@@ -79,6 +79,7 @@ camera_module_t HAL_MODULE_INFO_SYM = {
 typedef struct wrapper_camera_device
 {
     camera_device_t base;
+    int camera_released;
     int id;
     camera_device_t *vendor;
 } wrapper_camera_device_t;
@@ -369,13 +370,19 @@ static void camera_release_recording_frame(struct camera_device *device,
     android::VideoNativeHandleMetadata *md = (android::VideoNativeHandleMetadata *)opaque;
     native_handle_t *nh = md->pHandle;
 
+    wrapper_camera_device_t* wrapper_dev = NULL;
+
     ALOGV("%s->%08X->%08X", __FUNCTION__, (uintptr_t)device,
           (uintptr_t)(((wrapper_camera_device_t *)device)->vendor));
 
     if (!device)
         return;
 
+    wrapper_dev = (wrapper_camera_device_t*) device;
+
     VENDOR_CALL(device, release_recording_frame, opaque);
+
+    wrapper_dev->camera_released = true;
 
     native_handle_close(nh);
     native_handle_delete(nh);
@@ -526,6 +533,15 @@ static int camera_device_close(hw_device_t *device)
 
     wrapper_dev = (wrapper_camera_device_t *)device;
 
+    if (!wrapper_dev->camera_released) {
+        ALOGI("%s: releasing camera device with id %d", __FUNCTION__,
+                wrapper_dev->id);
+
+        VENDOR_CALL(wrapper_dev, release);
+
+        wrapper_dev->camera_released = true;
+    }
+
     wrapper_dev->vendor->common.close((hw_device_t *)wrapper_dev->vendor);
     if (wrapper_dev->base.ops)
         free(wrapper_dev->base.ops);
@@ -600,6 +616,7 @@ static int camera_device_open(const hw_module_t *module, const char *name,
             goto fail;
         }
         memset(camera_device, 0, sizeof(*camera_device));
+        camera_device->camera_released = false;
         camera_device->id = cameraid;
 
         rv = gVendorModule->common.methods->open(
