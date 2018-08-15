@@ -45,6 +45,6 @@ WLAN_SYMLINKS := $(TARGET_OUT_ETC)/firmware/wlan/
 $(WLAN_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@rm -rf $@/*
 	@mkdir -p $(dir $@)/qca_cld
-	$(hide) ln -sf /data/misc/wifi/wlan_mac.bin $@/qca_cld/wlan_mac.bin
+	$(hide) ln -sf /data/vendor/wifi/wlan_mac.bin $@/qca_cld/wlan_mac.bin
 ALL_DEFAULT_INSTALLED_MODULES += $(WLAN_SYMLINKS)
 endif
