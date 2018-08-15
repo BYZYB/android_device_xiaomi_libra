@@ -23,7 +23,7 @@
 
 #define XIAOMI_OUI_LIST_SIZE 41
 #define MAC_ADDR_SIZE 6
-#define WLAN_MAC_BIN "/data/misc/wifi/wlan_mac.bin"
+#define WLAN_MAC_BIN "/data/vendor/wifi/wlan_mac.bin"
 
 const uint8_t xiaomi_oui_list[XIAOMI_OUI_LIST_SIZE][3] =
     {
