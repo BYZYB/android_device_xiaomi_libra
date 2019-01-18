@@ -1,3 +1,24 @@
+# ART
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    dalvik.vm.boot-dex2oat-threads=6 \
+    dalvik.vm.dex2oat-cpu-set=0,1,2,3,4,5 \
+    dalvik.vm.dex2oat-filter=everything \
+    dalvik.vm.dex2oat-minidebuginfo=false \
+    dalvik.vm.dex2oat-threads=6 \
+    dalvik.vm.dex2oat64.enabled=true \
+    dalvik.vm.image-dex2oat-cpu-set=0,1,2,3,4,5 \
+    dalvik.vm.image-dex2oat-filter=everything \
+    dalvik.vm.image-dex2oat-threads=6 \
+    dalvik.vm.minidebuginfo=false \
+    pm.dexopt.ab-ota=everything \
+    pm.dexopt.bg-dexopt=everything \
+    pm.dexopt.boot=everything \
+    pm.dexopt.first-boot=everything \
+    pm.dexopt.inactive=everything \
+    pm.dexopt.install=everything \
+    pm.dexopt.shared=everything \
+    ro.sys.fw.dex2oat_thread_count=6
+
 # Audio
 PRODUCT_PROPERTY_OVERRIDES += \
     af.fast_track_multiplier=1 \
@@ -52,18 +73,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Charger
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.charger.enable_suspend=true
-
-# Dexpreopt
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dex2oat-filter=everything \
-    dalvik.vm.image-dex2oat-filter=everything \
-    pm.dexopt.ab-ota=everything \
-    pm.dexopt.bg-dexopt=everything \
-    pm.dexopt.boot=everything \
-    pm.dexopt.first-boot=everything \
-    pm.dexopt.inactive=everything \
-    pm.dexopt.install=everything \
-    pm.dexopt.shared=everything
 
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -129,6 +138,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.qcom.ad.sensortype=2 \
     ro.qcom.ad=1 \
     ro.qualcomm.cabl=0 \
+    ro.vendor.qti.am.reschedule_service=true \
     ro.vendor.qti.sys.fw.bservice_enable=true
 
 # Radio
