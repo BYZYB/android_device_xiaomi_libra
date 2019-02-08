@@ -1,0 +1,15 @@
+type readmac, domain;
+type readmac_exec, exec_type, vendor_file_type, file_type;
+
+init_daemon_domain(readmac)
+
+qmux_socket(readmac)
+diag_use(readmac)
+
+# /data/misc/wifi/wlan_mac.bin
+allow readmac wifi_data_file:file create_file_perms;
+allow readmac wifi_data_file:dir create_dir_perms;
+
+allow readmac self:socket create_socket_perms;
+allowxperm readmac self:socket ioctl msm_sock_ipc_ioctls;
+allow readmac self:capability fsetid;

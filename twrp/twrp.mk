@@ -1,0 +1,14 @@
+# TWRP
+BOARD_HAS_NO_REAL_SDCARD := true
+BOARD_HAS_NO_SELECT_BUTTON := true
+DEVICE_RESOLUTION := 1080x1920
+RECOVERY_SDCARD_ON_DATA := true
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+TARGET_RECOVERY_QCOM_RTC_FIX := true
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
+TW_INCLUDE_CRYPTO := true
+TW_EXTERNAL_STORAGE_PATH := "/usb-otg"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "usb-otg"
+TW_EXTRA_LANGUAGES := true
+
+PRODUCT_COPY_FILES += device/xiaomi/msm8994-common/twrp/twrp.fstab:recovery/root/etc/twrp.fstab

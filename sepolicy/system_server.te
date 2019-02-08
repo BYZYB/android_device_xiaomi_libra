@@ -1,0 +1,2 @@
+# Consumerir
+allow system_server lirc_device:chr_file rw_file_perms;

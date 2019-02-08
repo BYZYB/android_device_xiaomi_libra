@@ -1,0 +1,17 @@
+/system/vendor/bin/mmbn-daemon			u:object_r:mmbn-daemon_exec:s0
+/system/vendor/bin/readmac                      u:object_r:readmac_exec:s0
+/dev/lirc[0-9]*                                 u:object_r:lirc_device:s0
+/dev/block/bootdevice/by-name/mdm1m9kefs1       u:object_r:efs_boot_dev:s0
+/dev/block/bootdevice/by-name/mdm1m9kefs2       u:object_r:efs_boot_dev:s0
+/dev/block/bootdevice/by-name/mdm1m9kefs3       u:object_r:efs_boot_dev:s0
+/dev/block/bootdevice/by-name/mdm1m9kefsc       u:object_r:efs_boot_dev:s0
+/dev/block/bootdevice/by-name/msadp             u:object_r:mba_debug_dev:s0
+/dev/block/bootdevice/by-name/bootselect        u:object_r:bootselect_device:s0
+
+/sys/devices/soc.0/qcom,bcl.*(/.*)?                                 u:object_r:sysfs_thermal:s0
+/sys/devices/qcom,bcl.*(/.*)?                                       u:object_r:sysfs_thermal:s0
+
+# Shell files
+/system/vendor/bin/init\.qcom\.sh					u:object_r:qti_init_shell_exec:s0
+/system/vendor/bin/init\.qcom\.post_boot\.sh		u:object_r:qti_init_shell_exec:s0
+/system/vendor/bin/init\.qcom\.usb\.sh				u:object_r:qti_init_shell_exec:s0

@@ -1,0 +1,14 @@
+type mmbn-daemon, domain;
+type mmbn-daemon_exec, exec_type, file_type;
+
+init_daemon_domain(mmbn-daemon)
+
+qmux_socket(mmbn-daemon)
+diag_use(mmbn-daemon)
+
+# Allow access to firmware
+allow mmbn-daemon firmware_file:dir r_dir_perms;
+allow mmbn-daemon firmware_file:file r_file_perms;
+
+allow mmbn-daemon self:socket create_socket_perms;
+allowxperm mmbn-daemon self:socket ioctl msm_sock_ipc_ioctls;

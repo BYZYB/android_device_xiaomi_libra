@@ -1,0 +1,10 @@
+[
+  {
+    "repository": "android_kernel_xiaomi_leo",
+    "target_path": "kernel/xiaomi/leo"
+  },
+  {
+    "repository": "android_vendor_xiaomi_msm8994-common",
+    "target_path": "vendor/xiaomi/msm8994-common"
+  }
+]
