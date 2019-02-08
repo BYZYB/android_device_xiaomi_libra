@@ -1,0 +1,22 @@
+[
+  {
+    "repository": "LineageOS/android_device_qcom_common",
+    "target_path": "device/qcom/common",
+    "branch": "lineage-15.1"
+  },
+  {
+    "repository":  "LineageOS/android_packages_resources_devicesettings",
+    "target_path": "packages/resources/devicesettings",
+    "branch":      "lineage-15.1"
+  },
+    {
+    "repository": "WJXXBSH/proprietary_vendor_xiaomi_libra",
+    "target_path": "vendor/xiaomi",
+    "branch": "lineage-15.1"
+  },
+  {
+    "repository": "WJXXBSH/kernel_xiaomi_msm8992",
+    "target_path": "kernel/xiaomi/msm8992",
+    "branch": "Lineage-15.1_v3.10.108"
+  }
+]

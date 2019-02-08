@@ -1,0 +1,3 @@
+allow vold metadata_block_device:blk_file rw_file_perms;
+allow vold firmware_file:dir search;
+allow vold firmware_file:file { getattr open read };

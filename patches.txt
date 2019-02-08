@@ -1,0 +1,6 @@
+# We cant wait for all the patches be merged
+# so we pull the patches from gerrit.
+#
+198775/1 https://review.lineageos.org hardware/interfaces -f
+199643/1 https://review.lineageos.org hardware/qcom/bt -f
+199644/1 https://review.lineageos.org external/ant-wireless/ant_native -f

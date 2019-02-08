@@ -1,0 +1,147 @@
+#
+# system.prop for Mi-4c
+#
+
+# Audio
+af.fast_track_multiplier=1
+audio.deep_buffer.media=true
+audio.offload.buffer.size.kb=32
+audio.offload.disable=1
+audio.offload.gapless.enabled=true
+audio.offload.multiple.enabled=false
+audio.offload.pcm.16bit.enable=false
+audio.offload.pcm.24bit.enable=false
+audio.offload.track.enable=false
+audio.offload.video=true
+audio_hal.period_size=192
+persist.audio.dirac.speaker=true
+persist.audio.fluence.speaker=true
+persist.audio.fluence.voicecall=true
+persist.audio.fluence.voicerec=false
+persist.audio.ssr.3mic=false
+persist.speaker.prot.enable=true
+persist.spkr.cal.duration=0
+persist.sys.button_jack_profile=volume
+persist.sys.button_jack_switch=0
+qcom.hw.aac.encoder=true
+ro.qc.sdk.audio.fluencetype=fluence
+ro.qc.sdk.audio.ssr=false
+tunnel.audio.encode=false
+use.voice.path.for.pcm.voip=true
+
+# Bluetooth
+bluetooth.enable_timeout_ms=12000
+qcom.bluetooth.soc=rome
+ro.bluetooth.dun=true
+ro.bluetooth.emb_wp_mode=true
+ro.bluetooth.hfp.ver=1.6
+ro.bluetooth.sap=true
+ro.bluetooth.wipower=true
+ro.btconfig.chip=QCA6164
+ro.btconfig.dev=/dev/ttyHS0
+ro.btconfig.if=uart
+ro.btconfig.vendor=qcom
+ro.qualcomm.bluetooth.opp=true
+ro.qualcomm.bluetooth.hfp=true
+ro.qualcomm.bluetooth.hsp=true
+ro.qualcomm.bluetooth.pbap=true
+ro.qualcomm.bluetooth.ftp=true
+ro.qualcomm.bluetooth.nap=true
+ro.bluetooth.sap=true
+ro.bluetooth.dun=true
+ro.qualcomm.bluetooth.map=true
+ro.bluetooth.hfp.ver=1.6
+
+# Display
+debug.composition.type=c2d
+dev.pm.dyn_samplingrate=1
+persist.debug.wfd.enable=1
+persist.hwc.enable_vds=1
+persist.hwc.mdpcomp.enable=true
+persist.hwc.ptor.enable=true
+persist.mdpcomp.4k2kSplit=1
+persist.mdpcomp_perfhint=60
+persist.metadata_dynfps.disable=false
+ro.hdmi.enable=true
+ro.opengles.version=196610
+ro.sf.lcd_density=480
+ro.sys.display.support=23
+
+# CNE
+persist.cne.feature=1
+
+# DPM
+persist.dpm.feature=1
+
+# FRP
+ro.frp.pst=/dev/block/bootdevice/by-name/config
+
+# Media
+av.debug.disable.pers.cache=true
+media.aac_51_output_enabled=true
+media.stagefright.enable-aac=true
+media.stagefright.enable-fma2dp=true
+media.stagefright.enable-http=true
+media.stagefright.enable-player=true
+media.stagefright.enable-qcp=true
+media.stagefright.enable-scan=true
+media.stagefright.log-uri=1
+mm.enable.smoothstreaming=true
+mmp.enable.3g2=true
+persist.debug.sf.statistics=0
+vidc.debug.level=0
+vidc.enc.dcvs.extra-buff-count=2
+persist.media.treble_omx=false
+
+# Perf
+ro.vendor.extension_library=libqti-perfd-client.so
+
+# Radio
+persist.data.mode=concurrent
+persist.data.netmgrd.qos.enable=true
+persist.dbg.ims_volte_enable=1
+persist.dbg.volte_avail_ovr=1
+persist.dbg.vt_avail_ovr=1
+persist.dbg.wfc_avail_ovr=1
+persist.radio.add_power_save=1
+persist.radio.apm_sim_not_pwdn=1
+persist.radio.app_hw_mbn_path=/firmware/image/modem_pr/mcfg/configs/mcfg_hw/generic/common/MSM8994/LA
+persist.radio.custom_ecc=1
+persist.radio.force_on_dc=true
+persist.radio.multisim.config=dsds
+persist.radio.rat_on=combine
+persist.radio.data_ltd_sys_ind=1
+persist.radio.data_con_rprt=1
+persist.radio.calls.on.ims=1
+persist.radio.sib16_support=1
+persist.radio.VT_HYBRID_ENABLE=1
+ril.subscription.types=RUIM
+rild.libargs=-d /dev/smd0
+rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
+ro.data.large_tcp_window_size=true
+ro.telephony.default_cdma_sub=0
+ro.telephony.default_network=9,9
+ro.use_data_netmgrd=true
+telephony.lteOnCdmaDevice=1
+
+# Sensors
+ro.qc.sdk.camera.facialproc=false
+ro.qc.sdk.gestures.camera=false
+ro.qc.sdk.sensors.gestures=true
+
+# Time services
+persist.timed.enable=true
+
+# Google services
+ro.opa.eligible_device=true
+
+#Dex2oat config
+pm.dexopt.install=speed
+pm.dexopt.bg-dexopt=speed
+pm.dexopt.boot=speed
+pm.dexopt.first-boot=speed
+dalvik.vm.dex2oat-filter=speed
+dalvik.vm.image-dex2oat-filter=speed
+
+# Memory optimizations
+ro.vendor.qti.sys.fw.bservice_enable=true

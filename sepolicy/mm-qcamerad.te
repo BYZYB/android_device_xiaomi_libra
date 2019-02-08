@@ -1,0 +1,2 @@
+allow mm-qcamerad mpctl_socket:dir r_dir_perms;
+allow mm-qcamerad mpctl_socket:sock_file create_file_perms;

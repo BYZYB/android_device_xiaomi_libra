@@ -1,0 +1,4 @@
+allow thermal-engine thermal_data_file:dir create_dir_perms;
+allow thermal-engine thermal_data_file:file create_file_perms;
+
+allow thermal-engine self:capability { fowner chown };

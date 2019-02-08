@@ -1,0 +1,2 @@
+# /sys/kernel/debug/tracing/tracing_on
+allow init debugfs:file rw_file_perms;

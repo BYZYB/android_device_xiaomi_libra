@@ -1,0 +1,2 @@
+allow qti_init_shell sysfs_kgsl:file write;
+allow qti_init_shell sysfs_rqstats:dir r_dir_perms;

@@ -1,0 +1,45 @@
+/system/vendor/bin/mmbn-daemon			u:object_r:mmbn-daemon_exec:s0
+/system/vendor/bin/readmac               u:object_r:readmac_exec:s0
+/persist/st_.*                    u:object_r:sensors_persist_file:s0
+/persist/prox_calib_data.dat      u:object_r:sensors_persist_file:s0
+/persist/LightSensorData.txt      u:object_r:sensors_persist_file:s0
+/persist/PSensor.*                u:object_r:sensors_persist_file:s0
+/dev/lirc[0-9]*                   u:object_r:lirc_device:s0
+/data/thermal(/.*)?               u:object_r:thermal_data_file:s0
+
+/sys/kernel/debug/rmt_storage(/.*)?                                 u:object_r:debugfs_rmt_storage:s0
+
+/dev/block/bootdevice/by-name/bk1		u:object_r:metadata_block_device:s0
+
+# Fingerprint
+/sys/devices/soc\.0/f9968000.spi/spi_master/spi12/spi12\.0/irq                      u:object_r:fpc_sysfs:s0
+/sys/devices/soc\.0/f9968000.spi/spi_master/spi12/spi12\.0/hw_reset                 u:object_r:fpc_sysfs:s0
+/sys/devices/soc\.0/f9968000.spi/spi_master/spi12/spi12\.0/clk_enable               u:object_r:fpc_sysfs:s0
+/sys/devices/soc\.0/f9968000.spi/spi_master/spi12/spi12\.0/wakeup_enable            u:object_r:fpc_sysfs:s0
+/sys/devices/soc\.0/f9968000.spi/spi_master/spi12/spi12\.0/spi_prepare              u:object_r:fpc_sysfs:s0
+/data/fpc.*	                                                                    u:object_r:fpc_data_file:s0
+
+# Light
+/sys/class/leds/lcd-backlight(/.*)?				u:object_r:sysfs_leds:s0
+/sys/devices/soc.0/leds-qpnp-9/leds(/.*)?			u:object_r:sysfs_leds:s0
+/sys/devices/soc.0/leds-qpnp-10/leds(/.*)?			u:object_r:sysfs_leds:s0
+/sys/devices/soc.0/leds-qpnp-31/leds(/.*)?			u:object_r:sysfs_leds:s0
+
+# Location
+/system/vendor/bin/location-mq                      u:object_r:location_exec:s0
+
+# Hals
+/system/vendor/bin/hw/android\.hardware\.ir@1\.0-service.libra          u:object_r:hal_ir_default_exec:s0
+/system/vendor/bin/hw/android\.hardware\.light@2\.0-service.libra		u:object_r:hal_light_default_exec:s0
+
+# Shell files
+/system/vendor/bin/init\.qcom\.sh					u:object_r:qti_init_shell_exec:s0
+/system/vendor/bin/init\.qcom\.post_boot\.sh		u:object_r:qti_init_shell_exec:s0
+/system/vendor/bin/init\.qcom\.usb\.sh				u:object_r:qti_init_shell_exec:s0
+
+# Thermal sysfs
+/sys/devices/soc\.0/qcom,bcl[^/]*(/.*)?                             u:object_r:sysfs_thermal:s0
+/sys/devices/soc\.0/fdb00000\.qcom,kgsl-3d0/kgsl/kgsl-3d0/default_pwrlevel  u:object_r:sysfs_thermal:s0
+/sys/devices/virtual/net/rmnet_ipa0/queues/rx-0/rps_cpus            u:object_r:sysfs_devices_system_cpu:s0
+/sys/devices/soc\.0/qcom,cpubw\.[0-9]+/devfreq/qcom,cpubw\.[0-9]+(/.*)? u:object_r:sysfs_devices_system_cpu:s0
+/sys/devices/soc\.0/qcom,mincpubw\.[0-9]+/devfreq/qcom,mincpubw\.[0-9]+(/.*)? u:object_r:sysfs_devices_system_cpu:s0
