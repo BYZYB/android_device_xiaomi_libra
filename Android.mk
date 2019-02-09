@@ -15,9 +15,7 @@
 #
 
 LOCAL_PATH := $(call my-dir)
-
 ifneq ($(filter libra leo,$(TARGET_DEVICE)),)
-
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
 # WiFi symlinks
@@ -49,5 +47,4 @@ $(RFS_MSM_MPSS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	$(hide) ln -sf /firmware $@/readonly/firmware
 
 ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_ADSP_SYMLINKS) $(RFS_MSM_MPSS_SYMLINKS)
-
 endif
