@@ -2,13 +2,7 @@
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.heaptargetutilization=0.75 \
     dalvik.vm.heapminfree=2m \
-    dalvik.vm.heapmaxfree=8m \
-    pm.dexopt.install=speed \
-    pm.dexopt.bg-dexopt=speed \
-    pm.dexopt.boot=speed \
-    pm.dexopt.first-boot=speed \
-    dalvik.vm.dex2oat-filter=speed \
-    dalvik.vm.image-dex2oat-filter=speed
+    dalvik.vm.heapmaxfree=8m
 
 PRODUCT_PROPERTY_OVERRIDES += \
     rild.libpath=/vendor/lib64/libril-qc-qmi-1.so \
@@ -137,9 +131,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.qcom.ad=1 \
     ro.qcom.ad.calib.data=/system/etc/calib.cfg \
     ro.qcom.ad.sensortype=2
-
-# Display feature support
-# bit0-ColorPrefer bit1-EyeCare bit2-AD bit3-CE bit4-CABC bit5-SRGB
 
 #
 # System props for telephony
@@ -275,7 +266,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.klo=on \
     persist.sys.whetstone.level=2 \
     persist.sys.frozenKernel=true \
-    ro.carrier=unknown \
     ro.vendor.extension_library=libqti-perfd-client.so \
     persist.radio.custom_ecc=1 \
     persist.radio.sib16_support=1 \
@@ -287,3 +277,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.btconfig.vendor=qcom \
     ro.btconfig.chip=QCA6164 \
     persist.power.useautobrightadj=true \
+    persist.radio.apm_sim_not_pwdn=1

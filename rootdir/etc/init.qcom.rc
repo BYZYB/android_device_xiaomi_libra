@@ -263,7 +263,6 @@ on post-fs-data
     # Create a folder for audio delta files
     mkdir /data/audio/acdbdata 0770 media audio
     mkdir /data/audio/acdbdata/delta 0770 media audio
-
     setprop vold.post_fs_data_done 1
 
     #Create a folder for SRS to be able to create a usercfg file
@@ -505,4 +504,19 @@ service msm_irqbalance /vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqb
     writepid /dev/cpuset/system-background/tasks
 
 service mmbn-daemon /vendor/bin/mmbn-daemon
-   
+    class main
+    seclabel u:r:mmbn-daemon:s0
+    oneshot
+
+on property:persist.radio.modem=X7-LTE
+   setprop persist.radio.disable_flexmap 0
+
+service bdaddr /vendor/bin/bdaddr_xiaomi
+    class core
+    user root
+    group system
+    oneshot
+
+on property:init.svc.bdaddr=stopped
+    chmod 644 /data/misc/bluetooth/bdaddr
+    chown bluetooth bluetooth /data/misc/bluetooth/bdaddr

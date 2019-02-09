@@ -28,7 +28,8 @@
 
 target=`getprop ro.board.platform`
 
-case "$target" in "msm8992")
+case "$target" in
+    "msm8992")
 	    # Ensure at most two A57 is online when thermal hotplug is disabled
 		echo 1 > /sys/devices/system/cpu/cpu4/online
 		echo 1 > /sys/devices/system/cpu/cpu5/online
@@ -171,7 +172,8 @@ case "$target" in "msm8992")
     ;;
 esac
 
-case "$target" in "msm8994")
+case "$target" in
+    "msm8994")
         # enable suspend trace
         echo 1 > /proc/suspend_trace_stats
         # ensure at most one A57 is online when thermal hotplug is disabled
@@ -337,4 +339,8 @@ image_version+=`getprop ro.build.version.incremental`
 image_variant=`getprop ro.product.name`
 image_variant+="-"
 image_variant+=`getprop ro.build.type`
-oem_version
+oem_version=`getprop ro.build.version.codename`
+echo 10 > /sys/devices/soc0/select_image
+echo $image_version > /sys/devices/soc0/image_version
+echo $image_variant > /sys/devices/soc0/image_variant
+echo $oem_version > /sys/devices/soc0/image_crm_version

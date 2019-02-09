@@ -8,7 +8,7 @@ $(call inherit-product-if-exists, vendor/xiaomi/msm8994-common/msm8994-common-ve
 
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
-    $(LOCAL_PATH)/overlay-mokee
+    $(LOCAL_PATH)/overlay-lineage
 
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
@@ -179,6 +179,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.light@2.0-service.xiaomi_msm8994
 
+# LiveDisplay
+PRODUCT_PACKAGES += \
+    vendor.lineage.livedisplay@1.0-service-legacymm
+
 # OMX
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl \
@@ -245,7 +249,7 @@ PRODUCT_PACKAGES += \
 
 # Vibrator
 PRODUCT_PACKAGES += \
-    android.hardware.vibrator@1.0-service.impl
+    android.hardware.vibrator@1.0-service.lineage
 
 # Wifi
 PRODUCT_PACKAGES += \
@@ -280,4 +284,3 @@ PRODUCT_PACKAGES += \
     init.qcom.usb.sh \
     ueventd.qcom.rc \
     init.qcom.post_boot.sh
-    

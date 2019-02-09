@@ -104,6 +104,7 @@ ifneq (,$(filter linux darwin, $(HOST_OS)))
 TARGET_USERIMAGES_USE_F2FS := true
 endif
 BOARD_FLASH_BLOCK_SIZE := 131072 #262144 #(BOARD_KERNEL_PAGESIZE * 64)
+
 TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
 
 # Camera
@@ -191,6 +192,7 @@ TARGET_RELEASETOOLS_EXTENSIONS := $(COMMON_PATH)
 
 # SELinux
 include device/qcom/sepolicy-legacy/sepolicy.mk
+
 BOARD_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy
 
 # Shims
@@ -217,3 +219,5 @@ TARGET_USE_SDCLANG := true
 SDCLANG_PATH := vendor/qcom/sdclang-6.0/linux-x86/bin
 SDCLANG_LTO_DEFS := vendor/arrow/sdclang/sdllvm-lto-defs.mk
 
+# Include addon-su
+WITH_SU := true
