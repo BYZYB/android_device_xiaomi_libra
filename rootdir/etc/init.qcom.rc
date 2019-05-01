@@ -476,7 +476,7 @@ service ril-daemon2 /system/vendor/bin/hw/rild -c 2
     user root
     group radio cache inet misc audio sdcard_r sdcard_rw diag log net_raw
 
-service charger /charger
+service charger /system/bin/charger
     class charger
     group system graphics
     seclabel u:r:charger:s0
