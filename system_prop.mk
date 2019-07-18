@@ -77,6 +77,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     av.debug.disable.pers.cache=true \
+    debug.stagefright.omx_default_rank.sw-audio=1 \
+    debug.stagefright.omx_default_rank=0 \
     media.aac_51_output_enabled=true \
     media.stagefright.enable-aac=true \
     media.stagefright.enable-fma2dp=true \
