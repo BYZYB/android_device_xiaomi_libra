@@ -25,7 +25,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_l.mk)
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 # Inherit device configuration
-$(call inherit-product, device/xiaomi/libra/libra.mk)
+$(call inherit-product, device/xiaomi/libra/device.mk)
 
 # Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := libra

@@ -63,5 +63,5 @@ struct audio_event_info
 };
 typedef struct audio_event_info audio_event_info_t;
 
-typedef int (*sound_trigger_hw_call_back_t)(enum audio_event_type, truct audio_event_info *);
+typedef int (*sound_trigger_hw_call_back_t)(enum audio_event_type, struct audio_event_info *);
 #endif

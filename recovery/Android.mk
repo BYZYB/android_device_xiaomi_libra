@@ -9,5 +9,5 @@ LOCAL_C_INCLUDES := \
     bootable/recovery/updater/include
 LOCAL_SRC_FILES := recovery_updater.cpp
 LOCAL_MODULE := librecovery_updater_msm8994
-LOCAL_CFLAGS += -Ofast
+LOCAL_CFLAGS += -Ofast -g0
 include $(BUILD_STATIC_LIBRARY)

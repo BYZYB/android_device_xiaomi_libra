@@ -8,6 +8,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.audio.effect</name>
         <transport arch="32+64">passthrough</transport>
@@ -17,6 +18,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.bluetooth</name>
         <transport arch="32+64">passthrough</transport>
@@ -26,6 +28,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.camera.provider</name>
         <transport arch="32+64">passthrough</transport>
@@ -35,6 +38,7 @@
             <instance>legacy/0</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.cas</name>
         <transport>hwbinder</transport>
@@ -44,6 +48,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.configstore</name>
         <transport>hwbinder</transport>
@@ -53,6 +58,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.drm</name>
         <transport>hwbinder</transport>
@@ -70,6 +76,7 @@
             <instance>widevine</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.gatekeeper</name>
         <transport arch="32+64">passthrough</transport>
@@ -79,6 +86,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.gnss</name>
         <transport arch="32+64">passthrough</transport>
@@ -88,6 +96,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.graphics.allocator</name>
         <transport>hwbinder</transport>
@@ -97,6 +106,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.graphics.composer</name>
         <transport arch="32+64">passthrough</transport>
@@ -106,6 +116,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.graphics.mapper</name>
         <transport arch="32+64">passthrough</transport>
@@ -115,6 +126,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.health</name>
         <transport>hwbinder</transport>
@@ -124,6 +136,7 @@
             <instance>backup</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.keymaster</name>
         <transport arch="32+64">passthrough</transport>
@@ -133,6 +146,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.light</name>
         <transport>hwbinder</transport>
@@ -142,6 +156,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.media.omx</name>
         <transport>hwbinder</transport>
@@ -155,6 +170,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.memtrack</name>
         <transport arch="32+64">passthrough</transport>
@@ -164,6 +180,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.power</name>
         <transport>hwbinder</transport>
@@ -173,6 +190,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.radio</name>
         <transport>hwbinder</transport>
@@ -188,6 +206,7 @@
             <instance>slot2</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.radio.deprecated</name>
         <transport>hwbinder</transport>
@@ -198,6 +217,7 @@
             <instance>slot2</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.renderscript</name>
         <transport arch="32+64">passthrough</transport>
@@ -207,6 +227,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.sensors</name>
         <transport arch="32+64">passthrough</transport>
@@ -216,6 +237,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.soundtrigger</name>
         <transport arch="32+64">passthrough</transport>
@@ -225,6 +247,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.thermal</name>
         <transport arch="32+64">passthrough</transport>
@@ -234,6 +257,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.usb</name>
         <transport>hwbinder</transport>
@@ -243,6 +267,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.vibrator</name>
         <transport>hwbinder</transport>
@@ -252,6 +277,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.wifi</name>
         <transport>hwbinder</transport>
@@ -261,6 +287,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.wifi.hostapd</name>
         <transport>hwbinder</transport>
@@ -270,6 +297,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>android.hardware.wifi.supplicant</name>
         <transport>hwbinder</transport>
@@ -279,6 +307,7 @@
             <instance>default</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>com.quicinc.cne.api</name>
         <transport>hwbinder</transport>
@@ -288,6 +317,7 @@
             <instance>cnd</instance>
         </interface>
     </hal>
+
     <hal format="hidl">
         <name>com.quicinc.cne.server</name>
         <transport>hwbinder</transport>
@@ -297,15 +327,7 @@
             <instance>cnd</instance>
         </interface>
     </hal>
-    <hal format="hidl">
-        <name>vendor.lineage.power</name>
-        <transport>hwbinder</transport>
-        <version>1.0</version>
-        <interface>
-            <name>IlineagePower</name>
-            <instance>default</instance>
-        </interface>
-    </hal>
+
     <hal format="hidl">
         <name>vendor.lineage.livedisplay</name>
         <transport>hwbinder</transport>
@@ -315,6 +337,27 @@
             <instance>default</instance>
         </interface>
     </hal>
+
+    <hal format="hidl">
+        <name>vendor.lineage.power</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IlineagePower</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+
+    <hal format="hidl">
+        <name>vendor.lineage.touch</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IKeyDisabler</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+
     <hal format="hidl">
         <name>vendor.lineage.trust</name>
         <transport>hwbinder</transport>
@@ -324,7 +367,4 @@
             <instance>default</instance>
         </interface>
     </hal>
-    <sepolicy>
-        <version>0.0</version>
-    </sepolicy>
 </manifest>

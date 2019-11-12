@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 LOC_RPCGEN_APIS_PATH := $(TARGET_OUT_INTERMEDIATES)/loc_api/libloc_api_rpcgen_intermediates
 LOC_RPCGEN_APIS_PATH_FL := ../../../../../$(TARGET_OUT_INTERMEDIATES)/loc_api/libloc_api_rpcgen_intermediates
 
-LOCAL_CFLAGS += -Ofast
+LOCAL_CFLAGS += -Ofast -g0
 
 LOCAL_MODULE := libloc_api_rpcgen
 LOCAL_MODULE_OWNER := qcom
