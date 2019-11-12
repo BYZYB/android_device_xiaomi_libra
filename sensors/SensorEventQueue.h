@@ -30,11 +30,12 @@
  * Reading can be done safely after grabbing the mutex lock, while poll() writing in a separate
  * thread without a mutex lock. But there can only be one writer at a time.
  */
-class SensorEventQueue {
+class SensorEventQueue
+{
     int mCapacity;
     int mStart; // start of readable region
-    int mSize; // number of readable items
-    sensors_event_t* mData;
+    int mSize;  // number of readable items
+    sensors_event_t *mData;
     pthread_cond_t mSpaceAvailableCondition;
 
 public:
@@ -48,7 +49,7 @@ public:
     // Only call while holding the lock.
     // The region is not marked internally in any way. Subsequent calls may return overlapping
     // regions. This class expects there to be exactly one writer at a time.
-    int getWritableRegion(int requestedLength, sensors_event_t** out);
+    int getWritableRegion(int requestedLength, sensors_event_t **out);
 
     // After writing to the region returned by getWritableRegion(), call this to indicate how
     // many records were actually written.
@@ -62,7 +63,7 @@ public:
 
     // Returns pointer to the first readable record, or NULL if size() is zero.
     // Only call this while holding the lock.
-    sensors_event_t* peek();
+    sensors_event_t *peek();
 
     // This will decrease the size by one, freeing up the oldest readable event's slot for writing.
     // Only call while holding the lock.
@@ -70,7 +71,7 @@ public:
 
     // Blocks until space is available. No-op if there is already space.
     // Returns true if it had to wait.
-    bool waitForSpace(pthread_mutex_t* mutex);
+    bool waitForSpace(pthread_mutex_t *mutex);
 };
 
 #endif // SENSOREVENTQUEUE_H_

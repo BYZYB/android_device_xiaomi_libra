@@ -16,10 +16,9 @@
 
 #define LOG_TAG "vendor.lineage.touch@1.0-service.libra"
 
+#include "KeyDisabler.h"
 #include <android-base/logging.h>
 #include <hidl/HidlTransportSupport.h>
-
-#include "KeyDisabler.h"
 
 using android::OK;
 using android::sp;
@@ -30,12 +29,14 @@ using android::hardware::joinRpcThreadpool;
 using ::vendor::lineage::touch::V1_0::IKeyDisabler;
 using ::vendor::lineage::touch::V1_0::implementation::KeyDisabler;
 
-int main() {
+int main()
+{
     sp<KeyDisabler> keyDisabler;
     status_t status;
 
     keyDisabler = new KeyDisabler();
-    if (keyDisabler == nullptr) {
+    if (keyDisabler == nullptr)
+    {
         LOG(ERROR) << "Can not create an instance of Touch HAL KeyDisabler Iface, exiting.";
         goto shutdown;
     }
@@ -43,7 +44,8 @@ int main() {
     configureRpcThreadpool(1, true /*callerWillJoin*/);
 
     status = keyDisabler->registerAsService();
-    if (status != OK) {
+    if (status != OK)
+    {
         LOG(ERROR) << "Could not register service for Touch HAL KeyDisabler Iface ("
                    << status << ")";
         goto shutdown;

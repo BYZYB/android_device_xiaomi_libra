@@ -29,13 +29,15 @@ using android::hardware::joinRpcThreadpool;
 using android::hardware::ir::V1_0::IConsumerIr;
 using android::hardware::ir::V1_0::implementation::ConsumerIr;
 
-int main() {
+int main()
+{
     android::sp<IConsumerIr> service = new ConsumerIr();
 
     configureRpcThreadpool(1, true /*callerWillJoin*/);
 
     android::status_t status = service->registerAsService();
-    if (status != android::OK) {
+    if (status != android::OK)
+    {
         LOG(ERROR) << "Cannot register ConsumerIr HAL service";
         return 1;
     }

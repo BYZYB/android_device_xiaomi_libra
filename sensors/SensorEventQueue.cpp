@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <hardware/sensors.h>
-#include <algorithm>
-#include <pthread.h>
-#include <cutils/log.h>
-
 #include "SensorEventQueue.h"
+#include <algorithm>
+#include <cutils/log.h>
+#include <hardware/sensors.h>
+#include <pthread.h>
 
-SensorEventQueue::SensorEventQueue(int capacity) {
+SensorEventQueue::SensorEventQueue(int capacity)
+{
     mCapacity = capacity;
 
     mStart = 0;
@@ -30,14 +30,17 @@ SensorEventQueue::SensorEventQueue(int capacity) {
     pthread_cond_init(&mSpaceAvailableCondition, NULL);
 }
 
-SensorEventQueue::~SensorEventQueue() {
+SensorEventQueue::~SensorEventQueue()
+{
     delete[] mData;
     mData = NULL;
     pthread_cond_destroy(&mSpaceAvailableCondition);
 }
 
-int SensorEventQueue::getWritableRegion(int requestedLength, sensors_event_t** out) {
-    if (mSize == mCapacity || requestedLength <= 0) {
+int SensorEventQueue::getWritableRegion(int requestedLength, sensors_event_t **out)
+{
+    if (mSize == mCapacity || requestedLength <= 0)
+    {
         *out = NULL;
         return 0;
     }
@@ -47,33 +50,42 @@ int SensorEventQueue::getWritableRegion(int requestedLength, sensors_event_t** o
     int lastWritable = firstWritable + requestedLength - 1;
 
     // Don't go past the end of the data array.
-    if (lastWritable > mCapacity - 1) {
+    if (lastWritable > mCapacity - 1)
+    {
         lastWritable = mCapacity - 1;
     }
     // Don't go into the readable region.
-    if (firstWritable < mStart && lastWritable >= mStart) {
+    if (firstWritable < mStart && lastWritable >= mStart)
+    {
         lastWritable = mStart - 1;
     }
     *out = &mData[firstWritable];
     return lastWritable - firstWritable + 1;
 }
 
-void SensorEventQueue::markAsWritten(int count) {
+void SensorEventQueue::markAsWritten(int count)
+{
     mSize += count;
 }
 
-int SensorEventQueue::getSize() {
+int SensorEventQueue::getSize()
+{
     return mSize;
 }
 
-sensors_event_t* SensorEventQueue::peek() {
-    if (mSize == 0) return NULL;
+sensors_event_t *SensorEventQueue::peek()
+{
+    if (mSize == 0)
+        return NULL;
     return &mData[mStart];
 }
 
-void SensorEventQueue::dequeue() {
-    if (mSize == 0) return;
-    if (mSize == mCapacity) {
+void SensorEventQueue::dequeue()
+{
+    if (mSize == 0)
+        return;
+    if (mSize == mCapacity)
+    {
         pthread_cond_broadcast(&mSpaceAvailableCondition);
     }
     mSize--;
@@ -81,9 +93,11 @@ void SensorEventQueue::dequeue() {
 }
 
 // returns true if it waited, or false if it was a no-op.
-bool SensorEventQueue::waitForSpace(pthread_mutex_t* mutex) {
+bool SensorEventQueue::waitForSpace(pthread_mutex_t *mutex)
+{
     bool waited = false;
-    while (mSize == mCapacity) {
+    while (mSize == mCapacity)
+    {
         waited = true;
         pthread_cond_wait(&mSpaceAvailableCondition, mutex);
     }
