@@ -16,7 +16,6 @@ LOCAL_C_INCLUDES += external/libnfnetlink/include
 
 LOCAL_HEADER_LIBRARIES := generated_kernel_headers
 
-
 LOCAL_CFLAGS := -v
 LOCAL_CFLAGS += -DFEATURE_IPA_ANDROID
 LOCAL_CFLAGS += -Ofast
@@ -56,8 +55,6 @@ LOCAL_SHARED_LIBRARIES += libnetfilter_conntrack
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_EXECUTABLES)
 include $(BUILD_EXECUTABLE)
-
-################################################################################
 
 define ADD_TEST
 

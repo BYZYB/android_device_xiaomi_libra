@@ -23,11 +23,16 @@
 
 #include "ConsumerIr.h"
 
-namespace android {
-namespace hardware {
-namespace ir {
-namespace V1_0 {
-namespace implementation {
+namespace android
+{
+namespace hardware
+{
+namespace ir
+{
+namespace V1_0
+{
+namespace implementation
+{
 
 #define LIRC_DEV_PATH "/dev/lirc0"
 
@@ -37,10 +42,12 @@ static hidl_vec<ConsumerIrFreqRange> rangeVec{
     {.min = 30000, .max = 60000},
 };
 
-static int openLircDev() {
+static int openLircDev()
+{
     int fd = open(LIRC_DEV_PATH, O_RDWR);
 
-    if (fd < 0) {
+    if (fd < 0)
+    {
         LOG(ERROR) << "failed to open " << LIRC_DEV_PATH << ", error " << fd;
     }
 
@@ -48,36 +55,44 @@ static int openLircDev() {
 }
 
 // Methods from ::android::hardware::ir::V1_0::IConsumerIr follow.
-Return<bool> ConsumerIr::transmit(int32_t carrierFreq, const hidl_vec<int32_t>& pattern) {
+Return<bool> ConsumerIr::transmit(int32_t carrierFreq, const hidl_vec<int32_t> &pattern)
+{
     size_t entries = pattern.size();
     int rc;
     int lircFd;
 
     lircFd = openLircDev();
-    if (lircFd < 0) {
+    if (lircFd < 0)
+    {
         return lircFd;
     }
 
     rc = ioctl(lircFd, LIRC_SET_SEND_CARRIER, &carrierFreq);
-    if (rc < 0) {
+    if (rc < 0)
+    {
         LOG(ERROR) << "failed to set carrier " << carrierFreq << ", error: " << errno;
         goto out_close;
     }
 
     rc = ioctl(lircFd, LIRC_SET_SEND_DUTY_CYCLE, &dutyCycle);
-    if (rc < 0) {
+    if (rc < 0)
+    {
         LOG(ERROR) << "failed to set duty cycle " << dutyCycle << ", error: " << errno;
         goto out_close;
     }
 
-    if ((entries & 1) != 0) {
+    if ((entries & 1) != 0)
+    {
         rc = write(lircFd, pattern.data(), sizeof(int32_t) * entries);
-    } else {
+    }
+    else
+    {
         rc = write(lircFd, pattern.data(), sizeof(int32_t) * (entries - 1));
         usleep(pattern[entries - 1]);
     }
 
-    if (rc < 0) {
+    if (rc < 0)
+    {
         LOG(ERROR) << "failed to write pattern " << pattern.size() << ", error: " << errno;
         goto out_close;
     }
@@ -90,13 +105,14 @@ out_close:
     return rc == 0;
 }
 
-Return<void> ConsumerIr::getCarrierFreqs(getCarrierFreqs_cb _hidl_cb) {
+Return<void> ConsumerIr::getCarrierFreqs(getCarrierFreqs_cb _hidl_cb)
+{
     _hidl_cb(true, rangeVec);
     return Void();
 }
 
-}  // namespace implementation
-}  // namespace V1_0
-}  // namespace ir
-}  // namespace hardware
-}  // namespace android
+} // namespace implementation
+} // namespace V1_0
+} // namespace ir
+} // namespace hardware
+} // namespace android

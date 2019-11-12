@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2016, The CyanogenMod Project
+   Copyright (c) 2019, The LineageOS Project
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
    met:
@@ -25,8 +25,8 @@
    IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/sysinfo.h>
 #include <fstream>
+#include <sys/sysinfo.h>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
 
@@ -38,15 +38,14 @@ void property_override(char const prop[], char const value[])
 {
     prop_info *pi;
 
-    pi = (prop_info*) __system_property_find(prop);
+    pi = (prop_info *)__system_property_find(prop);
     if (pi)
         __system_property_update(pi, value, strlen(value));
     else
         __system_property_add(prop, strlen(prop), value, strlen(value));
 }
 
-void property_override_dual(char const system_prop[],
-        char const vendor_prop[], char const value[])
+void property_override_dual(char const system_prop[], char const vendor_prop[], char const value[])
 {
     property_override(system_prop, value);
     property_override(vendor_prop, value);
@@ -65,13 +64,16 @@ void set_dalvik_values()
 
     sysinfo(&sys);
 
-    if (sys.totalram > 2048ull * 1024 * 1024) {
+    if (sys.totalram > 2048ull * 1024 * 1024)
+    {
         // from - phone-xxhdpi-3072-dalvik-heap.mk
         heapstartsize = "8m";
         heapgrowthlimit = "288m";
         heapsize = "768m";
         heapminfree = "512k";
-    } else {
+    }
+    else
+    {
         // from - phone-xxhdpi-2048-dalvik-heap.mk
         heapstartsize = "16m";
         heapgrowthlimit = "192m";
@@ -112,19 +114,16 @@ void vendor_load_properties()
 
     set_board_id();
 
-    switch(board_id) {
+    switch (board_id)
+    {
     case LIBRA_BOARD_ID:
-        property_override_dual("ro.product.model", "ro.vendor.product.model", "Mi4c");
+        property_override_dual("ro.product.model", "ro.vendor.product.model", "Mi-4c");
         property_override_dual("ro.product.device", "ro.vendor.product.device", "libra");
-        property_override("ro.build.description", "libra-user 7.0 NRD90M V9.5.2.0.NXKCNFA release-keys");
-        property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "Xiaomi/libra/libra:7.0/NRD90M/V9.5.2.0.NXKCNFA:user/release-keys");
         property_override("ro.build.product", "libra");
         break;
     case AQUA_BOARD_ID:
-        property_override_dual("ro.product.model", "ro.vendor.product.model", "Mi4s");
+        property_override_dual("ro.product.model", "ro.vendor.product.model", "Mi-4s");
         property_override_dual("ro.product.device", "ro.vendor.product.device", "aqua");
-        property_override("ro.build.description", "aqua-user 7.0 NRD90M V9.5.2.0.NXKCNFA release-keys");
-        property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "Xiaomi/aqua/aqua:7.0/NRD90M/V9.5.2.0.NXKCNFA:user/release-keys");
         property_override("ro.build.product", "aqua");
         break;
     }

@@ -14,32 +14,40 @@
  * limitations under the License.
  */
 
+#include "KeyDisabler.h"
 #include <android-base/file.h>
 #include <android-base/logging.h>
 #include <android-base/strings.h>
 
-#include "KeyDisabler.h"
-
-namespace vendor {
-namespace lineage {
-namespace touch {
-namespace V1_0 {
-namespace implementation {
+namespace vendor
+{
+namespace lineage
+{
+namespace touch
+{
+namespace V1_0
+{
+namespace implementation
+{
 
 constexpr const char kControlPath[] =
     "/proc/touchscreen/nav_button_enable";
 
-KeyDisabler::KeyDisabler() {
+KeyDisabler::KeyDisabler()
+{
     mHasKeyDisabler = !access(kControlPath, F_OK);
 }
 
 // Methods from ::vendor::lineage::touch::V1_0::IKeyDisabler follow.
-Return<bool> KeyDisabler::isEnabled() {
+Return<bool> KeyDisabler::isEnabled()
+{
     std::string buf;
 
-    if (!mHasKeyDisabler) return false;
+    if (!mHasKeyDisabler)
+        return false;
 
-    if (!android::base::ReadFileToString(kControlPath, &buf)) {
+    if (!android::base::ReadFileToString(kControlPath, &buf))
+    {
         LOG(ERROR) << "Failed to read " << kControlPath;
         return false;
     }
@@ -47,10 +55,13 @@ Return<bool> KeyDisabler::isEnabled() {
     return std::stoi(android::base::Trim(buf)) == 0;
 }
 
-Return<bool> KeyDisabler::setEnabled(bool enabled) {
-    if (!mHasKeyDisabler) return false;
+Return<bool> KeyDisabler::setEnabled(bool enabled)
+{
+    if (!mHasKeyDisabler)
+        return false;
 
-    if (!android::base::WriteStringToFile((enabled ? "0" : "1"), kControlPath)) {
+    if (!android::base::WriteStringToFile((enabled ? "0" : "1"), kControlPath))
+    {
         LOG(ERROR) << "Failed to write " << kControlPath;
         return false;
     }
@@ -58,8 +69,8 @@ Return<bool> KeyDisabler::setEnabled(bool enabled) {
     return true;
 }
 
-}  // namespace implementation
-}  // namespace V1_0
-}  // namespace touch
-}  // namespace lineage
-}  // namespace vendor
+} // namespace implementation
+} // namespace V1_0
+} // namespace touch
+} // namespace lineage
+} // namespace vendor

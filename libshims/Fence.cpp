@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-extern "C" void _ZN7android5FenceD1Ev() { }
+extern "C" void _ZN7android5FenceD1Ev() {}
