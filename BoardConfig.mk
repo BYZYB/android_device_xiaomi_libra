@@ -15,7 +15,8 @@
 # limitations under the License.
 
 BOARD_VENDOR := xiaomi
-TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
+DEVICE_PATH := device/xiaomi/libra
+TARGET_SPECIFIC_HEADER_PATH := $(DEVICE_PATH)/include
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
@@ -36,7 +37,7 @@ TARGET_CPU_VARIANT := generic
 TARGET_USES_64_BIT_BINDER := true
 
 # Assertions
-TARGET_BOARD_INFO_FILE ?= $(LOCAL_PATH)/board-info.txt
+TARGET_BOARD_INFO_FILE ?= $(DEVICE_PATH)/board-info.txt
 TARGET_OTA_ASSERT_DEVICE := 4C,libra
 
 # Audio
@@ -63,7 +64,7 @@ USE_CUSTOM_AUDIO_POLICY := 1
 USE_XML_AUDIO_POLICY_CONF := 1
 
 # Bluetooth
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
 BOARD_HAS_QCA_BT_ROME := true
 BOARD_HAVE_BLUETOOTH_QCOM := true
 QCOM_BT_USE_BTNV := true
@@ -109,7 +110,7 @@ TARGET_TAP_TO_WAKE_NODE := "/proc/touchscreen/double_tap_enable"
 TARGET_EXFAT_DRIVER := exfat
 
 # Filesystem
-TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
+TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/config.fs
 
 # GPS
 USE_DEVICE_SPECIFIC_GPS := true
@@ -134,8 +135,8 @@ TARGET_USES_NEW_ION_API :=true
 TARGET_USES_OVERLAY := true
 
 # HIDL
-DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
-DEVICE_MATRIX_FILE := $(LOCAL_PATH)/compatibility_matrix.xml
+DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/manifest.xml
+DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
 
 # Init
 TARGET_INIT_VENDOR_LIB := libinit_libra
@@ -194,12 +195,12 @@ BOARD_USES_QCOM_HARDWARE := true
 
 # Recovery
 BOARD_HAS_LARGE_FILESYSTEM := true
-TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/rootdir/etc/fstab.qcom
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
 # Releasetools
 TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_msm8994
-TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
 
 # Ril
 FEATURE_QCRIL_UIM_SAP_SERVER_MODE := true
@@ -213,7 +214,7 @@ TARGET_REMOVE_SECDISCARD_COMMAND := true
 VENDOR_SECURITY_PATCH := 2018-03-01
 
 # SELinux
-BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy
+BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 include device/qcom/sepolicy-legacy/sepolicy.mk
 
 # Shims
@@ -229,7 +230,7 @@ BOARD_USES_QC_TIME_SERVICES := true
 
 # TWRP support
 ifeq ($(WITH_TWRP),true)
--include $(LOCAL_PATH)/twrp/twrp.mk
+-include $(DEVICE_PATH)/twrp/twrp.mk
 endif
 
 # Vendor

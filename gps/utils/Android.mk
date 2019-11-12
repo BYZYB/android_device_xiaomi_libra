@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS += -Ofast
+LOCAL_CFLAGS += -Ofast -g0
 
 ## Libs
 LOCAL_SHARED_LIBRARIES := \
@@ -30,7 +30,8 @@ LOCAL_SRC_FILES += \
 LOCAL_CFLAGS += \
      -fno-short-enums \
      -D_ANDROID_ \
-     -Ofast
+     -Ofast \
+     -g0
 
 ifeq ($(TARGET_BUILD_VARIANT),user)
    LOCAL_CFLAGS += -DTARGET_BUILD_VARIANT_USER
