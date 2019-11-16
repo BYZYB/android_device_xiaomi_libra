@@ -14,7 +14,7 @@ source_files:= \
 LOCAL_SRC_FILES:= $(source_files)
 
 LOCAL_CFLAGS:=-fno-short-enums
-LOCAL_CFLAGS+=-DUSE_QCOM_AUTO_RPC -DUSE_QCOM_AUTO_RPC
+LOCAL_CFLAGS+=-DUSE_QCOM_AUTO_RPC
 LOCAL_CFLAGS+=$(GPS_FEATURES)
 
 # for loc_api_fixup.c

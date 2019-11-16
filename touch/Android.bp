@@ -4,7 +4,7 @@ cc_binary {
     relative_install_path: "hw",
     init_rc: ["vendor.lineage.touch@1.0-service.libra.rc"],
     srcs: ["service.cpp", "KeyDisabler.cpp"],
-    cflags: ["-Ofast"],
+    cflags: ["-Ofast", "-g0"],
     shared_libs: [
         "libbase",
         "libhidlbase",

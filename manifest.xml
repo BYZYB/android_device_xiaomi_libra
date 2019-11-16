@@ -75,6 +75,8 @@
             <instance>default</instance>
             <instance>widevine</instance>
         </interface>
+        <fqname>@1.0::ICryptoFactory/default</fqname>
+        <fqname>@1.0::IDrmFactory/default</fqname>
     </hal>
 
     <hal format="hidl">
