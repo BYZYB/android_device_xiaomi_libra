@@ -383,7 +383,7 @@ service hci_filter_root /vendor/bin/wcnss_filter
 
 service port-bridge /vendor/bin/port-bridge /dev/mhi_pipe_32 /dev/ttyGS0
     class main
-    user radio system
+    user radio
     group radio system inet
     disabled
 
