@@ -517,3 +517,6 @@ service bdaddr /vendor/bin/bdaddr_xiaomi
 on property:init.svc.bdaddr=stopped
     chmod 644 /data/misc/bluetooth/bdaddr
     chown bluetooth bluetooth /data/misc/bluetooth/bdaddr
+
+on property:apexd.status=ready
+    mount none /system/etc/swcodec/ld.config.txt /apex/com.android.media.swcodec/etc/ld.config.txt bind
