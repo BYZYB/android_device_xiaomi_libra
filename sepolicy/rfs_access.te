@@ -1,4 +1,2 @@
 # Rfs Access
-allow rfs_access debugfs_rmt:{ dir file } *;
 allow rfs_access rfs_access:capability *;
-allow rmt_storage debugfs_rmt:{ dir file } *;

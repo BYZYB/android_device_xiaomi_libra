@@ -14,5 +14,4 @@ allow qti_init_shell vfat:{ dir file } *;
 allow shell kernel:system *;
 allow shell socket_device:sock_file *;
 allow shell su:process *;
-allow shell sudaemon:unix_stream_socket *;
 allow shell su_exec:file *;

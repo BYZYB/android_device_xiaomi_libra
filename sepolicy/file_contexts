@@ -14,6 +14,10 @@
 /sys/devices/soc.0/qcom,bcl.*(/.*)?             u:object_r:sysfs_thermal:s0
 /sys/devices/qcom,bcl.*(/.*)?                   u:object_r:sysfs_thermal:s0
 
+# Root directories
+/firmware(/.*)?                                 u:object_r:firmware_file:s0
+/bt_firmware(/.*)?                              u:object_r:bt_firmware_file:s0
+
 # Shell files
 /system/vendor/bin/init\.qcom\.sh               u:object_r:qti_init_shell_exec:s0
 /system/vendor/bin/init\.qcom\.post_boot\.sh    u:object_r:qti_init_shell_exec:s0

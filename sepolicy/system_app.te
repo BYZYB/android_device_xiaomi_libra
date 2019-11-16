@@ -2,7 +2,6 @@
 allow priv_app device:{ dir file } *;
 allow priv_app proc:{ dir file } *;
 allow priv_app proc_interrupts:{ dir file } *;
-allow priv_app rfs_system_file:{ dir file } *;
 allow priv_app sysfs:{ dir file } *;
 allow system_app init:binder *;
 allow system_app installd:binder *;
