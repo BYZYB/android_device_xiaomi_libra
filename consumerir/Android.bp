@@ -28,6 +28,6 @@ cc_binary {
         "libutils",
         "android.hardware.ir@1.0",
     ],
-    cflags: ["-Ofast"],
+    cflags: ["-Ofast", "-g0"],
     proprietary: true,
 }

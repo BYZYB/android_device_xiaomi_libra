@@ -84,16 +84,15 @@ USE_DEVICE_SPECIFIC_CAMERA := true
 # Charger
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
-# Dexpreopt
-BOARD_USES_SYSTEM_OTHER_ODEX := false
+# Enable dex-preoptimization to speed up first boot sequence
 DEX_PREOPT_DEFAULT := true
 DONT_DEXPREOPT_PREBUILTS := false
-DONT_UNCOMPRESS_PRIV_APPS_DEXS := true
 LOCAL_DEX_PREOPT := true
 PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 PRODUCT_DEX_PREOPT_BOOT_FLAGS := --compiler-filter=speed
 PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER := speed
 PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --compiler-filter=speed
+PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := false
 PRODUCT_OTHER_JAVA_DEBUG_INFO := false
 PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed
 PRODUCT_SYSTEM_SERVER_DEBUG_INFO := false
@@ -213,11 +212,6 @@ include device/qcom/sepolicy-legacy/sepolicy.mk
 
 # Shims
 TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libril-qc-qmi-1.so|rild_socket.so:/system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so:/system/vendor/lib64/libizat_core.so|libshims_get_process_name.so:/system/vendor/lib/hw/camera.vendor.msm8992.so|libshim_camera.so
-
-# SDCLANG
-SDCLANG_LTO_DEFS := vendor/lineage/build/core/sdllvm-lto-defs.mk
-SDCLANG_PATH := prebuilts/clang/host/linux-x86/sdclang/bin
-TARGET_USE_SDCLANG := true
 
 # Time services
 BOARD_USES_QC_TIME_SERVICES := true
