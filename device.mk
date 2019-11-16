@@ -56,8 +56,11 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.audio.common@5.0 \
     android.hardware.audio.common@5.0-util \
+    android.hardware.audio.effect@2.0-impl \
     android.hardware.audio.effect@5.0 \
     android.hardware.audio.effect@5.0-impl \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio@2.0-service \
     android.hardware.audio@5.0 \
     android.hardware.audio@5.0-impl \
     android.hardware.soundtrigger@2.0-impl \
@@ -251,7 +254,8 @@ PRODUCT_PACKAGES += \
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
-PRODUCT_ENFORCE_RRO_TARGETS := framework-res
+PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += $(LOCAL_PATH)/overlay/lineage-sdk
+PRODUCT_ENFORCE_RRO_TARGETS := *
 
 # Permissions
 PRODUCT_COPY_FILES += \
