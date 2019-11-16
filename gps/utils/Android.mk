@@ -11,7 +11,8 @@ LOCAL_CFLAGS += -Ofast -g0
 LOCAL_SHARED_LIBRARIES := \
     libutils \
     libcutils \
-    liblog
+    liblog \
+    libprocessgroup
 
 LOCAL_SRC_FILES += \
     loc_log.cpp \
