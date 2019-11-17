@@ -493,8 +493,7 @@ etc/firmware/venus.mdt:vendor/firmware/venus.mdt
 # Peripheral manager
 bin/pm-proxy:vendor/bin/pm-proxy
 bin/pm-service:vendor/bin/pm-service
-vendor/lib/libperipheral_client.so
-vendor/lib64/libperipheral_client.so
+vendor/lib64/libperipheral_client.so|5cf2eab39bacead0334deaf7a904d8e53c4f80bb
 
 # Qseecomm
 bin/qseecomd:vendor/bin/qseecomd
