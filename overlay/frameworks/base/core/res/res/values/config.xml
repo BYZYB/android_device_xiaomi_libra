@@ -104,45 +104,27 @@
     <integer name="config_screenBrightnessDim">2</integer>
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support. The N entries of this array define N + 1 control points as follows: (1-based arrays) Point 1:          (0, value[1]):           lux <= 0 Point 2:  (level[1], value[2]):  0       < lux <= level[1] Point 3:  (level[2], value[3]):  level[2] < lux <= level[3] ... Point N+1: (level[N], value[N+1]):  level[N] < lux The control points must be strictly increasing.  Each control point corresponds to an entry in the brightness backlight values arrays. For example, if LUX == level[1] (first element of the levels array) then the brightness will be determined by value[2] (second element of the brightness values array). Spline interpolation is used to determine the auto-brightness backlight values for LUX levels between these control points. Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>10</item>
-        <item>20</item>
-        <item>40</item>
-        <item>70</item>
+        <item>25</item>
         <item>100</item>
         <item>200</item>
-        <item>350</item>
-        <item>500</item>
-        <item>650</item>
+        <item>400</item>
         <item>800</item>
         <item>1000</item>
-        <item>1200</item>
         <item>1400</item>
-        <item>1600</item>
         <item>1800</item>
-        <item>2000</item>
-        <item>2200</item>
         <item>2500</item>
     </integer-array>
     <!-- Array of output values for LCD backlight corresponding to the LUX values in the config_autoBrightnessLevels array. This array should have size one greater than the size of the config_autoBrightnessLevels array. The brightness values must be between 0 and 255 and be non-decreasing. This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>3</item>
         <item>5</item>
-        <item>10</item>
-        <item>15</item>
         <item>20</item>
-        <item>35</item>
         <item>50</item>
-        <item>90</item>
-        <item>95</item>
+        <item>80</item>
         <item>100</item>
-        <item>110</item>
-        <item>135</item>
-        <item>150</item>
-        <item>165</item>
+        <item>120</item>
+        <item>140</item>
         <item>180</item>
-        <item>200</item>
         <item>220</item>
-        <item>235</item>
         <item>255</item>
     </integer-array>
     <!-- Boolean indicating if current platform supports BLE peripheral mode -->
