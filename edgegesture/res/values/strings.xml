@@ -17,6 +17,8 @@
 -->
 
 <resources>
-    <string name="edge_gesture_title">Edge Gesture</string>
+    <string name="button_panel_title">Edge Gesture</string>
+    <string name="device_settings_app_name">Edge Gesture</string>
     <string name="edge_gesture_summary">Double tap to phone\'s edge causes back</string>
+    <string name="edge_gesture_title">Edge Gesture</string>
 </resources>

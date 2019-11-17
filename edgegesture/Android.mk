@@ -14,8 +14,12 @@ LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 LOCAL_USE_AAPT2 := true
 
 LOCAL_STATIC_ANDROID_LIBRARIES := \
-    androidx.core_core \
-    androidx.preference_preference
+    android-support-v4 \
+    android-support-v7-appcompat \
+    android-support-v7-preference \
+    android-support-v7-recyclerview \
+    android-support-v13 \
+    android-support-v14-preference
 
 LOCAL_STATIC_JAVA_LIBRARIES := \
     org.lineageos.platform.internal

@@ -18,13 +18,13 @@
  * limitations under the License.
  */
 
-#include <cutils/properties.h>
-#include <string.h>
-
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
 #pragma push_macro("PROPERTY_VALUE_MAX")
+
+#include <cutils/properties.h>
+#include <string.h>
 
 static inline const char *BtmGetDefaultName()
 {
