@@ -25,6 +25,10 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Firmware Symlinks Path
+# Below macro will be read by uevent and will add the path to search paths for firmware loading
+firmware_directories /vendor/modem_firmware/image/
+
 # the DIAG device node is not world writable/readable.
 /dev/diag                 0660   system     oem_2950
 /dev/genlock              0666   system     system

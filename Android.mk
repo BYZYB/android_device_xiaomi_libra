@@ -18,32 +18,40 @@ LOCAL_PATH := $(call my-dir)
 ifeq ($(TARGET_DEVICE),libra)
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
-# WLAN symlinks
-$(shell mkdir -p $(TARGET_OUT_ETC)/firmware/wlan/qca_cld; \
-    ln -sf /data/misc/wifi/wlan_mac.bin \
-	    $(TARGET_OUT_ETC)/firmware/wlan/qca_cld/wlan_mac.bin)
+# BT_firmware symlinks
+BT_FIRMWARE_SYMLINKS := $(TARGET_OUT_VENDOR)/bt_firmware
+$(BT_FIRMWARE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
+	@mkdir -p $(TARGET_OUT_VENDOR)/bt_firmware
+ALL_DEFAULT_INSTALLED_MODULES += $(BT_FIRMWARE_SYMLINKS)
+
+# Modem_firmware symlinks
+MODEM_FIRMWARE_SYMLINKS := $(TARGET_OUT_VENDOR)/modem_firmware
+$(MODEM_FIRMWARE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
+	@mkdir -p $(TARGET_OUT_VENDOR)/modem_firmware
+ALL_DEFAULT_INSTALLED_MODULES += $(MODEM_FIRMWARE_SYMLINKS)
 
 # ADSP symlinks
 RFS_MSM_ADSP_SYMLINKS := $(TARGET_OUT)/rfs/msm/adsp/
 $(RFS_MSM_ADSP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
-	@echo "Creating RFS MSM ADSP folder structure: $@"
 	@rm -rf $@/*
 	@mkdir -p $(dir $@)/readonly
 	$(hide) ln -sf /persist/rfs/msm/adsp $@/readwrite
 	$(hide) ln -sf /persist/rfs/shared $@/shared
 	$(hide) ln -sf /persist/hlos_rfs/shared $@/hlos
 	$(hide) ln -sf /firmware $@/readonly/firmware
+ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_ADSP_SYMLINKS)
 
 # MPSS symlinks
 RFS_MSM_MPSS_SYMLINKS := $(TARGET_OUT)/rfs/msm/mpss/
 $(RFS_MSM_MPSS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
-	@echo "Creating RFS MSM MPSS folder structure: $@"
 	@rm -rf $@/*
 	@mkdir -p $(dir $@)/readonly
 	$(hide) ln -sf /persist/rfs/msm/mpss $@/readwrite
 	$(hide) ln -sf /persist/rfs/shared $@/shared
 	$(hide) ln -sf /persist/hlos_rfs/shared $@/hlos
 	$(hide) ln -sf /firmware $@/readonly/firmware
+ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_MPSS_SYMLINKS)
 
-ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_ADSP_SYMLINKS) $(RFS_MSM_MPSS_SYMLINKS)
+# WLAN symlinks
+$(shell mkdir -p $(TARGET_OUT_ETC)/firmware/wlan/qca_cld; ln -sf /data/misc/wifi/wlan_mac.bin $(TARGET_OUT_ETC)/firmware/wlan/qca_cld/wlan_mac.bin)
 endif
