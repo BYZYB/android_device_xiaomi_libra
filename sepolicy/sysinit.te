@@ -1,6 +1,5 @@
 type sysinit, coredomain, domain;
 type sysinit_exec, exec_type, file_type;
-permissive sysinit;
 
 # Allow for transition from init domain to sysinit
 init_daemon_domain(sysinit)
