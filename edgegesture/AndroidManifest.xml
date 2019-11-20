@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name=".Startup" >
+        <receiver android:name=".Startup">
             <intent-filter>
                 <action android:name="lineageos.intent.action.INITIALIZE_MK_HARDWARE" />
             </intent-filter>
