@@ -18,7 +18,7 @@ LOCAL_HEADER_LIBRARIES := generated_kernel_headers
 
 LOCAL_CFLAGS := -v
 LOCAL_CFLAGS += -DFEATURE_IPA_ANDROID
-LOCAL_CFLAGS += -Ofast -g0
+LOCAL_CFLAGS += -O3 -g0
 
 ifeq ($(TARGET_ARCH),arm)
 LOCAL_CFLAGS += -include bionic/libc/kernel/arch-arm/asm/posix_types.h
