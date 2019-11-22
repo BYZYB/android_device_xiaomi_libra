@@ -299,7 +299,7 @@
         <transport>hwbinder</transport>
         <version>1.0</version>
         <interface>
-            <name>IlineagePower</name>
+            <name>ILineagePower</name>
             <instance>default</instance>
         </interface>
     </hal>
