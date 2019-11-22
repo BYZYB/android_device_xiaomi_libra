@@ -30,7 +30,7 @@ cc_binary {
         "android.hardware.light@2.0",
     ],
     cflags: [
-        "-Ofast",
+        "-O3",
         "-g0",
     ],
 }

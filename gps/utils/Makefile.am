@@ -1,7 +1,7 @@
 AM_CFLAGS = -Wundef \
          -MD \
          -Wno-trigraphs \
-         -Ofast \
+         -O3 \
          -g0 \
          -fno-inline \
          -fno-short-enums \

@@ -11,7 +11,7 @@ LOCAL_VENDOR_MODULE := true
 
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_CFLAGS += -Ofast -g0
+LOCAL_CFLAGS += -O3 -g0
 
 LOCAL_SHARED_LIBRARIES := \
     libutils \
