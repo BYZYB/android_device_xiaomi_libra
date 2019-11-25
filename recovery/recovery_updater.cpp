@@ -99,8 +99,7 @@ static void bm_make_delta2(int *delta2, const char *pat, size_t pat_len)
     }
 }
 
-static char *bm_search(const char *str, size_t str_len, const char *pat,
-                       size_t pat_len)
+static char *bm_search(const char *str, size_t str_len, const char *pat, size_t pat_len)
 {
     int delta1[ALPHABET_LEN];
     int delta2[pat_len];
@@ -182,8 +181,7 @@ Value *VerifyTrustZoneFn(const char *name, State *state, const std::vector<std::
     ret = get_tz_version(current_tz_version, TZ_VER_BUF_LEN);
     if (ret)
     {
-        return ErrorAbort(state, "%s() failed to read current TZ version: %d",
-                          name, ret);
+        return ErrorAbort(state, "%s() failed to read current TZ version: %d", name, ret);
     }
 
     std::vector<std::string> tz_version;
@@ -195,8 +193,7 @@ Value *VerifyTrustZoneFn(const char *name, State *state, const std::vector<std::
     ret = 0;
     for (i = 0; i < argv.size(); i++)
     {
-        uiPrintf(state, "Comparing TZ version %s to %s",
-                 tz_version[i].c_str(), current_tz_version);
+        uiPrintf(state, "Comparing TZ version %s to %s", tz_version[i].c_str(), current_tz_version);
         if (strncmp(tz_version[i].c_str(), current_tz_version, tz_version[i].length()) == 0)
         {
             ret = 1;

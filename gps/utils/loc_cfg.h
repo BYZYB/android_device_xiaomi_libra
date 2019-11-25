@@ -33,11 +33,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define LOC_MAX_PARAM_NAME                 80
-#define LOC_MAX_PARAM_STRING               80
-#define LOC_MAX_PARAM_LINE    (LOC_MAX_PARAM_NAME + LOC_MAX_PARAM_STRING)
+#define LOC_MAX_PARAM_NAME 80
+#define LOC_MAX_PARAM_STRING 80
+#define LOC_MAX_PARAM_LINE (LOC_MAX_PARAM_NAME + LOC_MAX_PARAM_STRING)
 
-#define UTIL_UPDATE_CONF(conf_data, len, config_table) \
+#define UTIL_UPDATE_CONF(conf_data, len, config_table)  \
     loc_update_conf((conf_data), (len), (config_table), \
                     sizeof(config_table) / sizeof(config_table[0]))
 
@@ -54,10 +54,10 @@
  *============================================================================*/
 typedef struct
 {
-  const char                    *param_name;
-  void                          *param_ptr;
-  uint8_t                       *param_set;   /* was this value set by config file? */
-  char                           param_type;  /* 'n' for number,
+    const char *param_name;
+    void *param_ptr;
+    uint8_t *param_set; /* was this value set by config file? */
+    char param_type;    /* 'n' for number,
                                                  's' for string,
                                                  'f' for float */
 } loc_param_s_type;
@@ -69,21 +69,22 @@ typedef struct
  *============================================================================*/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/*=============================================================================
+    /*=============================================================================
  *
  *                       MODULE EXPORTED FUNCTIONS
  *
  *============================================================================*/
-void loc_read_conf(const char* conf_file_name,
-                   const loc_param_s_type* config_table,
-                   uint32_t table_length);
-int loc_read_conf_r(FILE *conf_fp, const loc_param_s_type* config_table,
-                    uint32_t table_length);
-int loc_update_conf(const char* conf_data, int32_t length,
-                    const loc_param_s_type* config_table, uint32_t table_length);
+    void loc_read_conf(const char *conf_file_name,
+                       const loc_param_s_type *config_table,
+                       uint32_t table_length);
+    int loc_read_conf_r(FILE *conf_fp, const loc_param_s_type *config_table,
+                        uint32_t table_length);
+    int loc_update_conf(const char *conf_data, int32_t length,
+                        const loc_param_s_type *config_table, uint32_t table_length);
 #ifdef __cplusplus
 }
 #endif

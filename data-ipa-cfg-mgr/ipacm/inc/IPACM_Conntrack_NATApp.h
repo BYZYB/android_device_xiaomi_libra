@@ -29,9 +29,9 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef IPACM_CONNTRACK_NATAPP_H
 #define IPACM_CONNTRACK_NATAPP_H
 
-#include <string.h>  /* for stderror */
+#include <string.h> /* for stderror */
 #include <stdlib.h>
-#include <cstdio>  /* for perror */
+#include <cstdio> /* for perror */
 
 #include "IPACM_Config.h"
 #include "IPACM_Xml.h"
@@ -55,21 +55,24 @@ typedef struct _nat_table_entry
 	uint16_t public_ip;
 	uint16_t public_port;
 
-	u_int8_t  protocol;
+	u_int8_t protocol;
 	uint32_t timestamp;
 
 	bool dst_nat;
 	bool enabled;
 	uint32_t rule_hdl;
 
-}nat_table_entry;
+} nat_table_entry;
 
-#define CHK_TBL_HDL()  if(nat_table_hdl == 0){ return -1; }
+#define CHK_TBL_HDL()       \
+	if (nat_table_hdl == 0) \
+	{                       \
+		return -1;          \
+	}
 
 class NatApp
 {
 private:
-
 	static NatApp *pInstance;
 
 	nat_table_entry *cache;
@@ -101,7 +104,7 @@ private:
 	bool isPwrSaveIf(uint32_t);
 
 public:
-	static NatApp* GetInstance();
+	static NatApp *GetInstance();
 
 	int AddTable(uint32_t);
 	uint32_t GetTableHdl(uint32_t);
@@ -124,7 +127,5 @@ public:
 	void DeleteTempEntry(const nat_table_entry *);
 	void FlushTempEntries(uint32_t, bool);
 };
-
-
 
 #endif /* IPACM_CONNTRACK_NATAPP_H */

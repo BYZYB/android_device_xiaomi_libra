@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -54,33 +54,37 @@ extern "C"
 
 #ifdef FEATURE_IPA_ANDROID
 #define IPACMLOG_FILE "/dev/socket/ipacm_log_file"
-#else/* defined(FEATURE_IPA_ANDROID) */
+#else /* defined(FEATURE_IPA_ANDROID) */
 #define IPACMLOG_FILE "/etc/ipacm_log_file"
 #endif /* defined(NOT FEATURE_IPA_ANDROID)*/
 
-typedef struct ipacm_log_buffer_s {
-	char	user_data[MAX_BUF_LEN];
-} ipacm_log_buffer_t;
+	typedef struct ipacm_log_buffer_s
+	{
+		char user_data[MAX_BUF_LEN];
+	} ipacm_log_buffer_t;
 
-void ipacm_log_send( void * user_data);
+	void ipacm_log_send(void *user_data);
 
-static char buffer_send[MAX_BUF_LEN];
+	static char buffer_send[MAX_BUF_LEN];
 
-#define PERROR(fmt)   memset(buffer_send, 0, MAX_BUF_LEN);\
-					  snprintf(buffer_send,MAX_BUF_LEN,"%s:%d %s()", __FILE__, __LINE__, __FUNCTION__);\
-					  ipacm_log_send (buffer_send); \
-                      perror(fmt);
+#define PERROR(fmt)                                                                     \
+	memset(buffer_send, 0, MAX_BUF_LEN);                                                \
+	snprintf(buffer_send, MAX_BUF_LEN, "%s:%d %s()", __FILE__, __LINE__, __FUNCTION__); \
+	ipacm_log_send(buffer_send);                                                        \
+	perror(fmt);
 
-#define IPACMERR(fmt, ...)	memset(buffer_send, 0, MAX_BUF_LEN);\
-							snprintf(buffer_send,MAX_BUF_LEN,"ERR: %s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);\
-							ipacm_log_send (buffer_send);\
-							printf("ERR: %s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);
-#define IPACMDBG_H(fmt, ...) memset(buffer_send, 0, MAX_BUF_LEN);\
-							 snprintf(buffer_send,MAX_BUF_LEN,"%s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);\
-							 ipacm_log_send (buffer_send);\
-							 printf("%s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);
-#define IPACMDBG(fmt, ...)	printf("%s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);
-#define IPACMLOG(fmt, ...)  printf(fmt, ##__VA_ARGS__);
+#define IPACMERR(fmt, ...)                                                                                       \
+	memset(buffer_send, 0, MAX_BUF_LEN);                                                                         \
+	snprintf(buffer_send, MAX_BUF_LEN, "ERR: %s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+	ipacm_log_send(buffer_send);                                                                                 \
+	printf("ERR: %s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__);
+#define IPACMDBG_H(fmt, ...)                                                                                \
+	memset(buffer_send, 0, MAX_BUF_LEN);                                                                    \
+	snprintf(buffer_send, MAX_BUF_LEN, "%s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+	ipacm_log_send(buffer_send);                                                                            \
+	printf("%s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__);
+#define IPACMDBG(fmt, ...) printf("%s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__);
+#define IPACMLOG(fmt, ...) printf(fmt, ##__VA_ARGS__);
 
 #ifdef __cplusplus
 }

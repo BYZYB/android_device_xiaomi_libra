@@ -34,36 +34,49 @@
 #define LOG_TAG "LocSvc_rpc"
 #include <utils/Log.h>
 
-#define PRINT(x...) do {                                    \
+#define PRINT(x...)                                         \
+    do                                                      \
+    {                                                       \
         fprintf(stdout, "%s(%d) ", __FUNCTION__, __LINE__); \
         fprintf(stdout, ##x);                               \
-        ALOGD(x);                               \
-    } while(0)
+        ALOGD(x);                                           \
+    } while (0)
 
 #ifdef DEBUG
 #define D PRINT
 #else
-#define D(x...) do { } while(0)
+#define D(x...) \
+    do          \
+    {           \
+    } while (0)
 #endif
 
 #ifdef VERBOSE
 #define V PRINT
 #else
-#define V(x...) do { } while(0)
+#define V(x...) \
+    do          \
+    {           \
+    } while (0)
 #endif
 
-#define E(x...) do {                                        \
+#define E(x...)                                             \
+    do                                                      \
+    {                                                       \
         fprintf(stderr, "%s(%d) ", __FUNCTION__, __LINE__); \
         fprintf(stderr, ##x);                               \
-        ALOGE(x);                                            \
-    } while(0)
+        ALOGE(x);                                           \
+    } while (0)
 
-#define FAILIF(cond, msg...) do {                                              \
-        if (__builtin_expect (cond, 0)) {                                      \
+#define FAILIF(cond, msg...)                                                   \
+    do                                                                         \
+    {                                                                          \
+        if (__builtin_expect(cond, 0))                                         \
+        {                                                                      \
             fprintf(stderr, "%s:%s:(%d): ", __FILE__, __FUNCTION__, __LINE__); \
             fprintf(stderr, ##msg);                                            \
-            ALOGE(##msg);                                                       \
+            ALOGE(##msg);                                                      \
         }                                                                      \
-    } while(0)
+    } while (0)
 
-#endif/*DEBUG_H*/
+#endif /*DEBUG_H*/

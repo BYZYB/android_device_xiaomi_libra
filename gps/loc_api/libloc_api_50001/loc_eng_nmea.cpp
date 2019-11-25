@@ -53,7 +53,7 @@ SIDE EFFECTS
 void loc_eng_nmea_send(char *pNmea, int length, loc_eng_data_s_type *loc_eng_data_p)
 {
     struct timeval tv;
-    gettimeofday(&tv, (struct timezone *) NULL);
+    gettimeofday(&tv, (struct timezone *)NULL);
     int64_t now = tv.tv_sec * 1000LL + tv.tv_usec / 1000;
     if (loc_eng_data_p->nmea_cb != NULL)
         loc_eng_data_p->nmea_cb(now, pNmea, length);
@@ -89,7 +89,7 @@ int loc_eng_nmea_put_checksum(char *pNmea, int maxSize)
     }
 
     // length now contains nmea sentence string length not including $ sign.
-    int checksumLength = snprintf(pNmea,(maxSize-length-1),"*%02X\r\n", checksum);
+    int checksumLength = snprintf(pNmea, (maxSize - length - 1), "*%02X\r\n", checksum);
 
     // total length of nmea sentence is length of nmea sentence inc $ sign plus
     // length of checksum (+1 is to cover the $ character in the length).
@@ -124,26 +124,28 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
                                unsigned char generate_nmea)
 {
     ENTRY_LOG();
-    time_t utcTime(location.gpsLocation.timestamp/1000);
-    tm * pTm = gmtime(&utcTime);
-    if (NULL == pTm) {
+    time_t utcTime(location.gpsLocation.timestamp / 1000);
+    tm *pTm = gmtime(&utcTime);
+    if (NULL == pTm)
+    {
         LOC_LOGE("gmtime failed");
         return;
     }
 
     char sentence[NMEA_SENTENCE_MAX_LENGTH] = {0};
-    char* pMarker = sentence;
+    char *pMarker = sentence;
     int lengthRemaining = sizeof(sentence);
     int length = 0;
     int utcYear = pTm->tm_year % 100; // 2 digit year
-    int utcMonth = pTm->tm_mon + 1; // tm_mon starts at zero
+    int utcMonth = pTm->tm_mon + 1;   // tm_mon starts at zero
     int utcDay = pTm->tm_mday;
     int utcHours = pTm->tm_hour;
     int utcMinutes = pTm->tm_min;
     int utcSeconds = pTm->tm_sec;
-    int utcMSeconds = (location.gpsLocation.timestamp)%1000;
+    int utcMSeconds = (location.gpsLocation.timestamp) % 1000;
 
-    if (generate_nmea) {
+    if (generate_nmea)
+    {
         // ------------------
         // ------$GPGSA------
         // ------------------
@@ -195,21 +197,21 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         }
 
         if (locationExtended.flags & GPS_LOCATION_EXTENDED_HAS_DOP)
-        {   // dop is in locationExtended, (QMI)
+        { // dop is in locationExtended, (QMI)
             length = snprintf(pMarker, lengthRemaining, "%.1f,%.1f,%.1f",
                               locationExtended.pdop,
                               locationExtended.hdop,
                               locationExtended.vdop);
         }
         else if (loc_eng_data_p->pdop > 0 && loc_eng_data_p->hdop > 0 && loc_eng_data_p->vdop > 0)
-        {   // dop was cached from sv report (RPC)
+        { // dop was cached from sv report (RPC)
             length = snprintf(pMarker, lengthRemaining, "%.1f,%.1f,%.1f",
                               loc_eng_data_p->pdop,
                               loc_eng_data_p->hdop,
                               loc_eng_data_p->vdop);
         }
         else
-        {   // no dop
+        { // no dop
             length = snprintf(pMarker, lengthRemaining, ",,");
         }
 
@@ -287,21 +289,21 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
 
         // Add the position/horizontal/vertical DOP values
         if (locationExtended.flags & GPS_LOCATION_EXTENDED_HAS_DOP)
-        {   // dop is in locationExtended, (QMI)
+        { // dop is in locationExtended, (QMI)
             length = snprintf(pMarker, lengthRemaining, "%.1f,%.1f,%.1f",
                               locationExtended.pdop,
                               locationExtended.hdop,
                               locationExtended.vdop);
         }
         else if (loc_eng_data_p->pdop > 0 && loc_eng_data_p->hdop > 0 && loc_eng_data_p->vdop > 0)
-        {   // dop was cached from sv report (RPC)
+        { // dop was cached from sv report (RPC)
             length = snprintf(pMarker, lengthRemaining, "%.1f,%.1f,%.1f",
                               loc_eng_data_p->pdop,
                               loc_eng_data_p->hdop,
                               loc_eng_data_p->vdop);
         }
         else
-        {   // no dop
+        { // no dop
             length = snprintf(pMarker, lengthRemaining, ",,");
         }
 
@@ -345,7 +347,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
 
         if (location.gpsLocation.flags & GPS_LOCATION_HAS_SPEED)
         {
-            float speedKnots = location.gpsLocation.speed * (3600.0/1852.0);
+            float speedKnots = location.gpsLocation.speed * (3600.0 / 1852.0);
             float speedKmPerHour = location.gpsLocation.speed * 3.6;
 
             length = snprintf(pMarker, lengthRemaining, "%.1lf,N,%.1lf,K,", speedKnots, speedKmPerHour);
@@ -380,8 +382,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         pMarker = sentence;
         lengthRemaining = sizeof(sentence);
 
-        length = snprintf(pMarker, lengthRemaining, "$GPRMC,%02d%02d%02d.%02d,A," ,
-                          utcHours, utcMinutes, utcSeconds,utcMSeconds/10);
+        length = snprintf(pMarker, lengthRemaining, "$GPRMC,%02d%02d%02d.%02d,A,",
+                          utcHours, utcMinutes, utcSeconds, utcMSeconds / 10);
 
         if (length < 0 || length >= lengthRemaining)
         {
@@ -420,16 +422,16 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
                 lonHemisphere = 'E';
             }
 
-            latMinutes = fmod(latitude * 60.0 , 60.0);
-            lonMinutes = fmod(longitude * 60.0 , 60.0);
+            latMinutes = fmod(latitude * 60.0, 60.0);
+            lonMinutes = fmod(longitude * 60.0, 60.0);
 
             length = snprintf(pMarker, lengthRemaining, "%02d%09.6lf,%c,%03d%09.6lf,%c,",
                               (uint8_t)floor(latitude), latMinutes, latHemisphere,
-                              (uint8_t)floor(longitude),lonMinutes, lonHemisphere);
+                              (uint8_t)floor(longitude), lonMinutes, lonHemisphere);
         }
         else
         {
-            length = snprintf(pMarker, lengthRemaining,",,,,");
+            length = snprintf(pMarker, lengthRemaining, ",,,,");
         }
 
         if (length < 0 || length >= lengthRemaining)
@@ -442,7 +444,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
 
         if (location.gpsLocation.flags & GPS_LOCATION_HAS_SPEED)
         {
-            float speedKnots = location.gpsLocation.speed * (3600.0/1852.0);
+            float speedKnots = location.gpsLocation.speed * (3600.0 / 1852.0);
             length = snprintf(pMarker, lengthRemaining, "%.1lf,", speedKnots);
         }
         else
@@ -533,8 +535,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         pMarker = sentence;
         lengthRemaining = sizeof(sentence);
 
-        length = snprintf(pMarker, lengthRemaining, "$GPGGA,%02d%02d%02d.%02d," ,
-                          utcHours, utcMinutes, utcSeconds, utcMSeconds/10);
+        length = snprintf(pMarker, lengthRemaining, "$GPGGA,%02d%02d%02d.%02d,",
+                          utcHours, utcMinutes, utcSeconds, utcMSeconds / 10);
 
         if (length < 0 || length >= lengthRemaining)
         {
@@ -573,16 +575,16 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
                 lonHemisphere = 'E';
             }
 
-            latMinutes = fmod(latitude * 60.0 , 60.0);
-            lonMinutes = fmod(longitude * 60.0 , 60.0);
+            latMinutes = fmod(latitude * 60.0, 60.0);
+            lonMinutes = fmod(longitude * 60.0, 60.0);
 
             length = snprintf(pMarker, lengthRemaining, "%02d%09.6lf,%c,%03d%09.6lf,%c,",
                               (uint8_t)floor(latitude), latMinutes, latHemisphere,
-                              (uint8_t)floor(longitude),lonMinutes, lonHemisphere);
+                              (uint8_t)floor(longitude), lonMinutes, lonHemisphere);
         }
         else
         {
-            length = snprintf(pMarker, lengthRemaining,",,,,");
+            length = snprintf(pMarker, lengthRemaining, ",,,,");
         }
 
         if (length < 0 || length >= lengthRemaining)
@@ -602,17 +604,17 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
             gpsQuality = '2'; // 2 means DGPS fix
 
         if (locationExtended.flags & GPS_LOCATION_EXTENDED_HAS_DOP)
-        {   // dop is in locationExtended, (QMI)
+        { // dop is in locationExtended, (QMI)
             length = snprintf(pMarker, lengthRemaining, "%c,%02d,%.1f,",
                               gpsQuality, svUsedCount, locationExtended.hdop);
         }
         else if (loc_eng_data_p->pdop > 0 && loc_eng_data_p->hdop > 0 && loc_eng_data_p->vdop > 0)
-        {   // dop was cached from sv report (RPC)
+        { // dop was cached from sv report (RPC)
             length = snprintf(pMarker, lengthRemaining, "%c,%02d,%.1f,",
                               gpsQuality, svUsedCount, loc_eng_data_p->hdop);
         }
         else
-        {   // no hdop
+        { // no hdop
             length = snprintf(pMarker, lengthRemaining, "%c,%02d,,",
                               gpsQuality, svUsedCount);
         }
@@ -632,7 +634,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         }
         else
         {
-            length = snprintf(pMarker, lengthRemaining,",,");
+            length = snprintf(pMarker, lengthRemaining, ",,");
         }
 
         if (length < 0 || length >= lengthRemaining)
@@ -651,15 +653,15 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         }
         else
         {
-            length = snprintf(pMarker, lengthRemaining,",,,");
+            length = snprintf(pMarker, lengthRemaining, ",,,");
         }
 
         length = loc_eng_nmea_put_checksum(sentence, sizeof(sentence));
         loc_eng_nmea_send(sentence, length, loc_eng_data_p);
-
     }
     //Send blank NMEA reports for non-final fixes
-    else {
+    else
+    {
         strlcpy(sentence, "$GPGSA,A,1,,,,,,,,,,,,,,,", sizeof(sentence));
         length = loc_eng_nmea_put_checksum(sentence, sizeof(sentence));
         loc_eng_nmea_send(sentence, length, loc_eng_data_p);
@@ -685,10 +687,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
     loc_eng_data_p->hdop = 0;
     loc_eng_data_p->vdop = 0;
 
-    EXIT_LOG(%d, 0);
+    EXIT_LOG(% d, 0);
 }
-
-
 
 /*===========================================================================
 FUNCTION    loc_eng_nmea_generate_sv
@@ -712,7 +712,7 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
     ENTRY_LOG();
 
     char sentence[NMEA_SENTENCE_MAX_LENGTH] = {0};
-    char* pMarker = sentence;
+    char *pMarker = sentence;
     int lengthRemaining = sizeof(sentence);
     int length = 0;
     int svCount = svStatus.num_svs;
@@ -726,7 +726,8 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
 
     loc_eng_data_p->gps_used_mask = 0;
     loc_eng_data_p->glo_used_mask = 0;
-    for(svNumber=1; svNumber <= svCount; svNumber++) {
+    for (svNumber = 1; svNumber <= svCount; svNumber++)
+    {
         if (GNSS_CONSTELLATION_GPS == svStatus.gnss_sv_list[svNumber - 1].constellation)
         {
             // cache the used in fix mask, as it will be needed to send $GPGSA
@@ -764,7 +765,7 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
     {
         svNumber = 1;
         sentenceNumber = 1;
-        sentenceCount = gpsCount/4 + (gpsCount % 4 != 0);
+        sentenceCount = gpsCount / 4 + (gpsCount % 4 != 0);
 
         while (sentenceNumber <= sentenceCount)
         {
@@ -772,7 +773,7 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
             lengthRemaining = sizeof(sentence);
 
             length = snprintf(pMarker, lengthRemaining, "$GPGSV,%d,%d,%02d",
-                          sentenceCount, sentenceNumber, gpsCount);
+                              sentenceCount, sentenceNumber, gpsCount);
 
             if (length < 0 || length >= lengthRemaining)
             {
@@ -782,14 +783,14 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
             pMarker += length;
             lengthRemaining -= length;
 
-            for (int i=0; (svNumber <= svCount) && (i < 4);  svNumber++)
+            for (int i = 0; (svNumber <= svCount) && (i < 4); svNumber++)
             {
                 if (GNSS_CONSTELLATION_GPS == svStatus.gnss_sv_list[svNumber - 1].constellation)
                 {
-                    length = snprintf(pMarker, lengthRemaining,",%02d,%02d,%03d,",
-                                      svStatus.gnss_sv_list[svNumber-1].svid,
-                                      (int)(0.5 + svStatus.gnss_sv_list[svNumber-1].elevation), //float to int
-                                      (int)(0.5 + svStatus.gnss_sv_list[svNumber-1].azimuth)); //float to int
+                    length = snprintf(pMarker, lengthRemaining, ",%02d,%02d,%03d,",
+                                      svStatus.gnss_sv_list[svNumber - 1].svid,
+                                      (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].elevation), //float to int
+                                      (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].azimuth));  //float to int
 
                     if (length < 0 || length >= lengthRemaining)
                     {
@@ -799,10 +800,10 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
                     pMarker += length;
                     lengthRemaining -= length;
 
-                    if (svStatus.gnss_sv_list[svNumber-1].c_n0_dbhz > 0)
+                    if (svStatus.gnss_sv_list[svNumber - 1].c_n0_dbhz > 0)
                     {
-                        length = snprintf(pMarker, lengthRemaining,"%02d",
-                                         (int)(0.5 + svStatus.gnss_sv_list[svNumber-1].c_n0_dbhz)); //float to int
+                        length = snprintf(pMarker, lengthRemaining, "%02d",
+                                          (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].c_n0_dbhz)); //float to int
 
                         if (length < 0 || length >= lengthRemaining)
                         {
@@ -814,15 +815,14 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
                     }
 
                     i++;
-               }
-
+                }
             }
 
             length = loc_eng_nmea_put_checksum(sentence, sizeof(sentence));
             loc_eng_nmea_send(sentence, length, loc_eng_data_p);
             sentenceNumber++;
 
-        }  //while
+        } //while
 
     } //if
 
@@ -841,7 +841,7 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
     {
         svNumber = 1;
         sentenceNumber = 1;
-        sentenceCount = glnCount/4 + (glnCount % 4 != 0);
+        sentenceCount = glnCount / 4 + (glnCount % 4 != 0);
 
         while (sentenceNumber <= sentenceCount)
         {
@@ -849,7 +849,7 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
             lengthRemaining = sizeof(sentence);
 
             length = snprintf(pMarker, lengthRemaining, "$GLGSV,%d,%d,%02d",
-                          sentenceCount, sentenceNumber, glnCount);
+                              sentenceCount, sentenceNumber, glnCount);
 
             if (length < 0 || length >= lengthRemaining)
             {
@@ -859,15 +859,15 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
             pMarker += length;
             lengthRemaining -= length;
 
-            for (int i=0; (svNumber <= svCount) && (i < 4);  svNumber++)
+            for (int i = 0; (svNumber <= svCount) && (i < 4); svNumber++)
             {
                 if (GNSS_CONSTELLATION_GLONASS == svStatus.gnss_sv_list[svNumber - 1].constellation)
                 {
 
-                    length = snprintf(pMarker, lengthRemaining,",%02d,%02d,%03d,",
-                        svStatus.gnss_sv_list[svNumber - 1].svid,
-                        (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].elevation), //float to int
-                        (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].azimuth)); //float to int
+                    length = snprintf(pMarker, lengthRemaining, ",%02d,%02d,%03d,",
+                                      svStatus.gnss_sv_list[svNumber - 1].svid,
+                                      (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].elevation), //float to int
+                                      (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].azimuth));  //float to int
 
                     if (length < 0 || length >= lengthRemaining)
                     {
@@ -879,8 +879,8 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
 
                     if (svStatus.gnss_sv_list[svNumber - 1].c_n0_dbhz > 0)
                     {
-                        length = snprintf(pMarker, lengthRemaining,"%02d",
-                            (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].c_n0_dbhz)); //float to int
+                        length = snprintf(pMarker, lengthRemaining, "%02d",
+                                          (int)(0.5 + svStatus.gnss_sv_list[svNumber - 1].c_n0_dbhz)); //float to int
 
                         if (length < 0 || length >= lengthRemaining)
                         {
@@ -892,17 +892,16 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
                     }
 
                     i++;
-               }
-
+                }
             }
 
             length = loc_eng_nmea_put_checksum(sentence, sizeof(sentence));
             loc_eng_nmea_send(sentence, length, loc_eng_data_p);
             sentenceNumber++;
 
-        }  //while
+        } //while
 
-    }//if
+    } //if
 
     // For RPC, the DOP are sent during sv report, so cache them
     // now to be sent during position report.
@@ -920,5 +919,5 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
         loc_eng_data_p->vdop = 0;
     }
 
-    EXIT_LOG(%d, 0);
+    EXIT_LOG(% d, 0);
 }

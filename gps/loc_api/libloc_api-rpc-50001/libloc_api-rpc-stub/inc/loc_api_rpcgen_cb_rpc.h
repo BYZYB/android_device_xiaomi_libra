@@ -41,22 +41,24 @@
 #include <pthread.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    struct rpc_loc_event_cb_f_type_args
+    {
+        rpc_uint32 cb_id;
+        rpc_loc_client_handle_type loc_handle;
+        rpc_loc_event_mask_type loc_event;
+        rpc_loc_event_payload_u_type *loc_event_payload;
+    };
+    typedef struct rpc_loc_event_cb_f_type_args rpc_loc_event_cb_f_type_args;
 
-struct rpc_loc_event_cb_f_type_args {
-    rpc_uint32 cb_id;
-    rpc_loc_client_handle_type loc_handle;
-    rpc_loc_event_mask_type loc_event;
-    rpc_loc_event_payload_u_type *loc_event_payload;
-};
-typedef struct rpc_loc_event_cb_f_type_args rpc_loc_event_cb_f_type_args;
-
-struct rpc_loc_event_cb_f_type_rets {
-    rpc_int32 loc_event_cb_f_type_result;
-};
-typedef struct rpc_loc_event_cb_f_type_rets rpc_loc_event_cb_f_type_rets;
+    struct rpc_loc_event_cb_f_type_rets
+    {
+        rpc_int32 loc_event_cb_f_type_result;
+    };
+    typedef struct rpc_loc_event_cb_f_type_rets rpc_loc_event_cb_f_type_rets;
 #define LOC_APICBVERS 0x00050006
 
 #define LOC_APICBPROG 0x3100008C
@@ -64,88 +66,88 @@ typedef struct rpc_loc_event_cb_f_type_rets rpc_loc_event_cb_f_type_rets;
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define rpc_loc_event_cb_f_type 1
-extern  enum clnt_stat rpc_loc_event_cb_f_type_0x00050001(rpc_loc_event_cb_f_type_args *, rpc_loc_event_cb_f_type_rets *, CLIENT *);
-extern  bool_t rpc_loc_event_cb_f_type_0x00050001_svc(rpc_loc_event_cb_f_type_args *, rpc_loc_event_cb_f_type_rets *, struct svc_req *);
-extern int loc_apicbprog_0x00050001_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_event_cb_f_type_0x00050001(rpc_loc_event_cb_f_type_args *, rpc_loc_event_cb_f_type_rets *, CLIENT *);
+    extern bool_t rpc_loc_event_cb_f_type_0x00050001_svc(rpc_loc_event_cb_f_type_args *, rpc_loc_event_cb_f_type_rets *, struct svc_req *);
+    extern int loc_apicbprog_0x00050001_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define rpc_loc_event_cb_f_type 1
-extern  enum clnt_stat rpc_loc_event_cb_f_type_0x00050001();
-extern  bool_t rpc_loc_event_cb_f_type_0x00050001_svc();
-extern int loc_apicbprog_0x00050001_freeresult ();
+extern enum clnt_stat rpc_loc_event_cb_f_type_0x00050001();
+extern bool_t rpc_loc_event_cb_f_type_0x00050001_svc();
+extern int loc_apicbprog_0x00050001_freeresult();
 #endif /* K&R C */
 #define LOC_APICBVERS_0002 0x00050002
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define rpc_loc_api_cb_null 0xffffff00
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050002(void *, int *, CLIENT *);
-extern  bool_t rpc_loc_api_cb_null_0x00050002_svc(void *, int *, struct svc_req *);
-extern int loc_apicbprog_0x00050002_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_cb_null_0x00050002(void *, int *, CLIENT *);
+    extern bool_t rpc_loc_api_cb_null_0x00050002_svc(void *, int *, struct svc_req *);
+    extern int loc_apicbprog_0x00050002_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define rpc_loc_api_cb_null 0xffffff00
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050002();
-extern  bool_t rpc_loc_api_cb_null_0x00050002_svc();
-extern int loc_apicbprog_0x00050002_freeresult ();
+extern enum clnt_stat rpc_loc_api_cb_null_0x00050002();
+extern bool_t rpc_loc_api_cb_null_0x00050002_svc();
+extern int loc_apicbprog_0x00050002_freeresult();
 #endif /* K&R C */
 #define LOC_APICBVERS_0003 0x00050003
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050003(void *, int *, CLIENT *);
-extern  bool_t rpc_loc_api_cb_null_0x00050003_svc(void *, int *, struct svc_req *);
-extern int loc_apicbprog_0x00050003_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_cb_null_0x00050003(void *, int *, CLIENT *);
+    extern bool_t rpc_loc_api_cb_null_0x00050003_svc(void *, int *, struct svc_req *);
+    extern int loc_apicbprog_0x00050003_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050003();
-extern  bool_t rpc_loc_api_cb_null_0x00050003_svc();
-extern int loc_apicbprog_0x00050003_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_cb_null_0x00050003();
+extern bool_t rpc_loc_api_cb_null_0x00050003_svc();
+extern int loc_apicbprog_0x00050003_freeresult();
 #endif /* K&R C */
 #define LOC_APICBVERS_0004 0x00050004
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050004(void *, int *, CLIENT *);
-extern  bool_t rpc_loc_api_cb_null_0x00050004_svc(void *, int *, struct svc_req *);
-extern int loc_apicbprog_0x00050004_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_cb_null_0x00050004(void *, int *, CLIENT *);
+    extern bool_t rpc_loc_api_cb_null_0x00050004_svc(void *, int *, struct svc_req *);
+    extern int loc_apicbprog_0x00050004_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050004();
-extern  bool_t rpc_loc_api_cb_null_0x00050004_svc();
-extern int loc_apicbprog_0x00050004_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_cb_null_0x00050004();
+extern bool_t rpc_loc_api_cb_null_0x00050004_svc();
+extern int loc_apicbprog_0x00050004_freeresult();
 #endif /* K&R C */
 #define LOC_APICBVERS_0005 0x00050005
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050005(void *, int *, CLIENT *);
-extern  bool_t rpc_loc_api_cb_null_0x00050005_svc(void *, int *, struct svc_req *);
-extern int loc_apicbprog_0x00050005_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_cb_null_0x00050005(void *, int *, CLIENT *);
+    extern bool_t rpc_loc_api_cb_null_0x00050005_svc(void *, int *, struct svc_req *);
+    extern int loc_apicbprog_0x00050005_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050005();
-extern  bool_t rpc_loc_api_cb_null_0x00050005_svc();
-extern int loc_apicbprog_0x00050005_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_cb_null_0x00050005();
+extern bool_t rpc_loc_api_cb_null_0x00050005_svc();
+extern int loc_apicbprog_0x00050005_freeresult();
 #endif /* K&R C */
 #define LOC_APICBVERS_0006 0x00050006
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050006(void *, int *, CLIENT *);
-extern  bool_t rpc_loc_api_cb_null_0x00050006_svc(void *, int *, struct svc_req *);
-extern int loc_apicbprog_0x00050006_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_cb_null_0x00050006(void *, int *, CLIENT *);
+    extern bool_t rpc_loc_api_cb_null_0x00050006_svc(void *, int *, struct svc_req *);
+    extern int loc_apicbprog_0x00050006_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_cb_null_0x00050006();
-extern  bool_t rpc_loc_api_cb_null_0x00050006_svc();
-extern int loc_apicbprog_0x00050006_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_cb_null_0x00050006();
+extern bool_t rpc_loc_api_cb_null_0x00050006_svc();
+extern int loc_apicbprog_0x00050006_freeresult();
 #endif /* K&R C */
 
-/* the xdr functions */
+    /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  bool_t xdr_rpc_loc_event_cb_f_type_args (XDR *, rpc_loc_event_cb_f_type_args*);
-extern  bool_t xdr_rpc_loc_event_cb_f_type_rets (XDR *, rpc_loc_event_cb_f_type_rets*);
+    extern bool_t xdr_rpc_loc_event_cb_f_type_args(XDR *, rpc_loc_event_cb_f_type_args *);
+    extern bool_t xdr_rpc_loc_event_cb_f_type_rets(XDR *, rpc_loc_event_cb_f_type_rets *);
 
 #else /* K&R C */
-extern bool_t xdr_rpc_loc_event_cb_f_type_args ();
-extern bool_t xdr_rpc_loc_event_cb_f_type_rets ();
+extern bool_t xdr_rpc_loc_event_cb_f_type_args();
+extern bool_t xdr_rpc_loc_event_cb_f_type_rets();
 
 #endif /* K&R C */
 

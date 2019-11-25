@@ -50,22 +50,12 @@
         <version>1.0</version>
         <interface>
             <name>ICryptoFactory</name>
-            <instance>clearkey</instance>
             <instance>default</instance>
-            <instance>widevine</instance>
         </interface>
         <interface>
             <name>IDrmFactory</name>
-            <instance>clearkey</instance>
             <instance>default</instance>
-            <instance>widevine</instance>
         </interface>
-        <fqname>@1.0::ICryptoFactory/default</fqname>
-        <fqname>@1.0::IDrmFactory/default</fqname>
-        <fqname>@1.2::ICryptoFactory/clearkey</fqname>
-        <fqname>@1.2::ICryptoFactory/widevine</fqname>
-        <fqname>@1.2::IDrmFactory/clearkey</fqname>
-        <fqname>@1.2::IDrmFactory/widevine</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.gatekeeper</name>
@@ -219,6 +209,15 @@
         <version>2.0</version>
         <interface>
             <name>ISoundTriggerHw</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.thermal</name>
+        <transport arch="32+64">passthrough</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IThermal</name>
             <instance>default</instance>
         </interface>
     </hal>

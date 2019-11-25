@@ -31,7 +31,8 @@
 #define __LOC_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include <ctype.h>
@@ -41,25 +42,26 @@ extern "C" {
 
 #define XTRA_DATA_MAX_SIZE 100000 /*bytes*/
 
-typedef void (*loc_location_cb_ext) (UlpLocation* location, void* locExt);
-typedef void (*loc_sv_status_cb_ext) (GpsSvStatus* sv_status, void* svExt);
-typedef void* (*loc_ext_parser)(void* data);
+    typedef void (*loc_location_cb_ext)(UlpLocation *location, void *locExt);
+    typedef void (*loc_sv_status_cb_ext)(GpsSvStatus *sv_status, void *svExt);
+    typedef void *(*loc_ext_parser)(void *data);
 
-typedef struct {
-    loc_location_cb_ext location_cb;
-    gps_status_callback status_cb;
-    loc_sv_status_cb_ext sv_status_cb;
-    gps_nmea_callback nmea_cb;
-    gps_set_capabilities set_capabilities_cb;
-    gps_acquire_wakelock acquire_wakelock_cb;
-    gps_release_wakelock release_wakelock_cb;
-    gps_create_thread create_thread_cb;
-    loc_ext_parser location_ext_parser;
-    loc_ext_parser sv_ext_parser;
-    gps_request_utc_time request_utc_time_cb;
-    gnss_set_system_info set_system_info_cb;
-    gnss_sv_status_callback gnss_sv_status_cb;
-} LocCallbacks;
+    typedef struct
+    {
+        loc_location_cb_ext location_cb;
+        gps_status_callback status_cb;
+        loc_sv_status_cb_ext sv_status_cb;
+        gps_nmea_callback nmea_cb;
+        gps_set_capabilities set_capabilities_cb;
+        gps_acquire_wakelock acquire_wakelock_cb;
+        gps_release_wakelock release_wakelock_cb;
+        gps_create_thread create_thread_cb;
+        loc_ext_parser location_ext_parser;
+        loc_ext_parser sv_ext_parser;
+        gps_request_utc_time request_utc_time_cb;
+        gnss_set_system_info set_system_info_cb;
+        gnss_sv_status_callback gnss_sv_status_cb;
+    } LocCallbacks;
 
 #ifdef __cplusplus
 }

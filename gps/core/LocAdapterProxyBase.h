@@ -33,34 +33,41 @@
 #include <ContextBase.h>
 #include <gps_extended.h>
 
-namespace loc_core {
+namespace loc_core
+{
 
-class LocAdapterProxyBase {
+class LocAdapterProxyBase
+{
 private:
     LocAdapterBase *mLocAdapterBase;
+
 protected:
     inline LocAdapterProxyBase(const LOC_API_ADAPTER_EVENT_MASK_T mask,
-                   ContextBase* context):
-                   mLocAdapterBase(new LocAdapterBase(mask, context, this)) {
+                               ContextBase *context) : mLocAdapterBase(new LocAdapterBase(mask, context, this))
+    {
     }
-    inline virtual ~LocAdapterProxyBase() {
+    inline virtual ~LocAdapterProxyBase()
+    {
         delete mLocAdapterBase;
     }
     inline void updateEvtMask(LOC_API_ADAPTER_EVENT_MASK_T event,
-                              loc_registration_mask_status isEnabled) {
-        mLocAdapterBase->updateEvtMask(event,isEnabled);
+                              loc_registration_mask_status isEnabled)
+    {
+        mLocAdapterBase->updateEvtMask(event, isEnabled);
     }
 
 public:
-    inline ContextBase* getContext() const {
+    inline ContextBase *getContext() const
+    {
         return mLocAdapterBase->getContext();
     }
-    inline virtual void handleEngineUpEvent() {};
-    inline virtual void handleEngineDownEvent() {};
+    inline virtual void handleEngineUpEvent(){};
+    inline virtual void handleEngineDownEvent(){};
     inline virtual bool reportPosition(UlpLocation &location,
                                        GpsLocationExtended &locationExtended,
                                        enum loc_sess_status status,
-                                       LocPosTechMask loc_technology_mask) {
+                                       LocPosTechMask loc_technology_mask)
+    {
 
         (void)location;
         (void)locationExtended;

@@ -42,23 +42,21 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <pthread.h>
 #include "IPACM_Defs.h"
 
-
-
 /*---------------------------------------------------------------------------
 	 Event data required by IPA_CM
 ---------------------------------------------------------------------------*/
 
-
-typedef struct _ipacm_cmd_q_data {
+typedef struct _ipacm_cmd_q_data
+{
 	ipa_cm_event_id event;
 	void *evt_data;
-}ipacm_cmd_q_data;
+} ipacm_cmd_q_data;
 
 typedef struct cmd_s
 {
 	void (*callback_ptr)(ipacm_cmd_q_data *);
 	ipacm_cmd_q_data data;
-}cmd_t;
+} cmd_t;
 
 class Message
 {
@@ -73,9 +71,9 @@ public:
 		m_next = NULL;
 		evt.callback_ptr = NULL;
 	}
-	~Message() { }
+	~Message() {}
 	void setnext(Message *item) { m_next = item; }
-	Message* getnext()       { return m_next; }
+	Message *getnext() { return m_next; }
 };
 
 class MessageQueue
@@ -84,7 +82,7 @@ class MessageQueue
 private:
 	Message *Head;
 	Message *Tail;
-	Message* dequeue(void);
+	Message *dequeue(void);
 	static MessageQueue *inst;
 
 	MessageQueue()
@@ -94,14 +92,11 @@ private:
 	}
 
 public:
-
-	~MessageQueue() { }
+	~MessageQueue() {}
 	void enqueue(Message *item);
 
-	static void* Process(void *);
-	static MessageQueue* getInstance();
-
+	static void *Process(void *);
+	static MessageQueue *getInstance();
 };
 
-#endif  /* IPA_CONNTRACK_MESSAGE_H */
-
+#endif /* IPA_CONNTRACK_MESSAGE_H */

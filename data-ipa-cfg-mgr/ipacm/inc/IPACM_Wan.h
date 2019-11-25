@@ -66,11 +66,11 @@ typedef struct _wan_client_rt_hdl
 	uint32_t wan_rt_rule_hdl_v4;
 	uint32_t wan_rt_rule_hdl_v6[IPV6_NUM_ADDR];
 	uint32_t wan_rt_rule_hdl_v6_wan[IPV6_NUM_ADDR];
-}wan_client_rt_hdl;
+} wan_client_rt_hdl;
 
 typedef struct _ipa_wan_client
 {
-	ipacm_event_data_wlan_ex* p_hdr_info;
+	ipacm_event_data_wlan_ex *p_hdr_info;
 	uint8_t mac[IPA_MAC_ADDR_SIZE];
 	uint32_t v4_addr;
 	uint32_t v6_addr[IPV6_NUM_ADDR][4];
@@ -84,14 +84,13 @@ typedef struct _ipa_wan_client
 	bool ipv6_header_set;
 	bool power_save_set;
 	wan_client_rt_hdl wan_rt_hdl[0]; /* depends on number of tx properties */
-}ipa_wan_client;
+} ipa_wan_client;
 
 /* wan iface */
 class IPACM_Wan : public IPACM_Iface
 {
 
 public:
-
 	static bool wan_up;
 	static bool wan_up_v6;
 	/* IPACM interface name */
@@ -103,12 +102,12 @@ public:
 	{
 #ifdef FEATURE_IPA_ANDROID
 		int i;
-		for (i=0; i < ipa_if_num_tether_v4_total;i++)
+		for (i = 0; i < ipa_if_num_tether_v4_total; i++)
 		{
 			if (ipa_if_num_tether_v4[i] == ipa_if_num_tether)
 			{
 				IPACMDBG_H("support ipv4 tether_iface(%s)\n",
-					IPACM_Iface::ipacmcfg->iface_table[ipa_if_num_tether].iface_name);
+						   IPACM_Iface::ipacmcfg->iface_table[ipa_if_num_tether].iface_name);
 				return wan_up;
 				break;
 			}
@@ -123,12 +122,12 @@ public:
 	{
 #ifdef FEATURE_IPA_ANDROID
 		int i;
-		for (i=0; i < ipa_if_num_tether_v6_total;i++)
+		for (i = 0; i < ipa_if_num_tether_v6_total; i++)
 		{
 			if (ipa_if_num_tether_v6[i] == ipa_if_num_tether)
 			{
 				IPACMDBG_H("support ipv6 tether_iface(%s)\n",
-					IPACM_Iface::ipacmcfg->iface_table[ipa_if_num_tether].iface_name);
+						   IPACM_Iface::ipacmcfg->iface_table[ipa_if_num_tether].iface_name);
 				return wan_up_v6;
 				break;
 			}
@@ -139,9 +138,8 @@ public:
 #endif
 	}
 
-
 	void event_callback(ipa_cm_event_id event,
-											void *data);
+						void *data);
 
 	static struct ipa_flt_rule_add flt_rule_v4[IPA_MAX_FLT_RULE];
 	static struct ipa_flt_rule_add flt_rule_v6[IPA_MAX_FLT_RULE];
@@ -164,7 +162,6 @@ public:
 #endif
 
 private:
-
 	uint32_t ipv6_frag_firewall_flt_rule_hdl;
 	uint32_t *wan_route_rule_v4_hdl;
 	uint32_t *wan_route_rule_v6_hdl;
@@ -177,7 +174,7 @@ private:
 	uint32_t ipv6_dest_flt_rule_hdl[MAX_DEFAULT_v6_ROUTE_RULES];
 	int num_ipv6_dest_flt_rule;
 	uint32_t ODU_fl_hdl[IPA_NUM_DEFAULT_WAN_FILTER_RULES];
-	int num_firewall_v4,num_firewall_v6;
+	int num_firewall_v4, num_firewall_v6;
 	uint32_t wan_v4_addr;
 	bool active_v4;
 	bool active_v6;
@@ -213,9 +210,9 @@ private:
 	/* update network stats for CNE */
 	int ipa_network_stats_fd;
 
-	inline ipa_wan_client* get_client_memptr(ipa_wan_client *param, int cnt)
+	inline ipa_wan_client *get_client_memptr(ipa_wan_client *param, int cnt)
 	{
-	    char *ret = ((char *)param) + (wan_client_len * cnt);
+		char *ret = ((char *)param) + (wan_client_len * cnt);
 		return (ipa_wan_client *)ret;
 	}
 
@@ -225,22 +222,22 @@ private:
 		int num_wan_client_tmp = num_wan_client;
 
 		IPACMDBG_H("Passed MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
-						 mac_addr[0], mac_addr[1], mac_addr[2],
-						 mac_addr[3], mac_addr[4], mac_addr[5]);
+				   mac_addr[0], mac_addr[1], mac_addr[2],
+				   mac_addr[3], mac_addr[4], mac_addr[5]);
 
-		for(cnt = 0; cnt < num_wan_client_tmp; cnt++)
+		for (cnt = 0; cnt < num_wan_client_tmp; cnt++)
 		{
 			IPACMDBG_H("stored MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
-							 get_client_memptr(wan_client, cnt)->mac[0],
-							 get_client_memptr(wan_client, cnt)->mac[1],
-							 get_client_memptr(wan_client, cnt)->mac[2],
-							 get_client_memptr(wan_client, cnt)->mac[3],
-							 get_client_memptr(wan_client, cnt)->mac[4],
-							 get_client_memptr(wan_client, cnt)->mac[5]);
+					   get_client_memptr(wan_client, cnt)->mac[0],
+					   get_client_memptr(wan_client, cnt)->mac[1],
+					   get_client_memptr(wan_client, cnt)->mac[2],
+					   get_client_memptr(wan_client, cnt)->mac[3],
+					   get_client_memptr(wan_client, cnt)->mac[4],
+					   get_client_memptr(wan_client, cnt)->mac[5]);
 
-			if(memcmp(get_client_memptr(wan_client, cnt)->mac,
-								mac_addr,
-								sizeof(get_client_memptr(wan_client, cnt)->mac)) == 0)
+			if (memcmp(get_client_memptr(wan_client, cnt)->mac,
+					   mac_addr,
+					   sizeof(get_client_memptr(wan_client, cnt)->mac)) == 0)
 			{
 				IPACMDBG_H("Matched client index: %d\n", cnt);
 				return cnt;
@@ -256,60 +253,59 @@ private:
 		uint32_t rt_hdl;
 		int num_v6;
 
-		if(iptype == IPA_IP_v4)
+		if (iptype == IPA_IP_v4)
 		{
-		     for(tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
-		     {
-		        if((tx_prop->tx[tx_index].ip == IPA_IP_v4) && (get_client_memptr(wan_client, clt_indx)->route_rule_set_v4==true)) /* for ipv4 */
+			for (tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
 			{
-				IPACMDBG_H("Delete client index %d ipv4 Qos rules for tx:%d \n",clt_indx,tx_index);
-				rt_hdl = get_client_memptr(wan_client, clt_indx)->wan_rt_hdl[tx_index].wan_rt_rule_hdl_v4;
-
-				if(m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v4) == false)
+				if ((tx_prop->tx[tx_index].ip == IPA_IP_v4) && (get_client_memptr(wan_client, clt_indx)->route_rule_set_v4 == true)) /* for ipv4 */
 				{
-					return IPACM_FAILURE;
-				}
-			}
-		     } /* end of for loop */
+					IPACMDBG_H("Delete client index %d ipv4 Qos rules for tx:%d \n", clt_indx, tx_index);
+					rt_hdl = get_client_memptr(wan_client, clt_indx)->wan_rt_hdl[tx_index].wan_rt_rule_hdl_v4;
 
-		     /* clean the 4 Qos ipv4 RT rules for client:clt_indx */
-		     if(get_client_memptr(wan_client, clt_indx)->route_rule_set_v4==true) /* for ipv4 */
-		     {
+					if (m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v4) == false)
+					{
+						return IPACM_FAILURE;
+					}
+				}
+			} /* end of for loop */
+
+			/* clean the 4 Qos ipv4 RT rules for client:clt_indx */
+			if (get_client_memptr(wan_client, clt_indx)->route_rule_set_v4 == true) /* for ipv4 */
+			{
 				get_client_memptr(wan_client, clt_indx)->route_rule_set_v4 = false;
-		     }
+			}
 		}
 
-		if(iptype == IPA_IP_v6)
+		if (iptype == IPA_IP_v6)
 		{
-		    for(tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
-		    {
+			for (tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
+			{
 
-				if((tx_prop->tx[tx_index].ip == IPA_IP_v6) && (get_client_memptr(wan_client, clt_indx)->route_rule_set_v6 != 0)) /* for ipv6 */
+				if ((tx_prop->tx[tx_index].ip == IPA_IP_v6) && (get_client_memptr(wan_client, clt_indx)->route_rule_set_v6 != 0)) /* for ipv6 */
 				{
-					for(num_v6 =0;num_v6 < get_client_memptr(wan_client, clt_indx)->route_rule_set_v6;num_v6++)
+					for (num_v6 = 0; num_v6 < get_client_memptr(wan_client, clt_indx)->route_rule_set_v6; num_v6++)
 					{
-						IPACMDBG_H("Delete client index %d ipv6 Qos rules for %d-st ipv6 for tx:%d\n", clt_indx,num_v6,tx_index);
+						IPACMDBG_H("Delete client index %d ipv6 Qos rules for %d-st ipv6 for tx:%d\n", clt_indx, num_v6, tx_index);
 						rt_hdl = get_client_memptr(wan_client, clt_indx)->wan_rt_hdl[tx_index].wan_rt_rule_hdl_v6[num_v6];
-						if(m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
+						if (m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
 						{
 							return IPACM_FAILURE;
 						}
 
 						rt_hdl = get_client_memptr(wan_client, clt_indx)->wan_rt_hdl[tx_index].wan_rt_rule_hdl_v6_wan[num_v6];
-						if(m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
+						if (m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
 						{
 							return IPACM_FAILURE;
 						}
 					}
-
 				}
 			} /* end of for loop */
 
-		    /* clean the 4 Qos ipv6 RT rules for client:clt_indx */
-		    if(get_client_memptr(wan_client, clt_indx)->route_rule_set_v6 != 0) /* for ipv6 */
-		    {
-		                 get_client_memptr(wan_client, clt_indx)->route_rule_set_v6 = 0;
-                    }
+			/* clean the 4 Qos ipv6 RT rules for client:clt_indx */
+			if (get_client_memptr(wan_client, clt_indx)->route_rule_set_v6 != 0) /* for ipv6 */
+			{
+				get_client_memptr(wan_client, clt_indx)->route_rule_set_v6 = 0;
+			}
 		}
 
 		return IPACM_SUCCESS;
@@ -350,14 +346,14 @@ private:
 	int handle_route_del_evt_ex(ipa_ip_type iptype);
 
 	/* configure the initial firewall filter rules */
-	int config_dft_firewall_rules_ex(struct ipa_flt_rule_add* rules, int rule_offset,
-		ipa_ip_type iptype);
+	int config_dft_firewall_rules_ex(struct ipa_flt_rule_add *rules, int rule_offset,
+									 ipa_ip_type iptype);
 
 	/* init filtering rule in wan dl filtering table */
 	int init_fl_rule_ex(ipa_ip_type iptype);
 
 	/* add ICMP and ALG rules in wan dl filtering table */
-	int add_icmp_alg_rules(struct ipa_flt_rule_add* rules, int rule_offset, ipa_ip_type iptype);
+	int add_icmp_alg_rules(struct ipa_flt_rule_add *rules, int rule_offset, ipa_ip_type iptype);
 
 	/* query extended property */
 	int query_ext_prop();
@@ -368,13 +364,13 @@ private:
 
 	int del_wan_firewall_rule(ipa_ip_type iptype);
 
-	int add_dft_filtering_rule(struct ipa_flt_rule_add* rules, int rule_offset, ipa_ip_type iptype);
+	int add_dft_filtering_rule(struct ipa_flt_rule_add *rules, int rule_offset, ipa_ip_type iptype);
 
 	int install_wan_filtering_rule(bool is_sw_routing);
 
-	void change_to_network_order(ipa_ip_type iptype, ipa_rule_attrib* attrib);
+	void change_to_network_order(ipa_ip_type iptype, ipa_rule_attrib *attrib);
 
-	bool is_global_ipv6_addr(uint32_t* ipv6_addr);
+	bool is_global_ipv6_addr(uint32_t *ipv6_addr);
 
 	int handle_network_stats_evt();
 

@@ -53,7 +53,7 @@ IPACM_Config::IPACM_Config()
 	alg_table = NULL;
 	memset(&ipa_client_rm_map_tbl, 0, sizeof(ipa_client_rm_map_tbl));
 	memset(&ipa_rm_tbl, 0, sizeof(ipa_rm_tbl));
-    ipa_rm_a2_check=0;
+	ipa_rm_a2_check = 0;
 	ipacm_odu_enable = false;
 	ipacm_odu_router_mode = false;
 
@@ -90,10 +90,10 @@ IPACM_Config::IPACM_Config()
 int IPACM_Config::Init(void)
 {
 	/* Read IPACM Config file */
-	char	IPACM_config_file[IPA_MAX_FILE_LEN];
-	IPACM_conf_t	*cfg;
+	char IPACM_config_file[IPA_MAX_FILE_LEN];
+	IPACM_conf_t *cfg;
 	cfg = (IPACM_conf_t *)malloc(sizeof(IPACM_conf_t));
-	if(cfg == NULL)
+	if (cfg == NULL)
 	{
 		IPACMERR("Unable to allocate cfg memory.\n");
 		return IPACM_FAILURE;
@@ -131,8 +131,8 @@ int IPACM_Config::Init(void)
 		IPACMDBG_H("RESET IPACM_Config::iface_table\n");
 	}
 	iface_table = (ipa_ifi_dev_name_t *)calloc(ipa_num_ipa_interfaces,
-					sizeof(ipa_ifi_dev_name_t));
-	if(iface_table == NULL)
+											   sizeof(ipa_ifi_dev_name_t));
+	if (iface_table == NULL)
 	{
 		IPACMERR("Unable to allocate iface_table memory.\n");
 		ret = IPACM_FAILURE;
@@ -145,7 +145,7 @@ int IPACM_Config::Init(void)
 		iface_table[i].if_cat = cfg->iface_config.iface_entries[i].if_cat;
 		IPACMDBG_H("IPACM_Config::iface_table[%d] = %s, cat=%d\n", i, iface_table[i].iface_name, iface_table[i].if_cat);
 		/* copy bridge interface name to ipacmcfg */
-		if( iface_table[i].if_cat == VIRTUAL_IF)
+		if (iface_table[i].if_cat == VIRTUAL_IF)
 		{
 			memcpy(ipa_virtual_iface_name, iface_table[i].iface_name, sizeof(ipa_virtual_iface_name));
 			IPACMDBG_H("ipa_virtual_iface_name(%s) \n", ipa_virtual_iface_name);
@@ -159,22 +159,22 @@ int IPACM_Config::Init(void)
 	for (i = 0; i < cfg->private_subnet_config.num_subnet_entries; i++)
 	{
 		memcpy(&private_subnet_table[i].subnet_addr,
-					 &cfg->private_subnet_config.private_subnet_entries[i].subnet_addr,
-					 sizeof(cfg->private_subnet_config.private_subnet_entries[i].subnet_addr));
+			   &cfg->private_subnet_config.private_subnet_entries[i].subnet_addr,
+			   sizeof(cfg->private_subnet_config.private_subnet_entries[i].subnet_addr));
 
 		memcpy(&private_subnet_table[i].subnet_mask,
-					 &cfg->private_subnet_config.private_subnet_entries[i].subnet_mask,
-					 sizeof(cfg->private_subnet_config.private_subnet_entries[i].subnet_mask));
+			   &cfg->private_subnet_config.private_subnet_entries[i].subnet_mask,
+			   sizeof(cfg->private_subnet_config.private_subnet_entries[i].subnet_mask));
 
 		subnet_addr = htonl(private_subnet_table[i].subnet_addr);
-		memcpy(&in_addr_print,&subnet_addr,sizeof(in_addr_print));
+		memcpy(&in_addr_print, &subnet_addr, sizeof(in_addr_print));
 		IPACMDBG_H("%dst::private_subnet_table= %s \n ", i,
-						 inet_ntoa(in_addr_print));
+				   inet_ntoa(in_addr_print));
 
-		subnet_mask =  htonl(private_subnet_table[i].subnet_mask);
-		memcpy(&in_addr_print,&subnet_mask,sizeof(in_addr_print));
+		subnet_mask = htonl(private_subnet_table[i].subnet_mask);
+		memcpy(&in_addr_print, &subnet_mask, sizeof(in_addr_print));
 		IPACMDBG_H("%dst::private_subnet_table= %s \n ", i,
-						 inet_ntoa(in_addr_print));
+				   inet_ntoa(in_addr_print));
 	}
 
 	/* Construct IPACM ALG table */
@@ -186,13 +186,14 @@ int IPACM_Config::Init(void)
 		IPACMDBG_H("RESET IPACM_Config::alg_table \n");
 	}
 	alg_table = (ipacm_alg *)calloc(ipa_num_alg_ports,
-				sizeof(ipacm_alg));
-	if(alg_table == NULL)
+									sizeof(ipacm_alg));
+	if (alg_table == NULL)
 	{
 		IPACMERR("Unable to allocate alg_table memory.\n");
 		ret = IPACM_FAILURE;
 		free(iface_table);
-		goto fail;;
+		goto fail;
+		;
 	}
 	for (i = 0; i < cfg->alg_config.num_alg_entries; i++)
 	{
@@ -271,20 +272,20 @@ int IPACM_Config::Init(void)
 	strncpy(rt_tbl_eth_bridge_wlan_wlan_v6.name, ETH_BRIDGE_WLAN_WLAN_ROUTE_TABLE_NAME_V6, sizeof(rt_tbl_eth_bridge_wlan_wlan_v6.name));
 
 	/* Construct IPACM ipa_client map to rm_resource table */
-	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN1_PROD]= IPA_RM_RESOURCE_WLAN_PROD;
-	ipa_client_rm_map_tbl[IPA_CLIENT_USB_PROD]= IPA_RM_RESOURCE_USB_PROD;
-	ipa_client_rm_map_tbl[IPA_CLIENT_A5_WLAN_AMPDU_PROD]= IPA_RM_RESOURCE_HSIC_PROD;
-	ipa_client_rm_map_tbl[IPA_CLIENT_A2_EMBEDDED_PROD]= IPA_RM_RESOURCE_Q6_PROD;
-	ipa_client_rm_map_tbl[IPA_CLIENT_A2_TETHERED_PROD]= IPA_RM_RESOURCE_Q6_PROD;
-	ipa_client_rm_map_tbl[IPA_CLIENT_APPS_LAN_WAN_PROD]= IPA_RM_RESOURCE_Q6_PROD;
-	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN1_CONS]= IPA_RM_RESOURCE_WLAN_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN2_CONS]= IPA_RM_RESOURCE_WLAN_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN3_CONS]= IPA_RM_RESOURCE_WLAN_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN4_CONS]= IPA_RM_RESOURCE_WLAN_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_USB_CONS]= IPA_RM_RESOURCE_USB_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_A2_EMBEDDED_CONS]= IPA_RM_RESOURCE_Q6_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_A2_TETHERED_CONS]= IPA_RM_RESOURCE_Q6_CONS;
-	ipa_client_rm_map_tbl[IPA_CLIENT_APPS_WAN_CONS]= IPA_RM_RESOURCE_Q6_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN1_PROD] = IPA_RM_RESOURCE_WLAN_PROD;
+	ipa_client_rm_map_tbl[IPA_CLIENT_USB_PROD] = IPA_RM_RESOURCE_USB_PROD;
+	ipa_client_rm_map_tbl[IPA_CLIENT_A5_WLAN_AMPDU_PROD] = IPA_RM_RESOURCE_HSIC_PROD;
+	ipa_client_rm_map_tbl[IPA_CLIENT_A2_EMBEDDED_PROD] = IPA_RM_RESOURCE_Q6_PROD;
+	ipa_client_rm_map_tbl[IPA_CLIENT_A2_TETHERED_PROD] = IPA_RM_RESOURCE_Q6_PROD;
+	ipa_client_rm_map_tbl[IPA_CLIENT_APPS_LAN_WAN_PROD] = IPA_RM_RESOURCE_Q6_PROD;
+	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN1_CONS] = IPA_RM_RESOURCE_WLAN_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN2_CONS] = IPA_RM_RESOURCE_WLAN_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN3_CONS] = IPA_RM_RESOURCE_WLAN_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_WLAN4_CONS] = IPA_RM_RESOURCE_WLAN_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_USB_CONS] = IPA_RM_RESOURCE_USB_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_A2_EMBEDDED_CONS] = IPA_RM_RESOURCE_Q6_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_A2_TETHERED_CONS] = IPA_RM_RESOURCE_Q6_CONS;
+	ipa_client_rm_map_tbl[IPA_CLIENT_APPS_WAN_CONS] = IPA_RM_RESOURCE_Q6_CONS;
 
 	/* Create the entries which IPACM wants to add dependencies on */
 	ipa_rm_tbl[0].producer_rm1 = IPA_RM_RESOURCE_WLAN_PROD;
@@ -316,7 +317,7 @@ fail:
 	return ret;
 }
 
-IPACM_Config* IPACM_Config::GetInstance()
+IPACM_Config *IPACM_Config::GetInstance()
 {
 	int res = IPACM_SUCCESS;
 
@@ -361,31 +362,30 @@ int IPACM_Config::GetNatIfaces(int nIfaces, NatIfaces *pIfaces)
 		return -1;
 	}
 
-	for (int cnt=0; cnt<nIfaces; cnt++)
+	for (int cnt = 0; cnt < nIfaces; cnt++)
 	{
 		memcpy(pIfaces[cnt].iface_name,
-					 pNatIfaces[cnt].iface_name,
-					 sizeof(pIfaces[cnt].iface_name));
+			   pNatIfaces[cnt].iface_name,
+			   sizeof(pIfaces[cnt].iface_name));
 	}
 
 	return 0;
 }
 
-
 int IPACM_Config::AddNatIfaces(char *dev_name)
 {
 	IPACMDBG_H("Add iface %s to NAT-ifaces, origin it has %d nat ifaces\n",
-					          dev_name, ipa_nat_iface_entries);
+			   dev_name, ipa_nat_iface_entries);
 	ipa_nat_iface_entries++;
 
 	if (ipa_nat_iface_entries < ipa_num_ipa_interfaces)
 	{
 		memcpy(pNatIfaces[ipa_nat_iface_entries - 1].iface_name,
-					 dev_name, IPA_IFACE_NAME_LEN);
+			   dev_name, IPA_IFACE_NAME_LEN);
 
 		IPACMDBG_H("Add Nat IfaceName: %s ,update nat-ifaces number: %d\n",
-						 pNatIfaces[ipa_nat_iface_entries - 1].iface_name,
-						 ipa_nat_iface_entries);
+				   pNatIfaces[ipa_nat_iface_entries - 1].iface_name,
+				   ipa_nat_iface_entries);
 	}
 
 	return 0;
@@ -395,14 +395,14 @@ int IPACM_Config::DelNatIfaces(char *dev_name)
 {
 	int i = 0;
 	IPACMDBG_H("Del iface %s from NAT-ifaces, origin it has %d nat ifaces\n",
-					 dev_name, ipa_nat_iface_entries);
+			   dev_name, ipa_nat_iface_entries);
 
 	for (i = 0; i < ipa_nat_iface_entries; i++)
 	{
 		if (strcmp(dev_name, pNatIfaces[i].iface_name) == 0)
 		{
 			IPACMDBG_H("Find Nat IfaceName: %s ,previous nat-ifaces number: %d\n",
-							 pNatIfaces[i].iface_name, ipa_nat_iface_entries);
+					   pNatIfaces[i].iface_name, ipa_nat_iface_entries);
 
 			/* Reset the matched entry */
 			memset(pNatIfaces[i].iface_name, 0, IPA_IFACE_NAME_LEN);
@@ -410,7 +410,7 @@ int IPACM_Config::DelNatIfaces(char *dev_name)
 			for (; i < ipa_nat_iface_entries - 1; i++)
 			{
 				memcpy(pNatIfaces[i].iface_name,
-							 pNatIfaces[i + 1].iface_name, IPA_IFACE_NAME_LEN);
+					   pNatIfaces[i + 1].iface_name, IPA_IFACE_NAME_LEN);
 
 				/* Reset the copied entry */
 				memset(pNatIfaces[i + 1].iface_name, 0, IPA_IFACE_NAME_LEN);
@@ -422,42 +422,42 @@ int IPACM_Config::DelNatIfaces(char *dev_name)
 	}
 
 	IPACMDBG_H("Can't find Nat IfaceName: %s with total nat-ifaces number: %d\n",
-					    dev_name, ipa_nat_iface_entries);
+			   dev_name, ipa_nat_iface_entries);
 	return 0;
 }
 
 /* for IPACM resource manager dependency usage
    add either Tx or Rx ipa_rm_resource_name and
    also indicate that endpoint property if valid */
-void IPACM_Config::AddRmDepend(ipa_rm_resource_name rm1,bool rx_bypass_ipa)
+void IPACM_Config::AddRmDepend(ipa_rm_resource_name rm1, bool rx_bypass_ipa)
 {
 	int retval = 0;
 	struct ipa_ioc_rm_dependency dep;
 
 	IPACMDBG_H(" Got rm add-depend index : %d \n", rm1);
 	/* ipa_rm_a2_check: IPA_RM_RESOURCE_Q6_CONS*/
-	if(rm1 == IPA_RM_RESOURCE_Q6_CONS)
+	if (rm1 == IPA_RM_RESOURCE_Q6_CONS)
 	{
-		ipa_rm_a2_check+=1;
+		ipa_rm_a2_check += 1;
 		IPACMDBG_H("got %d times default RT routing from A2 \n", ipa_rm_a2_check);
 	}
 
-	for(int i=0;i<IPA_MAX_PRIVATE_SUBNET_ENTRIES;i++)
+	for (int i = 0; i < IPA_MAX_PRIVATE_SUBNET_ENTRIES; i++)
 	{
-		if(rm1 == ipa_rm_tbl[i].producer_rm1)
+		if (rm1 == ipa_rm_tbl[i].producer_rm1)
 		{
 			ipa_rm_tbl[i].producer1_up = true;
 			/* entry1's producer actually dun have registered Rx-property */
 			ipa_rm_tbl[i].rx_bypass_ipa = rx_bypass_ipa;
-			IPACMDBG_H("Matched RM_table entry: %d's producer_rm1 with non_rx_prop: %d \n", i,ipa_rm_tbl[i].rx_bypass_ipa);
+			IPACMDBG_H("Matched RM_table entry: %d's producer_rm1 with non_rx_prop: %d \n", i, ipa_rm_tbl[i].rx_bypass_ipa);
 
-			if(ipa_rm_tbl[i].consumer1_up == true && ipa_rm_tbl[i].rm_set == false)
+			if (ipa_rm_tbl[i].consumer1_up == true && ipa_rm_tbl[i].rm_set == false)
 			{
 				IPACMDBG_H("SETUP RM_table entry %d's bi-direction dependency  \n", i);
 				/* add bi-directional dependency*/
-				if(ipa_rm_tbl[i].rx_bypass_ipa)
+				if (ipa_rm_tbl[i].rx_bypass_ipa)
 				{
-					IPACMDBG_H("Skip ADD entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1,ipa_rm_tbl[i].consumer_rm1);
+					IPACMDBG_H("Skip ADD entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1, ipa_rm_tbl[i].consumer_rm1);
 				}
 				else
 				{
@@ -465,41 +465,41 @@ void IPACM_Config::AddRmDepend(ipa_rm_resource_name rm1,bool rx_bypass_ipa)
 					dep.resource_name = ipa_rm_tbl[i].producer_rm1;
 					dep.depends_on_name = ipa_rm_tbl[i].consumer_rm1;
 					retval = ioctl(m_fd, IPA_IOC_RM_ADD_DEPENDENCY, &dep);
-					IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+					IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 					if (retval)
 					{
-						IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i,retval);
+						IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i, retval);
 					}
 				}
 				memset(&dep, 0, sizeof(dep));
 				dep.resource_name = ipa_rm_tbl[i].producer_rm2;
 				dep.depends_on_name = ipa_rm_tbl[i].consumer_rm2;
 				retval = ioctl(m_fd, IPA_IOC_RM_ADD_DEPENDENCY, &dep);
-				IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+				IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 				if (retval)
 				{
-					IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d)  \n", i,retval);
+					IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d)  \n", i, retval);
 				}
 				ipa_rm_tbl[i].rm_set = true;
 			}
 			else
 			{
-				IPACMDBG_H("Not SETUP RM_table entry %d: prod_up:%d, cons_up:%d, rm_set: %d \n", i,ipa_rm_tbl[i].producer1_up, ipa_rm_tbl[i].consumer1_up, ipa_rm_tbl[i].rm_set);
+				IPACMDBG_H("Not SETUP RM_table entry %d: prod_up:%d, cons_up:%d, rm_set: %d \n", i, ipa_rm_tbl[i].producer1_up, ipa_rm_tbl[i].consumer1_up, ipa_rm_tbl[i].rm_set);
 			}
 		}
 
-		if(rm1 == ipa_rm_tbl[i].consumer_rm1)
+		if (rm1 == ipa_rm_tbl[i].consumer_rm1)
 		{
 			ipa_rm_tbl[i].consumer1_up = true;
 			IPACMDBG_H("Matched RM_table entry: %d's consumer_rm1 \n", i);
 
-			if(ipa_rm_tbl[i].producer1_up == true && ipa_rm_tbl[i].rm_set == false)
+			if (ipa_rm_tbl[i].producer1_up == true && ipa_rm_tbl[i].rm_set == false)
 			{
 				IPACMDBG_H("SETUP RM_table entry %d's bi-direction dependency  \n", i);
 				/* add bi-directional dependency*/
-				if(ipa_rm_tbl[i].rx_bypass_ipa)
+				if (ipa_rm_tbl[i].rx_bypass_ipa)
 				{
-					IPACMDBG_H("Skip ADD entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1,ipa_rm_tbl[i].consumer_rm1);
+					IPACMDBG_H("Skip ADD entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1, ipa_rm_tbl[i].consumer_rm1);
 				}
 				else
 				{
@@ -507,10 +507,10 @@ void IPACM_Config::AddRmDepend(ipa_rm_resource_name rm1,bool rx_bypass_ipa)
 					dep.resource_name = ipa_rm_tbl[i].producer_rm1;
 					dep.depends_on_name = ipa_rm_tbl[i].consumer_rm1;
 					retval = ioctl(m_fd, IPA_IOC_RM_ADD_DEPENDENCY, &dep);
-					IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+					IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 					if (retval)
 					{
-						IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d)  \n", i,retval);
+						IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d)  \n", i, retval);
 					}
 				}
 
@@ -518,20 +518,20 @@ void IPACM_Config::AddRmDepend(ipa_rm_resource_name rm1,bool rx_bypass_ipa)
 				dep.resource_name = ipa_rm_tbl[i].producer_rm2;
 				dep.depends_on_name = ipa_rm_tbl[i].consumer_rm2;
 				retval = ioctl(m_fd, IPA_IOC_RM_ADD_DEPENDENCY, &dep);
-				IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+				IPACMDBG_H("ADD entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 				if (retval)
 				{
-					IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d)  \n", i,retval);
+					IPACMERR("Failed adding dependecny for RM_table entry %d's bi-direction dependency (error:%d)  \n", i, retval);
 				}
 				ipa_rm_tbl[i].rm_set = true;
 			}
 			else
 			{
-				IPACMDBG_H("Not SETUP RM_table entry %d: prod_up:%d, cons_up:%d, rm_set: %d \n", i,ipa_rm_tbl[i].producer1_up, ipa_rm_tbl[i].consumer1_up, ipa_rm_tbl[i].rm_set);
+				IPACMDBG_H("Not SETUP RM_table entry %d: prod_up:%d, cons_up:%d, rm_set: %d \n", i, ipa_rm_tbl[i].producer1_up, ipa_rm_tbl[i].consumer1_up, ipa_rm_tbl[i].rm_set);
 			}
-	   }
-   }
-   return ;
+		}
+	}
+	return;
 }
 
 /* for IPACM resource manager dependency usage
@@ -544,26 +544,26 @@ void IPACM_Config::DelRmDepend(ipa_rm_resource_name rm1)
 
 	IPACMDBG_H(" Got rm del-depend index : %d \n", rm1);
 	/* ipa_rm_a2_check: IPA_RM_RESOURCE_Q6_CONS*/
-	if(rm1 == IPA_RM_RESOURCE_Q6_CONS)
+	if (rm1 == IPA_RM_RESOURCE_Q6_CONS)
 	{
-		ipa_rm_a2_check-=1;
+		ipa_rm_a2_check -= 1;
 		IPACMDBG_H("Left %d times default RT routing from A2 \n", ipa_rm_a2_check);
 	}
 
-	for(int i=0;i<IPA_MAX_PRIVATE_SUBNET_ENTRIES;i++)
+	for (int i = 0; i < IPA_MAX_PRIVATE_SUBNET_ENTRIES; i++)
 	{
 
-		if(rm1 == ipa_rm_tbl[i].producer_rm1)
+		if (rm1 == ipa_rm_tbl[i].producer_rm1)
 		{
-			if(ipa_rm_tbl[i].rm_set == true)
+			if (ipa_rm_tbl[i].rm_set == true)
 			{
 				IPACMDBG_H("Matched RM_table entry: %d's producer_rm1 and dependency is up \n", i);
 				ipa_rm_tbl[i].rm_set = false;
 
 				/* delete bi-directional dependency*/
-				if(ipa_rm_tbl[i].rx_bypass_ipa)
+				if (ipa_rm_tbl[i].rx_bypass_ipa)
 				{
-					IPACMDBG_H("Skip DEL entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1,ipa_rm_tbl[i].consumer_rm1);
+					IPACMDBG_H("Skip DEL entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1, ipa_rm_tbl[i].consumer_rm1);
 				}
 				else
 				{
@@ -571,42 +571,42 @@ void IPACM_Config::DelRmDepend(ipa_rm_resource_name rm1)
 					dep.resource_name = ipa_rm_tbl[i].producer_rm1;
 					dep.depends_on_name = ipa_rm_tbl[i].consumer_rm1;
 					retval = ioctl(m_fd, IPA_IOC_RM_DEL_DEPENDENCY, &dep);
-					IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+					IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 					if (retval)
 					{
-						IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i,retval);
+						IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i, retval);
 					}
 				}
 				memset(&dep, 0, sizeof(dep));
 				dep.resource_name = ipa_rm_tbl[i].producer_rm2;
 				dep.depends_on_name = ipa_rm_tbl[i].consumer_rm2;
 				retval = ioctl(m_fd, IPA_IOC_RM_DEL_DEPENDENCY, &dep);
-				IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+				IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 				if (retval)
 				{
-					IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i,retval);
+					IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i, retval);
 				}
 			}
 			ipa_rm_tbl[i].producer1_up = false;
 			ipa_rm_tbl[i].rx_bypass_ipa = false;
 		}
-		if(rm1 == ipa_rm_tbl[i].consumer_rm1)
+		if (rm1 == ipa_rm_tbl[i].consumer_rm1)
 		{
 			/* ipa_rm_a2_check: IPA_RM_RESOURCE_!6_CONS*/
-			if(ipa_rm_tbl[i].consumer_rm1 == IPA_RM_RESOURCE_Q6_CONS && ipa_rm_a2_check == 1)
+			if (ipa_rm_tbl[i].consumer_rm1 == IPA_RM_RESOURCE_Q6_CONS && ipa_rm_a2_check == 1)
 			{
 				IPACMDBG_H(" still have %d default RT routing from A2 \n", ipa_rm_a2_check);
 				continue;
 			}
 
-			if(ipa_rm_tbl[i].rm_set == true)
+			if (ipa_rm_tbl[i].rm_set == true)
 			{
 				IPACMDBG_H("Matched RM_table entry: %d's consumer_rm1 and dependency is up \n", i);
 				ipa_rm_tbl[i].rm_set = false;
 				/* delete bi-directional dependency*/
-				if(ipa_rm_tbl[i].rx_bypass_ipa)
+				if (ipa_rm_tbl[i].rx_bypass_ipa)
 				{
-					IPACMDBG_H("Skip DEL entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1,ipa_rm_tbl[i].consumer_rm1);
+					IPACMDBG_H("Skip DEL entry %d's dependency between WLAN-Pro: %d, Con: %d \n", i, ipa_rm_tbl[i].producer_rm1, ipa_rm_tbl[i].consumer_rm1);
 				}
 				else
 				{
@@ -614,10 +614,10 @@ void IPACM_Config::DelRmDepend(ipa_rm_resource_name rm1)
 					dep.resource_name = ipa_rm_tbl[i].producer_rm1;
 					dep.depends_on_name = ipa_rm_tbl[i].consumer_rm1;
 					retval = ioctl(m_fd, IPA_IOC_RM_DEL_DEPENDENCY, &dep);
-					IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+					IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 					if (retval)
 					{
-						IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i,retval);
+						IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i, retval);
 					}
 				}
 
@@ -625,34 +625,34 @@ void IPACM_Config::DelRmDepend(ipa_rm_resource_name rm1)
 				dep.resource_name = ipa_rm_tbl[i].producer_rm2;
 				dep.depends_on_name = ipa_rm_tbl[i].consumer_rm2;
 				retval = ioctl(m_fd, IPA_IOC_RM_DEL_DEPENDENCY, &dep);
-				IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i,dep.resource_name,dep.depends_on_name);
+				IPACMDBG_H("Delete entry %d's dependency between Pro: %d, Con: %d \n", i, dep.resource_name, dep.depends_on_name);
 				if (retval)
 				{
-					IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i,retval);
+					IPACMERR("Failed deleting dependecny for RM_table entry %d's bi-direction dependency (error:%d) \n", i, retval);
 				}
 			}
 			ipa_rm_tbl[i].consumer1_up = false;
 		}
 	}
-	return ;
+	return;
 }
 
 int IPACM_Config::SetExtProp(ipa_ioc_query_intf_ext_props *prop)
 {
 	int i, num;
 
-	if(prop == NULL || prop->num_ext_props <= 0)
+	if (prop == NULL || prop->num_ext_props <= 0)
 	{
 		IPACMERR("There is no extended property!\n");
 		return IPACM_FAILURE;
 	}
 
 	num = prop->num_ext_props;
-	for(i=0; i<num; i++)
+	for (i = 0; i < num; i++)
 	{
-		if(prop->ext[i].ip == IPA_IP_v4)
+		if (prop->ext[i].ip == IPA_IP_v4)
 		{
-			if(ext_prop_v4.num_ext_props >= MAX_NUM_EXT_PROPS)
+			if (ext_prop_v4.num_ext_props >= MAX_NUM_EXT_PROPS)
 			{
 				IPACMDBG_H("IPv4 extended property table is full!\n");
 				continue;
@@ -660,9 +660,9 @@ int IPACM_Config::SetExtProp(ipa_ioc_query_intf_ext_props *prop)
 			memcpy(&ext_prop_v4.prop[ext_prop_v4.num_ext_props], &prop->ext[i], sizeof(struct ipa_ioc_ext_intf_prop));
 			ext_prop_v4.num_ext_props++;
 		}
-		else if(prop->ext[i].ip == IPA_IP_v6)
+		else if (prop->ext[i].ip == IPA_IP_v6)
 		{
-			if(ext_prop_v6.num_ext_props >= MAX_NUM_EXT_PROPS)
+			if (ext_prop_v6.num_ext_props >= MAX_NUM_EXT_PROPS)
 			{
 				IPACMDBG_H("IPv6 extended property table is full!\n");
 				continue;
@@ -682,11 +682,11 @@ int IPACM_Config::SetExtProp(ipa_ioc_query_intf_ext_props *prop)
 	return IPACM_SUCCESS;
 }
 
-ipacm_ext_prop* IPACM_Config::GetExtProp(ipa_ip_type ip_type)
+ipacm_ext_prop *IPACM_Config::GetExtProp(ipa_ip_type ip_type)
 {
-	if(ip_type == IPA_IP_v4)
+	if (ip_type == IPA_IP_v4)
 		return &ext_prop_v4;
-	else if(ip_type == IPA_IP_v6)
+	else if (ip_type == IPA_IP_v6)
 		return &ext_prop_v6;
 	else
 	{
@@ -697,12 +697,12 @@ ipacm_ext_prop* IPACM_Config::GetExtProp(ipa_ip_type ip_type)
 
 int IPACM_Config::DelExtProp(ipa_ip_type ip_type)
 {
-	if(ip_type != IPA_IP_v6)
+	if (ip_type != IPA_IP_v6)
 	{
 		memset(&ext_prop_v4, 0, sizeof(ext_prop_v4));
 	}
 
-	if(ip_type != IPA_IP_v4)
+	if (ip_type != IPA_IP_v4)
 	{
 		memset(&ext_prop_v6, 0, sizeof(ext_prop_v6));
 	}

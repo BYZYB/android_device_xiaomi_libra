@@ -50,18 +50,20 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int thelper_signal_init(struct loc_eng_dmn_conn_thelper * thelper)
+int thelper_signal_init(struct loc_eng_dmn_conn_thelper *thelper)
 {
     int result;
-    thelper->thread_exit  = 0;
+    thelper->thread_exit = 0;
     thelper->thread_ready = 0;
-    result = pthread_cond_init( &thelper->thread_cond, NULL);
-    if (result) {
+    result = pthread_cond_init(&thelper->thread_cond, NULL);
+    if (result)
+    {
         return result;
     }
 
     result = pthread_mutex_init(&thelper->thread_mutex, NULL);
-    if (result) {
+    if (result)
+    {
         pthread_cond_destroy(&thelper->thread_cond);
     }
     return result;
@@ -85,16 +87,18 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int thelper_signal_destroy(struct loc_eng_dmn_conn_thelper * thelper)
+int thelper_signal_destroy(struct loc_eng_dmn_conn_thelper *thelper)
 {
     int result, ret_result = 0;
-    result = pthread_cond_destroy( &thelper->thread_cond);
-    if (result) {
+    result = pthread_cond_destroy(&thelper->thread_cond);
+    if (result)
+    {
         ret_result = result;
     }
 
     result = pthread_mutex_destroy(&thelper->thread_mutex);
-    if (result) {
+    if (result)
+    {
         ret_result = result;
     }
 
@@ -120,16 +124,18 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int thelper_signal_wait(struct loc_eng_dmn_conn_thelper * thelper)
+int thelper_signal_wait(struct loc_eng_dmn_conn_thelper *thelper)
 {
     int result = 0;
 
     pthread_mutex_lock(&thelper->thread_mutex);
-    if (!thelper->thread_ready && !thelper->thread_exit) {
+    if (!thelper->thread_ready && !thelper->thread_exit)
+    {
         result = pthread_cond_wait(&thelper->thread_cond, &thelper->thread_mutex);
     }
 
-    if (thelper->thread_exit) {
+    if (thelper->thread_exit)
+    {
         result = -1;
     }
     pthread_mutex_unlock(&thelper->thread_mutex);
@@ -155,11 +161,11 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int thelper_signal_ready(struct loc_eng_dmn_conn_thelper * thelper)
+int thelper_signal_ready(struct loc_eng_dmn_conn_thelper *thelper)
 {
     int result;
 
-    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
 
     pthread_mutex_lock(&thelper->thread_mutex);
     thelper->thread_ready = 1;
@@ -187,11 +193,11 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int thelper_signal_block(struct loc_eng_dmn_conn_thelper * thelper)
+int thelper_signal_block(struct loc_eng_dmn_conn_thelper *thelper)
 {
     int result = thelper->thread_ready;
 
-    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
 
     pthread_mutex_lock(&thelper->thread_mutex);
     thelper->thread_ready = 0;
@@ -218,48 +224,57 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-static void * thelper_main(void *data)
+static void *thelper_main(void *data)
 {
     int result = 0;
-    struct loc_eng_dmn_conn_thelper * thelper = (struct loc_eng_dmn_conn_thelper *) data;
+    struct loc_eng_dmn_conn_thelper *thelper = (struct loc_eng_dmn_conn_thelper *)data;
 
-    if (thelper->thread_proc_init) {
+    if (thelper->thread_proc_init)
+    {
         result = thelper->thread_proc_init(thelper->thread_context);
-        if (result < 0) {
+        if (result < 0)
+        {
             thelper->thread_exit = 1;
             thelper_signal_ready(thelper);
-            LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long) thelper);
+            LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long)thelper);
             return NULL;
         }
     }
 
     thelper_signal_ready(thelper);
 
-    if (thelper->thread_proc_pre) {
+    if (thelper->thread_proc_pre)
+    {
         result = thelper->thread_proc_pre(thelper->thread_context);
-        if (result < 0) {
+        if (result < 0)
+        {
             thelper->thread_exit = 1;
-            LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long) thelper);
+            LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long)thelper);
             return NULL;
         }
     }
 
-    do {
-        if (thelper->thread_proc) {
+    do
+    {
+        if (thelper->thread_proc)
+        {
             result = thelper->thread_proc(thelper->thread_context);
-            if (result < 0) {
+            if (result < 0)
+            {
                 thelper->thread_exit = 1;
-                LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long) thelper);
+                LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long)thelper);
             }
         }
     } while (thelper->thread_exit == 0);
 
-    if (thelper->thread_proc_post) {
+    if (thelper->thread_proc_post)
+    {
         result = thelper->thread_proc_post(thelper->thread_context);
     }
 
-    if (result != 0) {
-        LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long) thelper);
+    if (result != 0)
+    {
+        LOC_LOGE("%s:%d] error: 0x%lx\n", __func__, __LINE__, (long)thelper);
     }
     return NULL;
 }
@@ -269,7 +284,6 @@ static void thelper_main_2(void *data)
     thelper_main(data);
     return;
 }
-
 
 /*===========================================================================
 FUNCTION    loc_eng_dmn_conn_launch_thelper
@@ -294,47 +308,52 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_launch_thelper(struct loc_eng_dmn_conn_thelper * thelper,
-    int (*thread_proc_init) (void * context),
-    int (*thread_proc_pre) (void * context),
-    int (*thread_proc) (void * context),
-    int (*thread_proc_post) (void * context),
-    thelper_create_thread   create_thread_cb,
-    void * context)
+int loc_eng_dmn_conn_launch_thelper(struct loc_eng_dmn_conn_thelper *thelper,
+                                    int (*thread_proc_init)(void *context),
+                                    int (*thread_proc_pre)(void *context),
+                                    int (*thread_proc)(void *context),
+                                    int (*thread_proc_post)(void *context),
+                                    thelper_create_thread create_thread_cb,
+                                    void *context)
 {
     int result;
 
     thelper_signal_init(thelper);
 
-    if (context) {
-        thelper->thread_context    = context;
+    if (context)
+    {
+        thelper->thread_context = context;
     }
 
-    thelper->thread_proc_init  = thread_proc_init;
-    thelper->thread_proc_pre   = thread_proc_pre;
-    thelper->thread_proc       = thread_proc;
-    thelper->thread_proc_post  = thread_proc_post;
+    thelper->thread_proc_init = thread_proc_init;
+    thelper->thread_proc_pre = thread_proc_pre;
+    thelper->thread_proc = thread_proc;
+    thelper->thread_proc_post = thread_proc_post;
 
-    LOC_LOGD("%s:%d] 0x%lx call pthread_create\n", __func__, __LINE__, (long) thelper);
-    if (create_thread_cb) {
+    LOC_LOGD("%s:%d] 0x%lx call pthread_create\n", __func__, __LINE__, (long)thelper);
+    if (create_thread_cb)
+    {
         result = 0;
         thelper->thread_id = create_thread_cb("loc_eng_dmn_conn",
-            thelper_main_2, (void *)thelper);
-    } else {
+                                              thelper_main_2, (void *)thelper);
+    }
+    else
+    {
         result = pthread_create(&thelper->thread_id, NULL,
-            thelper_main, (void *)thelper);
+                                thelper_main, (void *)thelper);
     }
 
-    if (result != 0) {
-        LOC_LOGE("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    if (result != 0)
+    {
+        LOC_LOGE("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
         return -1;
     }
 
-    LOC_LOGD("%s:%d] 0x%lx pthread_create done\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx pthread_create done\n", __func__, __LINE__, (long)thelper);
 
     thelper_signal_wait(thelper);
 
-    LOC_LOGD("%s:%d] 0x%lx pthread ready\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx pthread ready\n", __func__, __LINE__, (long)thelper);
     return thelper->thread_exit;
 }
 
@@ -356,9 +375,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_unblock_thelper(struct loc_eng_dmn_conn_thelper * thelper)
+int loc_eng_dmn_conn_unblock_thelper(struct loc_eng_dmn_conn_thelper *thelper)
 {
-    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
     thelper->thread_exit = 1;
     return 0;
 }
@@ -381,19 +400,19 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_join_thelper(struct loc_eng_dmn_conn_thelper * thelper)
+int loc_eng_dmn_conn_join_thelper(struct loc_eng_dmn_conn_thelper *thelper)
 {
     int result;
 
-    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
     result = pthread_join(thelper->thread_id, NULL);
-    if (result != 0) {
-        LOC_LOGE("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    if (result != 0)
+    {
+        LOC_LOGE("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
     }
-    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long) thelper);
+    LOC_LOGD("%s:%d] 0x%lx\n", __func__, __LINE__, (long)thelper);
 
     thelper_signal_destroy(thelper);
 
     return result;
 }
-

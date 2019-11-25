@@ -33,64 +33,73 @@
 #include <UlpProxyBase.h>
 #include <ContextBase.h>
 
-namespace loc_core {
+namespace loc_core
+{
 
 class LocAdapterProxyBase;
 
-class LocAdapterBase {
+class LocAdapterBase
+{
 protected:
     LOC_API_ADAPTER_EVENT_MASK_T mEvtMask;
-    ContextBase* mContext;
-    LocApiBase* mLocApi;
-    LocAdapterProxyBase* mLocAdapterProxyBase;
-    const MsgTask* mMsgTask;
+    ContextBase *mContext;
+    LocApiBase *mLocApi;
+    LocAdapterProxyBase *mLocAdapterProxyBase;
+    const MsgTask *mMsgTask;
 
-    inline LocAdapterBase(const MsgTask* msgTask) :
-        mEvtMask(0), mContext(NULL), mLocApi(NULL),
-        mLocAdapterProxyBase(NULL), mMsgTask(msgTask) {}
+    inline LocAdapterBase(const MsgTask *msgTask) : mEvtMask(0), mContext(NULL), mLocApi(NULL),
+                                                    mLocAdapterProxyBase(NULL), mMsgTask(msgTask) {}
+
 public:
     inline virtual ~LocAdapterBase() { mLocApi->removeAdapter(this); }
     LocAdapterBase(const LOC_API_ADAPTER_EVENT_MASK_T mask,
-                   ContextBase* context, LocAdapterProxyBase *adapterProxyBase = NULL);
+                   ContextBase *context, LocAdapterProxyBase *adapterProxyBase = NULL);
     inline LOC_API_ADAPTER_EVENT_MASK_T
-        checkMask(LOC_API_ADAPTER_EVENT_MASK_T mask) const {
+    checkMask(LOC_API_ADAPTER_EVENT_MASK_T mask) const
+    {
         return mEvtMask & mask;
     }
 
-    inline LOC_API_ADAPTER_EVENT_MASK_T getEvtMask() const {
+    inline LOC_API_ADAPTER_EVENT_MASK_T getEvtMask() const
+    {
         return mEvtMask;
     }
 
-    inline void sendMsg(const LocMsg* msg) const {
+    inline void sendMsg(const LocMsg *msg) const
+    {
         mMsgTask->sendMsg(msg);
     }
 
-    inline void sendMsg(const LocMsg* msg) {
+    inline void sendMsg(const LocMsg *msg)
+    {
         mMsgTask->sendMsg(msg);
     }
 
     inline void updateEvtMask(LOC_API_ADAPTER_EVENT_MASK_T event,
-                       loc_registration_mask_status isEnabled)
+                              loc_registration_mask_status isEnabled)
     {
         mEvtMask =
-            isEnabled == LOC_REGISTRATION_MASK_ENABLED ? (mEvtMask|event):(mEvtMask&~event);
+            isEnabled == LOC_REGISTRATION_MASK_ENABLED ? (mEvtMask | event) : (mEvtMask & ~event);
 
         mLocApi->updateEvtMask();
     }
 
-    inline bool isFeatureSupported(uint8_t featureVal) {
+    inline bool isFeatureSupported(uint8_t featureVal)
+    {
         return mLocApi->isFeatureSupported(featureVal);
     }
 
     // This will be overridden by the individual adapters
     // if necessary.
-    inline virtual void setUlpProxy(UlpProxyBase* ulp) {
+    inline virtual void setUlpProxy(UlpProxyBase *ulp)
+    {
 
         (void)ulp;
     }
     virtual void handleEngineUpEvent();
     virtual void handleEngineDownEvent();
-    inline virtual void setPositionModeInt(LocPosMode& posMode) {
+    inline virtual void setPositionModeInt(LocPosMode &posMode)
+    {
 
         (void)posMode;
     }
@@ -99,16 +108,16 @@ public:
     virtual void getZppInt() {}
     virtual void reportPosition(UlpLocation &location,
                                 GpsLocationExtended &locationExtended,
-                                void* locationExt,
+                                void *locationExt,
                                 enum loc_sess_status status,
                                 LocPosTechMask loc_technology_mask);
     virtual void reportSv(GnssSvStatus &svStatus,
                           GpsLocationExtended &locationExtended,
-                          void* svExt);
+                          void *svExt);
     virtual void reportStatus(GpsStatusValue status);
-    virtual void reportNmea(const char* nmea, int length);
-    virtual bool reportXtraServer(const char* url1, const char* url2,
-                                  const char* url3, const int maxlength);
+    virtual void reportNmea(const char *nmea, int length);
+    virtual bool reportXtraServer(const char *url1, const char *url2,
+                                  const char *url3, const int maxlength);
     virtual bool requestXtraData();
     virtual bool requestTime();
     virtual bool requestLocation();
@@ -118,9 +127,9 @@ public:
     virtual bool reportDataCallOpened();
     virtual bool reportDataCallClosed();
     virtual bool requestNiNotify(GpsNiNotification &notify,
-                                 const void* data);
+                                 const void *data);
     inline virtual bool isInSession() { return false; }
-    ContextBase* getContext() const { return mContext; }
+    ContextBase *getContext() const { return mContext; }
     virtual void reportGnssMeasurementData(GnssData &gnssMeasurementData);
 };
 

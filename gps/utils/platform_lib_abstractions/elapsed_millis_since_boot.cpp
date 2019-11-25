@@ -35,12 +35,11 @@ int64_t systemTime(int clock)
     struct timeval t;
     t.tv_sec = t.tv_usec = 0;
     gettimeofday(&t, NULL);
-    return t.tv_sec*1000000LL + t.tv_usec;
+    return t.tv_sec * 1000000LL + t.tv_usec;
 }
-
 
 int64_t elapsedMillisSinceBoot()
 {
     int64_t t_us = systemTime(0);
-    return (int64_t) t_us / 1000LL;
+    return (int64_t)t_us / 1000LL;
 }

@@ -54,8 +54,8 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 
 /* current support 2 ipv6-address*/
-#define MAX_DEFAULT_v4_ROUTE_RULES  1
-#define MAX_DEFAULT_v6_ROUTE_RULES  2
+#define MAX_DEFAULT_v4_ROUTE_RULES 1
+#define MAX_DEFAULT_v6_ROUTE_RULES 2
 #define IPV4_DEFAULT_FILTERTING_RULES 3
 
 #ifdef FEATURE_IPA_ANDROID
@@ -70,10 +70,9 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define INVALID_IFACE -1
 
 /* iface */
-class IPACM_Iface :public IPACM_Listener
+class IPACM_Iface : public IPACM_Listener
 {
 public:
-
 	/* Static class for reading IPACM configuration from XML file*/
 	static IPACM_Config *ipacmcfg;
 
@@ -104,7 +103,7 @@ public:
 	uint32_t dft_v4fl_rule_hdl[IPV4_DEFAULT_FILTERTING_RULES];
 	uint32_t dft_v6fl_rule_hdl[IPV6_DEFAULT_FILTERTING_RULES + IPV6_DEFAULT_LAN_FILTERTING_RULES];
 	/* create additional set of v6 RT-rules in Wanv6RT table*/
-	uint32_t dft_rt_rule_hdl[MAX_DEFAULT_v4_ROUTE_RULES+2*MAX_DEFAULT_v6_ROUTE_RULES];
+	uint32_t dft_rt_rule_hdl[MAX_DEFAULT_v4_ROUTE_RULES + 2 * MAX_DEFAULT_v6_ROUTE_RULES];
 
 	ipa_ioc_query_intf *iface_query;
 	ipa_ioc_query_intf_tx_props *tx_prop;
@@ -117,7 +116,7 @@ public:
 	IPACM_Iface(int iface_index);
 
 	virtual void event_callback(ipa_cm_event_id event,
-															void *data) = 0;
+								void *data) = 0;
 
 	/* Query ipa_interface_index by given linux interface_index */
 	static int iface_ipa_index_query(int interface_index);
@@ -138,7 +137,7 @@ public:
 	virtual int init_fl_rule(ipa_ip_type iptype);
 
 	/* Get interface index */
-	virtual int ipa_get_if_index(char * if_name, int * if_index);
+	virtual int ipa_get_if_index(char *if_name, int *if_index);
 
 	static IPACM_Routing m_routing;
 	static IPACM_Filtering m_filtering;
@@ -156,7 +155,6 @@ public:
 	int flt_rule_count_v6;
 
 private:
-
 	static const char *DEVICE_NAME;
 };
 

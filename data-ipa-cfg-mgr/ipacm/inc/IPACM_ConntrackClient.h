@@ -59,55 +59,53 @@ using namespace std;
 #define UDP_TIMEOUT_UPDATE 20
 #define BROADCAST_IPV4_ADDR 0xFFFFFFFF
 
+#define IPACM_TCP_UDP_DIR_NAME "/proc/sys/net/ipv4/netfilter"
+#define IPACM_TCP_FILE_NAME "ip_conntrack_tcp_timeout_established"
+#define IPACM_UDP_FILE_NAME "ip_conntrack_udp_timeout_stream"
 
-#define IPACM_TCP_UDP_DIR_NAME       "/proc/sys/net/ipv4/netfilter"
-#define IPACM_TCP_FILE_NAME  "ip_conntrack_tcp_timeout_established"
-#define IPACM_UDP_FILE_NAME   "ip_conntrack_udp_timeout_stream"
+#define IPACM_TCP_FULL_FILE_NAME "/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established"
+#define IPACM_UDP_FULL_FILE_NAME "/proc/sys/net/ipv4/netfilter/ip_conntrack_udp_timeout_stream"
 
-#define IPACM_TCP_FULL_FILE_NAME  "/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established"
-#define IPACM_UDP_FULL_FILE_NAME   "/proc/sys/net/ipv4/netfilter/ip_conntrack_udp_timeout_stream"
-
-#define INOTIFY_EVT_SIZE  (sizeof(struct inotify_event))
-#define INOTIFY_BUFFER_LEN     (INOTIFY_EVT_SIZE + 2*sizeof(IPACM_TCP_FILE_NAME))
+#define INOTIFY_EVT_SIZE (sizeof(struct inotify_event))
+#define INOTIFY_BUFFER_LEN (INOTIFY_EVT_SIZE + 2 * sizeof(IPACM_TCP_FILE_NAME))
 
 class IPACM_ConntrackClient
 {
 
 private:
-   static IPACM_ConntrackClient *pInstance;
+  static IPACM_ConntrackClient *pInstance;
 
-   struct nfct_handle *tcp_hdl;
-   struct nfct_handle *udp_hdl;
-   struct nfct_filter *tcp_filter;
-   struct nfct_filter *udp_filter;
-   static int IPA_Conntrack_Filters_Ignore_Local_Addrs(struct nfct_filter *filter);
-   static int IPA_Conntrack_Filters_Ignore_Bridge_Addrs(struct nfct_filter *filter);
-   static int IPA_Conntrack_Filters_Ignore_Local_Iface(struct nfct_filter *, ipacm_event_iface_up *);
-   IPACM_ConntrackClient();
+  struct nfct_handle *tcp_hdl;
+  struct nfct_handle *udp_hdl;
+  struct nfct_filter *tcp_filter;
+  struct nfct_filter *udp_filter;
+  static int IPA_Conntrack_Filters_Ignore_Local_Addrs(struct nfct_filter *filter);
+  static int IPA_Conntrack_Filters_Ignore_Bridge_Addrs(struct nfct_filter *filter);
+  static int IPA_Conntrack_Filters_Ignore_Local_Iface(struct nfct_filter *, ipacm_event_iface_up *);
+  IPACM_ConntrackClient();
 
 public:
-   static int IPAConntrackEventCB(enum nf_conntrack_msg_type type,
-                                  struct nf_conntrack *ct,
-                                  void *data);
+  static int IPAConntrackEventCB(enum nf_conntrack_msg_type type,
+                                 struct nf_conntrack *ct,
+                                 void *data);
 
-   static int IPA_Conntrack_UDP_Filter_Init(void);
-   static int IPA_Conntrack_TCP_Filter_Init(void);
-   static void* TCPRegisterWithConnTrack(void *);
-   static void* UDPRegisterWithConnTrack(void *);
-   static void* UDPConnTimeoutUpdate(void *);
-   static void* TCPUDP_Timeout_monitor(void *);
+  static int IPA_Conntrack_UDP_Filter_Init(void);
+  static int IPA_Conntrack_TCP_Filter_Init(void);
+  static void *TCPRegisterWithConnTrack(void *);
+  static void *UDPRegisterWithConnTrack(void *);
+  static void *UDPConnTimeoutUpdate(void *);
+  static void *TCPUDP_Timeout_monitor(void *);
 
-   static void UpdateUDPFilters(void *, bool);
-   static void UpdateTCPFilters(void *, bool);
-   static void Read_TcpUdp_Timeout(char *in, int len);
+  static void UpdateUDPFilters(void *, bool);
+  static void UpdateTCPFilters(void *, bool);
+  static void Read_TcpUdp_Timeout(char *in, int len);
 
-   static IPACM_ConntrackClient* GetInstance();
+  static IPACM_ConntrackClient *GetInstance();
 
 #ifdef IPACM_DEBUG
-#define iptodot(X,Y) \
-		 IPACMLOG(" %s(0x%x): %d.%d.%d.%d\n", X, Y, ((Y>>24) & 0xFF), ((Y>>16) & 0xFF), ((Y>>8) & 0xFF), (Y & 0xFF));
+#define iptodot(X, Y) \
+  IPACMLOG(" %s(0x%x): %d.%d.%d.%d\n", X, Y, ((Y >> 24) & 0xFF), ((Y >> 16) & 0xFF), ((Y >> 8) & 0xFF), (Y & 0xFF));
 #endif
-
 };
 
-#endif  /* IPACM_CONNTRACK_FILTER_H */
+#endif /* IPACM_CONNTRACK_FILTER_H */

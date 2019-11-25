@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -47,8 +47,8 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class IPACM_Listener
 {
 public:
-	virtual void event_callback(ipa_cm_event_id event,															void *data) = 0;
-	virtual ~IPACM_Listener(void) {};
+	virtual void event_callback(ipa_cm_event_id event, void *data) = 0;
+	virtual ~IPACM_Listener(void){};
 };
 
 #endif /* IPACM_LISTENER_H */

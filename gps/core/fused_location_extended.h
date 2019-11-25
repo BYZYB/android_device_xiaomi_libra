@@ -31,23 +31,24 @@
 #define FUSED_LOCATION_EXTENDED_H
 
 /** Batching default ID for dummy batching session*/
-#define GPS_BATCHING_DEFAULT_ID                 1
+#define GPS_BATCHING_DEFAULT_ID 1
 
 /** This cap is used to decide the FLP session cache
 size on AP. If the BATCH_SIZE in flp.conf is less than
 GPS_AP_BATCHING_SIZE_CAP, FLP session cache size will
 be twice the BATCH_SIZE defined in flp.conf. Otherwise,
 FLP session cache size will be equal to the BATCH_SIZE.*/
-#define GPS_AP_BATCHING_SIZE_CAP               40
+#define GPS_AP_BATCHING_SIZE_CAP 40
 
-#define GPS_BATCHING_OPERATION_SUCCEESS         1
-#define GPS_BATCHING_OPERATION_FAILURE          0
+#define GPS_BATCHING_OPERATION_SUCCEESS 1
+#define GPS_BATCHING_OPERATION_FAILURE 0
 
 /** GPS extended batching flags*/
-#define GPS_EXT_BATCHING_ON_FULL        0x0000001
-#define GPS_EXT_BATCHING_ON_FIX         0x000000
+#define GPS_EXT_BATCHING_ON_FULL 0x0000001
+#define GPS_EXT_BATCHING_ON_FIX 0x000000
 
-typedef struct {
+typedef struct
+{
     double max_power_allocation_mW;
     uint32_t sources_to_use;
     uint32_t flags;
@@ -55,32 +56,33 @@ typedef struct {
 } FlpExtBatchOptions;
 
 /** GpsLocationExtended has valid latitude and longitude. */
-#define GPS_LOCATION_EXTENDED_HAS_LAT_LONG   (1U<<0)
+#define GPS_LOCATION_EXTENDED_HAS_LAT_LONG (1U << 0)
 /** GpsLocationExtended has valid altitude. */
-#define GPS_LOCATION_EXTENDED_HAS_ALTITUDE   (1U<<1)
+#define GPS_LOCATION_EXTENDED_HAS_ALTITUDE (1U << 1)
 /** GpsLocationExtended has valid speed. */
-#define GPS_LOCATION_EXTENDED_HAS_SPEED      (1U<<2)
+#define GPS_LOCATION_EXTENDED_HAS_SPEED (1U << 2)
 /** GpsLocationExtended has valid bearing. */
-#define GPS_LOCATION_EXTENDED_HAS_BEARING    (1U<<4)
+#define GPS_LOCATION_EXTENDED_HAS_BEARING (1U << 4)
 /** GpsLocationExtended has valid accuracy. */
-#define GPS_LOCATION_EXTENDED_HAS_ACCURACY   (1U<<8)
+#define GPS_LOCATION_EXTENDED_HAS_ACCURACY (1U << 8)
 
 /** GPS extended supports geofencing */
-#define GPS_EXTENDED_CAPABILITY_GEOFENCE     0x0000001
+#define GPS_EXTENDED_CAPABILITY_GEOFENCE 0x0000001
 /** GPS extended supports batching */
-#define GPS_EXTENDED_CAPABILITY_BATCHING     0x0000002
+#define GPS_EXTENDED_CAPABILITY_BATCHING 0x0000002
 
-typedef struct FlpExtLocation_s {
-    size_t          size;
-    uint16_t        flags;
-    double          latitude;
-    double          longitude;
-    double          altitude;
-    float           speed;
-    float           bearing;
-    float           accuracy;
-    int64_t         timestamp;
-    uint32_t        sources_used;
+typedef struct FlpExtLocation_s
+{
+    size_t size;
+    uint16_t flags;
+    double latitude;
+    double longitude;
+    double altitude;
+    float speed;
+    float bearing;
+    float accuracy;
+    int64_t timestamp;
+    uint32_t sources_used;
 } FlpExtLocation;
 
 #endif /* FUSED_LOCATION_EXTENDED_H */

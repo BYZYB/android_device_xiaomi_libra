@@ -30,19 +30,19 @@
 #define LOC_ENG_DMN_CONN_GLUE_MSG_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
-
 
 #include <linux/types.h>
 #include "loc_eng_dmn_conn_glue_pipe.h"
 
-int loc_eng_dmn_conn_glue_msgget(const char * q_path, int mode);
-int loc_eng_dmn_conn_glue_msgremove(const char * q_path, int msgqid);
-int loc_eng_dmn_conn_glue_msgsnd(int msgqid, const void * msgp, size_t msgsz);
-int loc_eng_dmn_conn_glue_msgrcv(int msgqid, void *msgp, size_t msgsz);
-int loc_eng_dmn_conn_glue_msgflush(int msgqid);
-int loc_eng_dmn_conn_glue_msgunblock(int msgqid);
+    int loc_eng_dmn_conn_glue_msgget(const char *q_path, int mode);
+    int loc_eng_dmn_conn_glue_msgremove(const char *q_path, int msgqid);
+    int loc_eng_dmn_conn_glue_msgsnd(int msgqid, const void *msgp, size_t msgsz);
+    int loc_eng_dmn_conn_glue_msgrcv(int msgqid, void *msgp, size_t msgsz);
+    int loc_eng_dmn_conn_glue_msgflush(int msgqid);
+    int loc_eng_dmn_conn_glue_msgunblock(int msgqid);
 
 #ifdef __cplusplus
 }

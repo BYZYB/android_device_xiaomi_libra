@@ -46,21 +46,21 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 typedef struct
 {
-  char iface_name[IPA_IFACE_NAME_LEN];
-}NatIfaces;
+	char iface_name[IPA_IFACE_NAME_LEN];
+} NatIfaces;
 
 /* for IPACM rm dependency use*/
 typedef struct _ipa_rm_client
 {
-    ipa_rm_resource_name producer_rm1;
-    ipa_rm_resource_name consumer_rm1;
-    ipa_rm_resource_name producer_rm2;
-    ipa_rm_resource_name consumer_rm2;
-    bool producer1_up;            /* only monitor producer_rm1, not monitor producer_rm2 */
-    bool consumer1_up;            /* only monitor consumer_rm1, not monitor consumer_rm2 */
-    bool rm_set;                  /* once producer1_up and consumer1_up, will add bi-directional dependency */
-    bool rx_bypass_ipa;          /* support WLAN may not register RX-property, should not add dependency */
-}ipa_rm_client;
+	ipa_rm_resource_name producer_rm1;
+	ipa_rm_resource_name consumer_rm1;
+	ipa_rm_resource_name producer_rm2;
+	ipa_rm_resource_name consumer_rm2;
+	bool producer1_up;  /* only monitor producer_rm1, not monitor producer_rm2 */
+	bool consumer1_up;  /* only monitor consumer_rm1, not monitor consumer_rm2 */
+	bool rm_set;		/* once producer1_up and consumer1_up, will add bi-directional dependency */
+	bool rx_bypass_ipa; /* support WLAN may not register RX-property, should not add dependency */
+} ipa_rm_client;
 
 #define MAX_NUM_EXT_PROPS 15
 
@@ -75,7 +75,6 @@ typedef struct
 class IPACM_Config
 {
 public:
-
 	/* IPACM ipa_client map to rm_resource*/
 	ipa_rm_resource_name ipa_client_rm_map_tbl[IPA_CLIENT_MAX];
 
@@ -129,7 +128,7 @@ public:
 	struct ipa_ioc_get_rt_tbl rt_tbl_eth_bridge_usb_wlan_v6, rt_tbl_eth_bridge_wlan_wlan_v6;
 
 	/* To return the instance */
-	static IPACM_Config* GetInstance();
+	static IPACM_Config *GetInstance();
 
 	inline int GetAlgPortCnt()
 	{
@@ -150,7 +149,7 @@ public:
 	int GetNatIfaces(int nPorts, NatIfaces *ifaces);
 
 	/* for IPACM resource manager dependency usage */
-	void AddRmDepend(ipa_rm_resource_name rm1,bool rx_bypass_ipa);
+	void AddRmDepend(ipa_rm_resource_name rm1, bool rx_bypass_ipa);
 
 	void DelRmDepend(ipa_rm_resource_name rm1);
 
@@ -170,7 +169,7 @@ public:
 
 	int SetExtProp(ipa_ioc_query_intf_ext_props *prop);
 
-	ipacm_ext_prop* GetExtProp(ipa_ip_type ip_type);
+	ipacm_ext_prop *GetExtProp(ipa_ip_type ip_type);
 
 	int DelExtProp(ipa_ip_type ip_type);
 
@@ -178,10 +177,10 @@ public:
 
 	inline bool isPrivateSubnet(uint32_t ip_addr)
 	{
-		for(int cnt=0; cnt<ipa_num_private_subnet; cnt++)
+		for (int cnt = 0; cnt < ipa_num_private_subnet; cnt++)
 		{
-			if(private_subnet_table[cnt].subnet_addr ==
-				 (private_subnet_table[cnt].subnet_mask & ip_addr))
+			if (private_subnet_table[cnt].subnet_addr ==
+				(private_subnet_table[cnt].subnet_mask & ip_addr))
 			{
 				return true;
 			}
@@ -195,16 +194,16 @@ public:
 		ipacm_cmd_q_data evt_data;
 		ipacm_event_data_fid *data_fid;
 		uint32_t subnet_mask = ~0;
-		for(int cnt=0; cnt<ipa_num_private_subnet; cnt++)
+		for (int cnt = 0; cnt < ipa_num_private_subnet; cnt++)
 		{
-			if(private_subnet_table[cnt].subnet_addr == ip_addr)
+			if (private_subnet_table[cnt].subnet_addr == ip_addr)
 			{
 				IPACMDBG("Already has private subnet_addr as: 0x%x in entry(%d) \n", ip_addr, cnt);
 				return true;
 			}
 		}
 
-		if(ipa_num_private_subnet < IPA_MAX_PRIVATE_SUBNET_ENTRIES)
+		if (ipa_num_private_subnet < IPA_MAX_PRIVATE_SUBNET_ENTRIES)
 		{
 			IPACMDBG("Add IPACM private subnet_addr as: 0x%x in entry(%d) \n", ip_addr, ipa_num_private_subnet);
 			private_subnet_table[ipa_num_private_subnet].subnet_addr = ip_addr;
@@ -213,7 +212,7 @@ public:
 
 			/* IPACM private subnet set changes */
 			data_fid = (ipacm_event_data_fid *)malloc(sizeof(ipacm_event_data_fid));
-			if(data_fid == NULL)
+			if (data_fid == NULL)
 			{
 				IPACMERR("unable to allocate memory for event data_fid\n");
 				return IPACM_FAILURE;
@@ -234,20 +233,20 @@ public:
 	{
 		ipacm_cmd_q_data evt_data;
 		ipacm_event_data_fid *data_fid;
-		for(int cnt=0; cnt<ipa_num_private_subnet; cnt++)
+		for (int cnt = 0; cnt < ipa_num_private_subnet; cnt++)
 		{
-			if(private_subnet_table[cnt].subnet_addr == ip_addr)
+			if (private_subnet_table[cnt].subnet_addr == ip_addr)
 			{
 				IPACMDBG("Found private subnet_addr as: 0x%x in entry(%d) \n", ip_addr, cnt);
 				for (; cnt < ipa_num_private_subnet - 1; cnt++)
 				{
-					private_subnet_table[cnt].subnet_addr = private_subnet_table[cnt+1].subnet_addr;
+					private_subnet_table[cnt].subnet_addr = private_subnet_table[cnt + 1].subnet_addr;
 				}
 				ipa_num_private_subnet = ipa_num_private_subnet - 1;
 
 				/* IPACM private subnet set changes */
 				data_fid = (ipacm_event_data_fid *)malloc(sizeof(ipacm_event_data_fid));
-				if(data_fid == NULL)
+				if (data_fid == NULL)
 				{
 					IPACMERR("unable to allocate memory for event data_fid\n");
 					return IPACM_FAILURE;

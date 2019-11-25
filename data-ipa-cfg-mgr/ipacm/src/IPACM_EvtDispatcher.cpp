@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,30 +43,27 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "IPACM_CmdQueue.h"
 #include "IPACM_Defs.h"
 
-
 extern pthread_mutex_t mutex;
-extern pthread_cond_t  cond_var;
+extern pthread_cond_t cond_var;
 
 cmd_evts *IPACM_EvtDispatcher::head = NULL;
 extern uint32_t ipacm_event_stats[IPACM_EVENT_MAX];
 
-int IPACM_EvtDispatcher::PostEvt
-(
-	 ipacm_cmd_q_data *data
-)
+int IPACM_EvtDispatcher::PostEvt(
+	ipacm_cmd_q_data *data)
 {
 	Message *item = NULL;
 	MessageQueue *MsgQueue = NULL;
 
 	MsgQueue = MessageQueue::getInstance();
-	if(MsgQueue == NULL)
+	if (MsgQueue == NULL)
 	{
 		IPACMERR("unable to retrieve MsgQueue instance\n");
 		return IPACM_FAILURE;
 	}
 
 	item = new Message();
-	if(item == NULL)
+	if (item == NULL)
 	{
 		IPACMERR("unable to create new message item\n");
 		return IPACM_FAILURE;
@@ -76,7 +73,7 @@ int IPACM_EvtDispatcher::PostEvt
 	item->evt.callback_ptr = IPACM_EvtDispatcher::ProcessEvt;
 	memcpy(&item->evt.data, data, sizeof(ipacm_cmd_q_data));
 
-	if(pthread_mutex_lock(&mutex) != 0)
+	if (pthread_mutex_lock(&mutex) != 0)
 	{
 		IPACMERR("unable to lock the mutex\n");
 		return IPACM_FAILURE;
@@ -86,11 +83,11 @@ int IPACM_EvtDispatcher::PostEvt
 	MsgQueue->enqueue(item);
 	IPACMDBG("Enqueued item %p\n", item);
 
-	if(pthread_cond_signal(&cond_var) != 0)
+	if (pthread_cond_signal(&cond_var) != 0)
 	{
 		IPACMDBG("unable to lock the mutex\n");
 		/* Release the mutex before you return failure */
-		if(pthread_mutex_unlock(&mutex) != 0)
+		if (pthread_mutex_unlock(&mutex) != 0)
 		{
 			IPACMERR("unable to unlock the mutex\n");
 			return IPACM_FAILURE;
@@ -98,7 +95,7 @@ int IPACM_EvtDispatcher::PostEvt
 		return IPACM_FAILURE;
 	}
 
-	if(pthread_mutex_unlock(&mutex) != 0)
+	if (pthread_mutex_unlock(&mutex) != 0)
 	{
 		IPACMERR("unable to unlock the mutex\n");
 		return IPACM_FAILURE;
@@ -112,26 +109,26 @@ void IPACM_EvtDispatcher::ProcessEvt(ipacm_cmd_q_data *data)
 
 	cmd_evts *tmp = head, tmp1;
 
-	if(head == NULL)
+	if (head == NULL)
 	{
 		IPACMDBG("Queue is empty\n");
 	}
 
-	while(tmp != NULL)
+	while (tmp != NULL)
 	{
-	        memcpy(&tmp1, tmp, sizeof(tmp1));
-		if(data->event == tmp1.event)
+		memcpy(&tmp1, tmp, sizeof(tmp1));
+		if (data->event == tmp1.event)
 		{
 			ipacm_event_stats[data->event]++;
 			tmp1.obj->event_callback(data->event, data->evt_data);
 			IPACMDBG(" Find matched registered events\n");
 		}
-	        tmp = tmp1.next;
+		tmp = tmp1.next;
 	}
 
 	IPACMDBG(" Finished process events\n");
-			
-	if(data->evt_data != NULL)
+
+	if (data->evt_data != NULL)
 	{
 		IPACMDBG("free the event:%d data: %p\n", data->event, data->evt_data);
 		free(data->evt_data);
@@ -141,10 +138,10 @@ void IPACM_EvtDispatcher::ProcessEvt(ipacm_cmd_q_data *data)
 
 int IPACM_EvtDispatcher::registr(ipa_cm_event_id event, IPACM_Listener *obj)
 {
-	cmd_evts *tmp = head,*nw;
+	cmd_evts *tmp = head, *nw;
 
 	nw = (cmd_evts *)malloc(sizeof(cmd_evts));
-	if(nw != NULL)
+	if (nw != NULL)
 	{
 		nw->event = event;
 		nw->obj = obj;
@@ -155,13 +152,13 @@ int IPACM_EvtDispatcher::registr(ipa_cm_event_id event, IPACM_Listener *obj)
 		return IPACM_FAILURE;
 	}
 
-	if(head == NULL)
+	if (head == NULL)
 	{
 		head = nw;
 	}
 	else
 	{
-		while(tmp->next)
+		while (tmp->next)
 		{
 			tmp = tmp->next;
 		}
@@ -170,21 +167,20 @@ int IPACM_EvtDispatcher::registr(ipa_cm_event_id event, IPACM_Listener *obj)
 	return IPACM_SUCCESS;
 }
 
-
 int IPACM_EvtDispatcher::deregistr(IPACM_Listener *param)
 {
-	cmd_evts *tmp = head,*tmp1,*prev = head;
+	cmd_evts *tmp = head, *tmp1, *prev = head;
 
-	while(tmp != NULL)
+	while (tmp != NULL)
 	{
-		if(tmp->obj == param)
+		if (tmp->obj == param)
 		{
 			tmp1 = tmp;
-			if(tmp == head)
+			if (tmp == head)
 			{
 				head = head->next;
 			}
-			else if(tmp->next == NULL)
+			else if (tmp->next == NULL)
 			{
 				prev->next = NULL;
 			}

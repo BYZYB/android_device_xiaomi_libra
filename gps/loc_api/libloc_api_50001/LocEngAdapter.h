@@ -45,33 +45,36 @@ using namespace loc_core;
 
 class LocEngAdapter;
 
-class LocInternalAdapter : public LocAdapterBase {
-    LocEngAdapter* mLocEngAdapter;
+class LocInternalAdapter : public LocAdapterBase
+{
+    LocEngAdapter *mLocEngAdapter;
+
 public:
-    LocInternalAdapter(LocEngAdapter* adapter);
+    LocInternalAdapter(LocEngAdapter *adapter);
 
     virtual void reportPosition(UlpLocation &location,
                                 GpsLocationExtended &locationExtended,
-                                void* locationExt,
+                                void *locationExt,
                                 enum loc_sess_status status,
                                 LocPosTechMask loc_technology_mask);
     virtual void reportSv(GnssSvStatus &svStatus,
                           GpsLocationExtended &locationExtended,
-                          void* svExt);
+                          void *svExt);
     virtual void reportStatus(GpsStatusValue status);
-    virtual void setPositionModeInt(LocPosMode& posMode);
+    virtual void setPositionModeInt(LocPosMode &posMode);
     virtual void startFixInt();
     virtual void stopFixInt();
     virtual void getZppInt();
-    virtual void setUlpProxy(UlpProxyBase* ulp);
+    virtual void setUlpProxy(UlpProxyBase *ulp);
 };
 
-typedef void (*loc_msg_sender)(void* loc_eng_data_p, void* msgp);
+typedef void (*loc_msg_sender)(void *loc_eng_data_p, void *msgp);
 
-class LocEngAdapter : public LocAdapterBase {
-    void* mOwner;
-    LocInternalAdapter* mInternalAdapter;
-    UlpProxyBase* mUlp;
+class LocEngAdapter : public LocAdapterBase
+{
+    void *mOwner;
+    LocInternalAdapter *mInternalAdapter;
+    UlpProxyBase *mUlp;
     LocPosMode mFixCriteria;
     bool mNavigating;
     // mPowerVote is encoded as
@@ -88,155 +91,160 @@ public:
     GnssSystemInfo mGnssInfo;
 
     LocEngAdapter(LOC_API_ADAPTER_EVENT_MASK_T mask,
-                  void* owner, ContextBase* context,
+                  void *owner, ContextBase *context,
                   LocThread::tCreate tCreator);
     virtual ~LocEngAdapter();
 
-    virtual void setUlpProxy(UlpProxyBase* ulp);
+    virtual void setUlpProxy(UlpProxyBase *ulp);
     void setXtraUserAgent();
-    inline void requestUlp(unsigned long capabilities) {
+    inline void requestUlp(unsigned long capabilities)
+    {
         mContext->requestUlp(mInternalAdapter, capabilities);
     }
-    inline LocInternalAdapter* getInternalAdapter() { return mInternalAdapter; }
-    inline UlpProxyBase* getUlpProxy() { return mUlp; }
-    inline void* getOwner() { return mOwner; }
-    inline bool hasAgpsExtendedCapabilities() {
+    inline LocInternalAdapter *getInternalAdapter() { return mInternalAdapter; }
+    inline UlpProxyBase *getUlpProxy() { return mUlp; }
+    inline void *getOwner() { return mOwner; }
+    inline bool hasAgpsExtendedCapabilities()
+    {
         return mContext->hasAgpsExtendedCapabilities();
     }
-    inline bool hasCPIExtendedCapabilities() {
+    inline bool hasCPIExtendedCapabilities()
+    {
         return mContext->hasCPIExtendedCapabilities();
     }
-    inline bool hasNativeXtraClient() {
+    inline bool hasNativeXtraClient()
+    {
         return mContext->hasNativeXtraClient();
     }
-    inline const MsgTask* getMsgTask() { return mMsgTask; }
+    inline const MsgTask *getMsgTask() { return mMsgTask; }
 
     inline enum loc_api_adapter_err
-        startFix()
+    startFix()
     {
         return mLocApi->startFix(mFixCriteria);
     }
     inline enum loc_api_adapter_err
-        stopFix()
+    stopFix()
     {
         return mLocApi->stopFix();
     }
     inline enum loc_api_adapter_err
-        deleteAidingData(GpsAidingData f)
+    deleteAidingData(GpsAidingData f)
     {
         return mLocApi->deleteAidingData(f);
     }
     inline enum loc_api_adapter_err
-        enableData(int enable)
+    enableData(int enable)
     {
         return mLocApi->enableData(enable);
     }
     inline enum loc_api_adapter_err
-        setAPN(char* apn, int len)
+    setAPN(char *apn, int len)
     {
         return mLocApi->setAPN(apn, len);
     }
     inline enum loc_api_adapter_err
-        injectPosition(double latitude, double longitude, float accuracy)
+    injectPosition(double latitude, double longitude, float accuracy)
     {
         return mLocApi->injectPosition(latitude, longitude, accuracy);
     }
     inline enum loc_api_adapter_err
-        setXtraData(char* data, int length)
+    setXtraData(char *data, int length)
     {
         return mLocApi->setXtraData(data, length);
     }
     inline enum loc_api_adapter_err
-        requestXtraServer()
+    requestXtraServer()
     {
         return mLocApi->requestXtraServer();
     }
     inline enum loc_api_adapter_err
-        atlOpenStatus(int handle, int is_succ, char* apn, AGpsBearerType bearer, AGpsType agpsType)
+    atlOpenStatus(int handle, int is_succ, char *apn, AGpsBearerType bearer, AGpsType agpsType)
     {
         return mLocApi->atlOpenStatus(handle, is_succ, apn, bearer, agpsType);
     }
     inline enum loc_api_adapter_err
-        atlCloseStatus(int handle, int is_succ)
+    atlCloseStatus(int handle, int is_succ)
     {
         return mLocApi->atlCloseStatus(handle, is_succ);
     }
     inline enum loc_api_adapter_err
-        setPositionMode(const LocPosMode *posMode)
+    setPositionMode(const LocPosMode *posMode)
     {
-        if (NULL != posMode) {
+        if (NULL != posMode)
+        {
             mFixCriteria = *posMode;
         }
         return mLocApi->setPositionMode(mFixCriteria);
     }
     inline enum loc_api_adapter_err
-        setServer(const char* url, int len)
+    setServer(const char *url, int len)
     {
         return mLocApi->setServer(url, len);
     }
     inline enum loc_api_adapter_err
-        setServer(unsigned int ip, int port,
-                  LocServerType type)
+    setServer(unsigned int ip, int port,
+              LocServerType type)
     {
         return mLocApi->setServer(ip, port, type);
     }
     inline enum loc_api_adapter_err
-        informNiResponse(GpsUserResponseType userResponse, const void* passThroughData)
+    informNiResponse(GpsUserResponseType userResponse, const void *passThroughData)
     {
         return mLocApi->informNiResponse(userResponse, passThroughData);
     }
     inline enum loc_api_adapter_err
-        setSUPLVersion(uint32_t version)
+    setSUPLVersion(uint32_t version)
     {
         return mLocApi->setSUPLVersion(version);
     }
     inline enum loc_api_adapter_err
-        setNMEATypes (uint32_t typesMask)
+    setNMEATypes(uint32_t typesMask)
     {
         return mLocApi->setNMEATypes(typesMask);
     }
     inline enum loc_api_adapter_err
-        setLPPConfig(uint32_t profile)
+    setLPPConfig(uint32_t profile)
     {
         return mLocApi->setLPPConfig(profile);
     }
     inline enum loc_api_adapter_err
-        setSensorControlConfig(int sensorUsage, int sensorProvider)
+    setSensorControlConfig(int sensorUsage, int sensorProvider)
     {
         return mLocApi->setSensorControlConfig(sensorUsage, sensorProvider);
     }
     inline enum loc_api_adapter_err
-        setSensorProperties(bool gyroBiasVarianceRandomWalk_valid, float gyroBiasVarianceRandomWalk,
-                            bool accelBiasVarianceRandomWalk_valid, float accelBiasVarianceRandomWalk,
-                            bool angleBiasVarianceRandomWalk_valid, float angleBiasVarianceRandomWalk,
-                            bool rateBiasVarianceRandomWalk_valid, float rateBiasVarianceRandomWalk,
-                            bool velocityBiasVarianceRandomWalk_valid, float velocityBiasVarianceRandomWalk)
+    setSensorProperties(bool gyroBiasVarianceRandomWalk_valid, float gyroBiasVarianceRandomWalk,
+                        bool accelBiasVarianceRandomWalk_valid, float accelBiasVarianceRandomWalk,
+                        bool angleBiasVarianceRandomWalk_valid, float angleBiasVarianceRandomWalk,
+                        bool rateBiasVarianceRandomWalk_valid, float rateBiasVarianceRandomWalk,
+                        bool velocityBiasVarianceRandomWalk_valid, float velocityBiasVarianceRandomWalk)
     {
         return mLocApi->setSensorProperties(gyroBiasVarianceRandomWalk_valid, gyroBiasVarianceRandomWalk,
-                                           accelBiasVarianceRandomWalk_valid, accelBiasVarianceRandomWalk,
-                                           angleBiasVarianceRandomWalk_valid, angleBiasVarianceRandomWalk,
-                                           rateBiasVarianceRandomWalk_valid, rateBiasVarianceRandomWalk,
-                                           velocityBiasVarianceRandomWalk_valid, velocityBiasVarianceRandomWalk);
+                                            accelBiasVarianceRandomWalk_valid, accelBiasVarianceRandomWalk,
+                                            angleBiasVarianceRandomWalk_valid, angleBiasVarianceRandomWalk,
+                                            rateBiasVarianceRandomWalk_valid, rateBiasVarianceRandomWalk,
+                                            velocityBiasVarianceRandomWalk_valid, velocityBiasVarianceRandomWalk);
     }
     inline virtual enum loc_api_adapter_err
-        setSensorPerfControlConfig(int controlMode, int accelSamplesPerBatch, int accelBatchesPerSec,
-                            int gyroSamplesPerBatch, int gyroBatchesPerSec,
-                            int accelSamplesPerBatchHigh, int accelBatchesPerSecHigh,
-                            int gyroSamplesPerBatchHigh, int gyroBatchesPerSecHigh, int algorithmConfig)
+    setSensorPerfControlConfig(int controlMode, int accelSamplesPerBatch, int accelBatchesPerSec,
+                               int gyroSamplesPerBatch, int gyroBatchesPerSec,
+                               int accelSamplesPerBatchHigh, int accelBatchesPerSecHigh,
+                               int gyroSamplesPerBatchHigh, int gyroBatchesPerSecHigh, int algorithmConfig)
     {
         return mLocApi->setSensorPerfControlConfig(controlMode, accelSamplesPerBatch, accelBatchesPerSec,
-                                                  gyroSamplesPerBatch, gyroBatchesPerSec,
-                                                  accelSamplesPerBatchHigh, accelBatchesPerSecHigh,
-                                                  gyroSamplesPerBatchHigh, gyroBatchesPerSecHigh,
-                                                  algorithmConfig);
+                                                   gyroSamplesPerBatch, gyroBatchesPerSec,
+                                                   accelSamplesPerBatchHigh, accelBatchesPerSecHigh,
+                                                   gyroSamplesPerBatchHigh, gyroBatchesPerSecHigh,
+                                                   algorithmConfig);
     }
     inline virtual enum loc_api_adapter_err
-        setAGLONASSProtocol(unsigned long aGlonassProtocol)
+    setAGLONASSProtocol(unsigned long aGlonassProtocol)
     {
         return mLocApi->setAGLONASSProtocol(aGlonassProtocol);
     }
     inline virtual enum loc_api_adapter_err
-        setLPPeProtocol(unsigned long lppeCP, unsigned long lppeUP)
+    setLPPeProtocol(unsigned long lppeCP, unsigned long lppeUP)
     {
         return mLocApi->setLPPeProtocol(lppeCP, lppeUP);
     }
@@ -257,7 +265,7 @@ public:
         mLocApi->closeDataCall();
     }
     inline enum loc_api_adapter_err
-        getZpp(GpsLocation &zppLoc, LocPosTechMask &tech_mask)
+    getZpp(GpsLocation &zppLoc, LocPosTechMask &tech_mask)
     {
         return mLocApi->getBestAvailableZppFix(zppLoc, tech_mask);
     }
@@ -265,7 +273,7 @@ public:
                                      int64_t timeReference,
                                      int uncertainty);
     enum loc_api_adapter_err setXtraVersionCheck(int check);
-    inline virtual void installAGpsCert(const DerEncodedCertificate* pData,
+    inline virtual void installAGpsCert(const DerEncodedCertificate *pData,
                                         size_t length,
                                         uint32_t slotBitMask)
     {
@@ -275,49 +283,55 @@ public:
     virtual void handleEngineUpEvent();
     virtual void reportPosition(UlpLocation &location,
                                 GpsLocationExtended &locationExtended,
-                                void* locationExt,
+                                void *locationExt,
                                 enum loc_sess_status status,
                                 LocPosTechMask loc_technology_mask);
     virtual void reportSv(GnssSvStatus &svStatus,
                           GpsLocationExtended &locationExtended,
-                          void* svExt);
+                          void *svExt);
     virtual void reportStatus(GpsStatusValue status);
-    virtual void reportNmea(const char* nmea, int length);
-    virtual bool reportXtraServer(const char* url1, const char* url2,
-                                  const char* url3, const int maxlength);
+    virtual void reportNmea(const char *nmea, int length);
+    virtual bool reportXtraServer(const char *url1, const char *url2,
+                                  const char *url3, const int maxlength);
     virtual bool requestXtraData();
     virtual bool requestTime();
     virtual bool requestATL(int connHandle, AGpsType agps_type);
     virtual bool releaseATL(int connHandle);
-    virtual bool requestNiNotify(GpsNiNotification &notify, const void* data);
+    virtual bool requestNiNotify(GpsNiNotification &notify, const void *data);
     virtual bool requestSuplES(int connHandle);
     virtual bool reportDataCallOpened();
     virtual bool reportDataCallClosed();
     virtual void reportGnssMeasurementData(GnssData &gnssMeasurementData);
 
-    inline const LocPosMode& getPositionMode() const
-    {return mFixCriteria;}
+    inline const LocPosMode &getPositionMode() const
+    {
+        return mFixCriteria;
+    }
     inline virtual bool isInSession()
-    { return mNavigating; }
+    {
+        return mNavigating;
+    }
     void setInSession(bool inSession);
 
     // Permit/prohibit power voting
-    inline void setPowerVoteRight(bool powerVoteRight) {
-        mPowerVote = powerVoteRight ? (mPowerVote | POWER_VOTE_RIGHT) :
-                                      (mPowerVote & ~POWER_VOTE_RIGHT);
+    inline void setPowerVoteRight(bool powerVoteRight)
+    {
+        mPowerVote = powerVoteRight ? (mPowerVote | POWER_VOTE_RIGHT) : (mPowerVote & ~POWER_VOTE_RIGHT);
     }
-    inline bool getPowerVoteRight() const {
-        return (mPowerVote & POWER_VOTE_RIGHT) != 0 ;
+    inline bool getPowerVoteRight() const
+    {
+        return (mPowerVote & POWER_VOTE_RIGHT) != 0;
     }
     // Set the power voting up/down and do actual operation if permitted
-    inline void setPowerVote(bool powerOn) {
-        mPowerVote = powerOn ? (mPowerVote | POWER_VOTE_VALUE) :
-                               (mPowerVote & ~POWER_VOTE_VALUE);
+    inline void setPowerVote(bool powerOn)
+    {
+        mPowerVote = powerOn ? (mPowerVote | POWER_VOTE_VALUE) : (mPowerVote & ~POWER_VOTE_VALUE);
         requestPowerVote();
         mContext->modemPowerVote(powerOn);
     }
-    inline bool getPowerVote() const {
-        return (mPowerVote & POWER_VOTE_VALUE) != 0 ;
+    inline bool getPowerVote() const
+    {
+        return (mPowerVote & POWER_VOTE_VALUE) != 0;
     }
     // Do power voting according to last settings if permitted
     void requestPowerVote();

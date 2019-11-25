@@ -72,9 +72,10 @@ SIDE EFFECTS
 void loc_api_sync_call_init()
 {
    pthread_mutex_lock(&loc_sync_call_mutex);
-   if (loc_sync_call_inited == 1) {
-       pthread_mutex_unlock(&loc_sync_call_mutex);
-       return;
+   if (loc_sync_call_inited == 1)
+   {
+      pthread_mutex_unlock(&loc_sync_call_mutex);
+      return;
    }
    loc_sync_call_inited = 1;
 
@@ -91,8 +92,8 @@ void loc_api_sync_call_init()
       slot->not_available = 0;
       slot->in_use = 0;
       slot->loc_handle = -1;
-      slot->loc_cb_wait_event_mask = 0;       /* event to wait   */
-      slot->loc_cb_received_event_mask = 0;   /* received event   */
+      slot->loc_cb_wait_event_mask = 0;     /* event to wait   */
+      slot->loc_cb_received_event_mask = 0; /* received event   */
    }
 
    pthread_mutex_unlock(&loc_sync_call_mutex);
@@ -120,9 +121,10 @@ void loc_api_sync_call_destroy()
    int i;
 
    pthread_mutex_lock(&loc_sync_call_mutex);
-   if (loc_sync_call_inited == 0) {
-       pthread_mutex_unlock(&loc_sync_call_mutex);
-       return;
+   if (loc_sync_call_inited == 0)
+   {
+      pthread_mutex_unlock(&loc_sync_call_mutex);
+      return;
    }
    loc_sync_call_inited = 0;
 
@@ -156,17 +158,17 @@ RETURN VALUE
 
 ===========================================================================*/
 static boolean loc_match_callback(
-      rpc_loc_event_mask_type             wait_mask,
-      rpc_loc_ioctl_e_type                wait_ioctl,
-      rpc_loc_event_mask_type             event_mask,
-      const rpc_loc_event_payload_u_type  *callback_payload
-)
+    rpc_loc_event_mask_type wait_mask,
+    rpc_loc_ioctl_e_type wait_ioctl,
+    rpc_loc_event_mask_type event_mask,
+    const rpc_loc_event_payload_u_type *callback_payload)
 {
-   if ((event_mask & wait_mask) == 0) return FALSE;
+   if ((event_mask & wait_mask) == 0)
+      return FALSE;
 
    if (event_mask != RPC_LOC_EVENT_IOCTL_REPORT || wait_ioctl == 0 ||
-        ( (callback_payload != NULL) &&
-         callback_payload->rpc_loc_event_payload_u_type_u.ioctl_report.type == wait_ioctl) )
+       ((callback_payload != NULL) &&
+        callback_payload->rpc_loc_event_payload_u_type_u.ioctl_report.type == wait_ioctl))
       return TRUE;
 
    return FALSE;
@@ -190,9 +192,9 @@ SIDE EFFECTS
 
 ===========================================================================*/
 void loc_api_callback_process_sync_call(
-      rpc_loc_client_handle_type            loc_handle,             /* handle of the client */
-      rpc_loc_event_mask_type               loc_event,              /* event mask           */
-      const rpc_loc_event_payload_u_type*   loc_event_payload       /* payload              */
+    rpc_loc_client_handle_type loc_handle,                /* handle of the client */
+    rpc_loc_event_mask_type loc_event,                    /* event mask           */
+    const rpc_loc_event_payload_u_type *loc_event_payload /* payload              */
 )
 {
    int i;
@@ -209,17 +211,19 @@ void loc_api_callback_process_sync_call(
           slot->loc_handle == loc_handle &&
           loc_match_callback(slot->loc_cb_wait_event_mask, slot->ioctl_type, loc_event, loc_event_payload))
       {
-         memcpy(&slot->loc_cb_received_payload, loc_event_payload, sizeof (rpc_loc_event_payload_u_type));
+         memcpy(&slot->loc_cb_received_payload, loc_event_payload, sizeof(rpc_loc_event_payload_u_type));
 
          slot->loc_cb_received_event_mask = loc_event;
 
-         ALOGV("signal slot %d in_use %d, loc_handle 0x%lx, event_mask 0x%1x, ioctl_type %d", i, slot->in_use, slot->loc_handle, (int) slot->loc_cb_wait_event_mask, (int) slot->ioctl_type);
+         ALOGV("signal slot %d in_use %d, loc_handle 0x%lx, event_mask 0x%1x, ioctl_type %d", i, slot->in_use, slot->loc_handle, (int)slot->loc_cb_wait_event_mask, (int)slot->ioctl_type);
          pthread_cond_signal(&slot->loc_cb_arrived_cond);
          slot->signal_sent = 1;
 
          pthread_mutex_unlock(&slot->lock);
          break;
-      } else {
+      }
+      else
+      {
          /* do nothing */
       }
 
@@ -314,7 +318,7 @@ SIDE EFFECTS
 ===========================================================================*/
 static void loc_lock_slot(int select_id)
 {
-    pthread_mutex_lock(&loc_sync_data.slots[select_id].lock);
+   pthread_mutex_lock(&loc_sync_data.slots[select_id].lock);
 }
 
 /*===========================================================================
@@ -337,9 +341,9 @@ SIDE EFFECTS
 ===========================================================================*/
 static void loc_set_slot_in_use(int select_id, boolean in_use)
 {
-    loc_sync_data.slots[select_id].in_use = in_use;
-    if (in_use == 1)
-        loc_sync_data.slots[select_id].signal_sent = 0;
+   loc_sync_data.slots[select_id].in_use = in_use;
+   if (in_use == 1)
+      loc_sync_data.slots[select_id].signal_sent = 0;
 }
 
 /*===========================================================================
@@ -366,10 +370,10 @@ SIDE EFFECTS
 
 ===========================================================================*/
 static void loc_api_save_callback(
-      int                              select_id,            /* Selected slot */
-      rpc_loc_client_handle_type       loc_handle,           /* Client handle */
-      rpc_loc_event_mask_type          event_mask,           /* Event mask to wait for */
-      rpc_loc_ioctl_e_type             ioctl_type            /* IOCTL type to wait for */
+    int select_id,                         /* Selected slot */
+    rpc_loc_client_handle_type loc_handle, /* Client handle */
+    rpc_loc_event_mask_type event_mask,    /* Event mask to wait for */
+    rpc_loc_ioctl_e_type ioctl_type        /* IOCTL type to wait for */
 )
 {
    loc_sync_call_slot_s_type *slot = &loc_sync_data.slots[select_id];
@@ -378,7 +382,8 @@ static void loc_api_save_callback(
 
    slot->loc_cb_wait_event_mask = event_mask;
    slot->ioctl_type = ioctl_type;
-   if (ioctl_type) slot->loc_cb_wait_event_mask |= RPC_LOC_EVENT_IOCTL_REPORT;
+   if (ioctl_type)
+      slot->loc_cb_wait_event_mask |= RPC_LOC_EVENT_IOCTL_REPORT;
 
    return;
 }
@@ -395,21 +400,20 @@ RETURN VALUE
 
 ===========================================================================*/
 static void loc_save_user_payload(
-      rpc_loc_event_payload_u_type  *user_cb_payload,
-      rpc_loc_ioctl_callback_s_type *user_ioctl_buffer,
-      const rpc_loc_event_payload_u_type  *received_cb_payload
-)
+    rpc_loc_event_payload_u_type *user_cb_payload,
+    rpc_loc_ioctl_callback_s_type *user_ioctl_buffer,
+    const rpc_loc_event_payload_u_type *received_cb_payload)
 {
    if (user_cb_payload)
    {
       memcpy(user_cb_payload, received_cb_payload,
-            sizeof (rpc_loc_event_payload_u_type));
+             sizeof(rpc_loc_event_payload_u_type));
    }
    if (user_ioctl_buffer)
    {
       memcpy(user_ioctl_buffer,
-            &received_cb_payload->rpc_loc_event_payload_u_type_u.ioctl_report,
-            sizeof *user_ioctl_buffer);
+             &received_cb_payload->rpc_loc_event_payload_u_type_u.ioctl_report,
+             sizeof *user_ioctl_buffer);
    }
 }
 
@@ -437,14 +441,14 @@ SIDE EFFECTS
 
 ===========================================================================*/
 static int loc_api_wait_callback(
-      int select_id,        /* ID from loc_select_callback() */
-      int timeout_seconds,  /* Timeout in this number of seconds  */
-      rpc_loc_event_payload_u_type     *callback_payload,    /* Pointer to callback payload buffer, can be NULL */
-      rpc_loc_ioctl_callback_s_type    *ioctl_payload        /* Pointer to IOCTL payload, can be NULL */
+    int select_id,                                  /* ID from loc_select_callback() */
+    int timeout_seconds,                            /* Timeout in this number of seconds  */
+    rpc_loc_event_payload_u_type *callback_payload, /* Pointer to callback payload buffer, can be NULL */
+    rpc_loc_ioctl_callback_s_type *ioctl_payload    /* Pointer to IOCTL payload, can be NULL */
 )
 {
-   int ret_val = RPC_LOC_API_SUCCESS;  /* the return value of this function: 0 = no error */
-   int rc = 0;                         /* return code from pthread calls */
+   int ret_val = RPC_LOC_API_SUCCESS; /* the return value of this function: 0 = no error */
+   int rc = 0;                        /* return code from pthread calls */
 
    struct timespec expire_time;
 
@@ -454,9 +458,10 @@ static int loc_api_wait_callback(
    expire_time.tv_sec += timeout_seconds;
 
    /* Waiting */
-   while (slot->signal_sent == 0 && rc != ETIMEDOUT) {
-       rc = pthread_cond_timedwait(&slot->loc_cb_arrived_cond,
-             &slot->lock, &expire_time);
+   while (slot->signal_sent == 0 && rc != ETIMEDOUT)
+   {
+      rc = pthread_cond_timedwait(&slot->loc_cb_arrived_cond,
+                                  &slot->lock, &expire_time);
    }
 
    if (rc == ETIMEDOUT)
@@ -464,9 +469,10 @@ static int loc_api_wait_callback(
       ret_val = RPC_LOC_API_TIMEOUT; /* Timed out */
       ALOGE("TIMEOUT: %d", select_id);
    }
-   else {
+   else
+   {
       /* Obtained the first awaited callback */
-      ret_val = RPC_LOC_API_SUCCESS;       /* Successful */
+      ret_val = RPC_LOC_API_SUCCESS; /* Successful */
       loc_save_user_payload(callback_payload, ioctl_payload, &slot->loc_cb_received_payload);
    }
 
@@ -490,25 +496,23 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_api_sync_ioctl
-(
-      rpc_loc_client_handle_type           handle,
-      rpc_loc_ioctl_e_type                 ioctl_type,
-      rpc_loc_ioctl_data_u_type*           ioctl_data_ptr,
-      uint32                               timeout_msec,
-      rpc_loc_ioctl_callback_s_type       *cb_data_ptr
-)
+int loc_api_sync_ioctl(
+    rpc_loc_client_handle_type handle,
+    rpc_loc_ioctl_e_type ioctl_type,
+    rpc_loc_ioctl_data_u_type *ioctl_data_ptr,
+    uint32 timeout_msec,
+    rpc_loc_ioctl_callback_s_type *cb_data_ptr)
 {
-   int                              rc = -1;
-   int                              select_id;
-   rpc_loc_ioctl_callback_s_type    callback_data;
+   int rc = -1;
+   int select_id;
+   rpc_loc_ioctl_callback_s_type callback_data;
 
    select_id = loc_lock_a_slot();
 
    if (select_id < 0 || select_id >= loc_sync_data.num_of_slots)
    {
       ALOGE("slot not available ioctl_type = %s",
-           loc_get_ioctl_type_name(ioctl_type));
+            loc_get_ioctl_type_name(ioctl_type));
       return rc;
    }
 
@@ -522,44 +526,46 @@ int loc_api_sync_ioctl
    // we want to avoid keeping the slot locked during the loc_ioctl because the rpc
    // framework will also lock a different mutex during this call, and typically
    // locking two different mutexes at the same time can lead to deadlock.
-   rc =  loc_ioctl(handle, ioctl_type, ioctl_data_ptr);
+   rc = loc_ioctl(handle, ioctl_type, ioctl_data_ptr);
 
    loc_lock_slot(select_id);
 
    if (rc != RPC_LOC_API_SUCCESS)
    {
       ALOGE("loc_ioctl failed select_id = %d, ioctl_type %s, returned %s",
-           select_id, loc_get_ioctl_type_name(ioctl_type), loc_get_ioctl_status_name(rc));
+            select_id, loc_get_ioctl_type_name(ioctl_type), loc_get_ioctl_status_name(rc));
    }
-   else {
+   else
+   {
       ALOGV("select_id = %d, ioctl_type %d, returned RPC_LOC_API_SUCCESS",
-          select_id, ioctl_type);
+            select_id, ioctl_type);
       // Wait for the callback of loc_ioctl
       if ((rc = loc_api_wait_callback(select_id, timeout_msec / 1000, NULL, &callback_data)) != 0)
       {
          // Callback waiting failed
          ALOGE("callback wait failed select_id = %d, ioctl_type %s, returned %s",
-              select_id, loc_get_ioctl_type_name(ioctl_type), loc_get_ioctl_status_name(rc));
+               select_id, loc_get_ioctl_type_name(ioctl_type), loc_get_ioctl_status_name(rc));
       }
       else
       {
-         if (cb_data_ptr) memcpy(cb_data_ptr, &callback_data, sizeof *cb_data_ptr);
+         if (cb_data_ptr)
+            memcpy(cb_data_ptr, &callback_data, sizeof *cb_data_ptr);
          if (callback_data.status != RPC_LOC_API_SUCCESS)
          {
             rc = callback_data.status;
             ALOGE("callback status failed select_id = %d, ioctl_type %s, returned %s",
-                 select_id, loc_get_ioctl_type_name(ioctl_type), loc_get_ioctl_status_name(rc));
-         } else {
+                  select_id, loc_get_ioctl_type_name(ioctl_type), loc_get_ioctl_status_name(rc));
+         }
+         else
+         {
             ALOGV("callback status success select_id = %d, ioctl_type %d, returned %d",
-                select_id, ioctl_type, rc);
+                  select_id, ioctl_type, rc);
          }
       } /* wait callback */
-   } /* loc_ioctl */
+   }    /* loc_ioctl */
 
    loc_set_slot_in_use(select_id, 0); // set slot in use to false
    loc_unlock_slot(select_id);
 
    return rc;
 }
-
-

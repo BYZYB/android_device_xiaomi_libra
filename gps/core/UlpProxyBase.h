@@ -32,31 +32,44 @@
 #include <gps_extended.h>
 #include "fused_location_extended.h"
 
-namespace loc_core {
+namespace loc_core
+{
 
 class LocAdapterBase;
 
-class UlpProxyBase {
+class UlpProxyBase
+{
 public:
     LocPosMode mPosMode;
     bool mFixSet;
-    inline UlpProxyBase() {
+    inline UlpProxyBase()
+    {
         mPosMode.mode = LOC_POSITION_MODE_INVALID;
         mFixSet = false;
     }
     inline virtual ~UlpProxyBase() {}
-    inline virtual bool sendStartFix() { mFixSet = true; return false; }
-    inline virtual bool sendStopFix() { mFixSet = false; return false; }
-    inline virtual bool sendFixMode(LocPosMode &params) {
+    inline virtual bool sendStartFix()
+    {
+        mFixSet = true;
+        return false;
+    }
+    inline virtual bool sendStopFix()
+    {
+        mFixSet = false;
+        return false;
+    }
+    inline virtual bool sendFixMode(LocPosMode &params)
+    {
         mPosMode = params;
         return false;
     }
 
     inline virtual bool reportPosition(UlpLocation &location,
                                        GpsLocationExtended &locationExtended,
-                                       void* locationExt,
+                                       void *locationExt,
                                        enum loc_sess_status status,
-                                       LocPosTechMask loc_technology_mask) {
+                                       LocPosTechMask loc_technology_mask)
+    {
         (void)location;
         (void)locationExtended;
         (void)locationExt;
@@ -66,34 +79,40 @@ public:
     }
     inline virtual bool reportSv(GnssSvStatus &svStatus,
                                  GpsLocationExtended &locationExtended,
-                                 void* svExt) {
+                                 void *svExt)
+    {
         (void)svStatus;
         (void)locationExtended;
         (void)svExt;
         return false;
     }
-    inline virtual bool reportStatus(GpsStatusValue status) {
+    inline virtual bool reportStatus(GpsStatusValue status)
+    {
 
         (void)status;
         return false;
     }
-    inline virtual void setAdapter(LocAdapterBase* adapter) {
+    inline virtual void setAdapter(LocAdapterBase *adapter)
+    {
 
         (void)adapter;
     }
-    inline virtual void setCapabilities(unsigned long capabilities) {
+    inline virtual void setCapabilities(unsigned long capabilities)
+    {
 
         (void)capabilities;
     }
     inline virtual bool reportBatchingSession(FlpExtBatchOptions &options,
-                                              bool active) {
+                                              bool active)
+    {
 
         (void)options;
         (void)active;
         return false;
     }
-    inline virtual bool reportPositions(const FlpExtLocation* locations,
-                                        int32_t number_of_locations) {
+    inline virtual bool reportPositions(const FlpExtLocation *locations,
+                                        int32_t number_of_locations)
+    {
         (void)locations;
         (void)number_of_locations;
         return false;

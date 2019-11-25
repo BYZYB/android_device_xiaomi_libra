@@ -35,31 +35,33 @@
 #include <log_util.h>
 #include <LocAdapterProxyBase.h>
 
-namespace loc_core {
+namespace loc_core
+{
 
 // This is the top level class, so the constructor will
 // always gets called. Here we prepare for the default.
 // But if getLocApi(targetEnumType target) is overriden,
 // the right locApi should get created.
 LocAdapterBase::LocAdapterBase(const LOC_API_ADAPTER_EVENT_MASK_T mask,
-                               ContextBase* context, LocAdapterProxyBase *adapterProxyBase) :
-    mEvtMask(mask), mContext(context),
-    mLocApi(context->getLocApi()), mLocAdapterProxyBase(adapterProxyBase),
-    mMsgTask(context->getMsgTask())
+                               ContextBase *context, LocAdapterProxyBase *adapterProxyBase) : mEvtMask(mask), mContext(context),
+                                                                                              mLocApi(context->getLocApi()), mLocAdapterProxyBase(adapterProxyBase),
+                                                                                              mMsgTask(context->getMsgTask())
 {
     mLocApi->addAdapter(this);
 }
 
 void LocAdapterBase::handleEngineUpEvent()
 {
-    if (mLocAdapterProxyBase) {
+    if (mLocAdapterProxyBase)
+    {
         mLocAdapterProxyBase->handleEngineUpEvent();
     }
 }
 
 void LocAdapterBase::handleEngineDownEvent()
 {
-    if (mLocAdapterProxyBase) {
+    if (mLocAdapterProxyBase)
+    {
         mLocAdapterProxyBase->handleEngineDownEvent();
     }
 }
@@ -67,14 +69,16 @@ void LocAdapterBase::handleEngineDownEvent()
 void LocAdapterBase::
     reportPosition(UlpLocation &location,
                    GpsLocationExtended &locationExtended,
-                   void* locationExt,
+                   void *locationExt,
                    enum loc_sess_status status,
-                   LocPosTechMask loc_technology_mask) {
+                   LocPosTechMask loc_technology_mask)
+{
     if (mLocAdapterProxyBase == NULL ||
         !mLocAdapterProxyBase->reportPosition(location,
                                               locationExtended,
                                               status,
-                                              loc_technology_mask)) {
+                                              loc_technology_mask))
+    {
         DEFAULT_IMPL()
     }
 }
@@ -82,61 +86,59 @@ void LocAdapterBase::
 void LocAdapterBase::
     reportSv(GnssSvStatus &svStatus,
              GpsLocationExtended &locationExtended,
-             void* svExt)
-DEFAULT_IMPL()
+             void *svExt)
+        DEFAULT_IMPL()
 
+            void LocAdapterBase::
+                reportStatus(GpsStatusValue status)
+                    DEFAULT_IMPL()
 
-void LocAdapterBase::
-    reportStatus(GpsStatusValue status)
-DEFAULT_IMPL()
+                        void LocAdapterBase::
+                            reportNmea(const char *nmea, int length)
+                                DEFAULT_IMPL()
 
+                                    bool LocAdapterBase::
+                                        reportXtraServer(const char *url1, const char *url2,
+                                                         const char *url3, const int maxlength)
+                                            DEFAULT_IMPL(false)
 
-void LocAdapterBase::
-    reportNmea(const char* nmea, int length)
-DEFAULT_IMPL()
+                                                bool LocAdapterBase::
+                                                    requestXtraData()
+                                                        DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    reportXtraServer(const char* url1, const char* url2,
-                     const char* url3, const int maxlength)
-DEFAULT_IMPL(false)
+                                                            bool LocAdapterBase::
+                                                                requestTime()
+                                                                    DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    requestXtraData()
-DEFAULT_IMPL(false)
+                                                                        bool LocAdapterBase::
+                                                                            requestLocation()
+                                                                                DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    requestTime()
-DEFAULT_IMPL(false)
+                                                                                    bool LocAdapterBase::
+                                                                                        requestATL(int connHandle, AGpsType agps_type)
+                                                                                            DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    requestLocation()
-DEFAULT_IMPL(false)
+                                                                                                bool LocAdapterBase::
+                                                                                                    releaseATL(int connHandle)
+                                                                                                        DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    requestATL(int connHandle, AGpsType agps_type)
-DEFAULT_IMPL(false)
+                                                                                                            bool LocAdapterBase::
+                                                                                                                requestSuplES(int connHandle)
+                                                                                                                    DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    releaseATL(int connHandle)
-DEFAULT_IMPL(false)
+                                                                                                                        bool LocAdapterBase::
+                                                                                                                            reportDataCallOpened()
+                                                                                                                                DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    requestSuplES(int connHandle)
-DEFAULT_IMPL(false)
+                                                                                                                                    bool LocAdapterBase::
+                                                                                                                                        reportDataCallClosed()
+                                                                                                                                            DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    reportDataCallOpened()
-DEFAULT_IMPL(false)
+                                                                                                                                                bool LocAdapterBase::
+                                                                                                                                                    requestNiNotify(GpsNiNotification &notify, const void *data)
+                                                                                                                                                        DEFAULT_IMPL(false)
 
-bool LocAdapterBase::
-    reportDataCallClosed()
-DEFAULT_IMPL(false)
-
-bool LocAdapterBase::
-    requestNiNotify(GpsNiNotification &notify, const void* data)
-DEFAULT_IMPL(false)
-
-void LocAdapterBase::
-    reportGnssMeasurementData(GnssData &gnssMeasurementData)
-DEFAULT_IMPL()
+                                                                                                                                                            void LocAdapterBase::
+                                                                                                                                                                reportGnssMeasurementData(GnssData &gnssMeasurementData)
+                                                                                                                                                                    DEFAULT_IMPL()
 } // namespace loc_core

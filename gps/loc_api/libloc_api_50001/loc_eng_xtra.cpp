@@ -37,66 +37,75 @@
 
 using namespace loc_core;
 
-struct LocEngRequestXtraServer : public LocMsg {
-    LocEngAdapter* mAdapter;
-    inline LocEngRequestXtraServer(LocEngAdapter* adapter) :
-        LocMsg(), mAdapter(adapter)
+struct LocEngRequestXtraServer : public LocMsg
+{
+    LocEngAdapter *mAdapter;
+    inline LocEngRequestXtraServer(LocEngAdapter *adapter) : LocMsg(), mAdapter(adapter)
     {
         locallog();
     }
-    inline virtual void proc() const {
+    inline virtual void proc() const
+    {
         mAdapter->requestXtraServer();
     }
-    inline void locallog() const {
+    inline void locallog() const
+    {
         LOC_LOGV("LocEngRequestXtraServer");
     }
-    inline virtual void log() const {
+    inline virtual void log() const
+    {
         locallog();
     }
 };
 
-struct LocEngInjectXtraData : public LocMsg {
-    LocEngAdapter* mAdapter;
-    char* mData;
+struct LocEngInjectXtraData : public LocMsg
+{
+    LocEngAdapter *mAdapter;
+    char *mData;
     const int mLen;
-    inline LocEngInjectXtraData(LocEngAdapter* adapter,
-                                char* data, int len):
-        LocMsg(), mAdapter(adapter),
-        mData(new char[len]), mLen(len)
+    inline LocEngInjectXtraData(LocEngAdapter *adapter,
+                                char *data, int len) : LocMsg(), mAdapter(adapter),
+                                                       mData(new char[len]), mLen(len)
     {
-        memcpy((void*)mData, (void*)data, len);
+        memcpy((void *)mData, (void *)data, len);
         locallog();
     }
     inline ~LocEngInjectXtraData()
     {
         delete[] mData;
     }
-    inline virtual void proc() const {
+    inline virtual void proc() const
+    {
         mAdapter->setXtraData(mData, mLen);
     }
-    inline  void locallog() const {
+    inline void locallog() const
+    {
         LOC_LOGV("length: %d\n  data: %p", mLen, mData);
     }
-    inline virtual void log() const {
+    inline virtual void log() const
+    {
         locallog();
     }
 };
 
-struct LocEngSetXtraVersionCheck : public LocMsg {
+struct LocEngSetXtraVersionCheck : public LocMsg
+{
     LocEngAdapter *mAdapter;
     int mCheck;
-    inline LocEngSetXtraVersionCheck(LocEngAdapter* adapter,
-                                        int check):
-        mAdapter(adapter), mCheck(check) {}
-    inline virtual void proc() const {
+    inline LocEngSetXtraVersionCheck(LocEngAdapter *adapter,
+                                     int check) : mAdapter(adapter), mCheck(check) {}
+    inline virtual void proc() const
+    {
         locallog();
         mAdapter->setXtraVersionCheck(mCheck);
     }
-    inline void locallog() const {
+    inline void locallog() const
+    {
         LOC_LOGD("%s:%d]: mCheck: %d",
                  __func__, __LINE__, mCheck);
     }
-    inline virtual void log() const {
+    inline virtual void log() const
+    {
         locallog();
     }
 };
@@ -117,30 +126,33 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_xtra_init (loc_eng_data_s_type &loc_eng_data,
-                       GpsXtraExtCallbacks* callbacks)
+int loc_eng_xtra_init(loc_eng_data_s_type &loc_eng_data,
+                      GpsXtraExtCallbacks *callbacks)
 {
     int ret_val = -1;
     loc_eng_xtra_data_s_type *xtra_module_data_ptr;
     ENTRY_LOG();
 
-    if(!loc_eng_data.adapter->mSupportsTimeInjection
-       || loc_eng_data.adapter->hasNativeXtraClient()) {
+    if (!loc_eng_data.adapter->mSupportsTimeInjection || loc_eng_data.adapter->hasNativeXtraClient())
+    {
         LOC_LOGD("XTRA is already supported. disable it here.\n");
-        EXIT_LOG(%d, 1); // return 1 denote failure
+        EXIT_LOG(% d, 1); // return 1 denote failure
         return 1;
     }
 
-    if(callbacks == NULL) {
+    if (callbacks == NULL)
+    {
         LOC_LOGE("loc_eng_xtra_init: failed, cb is NULL");
-    } else {
+    }
+    else
+    {
         xtra_module_data_ptr = &loc_eng_data.xtra_module_data;
         xtra_module_data_ptr->download_request_cb = callbacks->download_request_cb;
         xtra_module_data_ptr->report_xtra_server_cb = callbacks->report_xtra_server_cb;
 
         ret_val = 0;
     }
-    EXIT_LOG(%d, ret_val);
+    EXIT_LOG(% d, ret_val);
     return ret_val;
 }
 
@@ -161,12 +173,12 @@ SIDE EFFECTS
 
 ===========================================================================*/
 int loc_eng_xtra_inject_data(loc_eng_data_s_type &loc_eng_data,
-                             char* data, int length)
+                             char *data, int length)
 {
     ENTRY_LOG();
-    LocEngAdapter* adapter = loc_eng_data.adapter;
+    LocEngAdapter *adapter = loc_eng_data.adapter;
     adapter->sendMsg(new LocEngInjectXtraData(adapter, data, length));
-    EXIT_LOG(%d, 0);
+    EXIT_LOG(% d, 0);
     return 0;
 }
 /*===========================================================================
@@ -188,9 +200,9 @@ SIDE EFFECTS
 int loc_eng_xtra_request_server(loc_eng_data_s_type &loc_eng_data)
 {
     ENTRY_LOG();
-    LocEngAdapter* adapter = loc_eng_data.adapter;
+    LocEngAdapter *adapter = loc_eng_data.adapter;
     adapter->sendMsg(new LocEngRequestXtraServer(adapter));
-    EXIT_LOG(%d, 0);
+    EXIT_LOG(% d, 0);
     return 0;
 }
 /*===========================================================================
@@ -216,5 +228,5 @@ void loc_eng_xtra_version_check(loc_eng_data_s_type &loc_eng_data,
     ENTRY_LOG();
     LocEngAdapter *adapter = loc_eng_data.adapter;
     adapter->sendMsg(new LocEngSetXtraVersionCheck(adapter, check));
-    EXIT_LOG(%d, 0);
+    EXIT_LOG(% d, 0);
 }

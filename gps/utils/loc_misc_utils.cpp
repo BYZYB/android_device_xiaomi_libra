@@ -38,12 +38,13 @@
 int loc_util_split_string(char *raw_string, char **split_strings_ptr,
                           int max_num_substrings, char delimiter)
 {
-    int raw_string_index=0;
-    int num_split_strings=0;
-    unsigned char end_string=0;
-    int raw_string_length=0;
+    int raw_string_index = 0;
+    int num_split_strings = 0;
+    unsigned char end_string = 0;
+    int raw_string_length = 0;
 
-    if(!raw_string || !split_strings_ptr) {
+    if (!raw_string || !split_strings_ptr)
+    {
         LOC_LOGE("%s:%d]: NULL parameters", __func__, __LINE__);
         num_split_strings = -1;
         goto err;
@@ -51,23 +52,27 @@ int loc_util_split_string(char *raw_string, char **split_strings_ptr,
     LOC_LOGD("%s:%d]: raw string: %s\n", __func__, __LINE__, raw_string);
     raw_string_length = strlen(raw_string) + 1;
     split_strings_ptr[num_split_strings] = &raw_string[raw_string_index];
-    for(raw_string_index=0; raw_string_index < raw_string_length; raw_string_index++) {
-        if(raw_string[raw_string_index] == '\0')
-            end_string=1;
-        if((raw_string[raw_string_index] == delimiter) || end_string) {
+    for (raw_string_index = 0; raw_string_index < raw_string_length; raw_string_index++)
+    {
+        if (raw_string[raw_string_index] == '\0')
+            end_string = 1;
+        if ((raw_string[raw_string_index] == delimiter) || end_string)
+        {
             raw_string[raw_string_index] = '\0';
             LOC_LOGD("%s:%d]: split string: %s\n",
                      __func__, __LINE__, split_strings_ptr[num_split_strings]);
             num_split_strings++;
-            if(((raw_string_index + 1) < raw_string_length) &&
-               (num_split_strings < max_num_substrings)) {
-                split_strings_ptr[num_split_strings] = &raw_string[raw_string_index+1];
+            if (((raw_string_index + 1) < raw_string_length) &&
+                (num_split_strings < max_num_substrings))
+            {
+                split_strings_ptr[num_split_strings] = &raw_string[raw_string_index + 1];
             }
-            else {
+            else
+            {
                 break;
             }
         }
-        if(end_string)
+        if (end_string)
             break;
     }
 err:
@@ -80,35 +85,43 @@ void loc_util_trim_space(char *org_string)
     char *scan_ptr, *write_ptr;
     char *first_nonspace = NULL, *last_nonspace = NULL;
 
-    if(org_string == NULL) {
+    if (org_string == NULL)
+    {
         LOC_LOGE("%s:%d]: NULL parameter", __func__, __LINE__);
         goto err;
     }
 
     scan_ptr = write_ptr = org_string;
 
-    while (*scan_ptr) {
+    while (*scan_ptr)
+    {
         //Find the first non-space character
-        if ( !isspace(*scan_ptr) && first_nonspace == NULL) {
+        if (!isspace(*scan_ptr) && first_nonspace == NULL)
+        {
             first_nonspace = scan_ptr;
         }
         //Once the first non-space character is found in the
         //above check, keep shifting the characters to the left
         //to replace the spaces
-        if (first_nonspace != NULL) {
+        if (first_nonspace != NULL)
+        {
             *(write_ptr++) = *scan_ptr;
             //Keep track of which was the last non-space character
             //encountered
             //last_nonspace will not be updated in the case where
             //the string ends with spaces
-            if ( !isspace(*scan_ptr)) {
+            if (!isspace(*scan_ptr))
+            {
                 last_nonspace = write_ptr;
             }
         }
         scan_ptr++;
     }
     //Add NULL terminator after the last non-space character
-    if (last_nonspace) { *last_nonspace = '\0'; }
+    if (last_nonspace)
+    {
+        *last_nonspace = '\0';
+    }
 err:
     return;
 }

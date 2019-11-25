@@ -34,7 +34,8 @@
 
 // abstract class to be implemented by client to provide a runnable class
 // which gets scheduled by LocThread
-class LocRunnable {
+class LocRunnable
+{
 public:
     inline LocRunnable() {}
     inline virtual ~LocRunnable() {}
@@ -59,13 +60,15 @@ class LocThreadDelegate;
 
 // A utility class to create a thread and run LocRunnable
 // caller passes in.
-class LocThread {
-    LocThreadDelegate* mThread;
+class LocThread
+{
+    LocThreadDelegate *mThread;
+
 public:
     inline LocThread() : mThread(NULL) {}
     virtual ~LocThread();
 
-    typedef pthread_t (*tCreate)(const char* name, void* (*start)(void*), void* arg);
+    typedef pthread_t (*tCreate)(const char *name, void *(*start)(void *), void *arg);
     // client starts thread with a runnable, which implements
     // the logics to fun in the created thread context.
     // The thread could be either joinable or detached.
@@ -76,8 +79,9 @@ public:
     //          returns true. Else it is client's responsibility
     //          to delete the object
     // Returns 0 if success; false if failure.
-    bool start(tCreate creator, const char* threadName, LocRunnable* runnable, bool joinable = true);
-    inline bool start(const char* threadName, LocRunnable* runnable, bool joinable = true) {
+    bool start(tCreate creator, const char *threadName, LocRunnable *runnable, bool joinable = true);
+    inline bool start(const char *threadName, LocRunnable *runnable, bool joinable = true)
+    {
         return start(NULL, threadName, runnable, joinable);
     }
 
