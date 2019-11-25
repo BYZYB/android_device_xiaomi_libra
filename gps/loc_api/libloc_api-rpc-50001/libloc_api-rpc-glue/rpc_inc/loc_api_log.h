@@ -38,19 +38,19 @@ extern "C"
 #include <ctype.h>
 #include "loc_api_rpcgen_common_rpc.h"
 
-extern int loc_callback_log(
-      rpc_loc_event_mask_type               loc_event,              /* event mask           */
-      const rpc_loc_event_payload_u_type*   loc_event_payload       /* payload              */
-);
+      extern int loc_callback_log(
+          rpc_loc_event_mask_type loc_event,                    /* event mask           */
+          const rpc_loc_event_payload_u_type *loc_event_payload /* payload              */
+      );
 
-extern const char* loc_get_event_atl_open_name(rpc_loc_server_request_e_type loc_event_atl_open);
-extern const char* loc_get_event_name(rpc_loc_event_mask_type loc_event_mask);
-extern const char* loc_get_ioctl_type_name(rpc_loc_ioctl_e_type ioctl_type);
-extern const char* loc_get_ioctl_status_name(uint32 status);
-extern const char* loc_get_sess_status_name(rpc_loc_session_status_e_type status);
-extern const char* loc_get_engine_state_name(rpc_loc_engine_state_e_type state);
-extern const char* loc_get_fix_session_state_name(rpc_loc_fix_session_state_e_type state);
-extern const char* loc_get_rpc_reset_event_name(enum rpc_reset_event event);
+      extern const char *loc_get_event_atl_open_name(rpc_loc_server_request_e_type loc_event_atl_open);
+      extern const char *loc_get_event_name(rpc_loc_event_mask_type loc_event_mask);
+      extern const char *loc_get_ioctl_type_name(rpc_loc_ioctl_e_type ioctl_type);
+      extern const char *loc_get_ioctl_status_name(uint32 status);
+      extern const char *loc_get_sess_status_name(rpc_loc_session_status_e_type status);
+      extern const char *loc_get_engine_state_name(rpc_loc_engine_state_e_type state);
+      extern const char *loc_get_fix_session_state_name(rpc_loc_fix_session_state_e_type state);
+      extern const char *loc_get_rpc_reset_event_name(enum rpc_reset_event event);
 
 #ifdef __cplusplus
 }

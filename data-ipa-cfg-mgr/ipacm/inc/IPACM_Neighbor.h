@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "IPACM_Listener.h"
 #include "IPACM_Iface.h"
 
-#define IPA_MAX_NUM_NEIGHBOR_CLIENTS  17
+#define IPA_MAX_NUM_NEIGHBOR_CLIENTS 17
 
 struct ipa_neighbor_client
 {
@@ -62,19 +62,15 @@ class IPACM_Neighbor : public IPACM_Listener
 {
 
 public:
-
 	IPACM_Neighbor();
 
 	void event_callback(ipa_cm_event_id event,
-											void *data);
+						void *data);
 
 private:
-
 	int num_neighbor_client;
 
 	ipa_neighbor_client neighbor_client[IPA_MAX_NUM_NEIGHBOR_CLIENTS];
-
-
 };
 
 #endif /* IPACM_NEIGHBOR_H */

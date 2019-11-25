@@ -55,11 +55,11 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_msgget(const char * q_path, int mode)
+int loc_eng_dmn_conn_glue_msgget(const char *q_path, int mode)
 {
-    int msgqid;
-    msgqid = loc_eng_dmn_conn_glue_pipeget(q_path, mode);
-    return msgqid;
+   int msgqid;
+   msgqid = loc_eng_dmn_conn_glue_pipeget(q_path, mode);
+   return msgqid;
 }
 
 /*===========================================================================
@@ -81,11 +81,11 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_msgremove(const char * q_path, int msgqid)
+int loc_eng_dmn_conn_glue_msgremove(const char *q_path, int msgqid)
 {
-    int result;
-    result = loc_eng_dmn_conn_glue_piperemove(q_path, msgqid);
-    return result;
+   int result;
+   result = loc_eng_dmn_conn_glue_piperemove(q_path, msgqid);
+   return result;
 }
 
 /*===========================================================================
@@ -108,19 +108,20 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_msgsnd(int msgqid, const void * msgp, size_t msgsz)
+int loc_eng_dmn_conn_glue_msgsnd(int msgqid, const void *msgp, size_t msgsz)
 {
-    int result;
-    struct ctrl_msgbuf *pmsg = (struct ctrl_msgbuf *) msgp;
-    pmsg->msgsz = msgsz;
+   int result;
+   struct ctrl_msgbuf *pmsg = (struct ctrl_msgbuf *)msgp;
+   pmsg->msgsz = msgsz;
 
-    result = loc_eng_dmn_conn_glue_pipewrite(msgqid, msgp, msgsz);
-    if (result != (int) msgsz) {
-        LOC_LOGE("%s:%d] pipe broken %d, msgsz = %d\n", __func__, __LINE__, result, (int) msgsz);
-        return -1;
-    }
+   result = loc_eng_dmn_conn_glue_pipewrite(msgqid, msgp, msgsz);
+   if (result != (int)msgsz)
+   {
+      LOC_LOGE("%s:%d] pipe broken %d, msgsz = %d\n", __func__, __LINE__, result, (int)msgsz);
+      return -1;
+   }
 
-    return result;
+   return result;
 }
 
 /*===========================================================================
@@ -145,27 +146,30 @@ SIDE EFFECTS
 ===========================================================================*/
 int loc_eng_dmn_conn_glue_msgrcv(int msgqid, void *msgp, size_t msgbufsz)
 {
-    int result;
-    struct ctrl_msgbuf *pmsg = (struct ctrl_msgbuf *) msgp;
+   int result;
+   struct ctrl_msgbuf *pmsg = (struct ctrl_msgbuf *)msgp;
 
-    result = loc_eng_dmn_conn_glue_piperead(msgqid, &(pmsg->msgsz), sizeof(pmsg->msgsz));
-    if (result != sizeof(pmsg->msgsz)) {
-        LOC_LOGE("%s:%d] pipe broken %d\n", __func__, __LINE__, result);
-        return -1;
-    }
+   result = loc_eng_dmn_conn_glue_piperead(msgqid, &(pmsg->msgsz), sizeof(pmsg->msgsz));
+   if (result != sizeof(pmsg->msgsz))
+   {
+      LOC_LOGE("%s:%d] pipe broken %d\n", __func__, __LINE__, result);
+      return -1;
+   }
 
-    if (msgbufsz < pmsg->msgsz) {
-        LOC_LOGE("%s:%d] msgbuf is too small %d < %d\n", __func__, __LINE__, (int) msgbufsz, (int) pmsg->msgsz);
-        return -1;
-    }
+   if (msgbufsz < pmsg->msgsz)
+   {
+      LOC_LOGE("%s:%d] msgbuf is too small %d < %d\n", __func__, __LINE__, (int)msgbufsz, (int)pmsg->msgsz);
+      return -1;
+   }
 
-    result = loc_eng_dmn_conn_glue_piperead(msgqid, (uint8_t *) msgp + sizeof(pmsg->msgsz), pmsg->msgsz - sizeof(pmsg->msgsz));
-    if (result != (int) (pmsg->msgsz - sizeof(pmsg->msgsz))) {
-        LOC_LOGE("%s:%d] pipe broken %d, msgsz = %d\n", __func__, __LINE__, result, (int) pmsg->msgsz);
-        return -1;
-    }
+   result = loc_eng_dmn_conn_glue_piperead(msgqid, (uint8_t *)msgp + sizeof(pmsg->msgsz), pmsg->msgsz - sizeof(pmsg->msgsz));
+   if (result != (int)(pmsg->msgsz - sizeof(pmsg->msgsz)))
+   {
+      LOC_LOGE("%s:%d] pipe broken %d, msgsz = %d\n", __func__, __LINE__, result, (int)pmsg->msgsz);
+      return -1;
+   }
 
-    return pmsg->msgsz;
+   return pmsg->msgsz;
 }
 
 /*===========================================================================
@@ -188,7 +192,7 @@ SIDE EFFECTS
 ===========================================================================*/
 int loc_eng_dmn_conn_glue_msgunblock(int msgqid)
 {
-    return loc_eng_dmn_conn_glue_pipeunblock(msgqid);
+   return loc_eng_dmn_conn_glue_pipeunblock(msgqid);
 }
 
 /*===========================================================================
@@ -211,13 +215,13 @@ SIDE EFFECTS
 ===========================================================================*/
 int loc_eng_dmn_conn_glue_msgflush(int msgqid)
 {
-    int length;
-    char buf[128];
+   int length;
+   char buf[128];
 
-    do {
-        length = loc_eng_dmn_conn_glue_piperead(msgqid, buf, 128);
-        LOC_LOGD("%s:%d] %s\n", __func__, __LINE__, buf);
-    } while(length);
-    return length;
+   do
+   {
+      length = loc_eng_dmn_conn_glue_piperead(msgqid, buf, 128);
+      LOC_LOGD("%s:%d] %s\n", __func__, __LINE__, buf);
+   } while (length);
+   return length;
 }
-

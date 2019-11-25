@@ -30,18 +30,19 @@
 #define LOC_ENG_DMN_CONN_GLUE_PIPE_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include <linux/types.h>
 
-int loc_eng_dmn_conn_glue_pipeget(const char * pipe_name, int mode);
-int loc_eng_dmn_conn_glue_piperemove(const char * pipe_name, int fd);
-int loc_eng_dmn_conn_glue_pipewrite(int fd, const void * buf, size_t sz);
-int loc_eng_dmn_conn_glue_piperead(int fd, void * buf, size_t sz);
+    int loc_eng_dmn_conn_glue_pipeget(const char *pipe_name, int mode);
+    int loc_eng_dmn_conn_glue_piperemove(const char *pipe_name, int fd);
+    int loc_eng_dmn_conn_glue_pipewrite(int fd, const void *buf, size_t sz);
+    int loc_eng_dmn_conn_glue_piperead(int fd, void *buf, size_t sz);
 
-int loc_eng_dmn_conn_glue_pipeflush(int fd);
-int loc_eng_dmn_conn_glue_pipeunblock(int fd);
+    int loc_eng_dmn_conn_glue_pipeflush(int fd);
+    int loc_eng_dmn_conn_glue_pipeunblock(int fd);
 
 #ifdef __cplusplus
 }

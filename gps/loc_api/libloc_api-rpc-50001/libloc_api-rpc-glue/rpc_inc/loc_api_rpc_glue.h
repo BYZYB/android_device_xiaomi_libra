@@ -57,64 +57,50 @@ extern "C"
 {
 #endif
 
-extern int loc_api_glue_init(void);
-extern int loc_api_null(void);
+      extern int loc_api_glue_init(void);
+      extern int loc_api_null(void);
 
-typedef int32 (loc_event_cb_f_type)(
-    void*                                 userData,
-    rpc_loc_client_handle_type            loc_handle,             /* handle of the client */
-    rpc_loc_event_mask_type               loc_event,              /* event mask           */
-    const rpc_loc_event_payload_u_type*   loc_event_payload       /* payload              */
-);
+      typedef int32(loc_event_cb_f_type)(
+          void *userData,
+          rpc_loc_client_handle_type loc_handle,                /* handle of the client */
+          rpc_loc_event_mask_type loc_event,                    /* event mask           */
+          const rpc_loc_event_payload_u_type *loc_event_payload /* payload              */
+      );
 
-typedef void (loc_reset_notif_cb_f_type)(
-    void*                                 userData,
-    CLIENT*                               clnt,
-    enum rpc_reset_event                  event
-);
+      typedef void(loc_reset_notif_cb_f_type)(
+          void *userData,
+          CLIENT *clnt,
+          enum rpc_reset_event event);
 
-extern rpc_loc_client_handle_type loc_open(
-    rpc_loc_event_mask_type       event_reg_mask,
-    loc_event_cb_f_type           *event_callback,
-    loc_reset_notif_cb_f_type     *rpc_global_cb,
-    void*                         userData
-);
+      extern rpc_loc_client_handle_type loc_open(
+          rpc_loc_event_mask_type event_reg_mask,
+          loc_event_cb_f_type *event_callback,
+          loc_reset_notif_cb_f_type *rpc_global_cb,
+          void *userData);
 
-extern int32 loc_close
-(
-      rpc_loc_client_handle_type handle
-);
+      extern int32 loc_close(
+          rpc_loc_client_handle_type handle);
 
-extern void loc_clear
-(
-      rpc_loc_client_handle_type handle
-);
+      extern void loc_clear(
+          rpc_loc_client_handle_type handle);
 
-extern int32 loc_start_fix
-(
-      rpc_loc_client_handle_type handle
-);
+      extern int32 loc_start_fix(
+          rpc_loc_client_handle_type handle);
 
-extern int32 loc_stop_fix
-(
-      rpc_loc_client_handle_type handle
-);
+      extern int32 loc_stop_fix(
+          rpc_loc_client_handle_type handle);
 
-extern int32 loc_ioctl
-(
-      rpc_loc_client_handle_type           handle,
-      rpc_loc_ioctl_e_type                 ioctl_type,
-      rpc_loc_ioctl_data_u_type*           ioctl_data
-);
+      extern int32 loc_ioctl(
+          rpc_loc_client_handle_type handle,
+          rpc_loc_ioctl_e_type ioctl_type,
+          rpc_loc_ioctl_data_u_type *ioctl_data);
 
-extern int loc_eng_ioctl
-(
-      rpc_loc_client_handle_type           handle,
-      rpc_loc_ioctl_e_type                 ioctl_type,
-      rpc_loc_ioctl_data_u_type*           ioctl_data_ptr,
-      uint32                               timeout_msec,
-      rpc_loc_ioctl_callback_s_type       *cb_data_ptr
-);
+      extern int loc_eng_ioctl(
+          rpc_loc_client_handle_type handle,
+          rpc_loc_ioctl_e_type ioctl_type,
+          rpc_loc_ioctl_data_u_type *ioctl_data_ptr,
+          uint32 timeout_msec,
+          rpc_loc_ioctl_callback_s_type *cb_data_ptr);
 
 #ifdef __cplusplus
 }

@@ -30,29 +30,30 @@
 #define __MSG_Q_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include <stdlib.h>
 
-/** Linked List Return Codes */
-typedef enum
-{
-  eMSG_Q_SUCCESS                             = 0,
-     /**< Request was successful. */
-  eMSG_Q_FAILURE_GENERAL                     = -1,
-     /**< Failed because of a general failure. */
-  eMSG_Q_INVALID_PARAMETER                   = -2,
-     /**< Failed because the request contained invalid parameters. */
-  eMSG_Q_INVALID_HANDLE                      = -3,
-     /**< Failed because an invalid handle was specified. */
-  eMSG_Q_UNAVAILABLE_RESOURCE                = -4,
-     /**< Failed because an there were not enough resources. */
-  eMSG_Q_INSUFFICIENT_BUFFER                 = -5,
-     /**< Failed because an the supplied buffer was too small. */
-}msq_q_err_type;
+   /** Linked List Return Codes */
+   typedef enum
+   {
+      eMSG_Q_SUCCESS = 0,
+      /**< Request was successful. */
+      eMSG_Q_FAILURE_GENERAL = -1,
+      /**< Failed because of a general failure. */
+      eMSG_Q_INVALID_PARAMETER = -2,
+      /**< Failed because the request contained invalid parameters. */
+      eMSG_Q_INVALID_HANDLE = -3,
+      /**< Failed because an invalid handle was specified. */
+      eMSG_Q_UNAVAILABLE_RESOURCE = -4,
+      /**< Failed because an there were not enough resources. */
+      eMSG_Q_INSUFFICIENT_BUFFER = -5,
+      /**< Failed because an the supplied buffer was too small. */
+   } msq_q_err_type;
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_init
 
 DESCRIPTION
@@ -70,9 +71,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-msq_q_err_type msg_q_init(void** msg_q_data);
+   msq_q_err_type msg_q_init(void **msg_q_data);
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_init2
 
 DESCRIPTION
@@ -88,9 +89,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-const void* msg_q_init2();
+   const void *msg_q_init2();
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_destroy
 
 DESCRIPTION
@@ -108,9 +109,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-msq_q_err_type msg_q_destroy(void** msg_q_data);
+   msq_q_err_type msg_q_destroy(void **msg_q_data);
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_snd
 
 DESCRIPTION
@@ -133,9 +134,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-msq_q_err_type msg_q_snd(void* msg_q_data, void* msg_obj, void (*dealloc)(void*));
+   msq_q_err_type msg_q_snd(void *msg_q_data, void *msg_obj, void (*dealloc)(void *));
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_rcv
 
 DESCRIPTION
@@ -155,9 +156,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-msq_q_err_type msg_q_rcv(void* msg_q_data, void** msg_obj);
+   msq_q_err_type msg_q_rcv(void *msg_q_data, void **msg_obj);
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_flush
 
 DESCRIPTION
@@ -175,9 +176,9 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-msq_q_err_type msg_q_flush(void* msg_q_data);
+   msq_q_err_type msg_q_flush(void *msg_q_data);
 
-/*===========================================================================
+   /*===========================================================================
 FUNCTION    msg_q_unblock
 
 DESCRIPTION
@@ -198,7 +199,7 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-msq_q_err_type msg_q_unblock(void* msg_q_data);
+   msq_q_err_type msg_q_unblock(void *msg_q_data);
 
 #ifdef __cplusplus
 }

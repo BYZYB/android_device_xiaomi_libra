@@ -24,24 +24,26 @@
 #define MAC_ADDR_SIZE 6
 #define BD_ADDR_FILE "/data/misc/bluetooth/bdaddr"
 
-extern int qmi_nv_read_bd_addr(char** mac);
+extern int qmi_nv_read_bd_addr(char **mac);
 
 int main()
 {
-    unsigned char bt_addr[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    char* nv_bt_mac = NULL;
+    unsigned char bt_addr[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    char *nv_bt_mac = NULL;
     int ret, i;
     FILE *fp;
 
     // Read bluetooth address from modem NV
     ret = qmi_nv_read_bd_addr(&nv_bt_mac);
-    if (!nv_bt_mac) {
+    if (!nv_bt_mac)
+    {
         ALOGE("qmi_nv_read_bd_addr error %d", ret);
         return 1;
     }
 
     // Swap bytes
-    for (i = 0; i < MAC_ADDR_SIZE; i++) {
+    for (i = 0; i < MAC_ADDR_SIZE; i++)
+    {
         bt_addr[i] = nv_bt_mac[6 - 1 - i];
     }
 

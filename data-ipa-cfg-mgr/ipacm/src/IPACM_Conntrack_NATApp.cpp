@@ -58,7 +58,7 @@ int NatApp::Init(void)
 	int size = 0;
 
 	pConfig = IPACM_Config::GetInstance();
-	if(pConfig == NULL)
+	if (pConfig == NULL)
 	{
 		IPACMERR("Unable to get Config instance\n");
 		return -1;
@@ -68,7 +68,7 @@ int NatApp::Init(void)
 
 	size = (sizeof(nat_table_entry) * max_entries);
 	cache = (nat_table_entry *)malloc(size);
-	if(cache == NULL)
+	if (cache == NULL)
 	{
 		IPACMERR("Unable to allocate memory for cache\n");
 		goto fail;
@@ -78,21 +78,21 @@ int NatApp::Init(void)
 
 	nALGPort = pConfig->GetAlgPortCnt();
 	pALGPorts = (ipacm_alg *)malloc(sizeof(ipacm_alg) * nALGPort);
-	if(pALGPorts == NULL)
+	if (pALGPorts == NULL)
 	{
 		IPACMERR("Unable to allocate memory for alg prots\n");
 		goto fail;
 	}
 	memset(pALGPorts, 0, sizeof(ipacm_alg) * nALGPort);
 
-	if(pConfig->GetAlgPorts(nALGPort, pALGPorts) != 0)
+	if (pConfig->GetAlgPorts(nALGPort, pALGPorts) != 0)
 	{
 		IPACMERR("Unable to retrieve ALG prots\n");
 		goto fail;
 	}
 
 	IPACMDBG("Printing %d alg ports information\n", nALGPort);
-	for(int cnt=0; cnt<nALGPort; cnt++)
+	for (int cnt = 0; cnt < nALGPort; cnt++)
 	{
 		IPACMDBG("%d: Proto[%d], port[%d]\n", cnt, pALGPorts[cnt].protocol, pALGPorts[cnt].port);
 	}
@@ -105,13 +105,13 @@ fail:
 	return -1;
 }
 
-NatApp* NatApp::GetInstance()
+NatApp *NatApp::GetInstance()
 {
-	if(pInstance == NULL)
+	if (pInstance == NULL)
 	{
 		pInstance = new NatApp();
 
-		if(pInstance->Init())
+		if (pInstance->Init())
 		{
 			delete pInstance;
 			return NULL;
@@ -140,7 +140,7 @@ int NatApp::AddTable(uint32_t pub_ip)
 	}
 #endif
 	ret = ipa_nat_add_ipv4_tbl(pub_ip, max_entries, &nat_table_hdl);
-	if(ret)
+	if (ret)
 	{
 		IPACMERR("unable to create nat table Error:%d\n", ret);
 		return ret;
@@ -150,11 +150,11 @@ int NatApp::AddTable(uint32_t pub_ip)
 	if (pub_ip == pub_ip_addr_pre)
 	{
 		IPACMDBG("Restore the cache to ipa NAT-table\n");
-		for(cnt = 0; cnt < max_entries; cnt++)
+		for (cnt = 0; cnt < max_entries; cnt++)
 		{
-			if(cache[cnt].private_ip !=0)
+			if (cache[cnt].private_ip != 0)
 			{
-				memset(&nat_rule, 0 , sizeof(nat_rule));
+				memset(&nat_rule, 0, sizeof(nat_rule));
 				nat_rule.private_ip = cache[cnt].private_ip;
 				nat_rule.target_ip = cache[cnt].target_ip;
 				nat_rule.target_port = cache[cnt].target_port;
@@ -162,7 +162,7 @@ int NatApp::AddTable(uint32_t pub_ip)
 				nat_rule.public_port = cache[cnt].public_port;
 				nat_rule.protocol = cache[cnt].protocol;
 
-				if(ipa_nat_add_ipv4_rule(nat_table_hdl, &nat_rule, &cache[cnt].rule_hdl) < 0)
+				if (ipa_nat_add_ipv4_rule(nat_table_hdl, &nat_rule, &cache[cnt].rule_hdl) < 0)
 				{
 					IPACMERR("unable to add the rule delete from cache\n");
 					memset(&cache[cnt], 0, sizeof(cache[cnt]));
@@ -192,9 +192,9 @@ void NatApp::Reset()
 	nat_table_hdl = 0;
 	pub_ip_addr = 0;
 	/* NAT tbl deleted, reset enabled bit */
-	for(cnt = 0; cnt < max_entries; cnt++)
+	for (cnt = 0; cnt < max_entries; cnt++)
 	{
-		cache[cnt].enabled ==false;
+		cache[cnt].enabled == false;
 	}
 }
 
@@ -205,7 +205,7 @@ int NatApp::DeleteTable(uint32_t pub_ip)
 
 	CHK_TBL_HDL();
 
-	if(pub_ip_addr != pub_ip)
+	if (pub_ip_addr != pub_ip)
 	{
 		IPACMDBG("Public ip address is not matching\n");
 		IPACMERR("unable to delete the nat table\n");
@@ -213,9 +213,10 @@ int NatApp::DeleteTable(uint32_t pub_ip)
 	}
 
 	ret = ipa_nat_del_ipv4_tbl(nat_table_hdl);
-	if(ret)
+	if (ret)
 	{
-		IPACMERR("unable to delete nat table Error: %d\n", ret);;
+		IPACMERR("unable to delete nat table Error: %d\n", ret);
+		;
 		return ret;
 	}
 
@@ -230,13 +231,13 @@ bool NatApp::ChkForDup(const nat_table_entry *rule)
 	int cnt = 0;
 	IPACMDBG("%s() %d\n", __FUNCTION__, __LINE__);
 
-	for(; cnt < max_entries; cnt++)
+	for (; cnt < max_entries; cnt++)
 	{
-		if(cache[cnt].private_ip == rule->private_ip &&
-			 cache[cnt].target_ip == rule->target_ip &&
-			 cache[cnt].private_port ==  rule->private_port  &&
-			 cache[cnt].target_port == rule->target_port &&
-			 cache[cnt].protocol == rule->protocol)
+		if (cache[cnt].private_ip == rule->private_ip &&
+			cache[cnt].target_ip == rule->target_ip &&
+			cache[cnt].private_port == rule->private_port &&
+			cache[cnt].target_port == rule->target_port &&
+			cache[cnt].protocol == rule->protocol)
 		{
 			IPACMDBG("Duplicate Rule\n");
 			iptodot("Private IP", rule->private_ip);
@@ -262,18 +263,18 @@ int NatApp::DeleteEntry(const nat_table_entry *rule)
 	IPACMDBG("Private Port: %d\t Target Port: %d\t", rule->private_port, rule->target_port);
 	IPACMDBG("protocolcol: %d\n", rule->protocol);
 
-	for(; cnt < max_entries; cnt++)
+	for (; cnt < max_entries; cnt++)
 	{
-		if(cache[cnt].private_ip == rule->private_ip &&
-			 cache[cnt].target_ip == rule->target_ip &&
-			 cache[cnt].private_port ==  rule->private_port  &&
-			 cache[cnt].target_port == rule->target_port &&
-			 cache[cnt].protocol == rule->protocol)
+		if (cache[cnt].private_ip == rule->private_ip &&
+			cache[cnt].target_ip == rule->target_ip &&
+			cache[cnt].private_port == rule->private_port &&
+			cache[cnt].target_port == rule->target_port &&
+			cache[cnt].protocol == rule->protocol)
 		{
 
-			if(cache[cnt].enabled == true)
+			if (cache[cnt].enabled == true)
 			{
-				if(ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
+				if (ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
 				{
 					IPACMERR("%s() %d deletion failed\n", __FUNCTION__, __LINE__);
 				}
@@ -310,38 +311,38 @@ int NatApp::AddEntry(const nat_table_entry *rule)
 	IPACMDBG("Private Port: %d\t Target Port: %d\t", rule->private_port, rule->target_port);
 	IPACMDBG("protocolcol: %d\n", rule->protocol);
 
-	if(isAlgPort(rule->protocol, rule->private_port) ||
-		 isAlgPort(rule->protocol, rule->target_port))
+	if (isAlgPort(rule->protocol, rule->private_port) ||
+		isAlgPort(rule->protocol, rule->target_port))
 	{
 		IPACMERR("connection using ALG Port. Dont insert into nat table\n");
 		return -1;
 	}
 
-	if(rule->private_ip == 0 ||
-		 rule->target_ip == 0 ||
-		 rule->private_port == 0  ||
-		 rule->target_port == 0 ||
-		 rule->protocol == 0)
+	if (rule->private_ip == 0 ||
+		rule->target_ip == 0 ||
+		rule->private_port == 0 ||
+		rule->target_port == 0 ||
+		rule->protocol == 0)
 	{
 		IPACMERR("Invalid Connection, ignoring it\n");
 		return 0;
 	}
 
-	if(!ChkForDup(rule))
+	if (!ChkForDup(rule))
 	{
-		for(; cnt < max_entries; cnt++)
+		for (; cnt < max_entries; cnt++)
 		{
-			if(cache[cnt].private_ip == 0 &&
-				 cache[cnt].target_ip == 0 &&
-				 cache[cnt].private_port == 0  &&
-				 cache[cnt].target_port == 0 &&
-				 cache[cnt].protocol == 0)
+			if (cache[cnt].private_ip == 0 &&
+				cache[cnt].target_ip == 0 &&
+				cache[cnt].private_port == 0 &&
+				cache[cnt].target_port == 0 &&
+				cache[cnt].protocol == 0)
 			{
 				break;
 			}
 		}
 
-		if(max_entries == cnt)
+		if (max_entries == cnt)
 		{
 			IPACMERR("Error: Unable to add, reached maximum rules\n");
 			return -1;
@@ -355,8 +356,8 @@ int NatApp::AddEntry(const nat_table_entry *rule)
 			nat_rule.public_port = rule->public_port;
 			nat_rule.protocol = rule->protocol;
 
-			if(isPwrSaveIf(rule->private_ip) ||
-				 isPwrSaveIf(rule->target_ip))
+			if (isPwrSaveIf(rule->private_ip) ||
+				isPwrSaveIf(rule->target_ip))
 			{
 				IPACMDBG("Device is Power Save mode: Dont insert into nat table but cache\n");
 				cache[cnt].enabled = false;
@@ -365,7 +366,7 @@ int NatApp::AddEntry(const nat_table_entry *rule)
 			else
 			{
 
-				if(ipa_nat_add_ipv4_rule(nat_table_hdl, &nat_rule, &cache[cnt].rule_hdl) < 0)
+				if (ipa_nat_add_ipv4_rule(nat_table_hdl, &nat_rule, &cache[cnt].rule_hdl) < 0)
 				{
 					IPACMERR("unable to add the rule\n");
 					return -1;
@@ -384,7 +385,6 @@ int NatApp::AddEntry(const nat_table_entry *rule)
 			cache[cnt].dst_nat = rule->dst_nat;
 			curCnt++;
 		}
-
 	}
 	else
 	{
@@ -392,14 +392,14 @@ int NatApp::AddEntry(const nat_table_entry *rule)
 		return -1;
 	}
 
-	if(cache[cnt].enabled == true)
+	if (cache[cnt].enabled == true)
 	{
 		IPACMDBG("Added rule(%d) successfully\n", cnt);
 	}
-  else
-  {
-    IPACMDBG("Cached rule(%d) successfully\n", cnt);
-  }
+	else
+	{
+		IPACMDBG("Cached rule(%d) successfully\n", cnt);
+	}
 
 	return 0;
 }
@@ -409,23 +409,23 @@ void NatApp::UpdateCTUdpTs(nat_table_entry *rule, uint32_t new_ts)
 	int ret;
 
 	iptodot("Private IP:", rule->private_ip);
-	iptodot("Target IP:",  rule->target_ip);
+	iptodot("Target IP:", rule->target_ip);
 	IPACMDBG("Private Port: %d, Target Port: %d\n", rule->private_port, rule->target_port);
 
-	if(!ct_hdl)
+	if (!ct_hdl)
 	{
 		ct_hdl = nfct_open(CONNTRACK, 0);
-		if(!ct_hdl)
+		if (!ct_hdl)
 		{
 			PERROR("nfct_open");
 			return;
 		}
 	}
 
-	if(!ct)
+	if (!ct)
 	{
 		ct = nfct_new();
-		if(!ct)
+		if (!ct)
 		{
 			PERROR("nfct_new");
 			return;
@@ -433,7 +433,7 @@ void NatApp::UpdateCTUdpTs(nat_table_entry *rule, uint32_t new_ts)
 	}
 
 	nfct_set_attr_u8(ct, ATTR_L3PROTO, AF_INET);
-	if(rule->protocol == IPPROTO_UDP)
+	if (rule->protocol == IPPROTO_UDP)
 	{
 		nfct_set_attr_u8(ct, ATTR_L4PROTO, rule->protocol);
 		nfct_set_attr_u32(ct, ATTR_TIMEOUT, udp_timeout);
@@ -444,7 +444,7 @@ void NatApp::UpdateCTUdpTs(nat_table_entry *rule, uint32_t new_ts)
 		nfct_set_attr_u32(ct, ATTR_TIMEOUT, tcp_timeout);
 	}
 
-	if(rule->dst_nat == false)
+	if (rule->dst_nat == false)
 	{
 		nfct_set_attr_u32(ct, ATTR_IPV4_SRC, htonl(rule->private_ip));
 		nfct_set_attr_u16(ct, ATTR_PORT_SRC, htons(rule->private_port));
@@ -466,15 +466,15 @@ void NatApp::UpdateCTUdpTs(nat_table_entry *rule, uint32_t new_ts)
 	}
 
 	iptodot("Source IP:", nfct_get_attr_u32(ct, ATTR_IPV4_SRC));
-	iptodot("Destination IP:",  nfct_get_attr_u32(ct, ATTR_IPV4_DST));
+	iptodot("Destination IP:", nfct_get_attr_u32(ct, ATTR_IPV4_DST));
 	IPACMDBG("Source Port: %d, Destination Port: %d\n",
-					 nfct_get_attr_u16(ct, ATTR_PORT_SRC), nfct_get_attr_u16(ct, ATTR_PORT_DST));
+			 nfct_get_attr_u16(ct, ATTR_PORT_SRC), nfct_get_attr_u16(ct, ATTR_PORT_DST));
 
 	IPACMDBG("updating %d connection with time: %d\n",
-					 rule->protocol, nfct_get_attr_u32(ct, ATTR_TIMEOUT));
+			 rule->protocol, nfct_get_attr_u32(ct, ATTR_TIMEOUT));
 
 	ret = nfct_query(ct_hdl, NFCT_Q_UPDATE, ct);
-	if(ret == -1)
+	if (ret == -1)
 	{
 		PERROR("unable to update time stamp");
 	}
@@ -492,22 +492,22 @@ void NatApp::UpdateUDPTimeStamp()
 	int cnt;
 	uint32_t ts;
 
-	for(cnt = 0; cnt < max_entries; cnt++)
+	for (cnt = 0; cnt < max_entries; cnt++)
 	{
 		ts = 0;
-		if(cache[cnt].enabled == true)
+		if (cache[cnt].enabled == true)
 		{
 			IPACMDBG("\n");
-			if(ipa_nat_query_timestamp(nat_table_hdl, cache[cnt].rule_hdl, &ts) < 0)
+			if (ipa_nat_query_timestamp(nat_table_hdl, cache[cnt].rule_hdl, &ts) < 0)
 			{
 				IPACMERR("unable to retrieve timeout for rule hanle: %d\n", cache[cnt].rule_hdl);
 				continue;
 			}
 
-			if(cache[cnt].timestamp == ts)
+			if (cache[cnt].timestamp == ts)
 			{
 				IPACMDBG("No Change in Time Stamp: cahce:%d, ipahw:%d\n",
-								                  cache[cnt].timestamp, ts);
+						 cache[cnt].timestamp, ts);
 				continue;
 			}
 
@@ -515,16 +515,15 @@ void NatApp::UpdateUDPTimeStamp()
 		} /* end of outer if */
 
 	} /* end of for loop */
-
 }
 
 bool NatApp::isAlgPort(uint8_t proto, uint16_t port)
 {
 	int cnt;
-	for(cnt = 0; cnt < nALGPort; cnt++)
+	for (cnt = 0; cnt < nALGPort; cnt++)
 	{
-		if(proto == pALGPorts[cnt].protocol &&
-			 port == pALGPorts[cnt].port)
+		if (proto == pALGPorts[cnt].protocol &&
+			port == pALGPorts[cnt].port)
 		{
 			return true;
 		}
@@ -537,10 +536,10 @@ bool NatApp::isPwrSaveIf(uint32_t ip_addr)
 {
 	int cnt;
 
-	for(cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
+	for (cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
 	{
-		if(0 != PwrSaveIfs[cnt] &&
-			 ip_addr == PwrSaveIfs[cnt])
+		if (0 != PwrSaveIfs[cnt] &&
+			ip_addr == PwrSaveIfs[cnt])
 		{
 			return true;
 		}
@@ -554,38 +553,37 @@ int NatApp::UpdatePwrSaveIf(uint32_t client_lan_ip)
 	int cnt;
 	IPACMDBG("Received IP address: 0x%x\n", client_lan_ip);
 
-	if(client_lan_ip == INVALID_IP_ADDR)
+	if (client_lan_ip == INVALID_IP_ADDR)
 	{
 		IPACMERR("Invalid ip address received\n");
 		return -1;
 	}
 
 	/* check for duplicate events */
-	for(cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
+	for (cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
 	{
-		if(PwrSaveIfs[cnt] == client_lan_ip)
+		if (PwrSaveIfs[cnt] == client_lan_ip)
 		{
 			IPACMDBG("The client 0x%x is already in power save\n", client_lan_ip);
 			return 0;
 		}
 	}
 
-
-	for(cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
+	for (cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
 	{
-		if(PwrSaveIfs[cnt] == 0)
+		if (PwrSaveIfs[cnt] == 0)
 		{
 			PwrSaveIfs[cnt] = client_lan_ip;
 			break;
 		}
 	}
 
-	for(cnt = 0; cnt < max_entries; cnt++)
+	for (cnt = 0; cnt < max_entries; cnt++)
 	{
-		if(cache[cnt].private_ip == client_lan_ip &&
-			 cache[cnt].enabled == true)
+		if (cache[cnt].private_ip == client_lan_ip &&
+			cache[cnt].enabled == true)
 		{
-			if(ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
+			if (ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
 			{
 				IPACMERR("unable to delete the rule\n");
 				continue;
@@ -606,29 +604,29 @@ int NatApp::ResetPwrSaveIf(uint32_t client_lan_ip)
 
 	IPACMDBG("Received ip address: 0x%x\n", client_lan_ip);
 
-	if(client_lan_ip == INVALID_IP_ADDR)
+	if (client_lan_ip == INVALID_IP_ADDR)
 	{
 		IPACMERR("Invalid ip address received\n");
 		return -1;
 	}
 
-	for(cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
+	for (cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
 	{
-		if(PwrSaveIfs[cnt] == client_lan_ip)
+		if (PwrSaveIfs[cnt] == client_lan_ip)
 		{
 			PwrSaveIfs[cnt] = 0;
 			break;
 		}
 	}
 
-	for(cnt = 0; cnt < max_entries; cnt++)
+	for (cnt = 0; cnt < max_entries; cnt++)
 	{
 		IPACMDBG("cache (%d): enable %d, ip 0x%x\n", cnt, cache[cnt].enabled, cache[cnt].private_ip);
 
-		if(cache[cnt].private_ip == client_lan_ip &&
-			 cache[cnt].enabled == false)
+		if (cache[cnt].private_ip == client_lan_ip &&
+			cache[cnt].enabled == false)
 		{
-			memset(&nat_rule, 0 , sizeof(nat_rule));
+			memset(&nat_rule, 0, sizeof(nat_rule));
 			nat_rule.private_ip = cache[cnt].private_ip;
 			nat_rule.target_ip = cache[cnt].target_ip;
 			nat_rule.target_port = cache[cnt].target_port;
@@ -636,7 +634,7 @@ int NatApp::ResetPwrSaveIf(uint32_t client_lan_ip)
 			nat_rule.public_port = cache[cnt].public_port;
 			nat_rule.protocol = cache[cnt].protocol;
 
-			if(ipa_nat_add_ipv4_rule(nat_table_hdl, &nat_rule, &cache[cnt].rule_hdl) < 0)
+			if (ipa_nat_add_ipv4_rule(nat_table_hdl, &nat_rule, &cache[cnt].rule_hdl) < 0)
 			{
 				IPACMERR("unable to add the rule delete from cache\n");
 				memset(&cache[cnt], 0, sizeof(cache[cnt]));
@@ -651,7 +649,6 @@ int NatApp::ResetPwrSaveIf(uint32_t client_lan_ip)
 			IPACMDBG("Private Port:%d \t Target Port: %d\t", nat_rule.private_port, nat_rule.target_port);
 			IPACMDBG("Public Port:%d\n", nat_rule.public_port);
 			IPACMDBG("protocol: %d\n", nat_rule.protocol);
-
 		}
 	}
 
@@ -660,12 +657,12 @@ int NatApp::ResetPwrSaveIf(uint32_t client_lan_ip)
 
 void NatApp::UpdateTcpUdpTo(uint32_t new_value, int proto)
 {
-	if(proto == IPPROTO_TCP)
+	if (proto == IPPROTO_TCP)
 	{
 		tcp_timeout = new_value;
 		IPACMDBG("new nat tcp timeout value: %d\n", tcp_timeout);
 	}
-	else if(proto == IPPROTO_UDP)
+	else if (proto == IPPROTO_UDP)
 	{
 		udp_timeout = new_value;
 		IPACMDBG("new nat udp timeout value: %d\n", udp_timeout);
@@ -674,7 +671,7 @@ void NatApp::UpdateTcpUdpTo(uint32_t new_value, int proto)
 
 uint32_t NatApp::GetTableHdl(uint32_t in_ip_addr)
 {
-	if(in_ip_addr == pub_ip_addr)
+	if (in_ip_addr == pub_ip_addr)
 	{
 		return nat_table_hdl;
 	}
@@ -692,10 +689,10 @@ void NatApp::AddTempEntry(const nat_table_entry *new_entry)
 	IPACMDBG("Private Port: %d\t Target Port: %d\t", new_entry->private_port, new_entry->target_port);
 	IPACMDBG("protocolcol: %d\n", new_entry->protocol);
 
-	for(cnt=0; cnt<MAX_TEMP_ENTRIES; cnt++)
+	for (cnt = 0; cnt < MAX_TEMP_ENTRIES; cnt++)
 	{
-		if(temp[cnt].private_ip == 0 &&
-			 temp[cnt].target_ip == 0)
+		if (temp[cnt].private_ip == 0 &&
+			temp[cnt].target_ip == 0)
 		{
 			memcpy(&temp[cnt], new_entry, sizeof(nat_table_entry));
 			IPACMDBG("Added Temp Entry\n");
@@ -717,13 +714,13 @@ void NatApp::DeleteTempEntry(const nat_table_entry *entry)
 	IPACMDBG("Private Port: %d\t Target Port: %d\t", entry->private_port, entry->target_port);
 	IPACMDBG("protocolcol: %d\n", entry->protocol);
 
-	for(cnt=0; cnt<MAX_TEMP_ENTRIES; cnt++)
+	for (cnt = 0; cnt < MAX_TEMP_ENTRIES; cnt++)
 	{
-		if(temp[cnt].private_ip == entry->private_ip &&
-			 temp[cnt].target_ip == entry->target_ip &&
-			 temp[cnt].private_port ==  entry->private_port  &&
-			 temp[cnt].target_port == entry->target_port &&
-			 temp[cnt].protocol == entry->protocol)
+		if (temp[cnt].private_ip == entry->private_ip &&
+			temp[cnt].target_ip == entry->target_ip &&
+			temp[cnt].private_port == entry->private_port &&
+			temp[cnt].target_port == entry->target_port &&
+			temp[cnt].protocol == entry->protocol)
 		{
 			memset(&temp[cnt], 0, sizeof(nat_table_entry));
 			IPACMDBG("Delete Temp Entry\n");
@@ -743,17 +740,17 @@ void NatApp::FlushTempEntries(uint32_t ip_addr, bool isAdd)
 	IPACMDBG("Received below with isAdd:%d\n", isAdd);
 	iptodot("IP Address:", ip_addr);
 
-	for(cnt=0; cnt<MAX_TEMP_ENTRIES; cnt++)
+	for (cnt = 0; cnt < MAX_TEMP_ENTRIES; cnt++)
 	{
-		if(temp[cnt].private_ip == ip_addr ||
-			 temp[cnt].target_ip == ip_addr)
+		if (temp[cnt].private_ip == ip_addr ||
+			temp[cnt].target_ip == ip_addr)
 		{
-			if(isAdd)
+			if (isAdd)
 			{
-				if(temp[cnt].public_ip == pub_ip_addr)
+				if (temp[cnt].public_ip == pub_ip_addr)
 				{
 					ret = AddEntry(&temp[cnt]);
-					if(ret)
+					if (ret)
 					{
 						IPACMERR("unable to add temp entry: %d\n", ret);
 						continue;
@@ -769,48 +766,47 @@ void NatApp::FlushTempEntries(uint32_t ip_addr, bool isAdd)
 
 int NatApp::DelEntriesOnClntDiscon(uint32_t ip_addr)
 {
- 	int cnt, tmp = curCnt;
+	int cnt, tmp = curCnt;
 	IPACMDBG("Received IP address: 0x%x\n", ip_addr);
 
-	if(ip_addr == INVALID_IP_ADDR)
+	if (ip_addr == INVALID_IP_ADDR)
 	{
 		IPACMERR("Invalid ip address received\n");
 		return -1;
 	}
 
-
-  for(cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
-  {
-    if(PwrSaveIfs[cnt] == ip_addr)
-    {
-      PwrSaveIfs[cnt] = 0;
-      IPACMDBG("Remove %d power save entry\n", cnt);
-      break;
-    }
-  }
-
-  for(cnt = 0; cnt < max_entries; cnt++)
-  {
-	if(cache[cnt].private_ip == ip_addr)
+	for (cnt = 0; cnt < IPA_MAX_NUM_WIFI_CLIENTS; cnt++)
 	{
-		if(cache[cnt].enabled == true)
-      		{
-			if(ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
-			{
-				IPACMERR("unable to delete the rule\n");
-				continue;
-			}
-			else
-			{
-				IPACMDBG("won't delete the rule\n");
-				cache[cnt].enabled = false;
-		        }
-	        }
-		IPACMDBG("won't delete the rule for entry %d, enabled %d\n",cnt, cache[cnt].enabled);
+		if (PwrSaveIfs[cnt] == ip_addr)
+		{
+			PwrSaveIfs[cnt] = 0;
+			IPACMDBG("Remove %d power save entry\n", cnt);
+			break;
+		}
 	}
-  }
-  IPACMDBG("Deleted %d entries\n", (tmp - curCnt));
-  return 0;
+
+	for (cnt = 0; cnt < max_entries; cnt++)
+	{
+		if (cache[cnt].private_ip == ip_addr)
+		{
+			if (cache[cnt].enabled == true)
+			{
+				if (ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
+				{
+					IPACMERR("unable to delete the rule\n");
+					continue;
+				}
+				else
+				{
+					IPACMDBG("won't delete the rule\n");
+					cache[cnt].enabled = false;
+				}
+			}
+			IPACMDBG("won't delete the rule for entry %d, enabled %d\n", cnt, cache[cnt].enabled);
+		}
+	}
+	IPACMDBG("Deleted %d entries\n", (tmp - curCnt));
+	return 0;
 }
 
 int NatApp::DelEntriesOnSTAClntDiscon(uint32_t ip_addr)
@@ -818,20 +814,19 @@ int NatApp::DelEntriesOnSTAClntDiscon(uint32_t ip_addr)
 	int cnt, tmp = curCnt;
 	IPACMDBG("Received IP address: 0x%x\n", ip_addr);
 
-	if(ip_addr == INVALID_IP_ADDR)
+	if (ip_addr == INVALID_IP_ADDR)
 	{
 		IPACMERR("Invalid ip address received\n");
 		return -1;
 	}
 
-
-	for(cnt = 0; cnt < max_entries; cnt++)
+	for (cnt = 0; cnt < max_entries; cnt++)
 	{
-		if(cache[cnt].target_ip == ip_addr)
+		if (cache[cnt].target_ip == ip_addr)
 		{
-			if(cache[cnt].enabled == true)
+			if (cache[cnt].enabled == true)
 			{
-				if(ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
+				if (ipa_nat_del_ipv4_rule(nat_table_hdl, cache[cnt].rule_hdl) < 0)
 				{
 					IPACMERR("unable to delete the rule\n");
 					continue;
@@ -850,31 +845,31 @@ int NatApp::DelEntriesOnSTAClntDiscon(uint32_t ip_addr)
 void NatApp::CacheEntry(const nat_table_entry *rule)
 {
 	int cnt;
-	if(rule->private_ip == 0 ||
-		 rule->target_ip == 0 ||
-		 rule->private_port == 0  ||
-		 rule->target_port == 0 ||
-		 rule->protocol == 0)
+	if (rule->private_ip == 0 ||
+		rule->target_ip == 0 ||
+		rule->private_port == 0 ||
+		rule->target_port == 0 ||
+		rule->protocol == 0)
 	{
 		IPACMERR("Invalid Connection, ignoring it\n");
 		return;
 	}
 
-	if(!ChkForDup(rule))
+	if (!ChkForDup(rule))
 	{
-		for(; cnt < max_entries; cnt++)
+		for (; cnt < max_entries; cnt++)
 		{
-			if(cache[cnt].private_ip == 0 &&
-				 cache[cnt].target_ip == 0 &&
-				 cache[cnt].private_port == 0  &&
-				 cache[cnt].target_port == 0 &&
-				 cache[cnt].protocol == 0)
+			if (cache[cnt].private_ip == 0 &&
+				cache[cnt].target_ip == 0 &&
+				cache[cnt].private_port == 0 &&
+				cache[cnt].target_port == 0 &&
+				cache[cnt].protocol == 0)
 			{
 				break;
 			}
 		}
 
-		if(max_entries == cnt)
+		if (max_entries == cnt)
 		{
 			IPACMERR("Error: Unable to add, reached maximum rules\n");
 			return;
@@ -893,7 +888,6 @@ void NatApp::CacheEntry(const nat_table_entry *rule)
 			cache[cnt].dst_nat = rule->dst_nat;
 			curCnt++;
 		}
-
 	}
 	else
 	{

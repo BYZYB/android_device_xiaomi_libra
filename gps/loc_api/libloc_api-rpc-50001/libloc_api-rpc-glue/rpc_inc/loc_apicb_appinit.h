@@ -34,9 +34,9 @@ extern "C"
 {
 #endif
 
- /* Initialization function for callbacks */
-extern int loc_apicb_app_init();
-extern void loc_apicb_app_deinit();
+    /* Initialization function for callbacks */
+    extern int loc_apicb_app_init();
+    extern void loc_apicb_app_deinit();
 
 #ifdef __cplusplus
 }

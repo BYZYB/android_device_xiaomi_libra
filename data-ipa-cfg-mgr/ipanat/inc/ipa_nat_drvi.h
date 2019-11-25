@@ -49,42 +49,42 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define NAT_MMAP_MEM_SIZE (2 * 1024UL * 1024UL - 1)
 #endif
 
-#define IPA_DEV_NAME       "/dev/ipa"
-#define NAT_DEV_DIR        "/dev"
-#define NAT_DEV_NAME       "ipaNatTable"
-#define NAT_DEV_FULL_NAME  "/dev/ipaNatTable"
+#define IPA_DEV_NAME "/dev/ipa"
+#define NAT_DEV_DIR "/dev"
+#define NAT_DEV_NAME "ipaNatTable"
+#define NAT_DEV_FULL_NAME "/dev/ipaNatTable"
 
 #define IPA_NAT_TABLE_VALID 1
-#define IPA_NAT_MAX_IP4_TBLS   1
-#define IPA_NAT_BASE_TABLE_PERCENTAGE       .8
-#define IPA_NAT_EXPANSION_TABLE_PERCENTAGE  .2
+#define IPA_NAT_MAX_IP4_TBLS 1
+#define IPA_NAT_BASE_TABLE_PERCENTAGE .8
+#define IPA_NAT_EXPANSION_TABLE_PERCENTAGE .2
 
-#define IPA_NAT_NUM_OF_BASE_TABLES      2
-#define IPA_NAT_UNUSED_BASE_ENTRIES     2
+#define IPA_NAT_NUM_OF_BASE_TABLES 2
+#define IPA_NAT_UNUSED_BASE_ENTRIES 2
 
-#define IPA_NAT_RULE_FLAG_FIELD_OFFSET        18
-#define IPA_NAT_RULE_NEXT_FIELD_OFFSET        8
-#define IPA_NAT_RULE_PROTO_FIELD_OFFSET       22
+#define IPA_NAT_RULE_FLAG_FIELD_OFFSET 18
+#define IPA_NAT_RULE_NEXT_FIELD_OFFSET 8
+#define IPA_NAT_RULE_PROTO_FIELD_OFFSET 22
 
-#define IPA_NAT_INDEX_RULE_NEXT_FIELD_OFFSET       2
-#define IPA_NAT_INDEX_RULE_NAT_INDEX_FIELD_OFFSET  0
+#define IPA_NAT_INDEX_RULE_NEXT_FIELD_OFFSET 2
+#define IPA_NAT_INDEX_RULE_NAT_INDEX_FIELD_OFFSET 0
 
-#define IPA_NAT_RULE_FLAG_FIELD_SIZE       2
-#define IPA_NAT_RULE_NEXTFIELD_FIELD_SIZE  2
+#define IPA_NAT_RULE_FLAG_FIELD_SIZE 2
+#define IPA_NAT_RULE_NEXTFIELD_FIELD_SIZE 2
 
-#define IPA_NAT_FLAG_ENABLE_BIT_MASK  0x8000
+#define IPA_NAT_FLAG_ENABLE_BIT_MASK 0x8000
 #define IPA_NAT_FLAG_DISABLE_BIT_MASK 0x0000
 
-#define IPA_NAT_FLAG_ENABLE_BIT  1
+#define IPA_NAT_FLAG_ENABLE_BIT 1
 #define IPA_NAT_FLAG_DISABLE_BIT 0
 
 #define IPA_NAT_INVALID_PROTO_FIELD_VALUE 0xFF00
-#define IPA_NAT_INVALID_PROTO_FIELD_CMP   0xFF
+#define IPA_NAT_INVALID_PROTO_FIELD_CMP 0xFF
 
 #define IPA_NAT_INVALID_INDEX 0xFF
 #define IPA_NAT_INVALID_NAT_ENTRY 0x0
 
-#define INDX_TBL_ENTRY_SIZE_IN_BITS  16
+#define INDX_TBL_ENTRY_SIZE_IN_BITS 16
 
 /* ----------- Rule id -----------------------
 
@@ -96,8 +96,8 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    ------------------------------------------------
 
 */
-#define IPA_NAT_RULE_HDL_TBL_TYPE_BITS        0x1
-#define IPA_NAT_RULE_HDL_TBL_TYPE_MASK        0x1
+#define IPA_NAT_RULE_HDL_TBL_TYPE_BITS 0x1
+#define IPA_NAT_RULE_HDL_TBL_TYPE_MASK 0x1
 
 /* ----------- sw specif parameter -----
    ------------------------------------
@@ -107,17 +107,19 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    |     entry       |                |
    ------------------------------------
 -----------------------------------------*/
-#define IPA_NAT_SW_PARAM_PREV_INDX_BYTE       0
-#define IPA_NAT_SW_PARAM_INDX_TBL_ENTRY_BYTE  1
+#define IPA_NAT_SW_PARAM_PREV_INDX_BYTE 0
+#define IPA_NAT_SW_PARAM_INDX_TBL_ENTRY_BYTE 1
 
-typedef enum {
-	IPA_NAT_BASE_TBL        = 0,
-	IPA_NAT_EXPN_TBL        = 1,
-	IPA_NAT_INDX_TBL        = 2,
-	IPA_NAT_INDEX_EXPN_TBL  = 3,
+typedef enum
+{
+	IPA_NAT_BASE_TBL = 0,
+	IPA_NAT_EXPN_TBL = 1,
+	IPA_NAT_INDX_TBL = 2,
+	IPA_NAT_INDEX_EXPN_TBL = 3,
 } nat_table_type;
 
-typedef enum {
+typedef enum
+{
 	NEXT_INDEX_FIELD,
 	PUBLIC_PORT_FILED,
 	PRIVATE_PORT_FIELD,
@@ -140,11 +142,11 @@ typedef enum {
 	| Public Port(2B)     | Next Index(2B)       |
 	---------------------------------------------
 */
-typedef struct {
-	uint32_t next_index:16;
-	uint32_t public_port:16;
+typedef struct
+{
+	uint32_t next_index : 16;
+	uint32_t public_port : 16;
 } next_index_pub_port;
-
 
 /*
 	---------------------------------------------
@@ -154,13 +156,13 @@ typedef struct {
 	|EN|FIN|Resv |        |                      |
 	---------------------------------------------
 */
-typedef struct {
-	uint32_t ip_chksum:16;
-	uint32_t rsvd1:14;
-	uint32_t redirect:1;
-	uint32_t enable:1;
+typedef struct
+{
+	uint32_t ip_chksum : 16;
+	uint32_t rsvd1 : 14;
+	uint32_t redirect : 1;
+	uint32_t enable : 1;
 } ipcksum_enbl;
-
 
 /*
 	---------------------------------------
@@ -170,11 +172,11 @@ typedef struct {
 	| (1B)    |                           |
 	---------------------------------------
 */
-typedef struct {
-	uint32_t time_stamp:24;
-	uint32_t protocol:8;
+typedef struct
+{
+	uint32_t time_stamp : 24;
+	uint32_t protocol : 8;
 } time_stamp_proto;
-
 
 /*
 	---------------------------------------------
@@ -183,7 +185,8 @@ typedef struct {
   |       next_index     | Table entry         |
 	----------------------------------------------
 */
-typedef struct {
+typedef struct
+{
 	uint16_t tbl_entry;
 	uint16_t next_index;
 } tbl_ent_nxt_indx;
@@ -197,7 +200,8 @@ typedef struct {
    |     entry       |                |
 	 ------------------------------------
 --------------------------------------------------*/
-typedef struct {
+typedef struct
+{
 	uint16_t prev_index;
 	uint16_t index_table_entry;
 } sw_spec_params;
@@ -221,18 +225,19 @@ typedef struct {
   Dont change below structure definition.
   It should be same as above(little endian order)
   -------------------------------------------------------------------------------*/
-struct ipa_nat_rule {
-	uint64_t private_ip:32;
-	uint64_t target_ip:32;
+struct ipa_nat_rule
+{
+	uint64_t private_ip : 32;
+	uint64_t target_ip : 32;
 
-	uint64_t nxt_indx_pub_port:32;
-	uint64_t private_port:16;
-	uint64_t target_port:16;
+	uint64_t nxt_indx_pub_port : 32;
+	uint64_t private_port : 16;
+	uint64_t target_port : 16;
 
-	uint64_t ip_cksm_enbl:32;
-	uint64_t ts_proto:32;
+	uint64_t ip_cksm_enbl : 32;
+	uint64_t ts_proto : 32;
 
-  /*--------------------------------------------------
+	/*--------------------------------------------------
    32 bit sw_spec_params is interpreted as follows
    ------------------------------------
    |     16 bits     |     16 bits    |
@@ -241,29 +246,30 @@ struct ipa_nat_rule {
    |     entry       |                |
 	 ------------------------------------
   --------------------------------------------------*/
-	uint64_t sw_spec_params:32;
+	uint64_t sw_spec_params : 32;
 
-	uint64_t rsvd2:16;
-	uint64_t tcp_udp_chksum:16;
+	uint64_t rsvd2 : 16;
+	uint64_t tcp_udp_chksum : 16;
 };
 
-struct ipa_nat_sw_rule {
-	uint64_t private_ip:32;
-	uint64_t target_ip:32;
+struct ipa_nat_sw_rule
+{
+	uint64_t private_ip : 32;
+	uint64_t target_ip : 32;
 
-	uint64_t next_index:16;
-	uint64_t public_port:16;
-	uint64_t private_port:16;
-	uint64_t target_port:16;
+	uint64_t next_index : 16;
+	uint64_t public_port : 16;
+	uint64_t private_port : 16;
+	uint64_t target_port : 16;
 
-	uint64_t ip_chksum:16;
-	uint64_t rsvd1:14;
-	uint64_t redirect:1;
-	uint64_t enable:1;
-	uint64_t time_stamp:24;
-	uint64_t protocol:8;
+	uint64_t ip_chksum : 16;
+	uint64_t rsvd1 : 14;
+	uint64_t redirect : 1;
+	uint64_t enable : 1;
+	uint64_t time_stamp : 24;
+	uint64_t protocol : 8;
 
-  /*--------------------------------------------------
+	/*--------------------------------------------------
    32 bit sw_spec_params is interpreted as follows
    ------------------------------------
    |     16 bits     |     16 bits    |
@@ -272,28 +278,32 @@ struct ipa_nat_sw_rule {
    |     entry       |                |
    ------------------------------------
   --------------------------------------------------*/
-	uint64_t prev_index:16;
-	uint64_t indx_tbl_entry:16;
-	uint64_t rsvd2:16;
-	uint64_t tcp_udp_chksum:16;
+	uint64_t prev_index : 16;
+	uint64_t indx_tbl_entry : 16;
+	uint64_t rsvd2 : 16;
+	uint64_t tcp_udp_chksum : 16;
 };
-#define IPA_NAT_TABLE_ENTRY_SIZE        32
-#define IPA_NAT_INDEX_TABLE_ENTRY_SIZE  4
+#define IPA_NAT_TABLE_ENTRY_SIZE 32
+#define IPA_NAT_INDEX_TABLE_ENTRY_SIZE 4
 
-struct ipa_nat_indx_tbl_rule {
+struct ipa_nat_indx_tbl_rule
+{
 	uint32_t tbl_entry_nxt_indx;
 };
 
-struct ipa_nat_sw_indx_tbl_rule {
+struct ipa_nat_sw_indx_tbl_rule
+{
 	uint16_t tbl_entry;
 	uint16_t next_index;
 };
 
-struct ipa_nat_indx_tbl_meta_info {
+struct ipa_nat_indx_tbl_meta_info
+{
 	uint16_t prev_index;
 };
 
-struct ipa_nat_ip4_table_cache {
+struct ipa_nat_ip4_table_cache
+{
 	uint8_t valid;
 	uint32_t public_addr;
 
@@ -302,13 +312,13 @@ struct ipa_nat_ip4_table_cache {
 	uint32_t tbl_addr_offset;
 	char table_name[IPA_RESOURCE_NAME_MAX];
 
-	char  *ipv4_rules_addr;
-	char  *index_table_addr;
-	uint16_t   table_entries;
+	char *ipv4_rules_addr;
+	char *index_table_addr;
+	uint16_t table_entries;
 
 	char *ipv4_expn_rules_addr;
 	char *index_table_expn_addr;
-	uint16_t  expn_table_entries;
+	uint16_t expn_table_entries;
 
 	struct ipa_nat_indx_tbl_meta_info *index_expn_table_meta;
 
@@ -318,19 +328,22 @@ struct ipa_nat_ip4_table_cache {
 #endif
 };
 
-struct ipa_nat_cache {
+struct ipa_nat_cache
+{
 	struct ipa_nat_ip4_table_cache ip4_tbl[IPA_NAT_MAX_IP4_TBLS];
 	int ipa_fd;
 	uint8_t table_cnt;
 };
 
-struct ipa_nat_indx_tbl_sw_rule {
+struct ipa_nat_indx_tbl_sw_rule
+{
 	uint16_t tbl_entry;
 	uint16_t next_index;
 	uint16_t prev_index;
 };
 
-typedef enum {
+typedef enum
+{
 	IPA_NAT_DEL_TYPE_ONLY_ONE,
 	IPA_NAT_DEL_TYPE_HEAD,
 	IPA_NAT_DEL_TYPE_MIDDLE,
@@ -350,9 +363,9 @@ typedef enum {
  * Returns:	None
  */
 void ipa_nati_parse_ipv4_rule_hdl(uint8_t tbl_hdl,
-				uint16_t rule_hdl,
-				uint8_t *expn_tbl,
-				uint16_t *tbl_entry);
+								  uint16_t rule_hdl,
+								  uint8_t *expn_tbl,
+								  uint16_t *tbl_entry);
 
 /**
  * ipa_nati_make_rule_hdl() - makes nat rule handle
@@ -366,112 +379,112 @@ void ipa_nati_parse_ipv4_rule_hdl(uint8_t tbl_hdl,
  * Returns:	>0 nat rule handle
  */
 uint16_t ipa_nati_make_rule_hdl(uint16_t tbl_hdl,
-				uint16_t tbl_entry);
+								uint16_t tbl_entry);
 
 uint32_t ipa_nati_get_index_entry_offset(
-				struct ipa_nat_ip4_table_cache*,
-				nat_table_type tbl_type,
-				uint16_t indx_tbl_entry);
+	struct ipa_nat_ip4_table_cache *,
+	nat_table_type tbl_type,
+	uint16_t indx_tbl_entry);
 uint32_t ipa_nati_get_entry_offset(
-				struct ipa_nat_ip4_table_cache*,
-				nat_table_type tbl_type,
-				uint16_t  tbl_entry);
+	struct ipa_nat_ip4_table_cache *,
+	nat_table_type tbl_type,
+	uint16_t tbl_entry);
 
 int ipa_nati_add_ipv4_tbl(uint32_t public_ip_addr,
-				uint16_t number_of_entries,
-				uint32_t *table_hanle);
+						  uint16_t number_of_entries,
+						  uint32_t *table_hanle);
 
 int ipa_nati_alloc_table(uint16_t number_of_entries,
-				struct ipa_ioc_nat_alloc_mem *mem,
-				uint16_t*, uint16_t*);
+						 struct ipa_ioc_nat_alloc_mem *mem,
+						 uint16_t *, uint16_t *);
 
 int ipa_nati_update_cache(struct ipa_ioc_nat_alloc_mem *,
-				uint32_t public_ip_addr,
-				uint16_t tbl_entries,
-				uint16_t expn_tbl_entries);
+						  uint32_t public_ip_addr,
+						  uint16_t tbl_entries,
+						  uint16_t expn_tbl_entries);
 
 int ipa_nati_del_ipv4_table(uint32_t tbl_hdl);
 int ipa_nati_reset_ipv4_table(uint32_t tbl_hdl);
 int ipa_nati_post_ipv4_init_cmd(uint8_t tbl_index);
 
-int ipa_nati_query_timestamp(uint32_t  tbl_hdl,
-				uint32_t  rule_hdl,
-				uint32_t  *time_stamp);
+int ipa_nati_query_timestamp(uint32_t tbl_hdl,
+							 uint32_t rule_hdl,
+							 uint32_t *time_stamp);
 
 int ipa_nati_add_ipv4_rule(uint32_t tbl_hdl,
-				const ipa_nat_ipv4_rule *clnt_rule,
-				uint32_t *rule_hdl);
+						   const ipa_nat_ipv4_rule *clnt_rule,
+						   uint32_t *rule_hdl);
 
 int ipa_nati_generate_rule(uint32_t tbl_hdl,
-				const ipa_nat_ipv4_rule *clnt_rule,
-				struct ipa_nat_sw_rule *rule,
-				struct ipa_nat_indx_tbl_sw_rule *index_sw_rule,
-				uint16_t *tbl_entry,
-				uint16_t *indx_tbl_entry);
+						   const ipa_nat_ipv4_rule *clnt_rule,
+						   struct ipa_nat_sw_rule *rule,
+						   struct ipa_nat_indx_tbl_sw_rule *index_sw_rule,
+						   uint16_t *tbl_entry,
+						   uint16_t *indx_tbl_entry);
 
 uint16_t ipa_nati_expn_tbl_free_entry(struct ipa_nat_rule *expn_tbl,
-				uint16_t size);
+									  uint16_t size);
 
 uint16_t ipa_nati_generate_tbl_rule(const ipa_nat_ipv4_rule *clnt_rule,
-				struct ipa_nat_sw_rule *sw_rule,
-				struct ipa_nat_ip4_table_cache *tbl_ptr);
+									struct ipa_nat_sw_rule *sw_rule,
+									struct ipa_nat_ip4_table_cache *tbl_ptr);
 
 uint16_t ipa_nati_generate_index_rule(const ipa_nat_ipv4_rule *clnt_rule,
-				struct ipa_nat_indx_tbl_sw_rule *sw_rule,
-				struct ipa_nat_ip4_table_cache *tbl_ptr);
+									  struct ipa_nat_indx_tbl_sw_rule *sw_rule,
+									  struct ipa_nat_ip4_table_cache *tbl_ptr);
 
 uint16_t ipa_nati_index_expn_get_free_entry(struct ipa_nat_indx_tbl_rule *tbl,
-				uint16_t size);
+											uint16_t size);
 
 void ipa_nati_copy_ipv4_rule_to_hw(
-				struct ipa_nat_ip4_table_cache *ipv4_cache,
-				struct ipa_nat_sw_rule *rule,
-				uint16_t entry, uint8_t tbl_index);
+	struct ipa_nat_ip4_table_cache *ipv4_cache,
+	struct ipa_nat_sw_rule *rule,
+	uint16_t entry, uint8_t tbl_index);
 
 void ipa_nati_copy_ipv4_index_rule_to_hw(
-				struct ipa_nat_ip4_table_cache *ipv4_cache,
-				struct ipa_nat_indx_tbl_sw_rule *indx_sw_rule,
-				uint16_t entry, uint8_t tbl_index);
+	struct ipa_nat_ip4_table_cache *ipv4_cache,
+	struct ipa_nat_indx_tbl_sw_rule *indx_sw_rule,
+	uint16_t entry, uint8_t tbl_index);
 
 void ipa_nati_write_next_index(uint8_t tbl_indx,
-				nat_table_type tbl_type,
-				uint16_t value,
-				uint32_t offset);
+							   nat_table_type tbl_type,
+							   uint16_t value,
+							   uint32_t offset);
 
 int ipa_nati_post_ipv4_dma_cmd(uint8_t tbl_indx,
-				uint16_t entry);
+							   uint16_t entry);
 
 int ipa_nati_del_ipv4_rule(uint32_t tbl_hdl,
-				uint32_t rule_hdl);
+						   uint32_t rule_hdl);
 
 int ipa_nati_post_del_dma_cmd(uint8_t tbl_indx,
-				uint16_t tbl_entry,
-				uint8_t expn_tbl,
-				del_type rule_pos);
+							  uint16_t tbl_entry,
+							  uint8_t expn_tbl,
+							  del_type rule_pos);
 
 void ipa_nati_find_index_rule_pos(
-				struct ipa_nat_ip4_table_cache *cache_ptr,
-				uint16_t tbl_entry,
-				del_type *rule_pos);
+	struct ipa_nat_ip4_table_cache *cache_ptr,
+	uint16_t tbl_entry,
+	del_type *rule_pos);
 
 void ipa_nati_del_dead_ipv4_head_nodes(uint8_t tbl_indx);
 void ipa_nati_find_rule_pos(struct ipa_nat_ip4_table_cache *cache_ptr,
-				uint8_t expn_tbl,
-				uint16_t tbl_entry,
-				del_type *rule_pos);
+							uint8_t expn_tbl,
+							uint16_t tbl_entry,
+							del_type *rule_pos);
 void ipa_nati_del_dead_ipv4_head_nodes(uint8_t tbl_indx);
 
 uint16_t Read16BitFieldValue(uint32_t param,
-				ipa_nat_rule_field_type fld_type);
+							 ipa_nat_rule_field_type fld_type);
 
 /* ========================================================
 								Debug functions
    ========================================================*/
 #ifdef NAT_DUMP
-void ipa_nati_print_rule(struct ipa_nat_rule*, uint32_t);
+void ipa_nati_print_rule(struct ipa_nat_rule *, uint32_t);
 void ipa_nat_dump_ipv4_table(uint32_t);
-void ipa_nati_print_index_rule(struct ipa_nat_indx_tbl_rule*,
-				uint32_t, uint16_t);
+void ipa_nati_print_index_rule(struct ipa_nat_indx_tbl_rule *,
+							   uint32_t, uint16_t);
 int ipa_nati_query_nat_rules(uint32_t, nat_table_type);
 #endif
 

@@ -33,27 +33,28 @@
 #include <stdbool.h>
 #include <LocEngAdapter.h>
 
-#define LOC_NI_NO_RESPONSE_TIME            20                      /* secs */
-#define LOC_NI_NOTIF_KEY_ADDRESS           "Address"
-#define GPS_NI_RESPONSE_IGNORE             4
+#define LOC_NI_NO_RESPONSE_TIME 20 /* secs */
+#define LOC_NI_NOTIF_KEY_ADDRESS "Address"
+#define GPS_NI_RESPONSE_IGNORE 4
 
-typedef struct {
-    pthread_t               thread;            /* NI thread */
-    int                     respTimeLeft;       /* examine time for NI response */
-    bool                    respRecvd;   /* NI User reponse received or not from Java layer*/
-    void*                   rawRequest;
-    int                     reqID;         /* ID to check against response */
-    GpsUserResponseType     resp;
-    pthread_cond_t          tCond;
-    pthread_mutex_t         tLock;
-    LocEngAdapter*          adapter;
+typedef struct
+{
+    pthread_t thread; /* NI thread */
+    int respTimeLeft; /* examine time for NI response */
+    bool respRecvd;   /* NI User reponse received or not from Java layer*/
+    void *rawRequest;
+    int reqID; /* ID to check against response */
+    GpsUserResponseType resp;
+    pthread_cond_t tCond;
+    pthread_mutex_t tLock;
+    LocEngAdapter *adapter;
 } loc_eng_ni_session_s_type;
 
-typedef struct {
-    loc_eng_ni_session_s_type session;    /* SUPL NI Session */
-    loc_eng_ni_session_s_type sessionEs;  /* Emergency SUPL NI Session */
+typedef struct
+{
+    loc_eng_ni_session_s_type session;   /* SUPL NI Session */
+    loc_eng_ni_session_s_type sessionEs; /* Emergency SUPL NI Session */
     int reqIDCounter;
 } loc_eng_ni_data_s_type;
-
 
 #endif /* LOC_ENG_NI_H */

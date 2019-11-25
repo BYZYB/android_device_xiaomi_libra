@@ -38,18 +38,18 @@ extern "C"
 #include <ctype.h>
 #include <gps_extended.h>
 
-const char* loc_get_gps_status_name(GpsStatusValue gps_status);
-const char* loc_get_position_mode_name(GpsPositionMode mode);
-const char* loc_get_position_recurrence_name(GpsPositionRecurrence recur);
-const char* loc_get_aiding_data_mask_names(GpsAidingData data);
-const char* loc_get_agps_type_name(AGpsType type);
-const char* loc_get_ni_type_name(GpsNiType type);
-const char* loc_get_ni_response_name(GpsUserResponseType response);
-const char* loc_get_ni_encoding_name(GpsNiEncodingType encoding);
-const char* loc_get_agps_bear_name(AGpsBearerType bear);
-const char* loc_get_server_type_name(LocServerType type);
-const char* loc_get_position_sess_status_name(enum loc_sess_status status);
-const char* loc_get_agps_status_name(AGpsStatusValue status);
+    const char *loc_get_gps_status_name(GpsStatusValue gps_status);
+    const char *loc_get_position_mode_name(GpsPositionMode mode);
+    const char *loc_get_position_recurrence_name(GpsPositionRecurrence recur);
+    const char *loc_get_aiding_data_mask_names(GpsAidingData data);
+    const char *loc_get_agps_type_name(AGpsType type);
+    const char *loc_get_ni_type_name(GpsNiType type);
+    const char *loc_get_ni_response_name(GpsUserResponseType response);
+    const char *loc_get_ni_encoding_name(GpsNiEncodingType encoding);
+    const char *loc_get_agps_bear_name(AGpsBearerType bear);
+    const char *loc_get_server_type_name(LocServerType type);
+    const char *loc_get_position_sess_status_name(enum loc_sess_status status);
+    const char *loc_get_agps_status_name(AGpsStatusValue status);
 
 #ifdef __cplusplus
 }

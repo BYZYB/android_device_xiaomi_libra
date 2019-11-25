@@ -49,11 +49,10 @@
 
 #endif
 
-int loc_eng_dmn_conn_loc_api_server_launch(thelper_create_thread   create_thread_cb,
-    const char * loc_api_q_path, const char * ctrl_q_path, void *agps_handle);
+int loc_eng_dmn_conn_loc_api_server_launch(thelper_create_thread create_thread_cb,
+                                           const char *loc_api_q_path, const char *ctrl_q_path, void *agps_handle);
 int loc_eng_dmn_conn_loc_api_server_unblock(void);
 int loc_eng_dmn_conn_loc_api_server_join(void);
 int loc_eng_dmn_conn_loc_api_server_data_conn(int, int);
 
 #endif /* LOC_ENG_DATA_SERVER_H */
-

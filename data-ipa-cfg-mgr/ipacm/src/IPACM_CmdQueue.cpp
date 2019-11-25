@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	@brief
 	This file implements the IPAM Comment Queue functionality
 
-	@Author 
+	@Author
    Sunil
 
 */
@@ -41,16 +41,16 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "IPACM_CmdQueue.h"
 #include "IPACM_Log.h"
 
-pthread_mutex_t mutex    = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t  cond_var = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond_var = PTHREAD_COND_INITIALIZER;
 
-MessageQueue* MessageQueue::inst = NULL;
-MessageQueue* MessageQueue::getInstance()
+MessageQueue *MessageQueue::inst = NULL;
+MessageQueue *MessageQueue::getInstance()
 {
-	if(inst == NULL)
+	if (inst == NULL)
 	{
 		inst = new MessageQueue();
-		if(inst == NULL)
+		if (inst == NULL)
 		{
 			IPACMERR("unable to create Message Queue instance\n");
 			return NULL;
@@ -62,14 +62,14 @@ MessageQueue* MessageQueue::getInstance()
 
 void MessageQueue::enqueue(Message *item)
 {
-	if(!Head)
+	if (!Head)
 	{
 		Tail = item;
 		Head = item;
 	}
 	else
 	{
-		if(Tail == NULL)
+		if (Tail == NULL)
 		{
 			IPACMDBG("Tail is null\n");
 			Head->setnext(item);
@@ -82,10 +82,9 @@ void MessageQueue::enqueue(Message *item)
 	}
 }
 
-
-Message* MessageQueue::dequeue(void)
+Message *MessageQueue::dequeue(void)
 {
-	if(Head == NULL)
+	if (Head == NULL)
 	{
 		return NULL;
 	}
@@ -98,23 +97,22 @@ Message* MessageQueue::dequeue(void)
 	}
 }
 
-
-void* MessageQueue::Process(void *param)
+void *MessageQueue::Process(void *param)
 {
 	MessageQueue *MsgQueue = NULL;
 	Message *item = NULL;
 	IPACMDBG("MessageQueue::Process()\n");
 
 	MsgQueue = MessageQueue::getInstance();
-	if(MsgQueue == NULL)
+	if (MsgQueue == NULL)
 	{
 		IPACMERR("unable to start cmd queue process\n");
 		return NULL;
 	}
 
-	while(1)
+	while (1)
 	{
-		if(pthread_mutex_lock(&mutex) != 0)
+		if (pthread_mutex_lock(&mutex) != 0)
 		{
 			IPACMERR("unable to lock the mutex\n");
 			return NULL;
@@ -122,15 +120,15 @@ void* MessageQueue::Process(void *param)
 
 		item = MsgQueue->dequeue();
 
-		if(item == NULL)
+		if (item == NULL)
 		{
 			IPACMDBG("Waiting for Message\n");
 
-			if(pthread_cond_wait(&cond_var, &mutex) != 0)
+			if (pthread_cond_wait(&cond_var, &mutex) != 0)
 			{
 				IPACMERR("unable to lock the mutex\n");
 
-				if(pthread_mutex_unlock(&mutex) != 0)
+				if (pthread_mutex_unlock(&mutex) != 0)
 				{
 					IPACMERR("unable to unlock the mutex\n");
 					return NULL;
@@ -139,27 +137,25 @@ void* MessageQueue::Process(void *param)
 				return NULL;
 			}
 
-			if(pthread_mutex_unlock(&mutex) != 0)
+			if (pthread_mutex_unlock(&mutex) != 0)
 			{
 				IPACMERR("unable to unlock the mutex\n");
 				return NULL;
 			}
-
 		}
 		else
 		{
-			if(pthread_mutex_unlock(&mutex) != 0)
+			if (pthread_mutex_unlock(&mutex) != 0)
 			{
 				IPACMERR("unable to unlock the mutex\n");
 				return NULL;
 			}
 
-			IPACMDBG("Processing item %p event ID: %d\n",item,item->evt.data.event);
+			IPACMDBG("Processing item %p event ID: %d\n", item, item->evt.data.event);
 			item->evt.callback_ptr(&item->evt.data);
 			delete item;
 			item = NULL;
 		}
 
 	} /* Go forever until a termination indication is received */
-
 }

@@ -58,34 +58,36 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_pipeget(const char * pipe_name, int mode)
+int loc_eng_dmn_conn_glue_pipeget(const char *pipe_name, int mode)
 {
-    int fd;
-    int result;
+   int fd;
+   int result;
 
-    LOC_LOGD("%s, mode = %d\n", pipe_name, mode);
-    result = mkfifo(pipe_name, 0660);
+   LOC_LOGD("%s, mode = %d\n", pipe_name, mode);
+   result = mkfifo(pipe_name, 0660);
 
-    if ((result == -1) && (errno != EEXIST)) {
-        LOC_LOGE("failed: %s\n", strerror(errno));
-        return result;
-    }
+   if ((result == -1) && (errno != EEXIST))
+   {
+      LOC_LOGE("failed: %s\n", strerror(errno));
+      return result;
+   }
 
-    // The mode in mkfifo is not honoured and does not provide the
-    // group permissions. Doing chmod to add group permissions.
-    result = chmod (pipe_name, 0660);
-    if (result != 0){
-        LOC_LOGE ("%s failed to change mode for %s, error = %s\n", __func__,
-              pipe_name, strerror(errno));
-    }
+   // The mode in mkfifo is not honoured and does not provide the
+   // group permissions. Doing chmod to add group permissions.
+   result = chmod(pipe_name, 0660);
+   if (result != 0)
+   {
+      LOC_LOGE("%s failed to change mode for %s, error = %s\n", __func__,
+               pipe_name, strerror(errno));
+   }
 
-    fd = open(pipe_name, mode);
-    if (fd <= 0)
-    {
-        LOC_LOGE("failed: %s\n", strerror(errno));
-    }
-    LOC_LOGD("fd = %d, %s\n", fd, pipe_name);
-    return fd;
+   fd = open(pipe_name, mode);
+   if (fd <= 0)
+   {
+      LOC_LOGE("failed: %s\n", strerror(errno));
+   }
+   LOC_LOGD("fd = %d, %s\n", fd, pipe_name);
+   return fd;
 }
 
 /*===========================================================================
@@ -107,12 +109,13 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_piperemove(const char * pipe_name, int fd)
+int loc_eng_dmn_conn_glue_piperemove(const char *pipe_name, int fd)
 {
-    close(fd);
-    if (pipe_name) unlink(pipe_name);
-    LOC_LOGD("fd = %d, %s\n", fd, pipe_name);
-    return 0;
+   close(fd);
+   if (pipe_name)
+      unlink(pipe_name);
+   LOC_LOGD("fd = %d, %s\n", fd, pipe_name);
+   return 0;
 }
 
 /*===========================================================================
@@ -135,16 +138,16 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_pipewrite(int fd, const void * buf, size_t sz)
+int loc_eng_dmn_conn_glue_pipewrite(int fd, const void *buf, size_t sz)
 {
-    int result;
+   int result;
 
-    result = write(fd, buf, sz);
+   result = write(fd, buf, sz);
 
-    /* @todo check for non EINTR & EAGAIN, shall not do select again, select_tut Law 7) */
+   /* @todo check for non EINTR & EAGAIN, shall not do select again, select_tut Law 7) */
 
-    /* LOC_LOGD("fd = %d, buf = 0x%lx, size = %d, result = %d\n", fd, (long) buf, (int) sz, (int) result); */
-    return result;
+   /* LOC_LOGD("fd = %d, buf = 0x%lx, size = %d, result = %d\n", fd, (long) buf, (int) sz, (int) result); */
+   return result;
 }
 
 /*===========================================================================
@@ -167,16 +170,16 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_dmn_conn_glue_piperead(int fd, void * buf, size_t sz)
+int loc_eng_dmn_conn_glue_piperead(int fd, void *buf, size_t sz)
 {
-    int len;
+   int len;
 
-    len = read(fd, buf, sz);
+   len = read(fd, buf, sz);
 
-    /* @todo check for non EINTR & EAGAIN, shall not do select again, select_tut Law 7) */
+   /* @todo check for non EINTR & EAGAIN, shall not do select again, select_tut Law 7) */
 
-    /* LOC_LOGD("fd = %d, buf = 0x%lx, size = %d, len = %d\n", fd, (long) buf, (int) sz, len); */
-    return len;
+   /* LOC_LOGD("fd = %d, buf = 0x%lx, size = %d, len = %d\n", fd, (long) buf, (int) sz, len); */
+   return len;
 }
 
 /*===========================================================================
@@ -199,16 +202,17 @@ SIDE EFFECTS
 ===========================================================================*/
 int loc_eng_dmn_conn_glue_pipeunblock(int fd)
 {
-    int result;
-    struct flock flock_v;
-    LOC_LOGD("\n");
-//    result = fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NDELAY);
-    flock_v.l_type = F_UNLCK;
-    flock_v.l_len = 32;
-    result = fcntl(fd, F_SETLK, &flock_v);
-    if (result < 0) {
-        LOC_LOGE("fcntl failure, %s\n", strerror(errno));
-    }
+   int result;
+   struct flock flock_v;
+   LOC_LOGD("\n");
+   //    result = fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NDELAY);
+   flock_v.l_type = F_UNLCK;
+   flock_v.l_len = 32;
+   result = fcntl(fd, F_SETLK, &flock_v);
+   if (result < 0)
+   {
+      LOC_LOGE("fcntl failure, %s\n", strerror(errno));
+   }
 
-    return result;
+   return result;
 }

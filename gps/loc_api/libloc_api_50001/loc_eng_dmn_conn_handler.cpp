@@ -37,201 +37,206 @@
 #include "loc_eng_dmn_conn.h"
 #include "loc_eng_dmn_conn_handler.h"
 
-void* loc_api_handle = NULL;
+void *loc_api_handle = NULL;
 
 int loc_eng_dmn_conn_loc_api_server_if_request_handler(struct ctrl_msgbuf *pmsg, int len)
 {
-    LOC_LOGD("%s:%d]\n", __func__, __LINE__);
+  LOC_LOGD("%s:%d]\n", __func__, __LINE__);
 #ifndef DEBUG_DMN_LOC_API
-    if (NULL == loc_api_handle) {
-        LOC_LOGE("%s:%d] NO agps data handle\n", __func__, __LINE__);
-        return 1;
-    }
+  if (NULL == loc_api_handle)
+  {
+    LOC_LOGE("%s:%d] NO agps data handle\n", __func__, __LINE__);
+    return 1;
+  }
 
-    if (NULL != loc_api_handle) {
-        AGpsExtType type;
-        switch (pmsg->cmsg.cmsg_if_request.type) {
-          case IF_REQUEST_TYPE_SUPL:
-          {
-            LOC_LOGD("IF_REQUEST_TYPE_SUPL");
-            type = AGPS_TYPE_SUPL;
-            break;
-          }
-          case IF_REQUEST_TYPE_WIFI:
-          {
-            LOC_LOGD("IF_REQUEST_TYPE_WIFI");
-            type = AGPS_TYPE_WIFI;
-            break;
-          }
-          case IF_REQUEST_TYPE_ANY:
-          {
-            LOC_LOGD("IF_REQUEST_TYPE_ANY");
-            type = AGPS_TYPE_ANY;
-            break;
-          }
-          default:
-          {
-            LOC_LOGD("invalid IF_REQUEST_TYPE!");
-            return -1;
-          }
-        }
-        switch (pmsg->cmsg.cmsg_if_request.sender_id) {
-          case IF_REQUEST_SENDER_ID_QUIPC:
-          {
-            LOC_LOGD("IF_REQUEST_SENDER_ID_QUIPC");
-            LocEngReqRelWifi* msg =
-                new LocEngReqRelWifi(loc_api_handle,
-                                     type,
-                                     LOC_ENG_IF_REQUEST_SENDER_ID_QUIPC,
-                                     (char*)pmsg->cmsg.cmsg_if_request.ssid,
-                                     (char*)pmsg->cmsg.cmsg_if_request.password,
-                                     true);
-            msg->send();
-            break;
-          }
-          case IF_REQUEST_SENDER_ID_MSAPM:
-          {
-            LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPM");
-            LocEngReqRelWifi* msg =
-                new LocEngReqRelWifi(loc_api_handle,
-                                     type,
-                                     LOC_ENG_IF_REQUEST_SENDER_ID_MSAPM,
-                                     (char*)pmsg->cmsg.cmsg_if_request.ssid,
-                                     (char*)pmsg->cmsg.cmsg_if_request.password,
-                                     true);
-            msg->send();
-            break;
-          }
-          case IF_REQUEST_SENDER_ID_MSAPU:
-          {
-            LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPU");
-            LocEngReqRelWifi* msg =
-                new LocEngReqRelWifi(loc_api_handle,
-                                     type,
-                                     LOC_ENG_IF_REQUEST_SENDER_ID_MSAPU,
-                                     (char*)pmsg->cmsg.cmsg_if_request.ssid,
-                                     (char*)pmsg->cmsg.cmsg_if_request.password,
-                                     true);
-            msg->send();
-            break;
-          }
-          case IF_REQUEST_SENDER_ID_GPSONE_DAEMON:
-          {
-            LOC_LOGD("IF_REQUEST_SENDER_ID_GPSONE_DAEMON");
-            LocEngReqRelBIT* msg =
-                new LocEngReqRelBIT(loc_api_handle,
-                                    type,
-                                    pmsg->cmsg.cmsg_if_request.ipv4_addr,
-                                    (char*)pmsg->cmsg.cmsg_if_request.ipv6_addr,
-                                    true);
-            msg->send();
-            break;
-          }
-          default:
-          {
-            LOC_LOGD("invalid IF_REQUEST_SENDER_ID!");
-            return -1;
-          }
-        }
+  if (NULL != loc_api_handle)
+  {
+    AGpsExtType type;
+    switch (pmsg->cmsg.cmsg_if_request.type)
+    {
+    case IF_REQUEST_TYPE_SUPL:
+    {
+      LOC_LOGD("IF_REQUEST_TYPE_SUPL");
+      type = AGPS_TYPE_SUPL;
+      break;
     }
+    case IF_REQUEST_TYPE_WIFI:
+    {
+      LOC_LOGD("IF_REQUEST_TYPE_WIFI");
+      type = AGPS_TYPE_WIFI;
+      break;
+    }
+    case IF_REQUEST_TYPE_ANY:
+    {
+      LOC_LOGD("IF_REQUEST_TYPE_ANY");
+      type = AGPS_TYPE_ANY;
+      break;
+    }
+    default:
+    {
+      LOC_LOGD("invalid IF_REQUEST_TYPE!");
+      return -1;
+    }
+    }
+    switch (pmsg->cmsg.cmsg_if_request.sender_id)
+    {
+    case IF_REQUEST_SENDER_ID_QUIPC:
+    {
+      LOC_LOGD("IF_REQUEST_SENDER_ID_QUIPC");
+      LocEngReqRelWifi *msg =
+          new LocEngReqRelWifi(loc_api_handle,
+                               type,
+                               LOC_ENG_IF_REQUEST_SENDER_ID_QUIPC,
+                               (char *)pmsg->cmsg.cmsg_if_request.ssid,
+                               (char *)pmsg->cmsg.cmsg_if_request.password,
+                               true);
+      msg->send();
+      break;
+    }
+    case IF_REQUEST_SENDER_ID_MSAPM:
+    {
+      LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPM");
+      LocEngReqRelWifi *msg =
+          new LocEngReqRelWifi(loc_api_handle,
+                               type,
+                               LOC_ENG_IF_REQUEST_SENDER_ID_MSAPM,
+                               (char *)pmsg->cmsg.cmsg_if_request.ssid,
+                               (char *)pmsg->cmsg.cmsg_if_request.password,
+                               true);
+      msg->send();
+      break;
+    }
+    case IF_REQUEST_SENDER_ID_MSAPU:
+    {
+      LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPU");
+      LocEngReqRelWifi *msg =
+          new LocEngReqRelWifi(loc_api_handle,
+                               type,
+                               LOC_ENG_IF_REQUEST_SENDER_ID_MSAPU,
+                               (char *)pmsg->cmsg.cmsg_if_request.ssid,
+                               (char *)pmsg->cmsg.cmsg_if_request.password,
+                               true);
+      msg->send();
+      break;
+    }
+    case IF_REQUEST_SENDER_ID_GPSONE_DAEMON:
+    {
+      LOC_LOGD("IF_REQUEST_SENDER_ID_GPSONE_DAEMON");
+      LocEngReqRelBIT *msg =
+          new LocEngReqRelBIT(loc_api_handle,
+                              type,
+                              pmsg->cmsg.cmsg_if_request.ipv4_addr,
+                              (char *)pmsg->cmsg.cmsg_if_request.ipv6_addr,
+                              true);
+      msg->send();
+      break;
+    }
+    default:
+    {
+      LOC_LOGD("invalid IF_REQUEST_SENDER_ID!");
+      return -1;
+    }
+    }
+  }
 
 #else
-   loc_eng_dmn_conn_loc_api_server_data_conn(LOC_ENG_IF_REQUEST_SENDER_ID_GPSONE_DAEMON, GPSONE_LOC_API_IF_REQUEST_SUCCESS);
+  loc_eng_dmn_conn_loc_api_server_data_conn(LOC_ENG_IF_REQUEST_SENDER_ID_GPSONE_DAEMON, GPSONE_LOC_API_IF_REQUEST_SUCCESS);
 #endif
-    return 0;
+  return 0;
 }
 
 int loc_eng_dmn_conn_loc_api_server_if_release_handler(struct ctrl_msgbuf *pmsg, int len)
 {
-    LOC_LOGD("%s:%d]\n", __func__, __LINE__);
+  LOC_LOGD("%s:%d]\n", __func__, __LINE__);
 #ifndef DEBUG_DMN_LOC_API
-    AGpsExtType type;
-    switch (pmsg->cmsg.cmsg_if_request.type) {
-      case IF_REQUEST_TYPE_SUPL:
-      {
-        LOC_LOGD("IF_REQUEST_TYPE_SUPL");
-        type = AGPS_TYPE_SUPL;
-        break;
-      }
-      case IF_REQUEST_TYPE_WIFI:
-      {
-        LOC_LOGD("IF_REQUEST_TYPE_WIFI");
-        type = AGPS_TYPE_WIFI;
-        break;
-      }
-      case IF_REQUEST_TYPE_ANY:
-      {
-        LOC_LOGD("IF_REQUEST_TYPE_ANY");
-        type = AGPS_TYPE_ANY;
-        break;
-      }
-      default:
-      {
-        LOC_LOGD("invalid IF_REQUEST_TYPE!");
-        return -1;
-      }
-    }
-    switch (pmsg->cmsg.cmsg_if_request.sender_id) {
-      case IF_REQUEST_SENDER_ID_QUIPC:
-      {
-        LOC_LOGD("IF_REQUEST_SENDER_ID_QUIPC");
-        LocEngReqRelWifi* msg =
-            new LocEngReqRelWifi(loc_api_handle,
-                                 type,
-                                 LOC_ENG_IF_REQUEST_SENDER_ID_QUIPC,
-                                 (char*)pmsg->cmsg.cmsg_if_request.ssid,
-                                 (char*)pmsg->cmsg.cmsg_if_request.password,
-                                 false);
-        msg->send();
-        break;
-      }
-      case IF_REQUEST_SENDER_ID_MSAPM:
-      {
-        LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPM");
-        LocEngReqRelWifi* msg =
-            new LocEngReqRelWifi(loc_api_handle,
-                                 type,
-                                 LOC_ENG_IF_REQUEST_SENDER_ID_MSAPM,
-                                 (char*)pmsg->cmsg.cmsg_if_request.ssid,
-                                 (char*)pmsg->cmsg.cmsg_if_request.password,
-                                 false);
-        msg->send();
-        break;
-      }
-      case IF_REQUEST_SENDER_ID_MSAPU:
-      {
-        LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPU");
-        LocEngReqRelWifi* msg =
-            new LocEngReqRelWifi(loc_api_handle,
-                                 type,
-                                 LOC_ENG_IF_REQUEST_SENDER_ID_MSAPU,
-                                 (char*)pmsg->cmsg.cmsg_if_request.ssid,
-                                 (char*)pmsg->cmsg.cmsg_if_request.password,
-                                 false);
-        msg->send();
-        break;
-      }
-      case IF_REQUEST_SENDER_ID_GPSONE_DAEMON:
-      {
-        LOC_LOGD("IF_REQUEST_SENDER_ID_GPSONE_DAEMON");
-        LocEngReqRelBIT* msg =
-            new LocEngReqRelBIT(loc_api_handle,
-                                type,
-                                pmsg->cmsg.cmsg_if_request.ipv4_addr,
-                                (char*)pmsg->cmsg.cmsg_if_request.ipv6_addr,
-                                false);
-        msg->send();
-        break;
-      }
-      default:
-      {
-        LOC_LOGD("invalid IF_REQUEST_SENDER_ID!");
-        return -1;
-      }
-    }
+  AGpsExtType type;
+  switch (pmsg->cmsg.cmsg_if_request.type)
+  {
+  case IF_REQUEST_TYPE_SUPL:
+  {
+    LOC_LOGD("IF_REQUEST_TYPE_SUPL");
+    type = AGPS_TYPE_SUPL;
+    break;
+  }
+  case IF_REQUEST_TYPE_WIFI:
+  {
+    LOC_LOGD("IF_REQUEST_TYPE_WIFI");
+    type = AGPS_TYPE_WIFI;
+    break;
+  }
+  case IF_REQUEST_TYPE_ANY:
+  {
+    LOC_LOGD("IF_REQUEST_TYPE_ANY");
+    type = AGPS_TYPE_ANY;
+    break;
+  }
+  default:
+  {
+    LOC_LOGD("invalid IF_REQUEST_TYPE!");
+    return -1;
+  }
+  }
+  switch (pmsg->cmsg.cmsg_if_request.sender_id)
+  {
+  case IF_REQUEST_SENDER_ID_QUIPC:
+  {
+    LOC_LOGD("IF_REQUEST_SENDER_ID_QUIPC");
+    LocEngReqRelWifi *msg =
+        new LocEngReqRelWifi(loc_api_handle,
+                             type,
+                             LOC_ENG_IF_REQUEST_SENDER_ID_QUIPC,
+                             (char *)pmsg->cmsg.cmsg_if_request.ssid,
+                             (char *)pmsg->cmsg.cmsg_if_request.password,
+                             false);
+    msg->send();
+    break;
+  }
+  case IF_REQUEST_SENDER_ID_MSAPM:
+  {
+    LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPM");
+    LocEngReqRelWifi *msg =
+        new LocEngReqRelWifi(loc_api_handle,
+                             type,
+                             LOC_ENG_IF_REQUEST_SENDER_ID_MSAPM,
+                             (char *)pmsg->cmsg.cmsg_if_request.ssid,
+                             (char *)pmsg->cmsg.cmsg_if_request.password,
+                             false);
+    msg->send();
+    break;
+  }
+  case IF_REQUEST_SENDER_ID_MSAPU:
+  {
+    LOC_LOGD("IF_REQUEST_SENDER_ID_MSAPU");
+    LocEngReqRelWifi *msg =
+        new LocEngReqRelWifi(loc_api_handle,
+                             type,
+                             LOC_ENG_IF_REQUEST_SENDER_ID_MSAPU,
+                             (char *)pmsg->cmsg.cmsg_if_request.ssid,
+                             (char *)pmsg->cmsg.cmsg_if_request.password,
+                             false);
+    msg->send();
+    break;
+  }
+  case IF_REQUEST_SENDER_ID_GPSONE_DAEMON:
+  {
+    LOC_LOGD("IF_REQUEST_SENDER_ID_GPSONE_DAEMON");
+    LocEngReqRelBIT *msg =
+        new LocEngReqRelBIT(loc_api_handle,
+                            type,
+                            pmsg->cmsg.cmsg_if_request.ipv4_addr,
+                            (char *)pmsg->cmsg.cmsg_if_request.ipv6_addr,
+                            false);
+    msg->send();
+    break;
+  }
+  default:
+  {
+    LOC_LOGD("invalid IF_REQUEST_SENDER_ID!");
+    return -1;
+  }
+  }
 #else
-   loc_eng_dmn_conn_loc_api_server_data_conn(LOC_ENG_IF_REQUEST_SENDER_ID_GPSONE_DAEMON, GPSONE_LOC_API_IF_RELEASE_SUCCESS);
+  loc_eng_dmn_conn_loc_api_server_data_conn(LOC_ENG_IF_REQUEST_SENDER_ID_GPSONE_DAEMON, GPSONE_LOC_API_IF_RELEASE_SUCCESS);
 #endif
-    return 0;
+  return 0;
 }
-

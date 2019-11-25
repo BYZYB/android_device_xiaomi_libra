@@ -31,4 +31,3 @@
 int loc_apicb_app_init();
 
 void loc_apicb_app_deinit();
-

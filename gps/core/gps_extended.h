@@ -30,63 +30,64 @@
 #define GPS_EXTENDED_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include <gps_extended_c.h>
 
-struct LocPosMode
-{
-    LocPositionMode mode;
-    GpsPositionRecurrence recurrence;
-    uint32_t min_interval;
-    uint32_t preferred_accuracy;
-    uint32_t preferred_time;
-    char credentials[14];
-    char provider[8];
-    LocPosMode(LocPositionMode m, GpsPositionRecurrence recr,
-               uint32_t gap, uint32_t accu, uint32_t time,
-               const char* cred, const char* prov) :
-        mode(m), recurrence(recr),
-        min_interval(gap < MIN_POSSIBLE_FIX_INTERVAL ? MIN_POSSIBLE_FIX_INTERVAL : gap),
-        preferred_accuracy(accu), preferred_time(time) {
-        memset(credentials, 0, sizeof(credentials));
-        memset(provider, 0, sizeof(provider));
-        if (NULL != cred) {
-            memcpy(credentials, cred, sizeof(credentials)-1);
-        }
-        if (NULL != prov) {
-            memcpy(provider, prov, sizeof(provider)-1);
-        }
-    }
-
-    inline LocPosMode() :
-        mode(LOC_POSITION_MODE_MS_BASED),
-        recurrence(GPS_POSITION_RECURRENCE_PERIODIC),
-        min_interval(MIN_POSSIBLE_FIX_INTERVAL),
-        preferred_accuracy(50), preferred_time(120000) {
-        memset(credentials, 0, sizeof(credentials));
-        memset(provider, 0, sizeof(provider));
-    }
-
-    inline bool equals(const LocPosMode &anotherMode) const
+    struct LocPosMode
     {
-        return anotherMode.mode == mode &&
-            anotherMode.recurrence == recurrence &&
-            anotherMode.min_interval == min_interval &&
-            anotherMode.preferred_accuracy == preferred_accuracy &&
-            anotherMode.preferred_time == preferred_time &&
-            !strncmp(anotherMode.credentials, credentials, sizeof(credentials)-1) &&
-            !strncmp(anotherMode.provider, provider, sizeof(provider)-1);
-    }
+        LocPositionMode mode;
+        GpsPositionRecurrence recurrence;
+        uint32_t min_interval;
+        uint32_t preferred_accuracy;
+        uint32_t preferred_time;
+        char credentials[14];
+        char provider[8];
+        LocPosMode(LocPositionMode m, GpsPositionRecurrence recr,
+                   uint32_t gap, uint32_t accu, uint32_t time,
+                   const char *cred, const char *prov) : mode(m), recurrence(recr),
+                                                         min_interval(gap < MIN_POSSIBLE_FIX_INTERVAL ? MIN_POSSIBLE_FIX_INTERVAL : gap),
+                                                         preferred_accuracy(accu), preferred_time(time)
+        {
+            memset(credentials, 0, sizeof(credentials));
+            memset(provider, 0, sizeof(provider));
+            if (NULL != cred)
+            {
+                memcpy(credentials, cred, sizeof(credentials) - 1);
+            }
+            if (NULL != prov)
+            {
+                memcpy(provider, prov, sizeof(provider) - 1);
+            }
+        }
 
-    void logv() const;
-};
+        inline LocPosMode() : mode(LOC_POSITION_MODE_MS_BASED),
+                              recurrence(GPS_POSITION_RECURRENCE_PERIODIC),
+                              min_interval(MIN_POSSIBLE_FIX_INTERVAL),
+                              preferred_accuracy(50), preferred_time(120000)
+        {
+            memset(credentials, 0, sizeof(credentials));
+            memset(provider, 0, sizeof(provider));
+        }
 
+        inline bool equals(const LocPosMode &anotherMode) const
+        {
+            return anotherMode.mode == mode &&
+                   anotherMode.recurrence == recurrence &&
+                   anotherMode.min_interval == min_interval &&
+                   anotherMode.preferred_accuracy == preferred_accuracy &&
+                   anotherMode.preferred_time == preferred_time &&
+                   !strncmp(anotherMode.credentials, credentials, sizeof(credentials) - 1) &&
+                   !strncmp(anotherMode.provider, provider, sizeof(provider) - 1);
+        }
+
+        void logv() const;
+    };
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
 #endif /* GPS_EXTENDED_H */
-

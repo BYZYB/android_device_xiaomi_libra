@@ -34,27 +34,27 @@
 #include "loc_api_rpcgen_cb_rpc.h"
 
 bool_t
-xdr_rpc_loc_event_cb_f_type_args (XDR *xdrs, rpc_loc_event_cb_f_type_args *objp)
+xdr_rpc_loc_event_cb_f_type_args(XDR *xdrs, rpc_loc_event_cb_f_type_args *objp)
 {
-;
+    ;
 
-     if (!xdr_rpc_uint32 (xdrs, &objp->cb_id))
-         return FALSE;
-     if (!xdr_rpc_loc_client_handle_type (xdrs, &objp->loc_handle))
-         return FALSE;
-     if (!xdr_rpc_loc_event_mask_type (xdrs, &objp->loc_event))
-         return FALSE;
-     if (!xdr_pointer (xdrs, (char **)&objp->loc_event_payload, sizeof (rpc_loc_event_payload_u_type), (xdrproc_t) xdr_rpc_loc_event_payload_u_type))
-         return FALSE;
+    if (!xdr_rpc_uint32(xdrs, &objp->cb_id))
+        return FALSE;
+    if (!xdr_rpc_loc_client_handle_type(xdrs, &objp->loc_handle))
+        return FALSE;
+    if (!xdr_rpc_loc_event_mask_type(xdrs, &objp->loc_event))
+        return FALSE;
+    if (!xdr_pointer(xdrs, (char **)&objp->loc_event_payload, sizeof(rpc_loc_event_payload_u_type), (xdrproc_t)xdr_rpc_loc_event_payload_u_type))
+        return FALSE;
     return TRUE;
 }
 
 bool_t
-xdr_rpc_loc_event_cb_f_type_rets (XDR *xdrs, rpc_loc_event_cb_f_type_rets *objp)
+xdr_rpc_loc_event_cb_f_type_rets(XDR *xdrs, rpc_loc_event_cb_f_type_rets *objp)
 {
-;
+    ;
 
-     if (!xdr_rpc_int32 (xdrs, &objp->loc_event_cb_f_type_result))
-         return FALSE;
+    if (!xdr_rpc_int32(xdrs, &objp->loc_event_cb_f_type_result))
+        return FALSE;
     return TRUE;
 }

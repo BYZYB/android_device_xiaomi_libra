@@ -30,31 +30,29 @@
 #include "loc_api_rpcgen_rpc.h"
 #include "loc_api_rpcgen_cb_rpc.h"
 
+#define RPC_FUNC_VERSION_BASE(a, b) a##b
+#define RPC_CB_FUNC_VERS(a, b) RPC_FUNC_VERSION_BASE(a, b)
 
-#define RPC_FUNC_VERSION_BASE(a,b) a ## b
-#define RPC_CB_FUNC_VERS(a,b) RPC_FUNC_VERSION_BASE(a,b)
+static SVCXPRT *svrPort = NULL;
 
-
-static SVCXPRT* svrPort = NULL;
-
-extern void RPC_CB_FUNC_VERS(loc_apicbprog_,LOC_APICBVERS_0001)(struct svc_req *rqstp, register SVCXPRT *transp);
+extern void RPC_CB_FUNC_VERS(loc_apicbprog_, LOC_APICBVERS_0001)(struct svc_req *rqstp, register SVCXPRT *transp);
 
 int loc_apicb_app_init(void)
 {
 
   /* Register a callback server to use the loc_apicbprog_0x00010001  */
-  if (svrPort == NULL) {
-        svrPort = svcrtr_create();
+  if (svrPort == NULL)
+  {
+    svrPort = svcrtr_create();
   }
-  if (!svrPort) return -1;
+  if (!svrPort)
+    return -1;
 
   xprt_register(svrPort);
 
-
-
-  if(svc_register(svrPort, LOC_APICBPROG,LOC_APICBVERS_0001, RPC_CB_FUNC_VERS(loc_apicbprog_,LOC_APICBVERS_0001),0))
+  if (svc_register(svrPort, LOC_APICBPROG, LOC_APICBVERS_0001, RPC_CB_FUNC_VERS(loc_apicbprog_, LOC_APICBVERS_0001), 0))
   {
-     return 0;
+    return 0;
   }
   else
   {
@@ -64,11 +62,10 @@ int loc_apicb_app_init(void)
 void loc_apicb_app_deinit(void)
 {
 
-   if (svrPort == NULL)
-   {
-      return;
-   }
+  if (svrPort == NULL)
+  {
+    return;
+  }
 
-
-  svc_unregister(svrPort, LOC_APICBPROG,LOC_APICBVERS_0001);
+  svc_unregister(svrPort, LOC_APICBPROG, LOC_APICBVERS_0001);
 }

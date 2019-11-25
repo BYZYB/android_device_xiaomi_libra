@@ -36,47 +36,53 @@
 #include <hardware/gps.h>
 
 #ifndef SSID_BUF_SIZE
-    #define SSID_BUF_SIZE (32+1)
+#define SSID_BUF_SIZE (32 + 1)
 #endif
 
-enum {
+enum
+{
     /* 0x0 - 0xEF is reserved for daemon internal */
-    GPSONE_LOC_API_IF_REQUEST   = 0xF0,
+    GPSONE_LOC_API_IF_REQUEST = 0xF0,
     GPSONE_LOC_API_IF_RELEASE,
     GPSONE_LOC_API_RESPONSE,
     GPSONE_UNBLOCK,
 };
 
-enum {
+enum
+{
     GPSONE_LOC_API_IF_REQUEST_SUCCESS = 0xF0,
     GPSONE_LOC_API_IF_RELEASE_SUCCESS,
     GPSONE_LOC_API_IF_FAILURE,
 };
 
-
-struct ctrl_msg_response {
+struct ctrl_msg_response
+{
     int result;
 };
 
-struct ctrl_msg_unblock {
+struct ctrl_msg_unblock
+{
     int reserved;
 };
 
-typedef enum {
-  IF_REQUEST_TYPE_SUPL = 0,
-  IF_REQUEST_TYPE_WIFI,
-  IF_REQUEST_TYPE_ANY
+typedef enum
+{
+    IF_REQUEST_TYPE_SUPL = 0,
+    IF_REQUEST_TYPE_WIFI,
+    IF_REQUEST_TYPE_ANY
 } ctrl_if_req_type_e_type;
 
-typedef enum {
-  IF_REQUEST_SENDER_ID_QUIPC = 0,
-  IF_REQUEST_SENDER_ID_MSAPM,
-  IF_REQUEST_SENDER_ID_MSAPU,
-  IF_REQUEST_SENDER_ID_GPSONE_DAEMON,
-  IF_REQUEST_SENDER_ID_MODEM
+typedef enum
+{
+    IF_REQUEST_SENDER_ID_QUIPC = 0,
+    IF_REQUEST_SENDER_ID_MSAPM,
+    IF_REQUEST_SENDER_ID_MSAPU,
+    IF_REQUEST_SENDER_ID_GPSONE_DAEMON,
+    IF_REQUEST_SENDER_ID_MODEM
 } ctrl_if_req_sender_id_e_type;
 
-struct ctrl_msg_if_request {
+struct ctrl_msg_if_request
+{
     ctrl_if_req_type_e_type type;
     ctrl_if_req_sender_id_e_type sender_id;
     unsigned long ipv4_addr;
@@ -86,19 +92,20 @@ struct ctrl_msg_if_request {
 };
 
 /* do not change this structure */
-struct ctrl_msgbuf {
+struct ctrl_msgbuf
+{
     size_t msgsz;
     uint16_t reserved1;
     uint32_t reserved2;
     uint8_t ctrl_type;
     union {
-        struct ctrl_msg_response   cmsg_response;
-        struct ctrl_msg_unblock    cmsg_unblock;
+        struct ctrl_msg_response cmsg_response;
+        struct ctrl_msg_unblock cmsg_unblock;
         struct ctrl_msg_if_request cmsg_if_request;
     } cmsg;
 };
 
-extern void* loc_api_handle;
+extern void *loc_api_handle;
 
 int loc_eng_dmn_conn_loc_api_server_if_request_handler(struct ctrl_msgbuf *pmsg, int len);
 int loc_eng_dmn_conn_loc_api_server_if_release_handler(struct ctrl_msgbuf *pmsg, int len);

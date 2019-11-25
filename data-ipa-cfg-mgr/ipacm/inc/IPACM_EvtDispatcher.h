@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -52,14 +52,11 @@ typedef struct _cmd_evts
 	IPACM_Listener *obj;
 	//int ipa_interface_index;
 	_cmd_evts *next;
-}  cmd_evts;
-
-
+} cmd_evts;
 
 class IPACM_EvtDispatcher
 {
 public:
-
 	/* api for all iface instances to register events */
 	static int registr(ipa_cm_event_id event, IPACM_Listener *obj);
 

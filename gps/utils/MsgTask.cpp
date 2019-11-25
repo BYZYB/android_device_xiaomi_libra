@@ -36,57 +36,69 @@
 #include <log_util.h>
 #include <loc_log.h>
 
-static void LocMsgDestroy(void* msg) {
-    delete (LocMsg*)msg;
+static void LocMsgDestroy(void *msg)
+{
+    delete (LocMsg *)msg;
 }
 
 MsgTask::MsgTask(LocThread::tCreate tCreator,
-                 const char* threadName, bool joinable) :
-    mQ(msg_q_init2()), mThread(new LocThread()) {
-    if (!mThread->start(tCreator, threadName, this, joinable)) {
+                 const char *threadName, bool joinable) : mQ(msg_q_init2()), mThread(new LocThread())
+{
+    if (!mThread->start(tCreator, threadName, this, joinable))
+    {
         delete mThread;
         mThread = NULL;
     }
 }
 
-MsgTask::MsgTask(const char* threadName, bool joinable) :
-    mQ(msg_q_init2()), mThread(new LocThread()) {
-    if (!mThread->start(threadName, this, joinable)) {
+MsgTask::MsgTask(const char *threadName, bool joinable) : mQ(msg_q_init2()), mThread(new LocThread())
+{
+    if (!mThread->start(threadName, this, joinable))
+    {
         delete mThread;
         mThread = NULL;
     }
 }
 
-MsgTask::~MsgTask() {
-    msg_q_flush((void*)mQ);
-    msg_q_destroy((void**)&mQ);
+MsgTask::~MsgTask()
+{
+    msg_q_flush((void *)mQ);
+    msg_q_destroy((void **)&mQ);
 }
 
-void MsgTask::destroy() {
-    LocThread* thread = mThread;
-    msg_q_unblock((void*)mQ);
-    if (thread) {
+void MsgTask::destroy()
+{
+    LocThread *thread = mThread;
+    msg_q_unblock((void *)mQ);
+    if (thread)
+    {
         mThread = NULL;
         delete thread;
-    } else {
+    }
+    else
+    {
         delete this;
     }
 }
 
-void MsgTask::sendMsg(const LocMsg* msg) const {
-    msg_q_snd((void*)mQ, (void*)msg, LocMsgDestroy);
+void MsgTask::sendMsg(const LocMsg *msg) const
+{
+    msg_q_snd((void *)mQ, (void *)msg, LocMsgDestroy);
 }
 
-void MsgTask::prerun() {
+void MsgTask::prerun()
+{
     // make sure we do not run in background scheduling group
     set_sched_policy(gettid(), SP_FOREGROUND);
 }
 
-bool MsgTask::run() {
+bool MsgTask::run()
+{
     LOC_LOGV("MsgTask::loop() listening ...\n");
-    LocMsg* msg;
-    msq_q_err_type result = msg_q_rcv((void*)mQ, (void **)&msg);
-    if (eMSG_Q_SUCCESS != result) {
+    LocMsg *msg;
+    msq_q_err_type result = msg_q_rcv((void *)mQ, (void **)&msg);
+    if (eMSG_Q_SUCCESS != result)
+    {
         LOC_LOGE("%s:%d] fail receiving msg: %s\n", __func__, __LINE__,
                  loc_get_msg_q_status(result));
         return false;

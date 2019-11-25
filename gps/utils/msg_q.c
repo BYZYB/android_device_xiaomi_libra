@@ -36,11 +36,12 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-typedef struct msg_q {
-   void* msg_list;                  /* Linked list to store information */
-   pthread_cond_t  list_cond;       /* Condition variable for waiting on msg queue */
-   pthread_mutex_t list_mutex;      /* Mutex for exclusive access to message queue */
-   int unblocked;                   /* Has this message queue been unblocked? */
+typedef struct msg_q
+{
+   void *msg_list;             /* Linked list to store information */
+   pthread_cond_t list_cond;   /* Condition variable for waiting on msg queue */
+   pthread_mutex_t list_mutex; /* Mutex for exclusive access to message queue */
+   int unblocked;              /* Has this message queue been unblocked? */
 } msg_q;
 
 /*===========================================================================
@@ -63,7 +64,7 @@ SIDE EFFECTS
 ===========================================================================*/
 static msq_q_err_type convert_linked_list_err_type(linked_list_err_type linked_list_val)
 {
-   switch( linked_list_val )
+   switch (linked_list_val)
    {
    case eLINKED_LIST_SUCCESS:
       return eMSG_Q_SUCCESS;
@@ -89,30 +90,30 @@ static msq_q_err_type convert_linked_list_err_type(linked_list_err_type linked_l
   FUNCTION:   msg_q_init
 
   ===========================================================================*/
-msq_q_err_type msg_q_init(void** msg_q_data)
+msq_q_err_type msg_q_init(void **msg_q_data)
 {
-   if( msg_q_data == NULL )
+   if (msg_q_data == NULL)
    {
       LOC_LOGE("%s: Invalid msg_q_data parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_PARAMETER;
    }
 
-   msg_q* tmp_msg_q;
-   tmp_msg_q = (msg_q*)calloc(1, sizeof(msg_q));
-   if( tmp_msg_q == NULL )
+   msg_q *tmp_msg_q;
+   tmp_msg_q = (msg_q *)calloc(1, sizeof(msg_q));
+   if (tmp_msg_q == NULL)
    {
       LOC_LOGE("%s: Unable to allocate space for message queue!\n", __FUNCTION__);
       return eMSG_Q_FAILURE_GENERAL;
    }
 
-   if( linked_list_init(&tmp_msg_q->msg_list) != 0 )
+   if (linked_list_init(&tmp_msg_q->msg_list) != 0)
    {
       LOC_LOGE("%s: Unable to initialize storage list!\n", __FUNCTION__);
       free(tmp_msg_q);
       return eMSG_Q_FAILURE_GENERAL;
    }
 
-   if( pthread_mutex_init(&tmp_msg_q->list_mutex, NULL) != 0 )
+   if (pthread_mutex_init(&tmp_msg_q->list_mutex, NULL) != 0)
    {
       LOC_LOGE("%s: Unable to initialize list mutex!\n", __FUNCTION__);
       linked_list_destroy(&tmp_msg_q->msg_list);
@@ -120,7 +121,7 @@ msq_q_err_type msg_q_init(void** msg_q_data)
       return eMSG_Q_FAILURE_GENERAL;
    }
 
-   if( pthread_cond_init(&tmp_msg_q->list_cond, NULL) != 0 )
+   if (pthread_cond_init(&tmp_msg_q->list_cond, NULL) != 0)
    {
       LOC_LOGE("%s: Unable to initialize msg q cond var!\n", __FUNCTION__);
       linked_list_destroy(&tmp_msg_q->msg_list);
@@ -141,13 +142,14 @@ msq_q_err_type msg_q_init(void** msg_q_data)
   FUNCTION:   msg_q_init2
 
   ===========================================================================*/
-const void* msg_q_init2()
+const void *msg_q_init2()
 {
-  void* q = NULL;
-  if (eMSG_Q_SUCCESS != msg_q_init(&q)) {
-    q = NULL;
-  }
-  return q;
+   void *q = NULL;
+   if (eMSG_Q_SUCCESS != msg_q_init(&q))
+   {
+      q = NULL;
+   }
+   return q;
 }
 
 /*===========================================================================
@@ -155,15 +157,15 @@ const void* msg_q_init2()
   FUNCTION:   msg_q_destroy
 
   ===========================================================================*/
-msq_q_err_type msg_q_destroy(void** msg_q_data)
+msq_q_err_type msg_q_destroy(void **msg_q_data)
 {
-   if( msg_q_data == NULL )
+   if (msg_q_data == NULL)
    {
       LOC_LOGE("%s: Invalid msg_q_data parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_HANDLE;
    }
 
-   msg_q* p_msg_q = (msg_q*)*msg_q_data;
+   msg_q *p_msg_q = (msg_q *)*msg_q_data;
 
    linked_list_destroy(&p_msg_q->msg_list);
    pthread_mutex_destroy(&p_msg_q->list_mutex);
@@ -182,26 +184,26 @@ msq_q_err_type msg_q_destroy(void** msg_q_data)
   FUNCTION:   msg_q_snd
 
   ===========================================================================*/
-msq_q_err_type msg_q_snd(void* msg_q_data, void* msg_obj, void (*dealloc)(void*))
+msq_q_err_type msg_q_snd(void *msg_q_data, void *msg_obj, void (*dealloc)(void *))
 {
    msq_q_err_type rv;
-   if( msg_q_data == NULL )
+   if (msg_q_data == NULL)
    {
       LOC_LOGE("%s: Invalid msg_q_data parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_HANDLE;
    }
-   if( msg_obj == NULL )
+   if (msg_obj == NULL)
    {
       LOC_LOGE("%s: Invalid msg_obj parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_PARAMETER;
    }
 
-   msg_q* p_msg_q = (msg_q*)msg_q_data;
+   msg_q *p_msg_q = (msg_q *)msg_q_data;
 
    pthread_mutex_lock(&p_msg_q->list_mutex);
    LOC_LOGV("%s: Sending message with handle = 0x%08X\n", __FUNCTION__, msg_obj);
 
-   if( p_msg_q->unblocked )
+   if (p_msg_q->unblocked)
    {
       LOC_LOGE("%s: Message queue has been unblocked.\n", __FUNCTION__);
       pthread_mutex_unlock(&p_msg_q->list_mutex);
@@ -225,28 +227,28 @@ msq_q_err_type msg_q_snd(void* msg_q_data, void* msg_obj, void (*dealloc)(void*)
   FUNCTION:   msg_q_rcv
 
   ===========================================================================*/
-msq_q_err_type msg_q_rcv(void* msg_q_data, void** msg_obj)
+msq_q_err_type msg_q_rcv(void *msg_q_data, void **msg_obj)
 {
    msq_q_err_type rv;
-   if( msg_q_data == NULL )
+   if (msg_q_data == NULL)
    {
       LOC_LOGE("%s: Invalid msg_q_data parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_HANDLE;
    }
 
-   if( msg_obj == NULL )
+   if (msg_obj == NULL)
    {
       LOC_LOGE("%s: Invalid msg_obj parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_PARAMETER;
    }
 
-   msg_q* p_msg_q = (msg_q*)msg_q_data;
+   msg_q *p_msg_q = (msg_q *)msg_q_data;
 
    LOC_LOGV("%s: Waiting on message\n", __FUNCTION__);
 
    pthread_mutex_lock(&p_msg_q->list_mutex);
 
-   if( p_msg_q->unblocked )
+   if (p_msg_q->unblocked)
    {
       LOC_LOGE("%s: Message queue has been unblocked.\n", __FUNCTION__);
       pthread_mutex_unlock(&p_msg_q->list_mutex);
@@ -254,7 +256,7 @@ msq_q_err_type msg_q_rcv(void* msg_q_data, void** msg_obj)
    }
 
    /* Wait for data in the message queue */
-   while( linked_list_empty(p_msg_q->msg_list) && !p_msg_q->unblocked )
+   while (linked_list_empty(p_msg_q->msg_list) && !p_msg_q->unblocked)
    {
       pthread_cond_wait(&p_msg_q->list_cond, &p_msg_q->list_mutex);
    }
@@ -273,16 +275,16 @@ msq_q_err_type msg_q_rcv(void* msg_q_data, void** msg_obj)
   FUNCTION:   msg_q_flush
 
   ===========================================================================*/
-msq_q_err_type msg_q_flush(void* msg_q_data)
+msq_q_err_type msg_q_flush(void *msg_q_data)
 {
    msq_q_err_type rv;
-   if ( msg_q_data == NULL )
+   if (msg_q_data == NULL)
    {
       LOC_LOGE("%s: Invalid msg_q_data parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_HANDLE;
    }
 
-   msg_q* p_msg_q = (msg_q*)msg_q_data;
+   msg_q *p_msg_q = (msg_q *)msg_q_data;
 
    LOC_LOGD("%s: Flushing Message Queue\n", __FUNCTION__);
 
@@ -303,18 +305,18 @@ msq_q_err_type msg_q_flush(void* msg_q_data)
   FUNCTION:   msg_q_unblock
 
   ===========================================================================*/
-msq_q_err_type msg_q_unblock(void* msg_q_data)
+msq_q_err_type msg_q_unblock(void *msg_q_data)
 {
-   if ( msg_q_data == NULL )
+   if (msg_q_data == NULL)
    {
       LOC_LOGE("%s: Invalid msg_q_data parameter!\n", __FUNCTION__);
       return eMSG_Q_INVALID_HANDLE;
    }
 
-   msg_q* p_msg_q = (msg_q*)msg_q_data;
+   msg_q *p_msg_q = (msg_q *)msg_q_data;
    pthread_mutex_lock(&p_msg_q->list_mutex);
 
-   if( p_msg_q->unblocked )
+   if (p_msg_q->unblocked)
    {
       LOC_LOGE("%s: Message queue has been unblocked.\n", __FUNCTION__);
       pthread_mutex_unlock(&p_msg_q->list_mutex);

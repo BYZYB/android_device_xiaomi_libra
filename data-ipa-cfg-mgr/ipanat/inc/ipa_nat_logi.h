@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	This file implements the IPAM log functionality.
 
 	@Author
-	
+
 
 */
 
@@ -50,13 +50,14 @@ extern "C"
 #include <string.h>
 #include <syslog.h>
 
-#define PERROR(fmt) printf("%s:%d %s()", __FILE__, __LINE__, __FUNCTION__);\
-                    perror(fmt);
+#define PERROR(fmt)                                       \
+  printf("%s:%d %s()", __FILE__, __LINE__, __FUNCTION__); \
+  perror(fmt);
 
-#define IPAERR(fmt, ...)  printf("ERR: %s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);
+#define IPAERR(fmt, ...) printf("ERR: %s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__);
 
 #ifdef DEBUG
-#define IPADBG(fmt, ...) printf("%s:%d %s() " fmt, __FILE__,  __LINE__, __FUNCTION__, ##__VA_ARGS__);
+#define IPADBG(fmt, ...) printf("%s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__);
 
 #define IPADUMP(fmt, ...) printf(fmt, ##__VA_ARGS__);
 
@@ -64,7 +65,6 @@ extern "C"
 #define IPADBG(fmt, ...)
 #define IPADUMP(fmt, ...)
 #endif
-
 
 #ifdef __cplusplus
 }

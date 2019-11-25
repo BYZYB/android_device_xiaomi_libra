@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -118,7 +118,8 @@ bool IPACM_Header::GetHeaderHandle(struct ipa_ioc_get_hdr *pHeaderStruct)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_GET_HDR, pHeaderStruct);
 	if (retval)
@@ -137,7 +138,8 @@ bool IPACM_Header::CopyHeader(struct ipa_ioc_copy_hdr *pCopyHeaderStruct)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_COPY_HDR, pCopyHeaderStruct);
 	if (retval)
@@ -182,9 +184,9 @@ bool IPACM_Header::DeleteHeaderHdl(uint32_t hdr_hdl)
 
 	IPACMDBG("Deleting Header hdl:(%x)\n", hd_rule_entry->hdl);
 	if ((false == DeleteHeader(pHeaderDescriptor)) ||
-			(hd_rule_entry->status))
+		(hd_rule_entry->status))
 	{
-	    IPACMERR("Header hdl:(%x) deletion failed!  status: %d\n", hd_rule_entry->hdl,hd_rule_entry->status);
+		IPACMERR("Header hdl:(%x) deletion failed!  status: %d\n", hd_rule_entry->hdl, hd_rule_entry->status);
 		res = false;
 		goto fail;
 	}
@@ -195,10 +197,9 @@ fail:
 	free(pHeaderDescriptor);
 
 	return res;
-
 }
 
-bool IPACM_Header::AddHeaderProcCtx(struct ipa_ioc_add_hdr_proc_ctx* pHeader)
+bool IPACM_Header::AddHeaderProcCtx(struct ipa_ioc_add_hdr_proc_ctx *pHeader)
 {
 	int ret = 0;
 	//call the Driver ioctl to add header processing context
@@ -209,11 +210,11 @@ bool IPACM_Header::AddHeaderProcCtx(struct ipa_ioc_add_hdr_proc_ctx* pHeader)
 bool IPACM_Header::DeleteHeaderProcCtx(uint32_t hdl)
 {
 	int len, ret;
-	struct ipa_ioc_del_hdr_proc_ctx* pHeaderTable = NULL;
+	struct ipa_ioc_del_hdr_proc_ctx *pHeaderTable = NULL;
 
 	len = sizeof(struct ipa_ioc_del_hdr_proc_ctx) + sizeof(struct ipa_hdr_proc_ctx_del);
-	pHeaderTable = (struct ipa_ioc_del_hdr_proc_ctx*)malloc(len);
-	if(pHeaderTable == NULL)
+	pHeaderTable = (struct ipa_ioc_del_hdr_proc_ctx *)malloc(len);
+	if (pHeaderTable == NULL)
 	{
 		IPACMERR("Failed to allocate buffer.\n");
 		return false;
@@ -228,4 +229,3 @@ bool IPACM_Header::DeleteHeaderProcCtx(uint32_t hdl)
 	free(pHeaderTable);
 	return (ret != -1);
 }
-

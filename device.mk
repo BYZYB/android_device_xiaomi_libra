@@ -18,12 +18,10 @@ $(call inherit-product, vendor/xiaomi/libra/libra-vendor.mk)
 
 # AAPT
 PRODUCT_AAPT_CONFIG := normal
-PRODUCT_AAPT_PREBUILT_DPI := xxhdpi xhdpi hdpi
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
 # ANT+ stack
-PRODUCT_COPY_FILES += \
-    external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:system/vendor/etc/permissions/com.dsi.ant.antradio_library.xml
+PRODUCT_COPY_FILES += external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:system/vendor/etc/permissions/com.dsi.ant.antradio_library.xml
 
 PRODUCT_PACKAGES += \
     AntHalService \
@@ -81,8 +79,7 @@ TARGET_SCREEN_HEIGHT := 1920
 TARGET_SCREEN_WIDTH := 1080
 
 # Busybox
-PRODUCT_COPY_FILES += \
-$(LOCAL_PATH)/rootdir/bin/busybox:system/xbin/busybox
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/rootdir/bin/busybox:system/xbin/busybox
 
 # Camera
 PRODUCT_PACKAGES += \
@@ -101,8 +98,7 @@ PRODUCT_PACKAGES += \
     services-ext
 
 # EdgeGesture
-PRODUCT_PACKAGES += \
-    EdgeGesture
+PRODUCT_PACKAGES += EdgeGesture
 
 # Fingerprint
 PRODUCT_COPY_FILES += \
@@ -110,12 +106,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/uinput-fpc.kl:system/vendor/usr/keylayout/uinput-fpc.kl \
     frameworks/native/data/etc/android.hardware.fingerprint.xml:system/vendor/etc/permissions/android.hardware.fingerprint.xml
 
-PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.1-service
+PRODUCT_PACKAGES += android.hardware.biometrics.fingerprint@2.1-service
 
 # Gatekeeper HAL
-PRODUCT_PACKAGES += \
-    android.hardware.gatekeeper@1.0-impl
+PRODUCT_PACKAGES += android.hardware.gatekeeper@1.0-impl
 
 # GNSS HAL
 PRODUCT_PACKAGES += \
@@ -186,16 +180,13 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/vendor/etc/permissions/handheld_core_hardware.xml
 
 # IR
-PRODUCT_PACKAGES += \
-    android.hardware.ir@1.0-service.libra
+PRODUCT_PACKAGES += android.hardware.ir@1.0-service.libra
 
 # IRQ
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/msm_irqbalance.conf:system/vendor/etc/msm_irqbalance.conf
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/msm_irqbalance.conf:system/vendor/etc/msm_irqbalance.conf
 
 # IRSC
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/sec_config:system/vendor/etc/sec_config
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/sec_config:system/vendor/etc/sec_config
 
 # Keylayout
 PRODUCT_COPY_FILES += \
@@ -208,16 +199,13 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/synaptics_dsx.kl:system/vendor/usr/keylayout/synaptics_dsx.kl
 
 # Keystore
-PRODUCT_PACKAGES += \
-    android.hardware.keymaster@3.0-impl
+PRODUCT_PACKAGES += android.hardware.keymaster@3.0-impl
 
 # Lights
-PRODUCT_PACKAGES += \
-    android.hardware.light@2.0-service.xiaomi_msm8994
+PRODUCT_PACKAGES += android.hardware.light@2.0-service.xiaomi_msm8994
 
 # LiveDisplay
-PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.0-service-legacymm
+PRODUCT_PACKAGES += vendor.lineage.livedisplay@2.0-service-legacymm
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -232,8 +220,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl \
     android.hardware.drm@1.0-service \
-    android.hardware.drm@1.1-service.clearkey \
-    android.hardware.drm@1.1-service.widevine \
     libc2dcolorconvert \
     libdivxdrmdecrypt \
     libdrmclearkeyplugin \
@@ -253,16 +239,13 @@ DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
 PRODUCT_ENFORCE_RRO_TARGETS := framework-res
 
 # Permissions
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.consumerir.xml:system/vendor/etc/permissions/android.hardware.consumerir.xml
+PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.consumerir.xml:system/vendor/etc/permissions/android.hardware.consumerir.xml
 
 # Power
-PRODUCT_PACKAGES += \
-    android.hardware.power@1.1-service-qti
+PRODUCT_PACKAGES += android.hardware.power@1.1-service-qti
 
 # Privapp Whitelist
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/privapp-permissions-qti.xml:system/etc/permissions/privapp-permissions-qti.xml
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/privapp-permissions-qti.xml:system/etc/permissions/privapp-permissions-qti.xml
 
 # Ramdisk
 PRODUCT_PACKAGES += \
@@ -277,12 +260,10 @@ PRODUCT_PACKAGES += \
     ueventd.qcom.rc
 
 # Recovery
-PRODUCT_PACKAGES += \
-    librecovery_updater_msm8994
+PRODUCT_PACKAGES += librecovery_updater_msm8994
 
 # RenderScript HAL
-PRODUCT_PACKAGES += \
-    android.hardware.renderscript@1.0-impl
+PRODUCT_PACKAGES += android.hardware.renderscript@1.0-impl
 
 # RIL
 PRODUCT_PACKAGES += \
@@ -296,8 +277,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp/mediaextractor.policy:system/vendor/etc/seccomp_policy/mediaextractor.policy
 
 # Sensors
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/sensor_diag.cfg:system/etc/sensor_diag.cfg
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/sensor_diag.cfg:system/etc/sensor_diag.cfg
 
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
@@ -307,32 +287,26 @@ PRODUCT_PACKAGES += \
 -include $(LOCAL_PATH)/system_prop.mk
 
 # Telephony
-PRODUCT_BOOT_JARS += \
-    telephony-ext
+PRODUCT_BOOT_JARS += telephony-ext
 
 PRODUCT_PACKAGES += \
     qti-telephony-common \
     telephony-ext
 
 # Thermal HAL
-PRODUCT_PACKAGES += \
-    android.hardware.thermal@1.0-impl
+PRODUCT_PACKAGES += android.hardware.thermal@1.0-impl
 
 # Touch
-PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.libra
+PRODUCT_PACKAGES += vendor.lineage.touch@1.0-service.libra
 
 # Trust HAL
-PRODUCT_PACKAGES += \
-    vendor.lineage.trust@1.0-service
+PRODUCT_PACKAGES += vendor.lineage.trust@1.0-service
 
 # USB HAL
-PRODUCT_PACKAGES += \
-    android.hardware.usb@1.0-service.basic
+PRODUCT_PACKAGES += android.hardware.usb@1.0-service.basic
 
 # Vibrator
-PRODUCT_PACKAGES += \
-    android.hardware.vibrator@1.0-service.lineage
+PRODUCT_PACKAGES += android.hardware.vibrator@1.0-service.lineage
 
 # Wifi
 PRODUCT_COPY_FILES += \

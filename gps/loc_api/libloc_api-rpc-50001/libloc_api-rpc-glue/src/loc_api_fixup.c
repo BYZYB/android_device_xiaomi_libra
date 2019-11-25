@@ -33,20 +33,19 @@
 #ifdef ADD_XDR_FLOAT
 
 int
-xdr_float(xdrp, fp)
+    xdr_float(xdrp, fp)
         XDR *xdrp;
-        float *fp;
+float *fp;
 {
-        return xdr_long(xdrp, (long*)fp);
+        return xdr_long(xdrp, (long *)fp);
 }
 
 int
-xdr_double(xdrp, dp)
+    xdr_double(xdrp, dp)
         XDR *xdrp;
-        double *dp;
+double *dp;
 {
-                return xdr_long(xdrp, (long*)dp + 1)
-                                && xdr_long(xdrp, (long*)dp);
+        return xdr_long(xdrp, (long *)dp + 1) && xdr_long(xdrp, (long *)dp);
 }
 
 #endif /* ADD_XDR_FLOAT */

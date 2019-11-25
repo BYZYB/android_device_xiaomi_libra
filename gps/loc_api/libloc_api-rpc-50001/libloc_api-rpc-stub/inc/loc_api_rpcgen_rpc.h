@@ -41,88 +41,102 @@
 #include <pthread.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    typedef struct
+    {
+        u_int rpc_loc_api_api_versions_return_type_len;
+        rpc_uint32 *rpc_loc_api_api_versions_return_type_val;
+    } rpc_loc_api_api_versions_return_type;
 
-typedef struct {
-    u_int rpc_loc_api_api_versions_return_type_len;
-    rpc_uint32 *rpc_loc_api_api_versions_return_type_val;
-} rpc_loc_api_api_versions_return_type;
+    typedef rpc_uint32 rpc_loc_event_cb_f_type;
 
-typedef rpc_uint32 rpc_loc_event_cb_f_type;
+    struct rpc_loc_open_args
+    {
+        rpc_loc_event_mask_type event_reg_mask;
+        rpc_loc_event_cb_f_type event_callback;
+    };
+    typedef struct rpc_loc_open_args rpc_loc_open_args;
 
-struct rpc_loc_open_args {
-    rpc_loc_event_mask_type event_reg_mask;
-    rpc_loc_event_cb_f_type event_callback;
-};
-typedef struct rpc_loc_open_args rpc_loc_open_args;
+    struct rpc_loc_close_args
+    {
+        rpc_loc_client_handle_type handle;
+    };
+    typedef struct rpc_loc_close_args rpc_loc_close_args;
 
-struct rpc_loc_close_args {
-    rpc_loc_client_handle_type handle;
-};
-typedef struct rpc_loc_close_args rpc_loc_close_args;
+    struct rpc_loc_start_fix_args
+    {
+        rpc_loc_client_handle_type handle;
+    };
+    typedef struct rpc_loc_start_fix_args rpc_loc_start_fix_args;
 
-struct rpc_loc_start_fix_args {
-    rpc_loc_client_handle_type handle;
-};
-typedef struct rpc_loc_start_fix_args rpc_loc_start_fix_args;
+    struct rpc_loc_stop_fix_args
+    {
+        rpc_loc_client_handle_type handle;
+    };
+    typedef struct rpc_loc_stop_fix_args rpc_loc_stop_fix_args;
 
-struct rpc_loc_stop_fix_args {
-    rpc_loc_client_handle_type handle;
-};
-typedef struct rpc_loc_stop_fix_args rpc_loc_stop_fix_args;
+    struct rpc_loc_ioctl_args
+    {
+        rpc_loc_client_handle_type handle;
+        rpc_loc_ioctl_e_type ioctl_type;
+        rpc_loc_ioctl_data_u_type *ioctl_data;
+    };
+    typedef struct rpc_loc_ioctl_args rpc_loc_ioctl_args;
 
-struct rpc_loc_ioctl_args {
-    rpc_loc_client_handle_type handle;
-    rpc_loc_ioctl_e_type ioctl_type;
-    rpc_loc_ioctl_data_u_type *ioctl_data;
-};
-typedef struct rpc_loc_ioctl_args rpc_loc_ioctl_args;
+    struct rpc_loc_api_api_version_s_args
+    {
+        rpc_boolean len_not_null;
+    };
+    typedef struct rpc_loc_api_api_version_s_args rpc_loc_api_api_version_s_args;
 
-struct rpc_loc_api_api_version_s_args {
-    rpc_boolean len_not_null;
-};
-typedef struct rpc_loc_api_api_version_s_args rpc_loc_api_api_version_s_args;
+    struct rpc_loc_api_rpc_glue_code_info_remote_rets
+    {
+        rpc_uint32 toolvers;
+        rpc_uint32 features;
+        rpc_uint32 proghash;
+        rpc_uint32 cbproghash;
+    };
+    typedef struct rpc_loc_api_rpc_glue_code_info_remote_rets rpc_loc_api_rpc_glue_code_info_remote_rets;
 
-struct rpc_loc_api_rpc_glue_code_info_remote_rets {
-    rpc_uint32 toolvers;
-    rpc_uint32 features;
-    rpc_uint32 proghash;
-    rpc_uint32 cbproghash;
-};
-typedef struct rpc_loc_api_rpc_glue_code_info_remote_rets rpc_loc_api_rpc_glue_code_info_remote_rets;
+    struct rpc_loc_open_rets
+    {
+        rpc_loc_client_handle_type loc_open_result;
+    };
+    typedef struct rpc_loc_open_rets rpc_loc_open_rets;
 
-struct rpc_loc_open_rets {
-    rpc_loc_client_handle_type loc_open_result;
-};
-typedef struct rpc_loc_open_rets rpc_loc_open_rets;
+    struct rpc_loc_close_rets
+    {
+        rpc_int32 loc_close_result;
+    };
+    typedef struct rpc_loc_close_rets rpc_loc_close_rets;
 
-struct rpc_loc_close_rets {
-    rpc_int32 loc_close_result;
-};
-typedef struct rpc_loc_close_rets rpc_loc_close_rets;
+    struct rpc_loc_start_fix_rets
+    {
+        rpc_int32 loc_start_fix_result;
+    };
+    typedef struct rpc_loc_start_fix_rets rpc_loc_start_fix_rets;
 
-struct rpc_loc_start_fix_rets {
-    rpc_int32 loc_start_fix_result;
-};
-typedef struct rpc_loc_start_fix_rets rpc_loc_start_fix_rets;
+    struct rpc_loc_stop_fix_rets
+    {
+        rpc_int32 loc_stop_fix_result;
+    };
+    typedef struct rpc_loc_stop_fix_rets rpc_loc_stop_fix_rets;
 
-struct rpc_loc_stop_fix_rets {
-    rpc_int32 loc_stop_fix_result;
-};
-typedef struct rpc_loc_stop_fix_rets rpc_loc_stop_fix_rets;
+    struct rpc_loc_ioctl_rets
+    {
+        rpc_int32 loc_ioctl_result;
+    };
+    typedef struct rpc_loc_ioctl_rets rpc_loc_ioctl_rets;
 
-struct rpc_loc_ioctl_rets {
-    rpc_int32 loc_ioctl_result;
-};
-typedef struct rpc_loc_ioctl_rets rpc_loc_ioctl_rets;
-
-struct rpc_loc_api_api_versions_rets {
-    rpc_loc_api_api_versions_return_type loc_api_api_versions_result;
-    rpc_uint32 *len;
-};
-typedef struct rpc_loc_api_api_versions_rets rpc_loc_api_api_versions_rets;
+    struct rpc_loc_api_api_versions_rets
+    {
+        rpc_loc_api_api_versions_return_type loc_api_api_versions_result;
+        rpc_uint32 *len;
+    };
+    typedef struct rpc_loc_api_api_versions_rets rpc_loc_api_api_versions_rets;
 #define LOC_APIVERS 0x00050006
 
 #define LOC_APIPROG 0x3000008C
@@ -130,154 +144,154 @@ typedef struct rpc_loc_api_api_versions_rets rpc_loc_api_api_versions_rets;
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define rpc_loc_api_null 0
-extern  enum clnt_stat rpc_loc_api_null_0x00050001(void *, void *, CLIENT *);
-extern  bool_t rpc_loc_api_null_0x00050001_svc(void *, void *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_api_null_0x00050001(void *, void *, CLIENT *);
+    extern bool_t rpc_loc_api_null_0x00050001_svc(void *, void *, struct svc_req *);
 #define rpc_loc_api_rpc_glue_code_info_remote 1
-extern  enum clnt_stat rpc_loc_api_rpc_glue_code_info_remote_0x00050001(void *, rpc_loc_api_rpc_glue_code_info_remote_rets *, CLIENT *);
-extern  bool_t rpc_loc_api_rpc_glue_code_info_remote_0x00050001_svc(void *, rpc_loc_api_rpc_glue_code_info_remote_rets *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_api_rpc_glue_code_info_remote_0x00050001(void *, rpc_loc_api_rpc_glue_code_info_remote_rets *, CLIENT *);
+    extern bool_t rpc_loc_api_rpc_glue_code_info_remote_0x00050001_svc(void *, rpc_loc_api_rpc_glue_code_info_remote_rets *, struct svc_req *);
 #define rpc_loc_open 2
-extern  enum clnt_stat rpc_loc_open_0x00050001(rpc_loc_open_args *, rpc_loc_open_rets *, CLIENT *);
-extern  bool_t rpc_loc_open_0x00050001_svc(rpc_loc_open_args *, rpc_loc_open_rets *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_open_0x00050001(rpc_loc_open_args *, rpc_loc_open_rets *, CLIENT *);
+    extern bool_t rpc_loc_open_0x00050001_svc(rpc_loc_open_args *, rpc_loc_open_rets *, struct svc_req *);
 #define rpc_loc_close 3
-extern  enum clnt_stat rpc_loc_close_0x00050001(rpc_loc_close_args *, rpc_loc_close_rets *, CLIENT *);
-extern  bool_t rpc_loc_close_0x00050001_svc(rpc_loc_close_args *, rpc_loc_close_rets *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_close_0x00050001(rpc_loc_close_args *, rpc_loc_close_rets *, CLIENT *);
+    extern bool_t rpc_loc_close_0x00050001_svc(rpc_loc_close_args *, rpc_loc_close_rets *, struct svc_req *);
 #define rpc_loc_start_fix 4
-extern  enum clnt_stat rpc_loc_start_fix_0x00050001(rpc_loc_start_fix_args *, rpc_loc_start_fix_rets *, CLIENT *);
-extern  bool_t rpc_loc_start_fix_0x00050001_svc(rpc_loc_start_fix_args *, rpc_loc_start_fix_rets *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_start_fix_0x00050001(rpc_loc_start_fix_args *, rpc_loc_start_fix_rets *, CLIENT *);
+    extern bool_t rpc_loc_start_fix_0x00050001_svc(rpc_loc_start_fix_args *, rpc_loc_start_fix_rets *, struct svc_req *);
 #define rpc_loc_stop_fix 5
-extern  enum clnt_stat rpc_loc_stop_fix_0x00050001(rpc_loc_stop_fix_args *, rpc_loc_stop_fix_rets *, CLIENT *);
-extern  bool_t rpc_loc_stop_fix_0x00050001_svc(rpc_loc_stop_fix_args *, rpc_loc_stop_fix_rets *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_stop_fix_0x00050001(rpc_loc_stop_fix_args *, rpc_loc_stop_fix_rets *, CLIENT *);
+    extern bool_t rpc_loc_stop_fix_0x00050001_svc(rpc_loc_stop_fix_args *, rpc_loc_stop_fix_rets *, struct svc_req *);
 #define rpc_loc_ioctl 6
-extern  enum clnt_stat rpc_loc_ioctl_0x00050001(rpc_loc_ioctl_args *, rpc_loc_ioctl_rets *, CLIENT *);
-extern  bool_t rpc_loc_ioctl_0x00050001_svc(rpc_loc_ioctl_args *, rpc_loc_ioctl_rets *, struct svc_req *);
+    extern enum clnt_stat rpc_loc_ioctl_0x00050001(rpc_loc_ioctl_args *, rpc_loc_ioctl_rets *, CLIENT *);
+    extern bool_t rpc_loc_ioctl_0x00050001_svc(rpc_loc_ioctl_args *, rpc_loc_ioctl_rets *, struct svc_req *);
 #define rpc_loc_api_api_versions 0xFFFFFFFF
-extern  enum clnt_stat rpc_loc_api_api_versions_0x00050001(void *, rpc_loc_api_api_versions_rets *, CLIENT *);
-extern  bool_t rpc_loc_api_api_versions_0x00050001_svc(void *, rpc_loc_api_api_versions_rets *, struct svc_req *);
-extern int loc_apiprog_0x00050001_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_api_versions_0x00050001(void *, rpc_loc_api_api_versions_rets *, CLIENT *);
+    extern bool_t rpc_loc_api_api_versions_0x00050001_svc(void *, rpc_loc_api_api_versions_rets *, struct svc_req *);
+    extern int loc_apiprog_0x00050001_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define rpc_loc_api_null 0
-extern  enum clnt_stat rpc_loc_api_null_0x00050001();
-extern  bool_t rpc_loc_api_null_0x00050001_svc();
+extern enum clnt_stat rpc_loc_api_null_0x00050001();
+extern bool_t rpc_loc_api_null_0x00050001_svc();
 #define rpc_loc_api_rpc_glue_code_info_remote 1
-extern  enum clnt_stat rpc_loc_api_rpc_glue_code_info_remote_0x00050001();
-extern  bool_t rpc_loc_api_rpc_glue_code_info_remote_0x00050001_svc();
+extern enum clnt_stat rpc_loc_api_rpc_glue_code_info_remote_0x00050001();
+extern bool_t rpc_loc_api_rpc_glue_code_info_remote_0x00050001_svc();
 #define rpc_loc_open 2
-extern  enum clnt_stat rpc_loc_open_0x00050001();
-extern  bool_t rpc_loc_open_0x00050001_svc();
+extern enum clnt_stat rpc_loc_open_0x00050001();
+extern bool_t rpc_loc_open_0x00050001_svc();
 #define rpc_loc_close 3
-extern  enum clnt_stat rpc_loc_close_0x00050001();
-extern  bool_t rpc_loc_close_0x00050001_svc();
+extern enum clnt_stat rpc_loc_close_0x00050001();
+extern bool_t rpc_loc_close_0x00050001_svc();
 #define rpc_loc_start_fix 4
-extern  enum clnt_stat rpc_loc_start_fix_0x00050001();
-extern  bool_t rpc_loc_start_fix_0x00050001_svc();
+extern enum clnt_stat rpc_loc_start_fix_0x00050001();
+extern bool_t rpc_loc_start_fix_0x00050001_svc();
 #define rpc_loc_stop_fix 5
-extern  enum clnt_stat rpc_loc_stop_fix_0x00050001();
-extern  bool_t rpc_loc_stop_fix_0x00050001_svc();
+extern enum clnt_stat rpc_loc_stop_fix_0x00050001();
+extern bool_t rpc_loc_stop_fix_0x00050001_svc();
 #define rpc_loc_ioctl 6
-extern  enum clnt_stat rpc_loc_ioctl_0x00050001();
-extern  bool_t rpc_loc_ioctl_0x00050001_svc();
+extern enum clnt_stat rpc_loc_ioctl_0x00050001();
+extern bool_t rpc_loc_ioctl_0x00050001_svc();
 #define rpc_loc_api_api_versions 0xFFFFFFFF
-extern  enum clnt_stat rpc_loc_api_api_versions_0x00050001();
-extern  bool_t rpc_loc_api_api_versions_0x00050001_svc();
-extern int loc_apiprog_0x00050001_freeresult ();
+extern enum clnt_stat rpc_loc_api_api_versions_0x00050001();
+extern bool_t rpc_loc_api_api_versions_0x00050001_svc();
+extern int loc_apiprog_0x00050001_freeresult();
 #endif /* K&R C */
 #define LOC_APIVERS_0002 0x00050002
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_null_0x00050002(void *, void *, CLIENT *);
-extern  bool_t rpc_loc_api_null_0x00050002_svc(void *, void *, struct svc_req *);
-extern int loc_apiprog_0x00050002_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_null_0x00050002(void *, void *, CLIENT *);
+    extern bool_t rpc_loc_api_null_0x00050002_svc(void *, void *, struct svc_req *);
+    extern int loc_apiprog_0x00050002_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_null_0x00050002();
-extern  bool_t rpc_loc_api_null_0x00050002_svc();
-extern int loc_apiprog_0x00050002_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_null_0x00050002();
+extern bool_t rpc_loc_api_null_0x00050002_svc();
+extern int loc_apiprog_0x00050002_freeresult();
 #endif /* K&R C */
 #define LOC_APIVERS_0003 0x00050003
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_null_0x00050003(void *, void *, CLIENT *);
-extern  bool_t rpc_loc_api_null_0x00050003_svc(void *, void *, struct svc_req *);
-extern int loc_apiprog_0x00050003_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_null_0x00050003(void *, void *, CLIENT *);
+    extern bool_t rpc_loc_api_null_0x00050003_svc(void *, void *, struct svc_req *);
+    extern int loc_apiprog_0x00050003_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_null_0x00050003();
-extern  bool_t rpc_loc_api_null_0x00050003_svc();
-extern int loc_apiprog_0x00050003_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_null_0x00050003();
+extern bool_t rpc_loc_api_null_0x00050003_svc();
+extern int loc_apiprog_0x00050003_freeresult();
 #endif /* K&R C */
 #define LOC_APIVERS_0004 0x00050004
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_null_0x00050004(void *, void *, CLIENT *);
-extern  bool_t rpc_loc_api_null_0x00050004_svc(void *, void *, struct svc_req *);
-extern int loc_apiprog_0x00050004_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_null_0x00050004(void *, void *, CLIENT *);
+    extern bool_t rpc_loc_api_null_0x00050004_svc(void *, void *, struct svc_req *);
+    extern int loc_apiprog_0x00050004_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_null_0x00050004();
-extern  bool_t rpc_loc_api_null_0x00050004_svc();
-extern int loc_apiprog_0x00050004_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_null_0x00050004();
+extern bool_t rpc_loc_api_null_0x00050004_svc();
+extern int loc_apiprog_0x00050004_freeresult();
 #endif /* K&R C */
 #define LOC_APIVERS_0005 0x00050005
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_null_0x00050005(void *, void *, CLIENT *);
-extern  bool_t rpc_loc_api_null_0x00050005_svc(void *, void *, struct svc_req *);
-extern int loc_apiprog_0x00050005_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_null_0x00050005(void *, void *, CLIENT *);
+    extern bool_t rpc_loc_api_null_0x00050005_svc(void *, void *, struct svc_req *);
+    extern int loc_apiprog_0x00050005_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_null_0x00050005();
-extern  bool_t rpc_loc_api_null_0x00050005_svc();
-extern int loc_apiprog_0x00050005_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_null_0x00050005();
+extern bool_t rpc_loc_api_null_0x00050005_svc();
+extern int loc_apiprog_0x00050005_freeresult();
 #endif /* K&R C */
 #define LOC_APIVERS_0006 0x00050006
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  enum clnt_stat rpc_loc_api_null_0x00050006(void *, void *, CLIENT *);
-extern  bool_t rpc_loc_api_null_0x00050006_svc(void *, void *, struct svc_req *);
-extern int loc_apiprog_0x00050006_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+    extern enum clnt_stat rpc_loc_api_null_0x00050006(void *, void *, CLIENT *);
+    extern bool_t rpc_loc_api_null_0x00050006_svc(void *, void *, struct svc_req *);
+    extern int loc_apiprog_0x00050006_freeresult(SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* K&R C */
-extern  enum clnt_stat rpc_loc_api_null_0x00050006();
-extern  bool_t rpc_loc_api_null_0x00050006_svc();
-extern int loc_apiprog_0x00050006_freeresult ();
+#else  /* K&R C */
+extern enum clnt_stat rpc_loc_api_null_0x00050006();
+extern bool_t rpc_loc_api_null_0x00050006_svc();
+extern int loc_apiprog_0x00050006_freeresult();
 #endif /* K&R C */
 
-/* the xdr functions */
+    /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  bool_t xdr_rpc_loc_api_api_versions_return_type (XDR *, rpc_loc_api_api_versions_return_type*);
-extern  bool_t xdr_rpc_loc_event_cb_f_type (XDR *, rpc_loc_event_cb_f_type*);
-extern  bool_t xdr_rpc_loc_open_args (XDR *, rpc_loc_open_args*);
-extern  bool_t xdr_rpc_loc_close_args (XDR *, rpc_loc_close_args*);
-extern  bool_t xdr_rpc_loc_start_fix_args (XDR *, rpc_loc_start_fix_args*);
-extern  bool_t xdr_rpc_loc_stop_fix_args (XDR *, rpc_loc_stop_fix_args*);
-extern  bool_t xdr_rpc_loc_ioctl_args (XDR *, rpc_loc_ioctl_args*);
-extern  bool_t xdr_rpc_loc_api_api_version_s_args (XDR *, rpc_loc_api_api_version_s_args*);
-extern  bool_t xdr_rpc_loc_api_rpc_glue_code_info_remote_rets (XDR *, rpc_loc_api_rpc_glue_code_info_remote_rets*);
-extern  bool_t xdr_rpc_loc_open_rets (XDR *, rpc_loc_open_rets*);
-extern  bool_t xdr_rpc_loc_close_rets (XDR *, rpc_loc_close_rets*);
-extern  bool_t xdr_rpc_loc_start_fix_rets (XDR *, rpc_loc_start_fix_rets*);
-extern  bool_t xdr_rpc_loc_stop_fix_rets (XDR *, rpc_loc_stop_fix_rets*);
-extern  bool_t xdr_rpc_loc_ioctl_rets (XDR *, rpc_loc_ioctl_rets*);
-extern  bool_t xdr_rpc_loc_api_api_versions_rets (XDR *, rpc_loc_api_api_versions_rets*);
+    extern bool_t xdr_rpc_loc_api_api_versions_return_type(XDR *, rpc_loc_api_api_versions_return_type *);
+    extern bool_t xdr_rpc_loc_event_cb_f_type(XDR *, rpc_loc_event_cb_f_type *);
+    extern bool_t xdr_rpc_loc_open_args(XDR *, rpc_loc_open_args *);
+    extern bool_t xdr_rpc_loc_close_args(XDR *, rpc_loc_close_args *);
+    extern bool_t xdr_rpc_loc_start_fix_args(XDR *, rpc_loc_start_fix_args *);
+    extern bool_t xdr_rpc_loc_stop_fix_args(XDR *, rpc_loc_stop_fix_args *);
+    extern bool_t xdr_rpc_loc_ioctl_args(XDR *, rpc_loc_ioctl_args *);
+    extern bool_t xdr_rpc_loc_api_api_version_s_args(XDR *, rpc_loc_api_api_version_s_args *);
+    extern bool_t xdr_rpc_loc_api_rpc_glue_code_info_remote_rets(XDR *, rpc_loc_api_rpc_glue_code_info_remote_rets *);
+    extern bool_t xdr_rpc_loc_open_rets(XDR *, rpc_loc_open_rets *);
+    extern bool_t xdr_rpc_loc_close_rets(XDR *, rpc_loc_close_rets *);
+    extern bool_t xdr_rpc_loc_start_fix_rets(XDR *, rpc_loc_start_fix_rets *);
+    extern bool_t xdr_rpc_loc_stop_fix_rets(XDR *, rpc_loc_stop_fix_rets *);
+    extern bool_t xdr_rpc_loc_ioctl_rets(XDR *, rpc_loc_ioctl_rets *);
+    extern bool_t xdr_rpc_loc_api_api_versions_rets(XDR *, rpc_loc_api_api_versions_rets *);
 
 #else /* K&R C */
-extern bool_t xdr_rpc_loc_api_api_versions_return_type ();
-extern bool_t xdr_rpc_loc_event_cb_f_type ();
-extern bool_t xdr_rpc_loc_open_args ();
-extern bool_t xdr_rpc_loc_close_args ();
-extern bool_t xdr_rpc_loc_start_fix_args ();
-extern bool_t xdr_rpc_loc_stop_fix_args ();
-extern bool_t xdr_rpc_loc_ioctl_args ();
-extern bool_t xdr_rpc_loc_api_api_version_s_args ();
-extern bool_t xdr_rpc_loc_api_rpc_glue_code_info_remote_rets ();
-extern bool_t xdr_rpc_loc_open_rets ();
-extern bool_t xdr_rpc_loc_close_rets ();
-extern bool_t xdr_rpc_loc_start_fix_rets ();
-extern bool_t xdr_rpc_loc_stop_fix_rets ();
-extern bool_t xdr_rpc_loc_ioctl_rets ();
-extern bool_t xdr_rpc_loc_api_api_versions_rets ();
+extern bool_t xdr_rpc_loc_api_api_versions_return_type();
+extern bool_t xdr_rpc_loc_event_cb_f_type();
+extern bool_t xdr_rpc_loc_open_args();
+extern bool_t xdr_rpc_loc_close_args();
+extern bool_t xdr_rpc_loc_start_fix_args();
+extern bool_t xdr_rpc_loc_stop_fix_args();
+extern bool_t xdr_rpc_loc_ioctl_args();
+extern bool_t xdr_rpc_loc_api_api_version_s_args();
+extern bool_t xdr_rpc_loc_api_rpc_glue_code_info_remote_rets();
+extern bool_t xdr_rpc_loc_open_rets();
+extern bool_t xdr_rpc_loc_close_rets();
+extern bool_t xdr_rpc_loc_start_fix_rets();
+extern bool_t xdr_rpc_loc_stop_fix_rets();
+extern bool_t xdr_rpc_loc_ioctl_rets();
+extern bool_t xdr_rpc_loc_api_api_versions_rets();
 
 #endif /* K&R C */
 

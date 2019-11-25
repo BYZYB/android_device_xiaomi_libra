@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -66,9 +66,10 @@ bool IPACM_Routing::DeviceNodeIsOpened()
 {
 	int res = fcntl(m_fd, F_GETFL);
 
-	if (m_fd > 0 && res >= 0) return true;
-	else return false;
-
+	if (m_fd > 0 && res >= 0)
+		return true;
+	else
+		return false;
 }
 
 bool IPACM_Routing::AddRoutingRule(struct ipa_ioc_add_rt_rule *ruleTable)
@@ -96,7 +97,8 @@ bool IPACM_Routing::DeleteRoutingRule(struct ipa_ioc_del_rt_rule *ruleTable)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_DEL_RT_RULE, ruleTable);
 	if (retval)
@@ -113,7 +115,8 @@ bool IPACM_Routing::Commit(enum ipa_ip_type ip)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_COMMIT_RT, ip);
 	if (retval)
@@ -130,7 +133,8 @@ bool IPACM_Routing::Reset(enum ipa_ip_type ip)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_RESET_RT, ip);
 	retval |= ioctl(m_fd, IPA_IOC_COMMIT_RT, ip);
@@ -148,7 +152,8 @@ bool IPACM_Routing::GetRoutingTable(struct ipa_ioc_get_rt_tbl *routingTable)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_GET_RT_TBL, routingTable);
 	if (retval)
@@ -165,7 +170,8 @@ bool IPACM_Routing::PutRoutingTable(uint32_t routingTableHandle)
 {
 	int retval = 0;
 
-	if (!DeviceNodeIsOpened()) return false;
+	if (!DeviceNodeIsOpened())
+		return false;
 
 	retval = ioctl(m_fd, IPA_IOC_PUT_RT_TBL, routingTableHandle);
 	if (retval)
@@ -211,7 +217,7 @@ bool IPACM_Routing::DeleteRoutingHdl(uint32_t rt_rule_hdl, ipa_ip_type ip)
 
 	IPACMDBG_H("Deleting Route hdl:(0x%x) with ip type: %d\n", rt_rule_entry->hdl, ip);
 	if ((false == DeleteRoutingRule(rt_rule)) ||
-			(rt_rule_entry->status))
+		(rt_rule_entry->status))
 	{
 		PERROR("Routing rule deletion failed!\n");
 		goto fail;
@@ -223,4 +229,3 @@ fail:
 
 	return res;
 }
-

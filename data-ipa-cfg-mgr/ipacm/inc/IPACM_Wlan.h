@@ -54,11 +54,11 @@ typedef struct _wlan_client_rt_hdl
 	uint32_t wifi_rt_rule_hdl_v4;
 	uint32_t wifi_rt_rule_hdl_v6[IPV6_NUM_ADDR];
 	uint32_t wifi_rt_rule_hdl_v6_wan[IPV6_NUM_ADDR];
-}wlan_client_rt_hdl;
+} wlan_client_rt_hdl;
 
 typedef struct _ipa_wlan_client
 {
-	ipacm_event_data_wlan_ex* p_hdr_info;
+	ipacm_event_data_wlan_ex *p_hdr_info;
 	uint8_t mac[IPA_MAC_ADDR_SIZE];
 	uint32_t v4_addr;
 	uint32_t v6_addr[IPV6_NUM_ADDR][4];
@@ -72,7 +72,7 @@ typedef struct _ipa_wlan_client
 	bool ipv6_header_set;
 	bool power_save_set;
 	wlan_client_rt_hdl wifi_rt_hdl[0]; /* depends on number of tx properties */
-}ipa_wlan_client;
+} ipa_wlan_client;
 
 typedef enum
 {
@@ -80,25 +80,22 @@ typedef enum
 	SRC_USB
 } eth_bridge_src_iface;
 
-
 /* wlan iface */
 class IPACM_Wlan : public IPACM_Lan
 {
 
 public:
-
 	IPACM_Wlan(int iface_index);
 	virtual ~IPACM_Wlan(void);
 
 	static int total_num_wifi_clients;
 
 	void event_callback(ipa_cm_event_id event,
-											void *data);
+						void *data);
 
-	virtual int add_lan2lan_hdr(ipa_ip_type iptype, uint8_t* src_mac, uint8_t* dst_mac, uint32_t* hdr_hdl);
+	virtual int add_lan2lan_hdr(ipa_ip_type iptype, uint8_t *src_mac, uint8_t *dst_mac, uint32_t *hdr_hdl);
 
 private:
-
 	eth_bridge_client_flt_info eth_bridge_usb_client_flt_info[IPA_LAN_TO_LAN_MAX_USB_CLIENT];
 	int num_usb_client;
 
@@ -114,14 +111,14 @@ private:
 
 	bool is_guest_ap;
 
-	eth_bridge_client_rt_info* eth_bridge_wlan_client_rt_from_usb_info_v4;
+	eth_bridge_client_rt_info *eth_bridge_wlan_client_rt_from_usb_info_v4;
 	int wlan_client_rt_from_usb_info_count_v4;
-	eth_bridge_client_rt_info* eth_bridge_wlan_client_rt_from_usb_info_v6;
+	eth_bridge_client_rt_info *eth_bridge_wlan_client_rt_from_usb_info_v6;
 	int wlan_client_rt_from_usb_info_count_v6;
 
-	eth_bridge_client_rt_info* eth_bridge_wlan_client_rt_from_wlan_info_v4;
+	eth_bridge_client_rt_info *eth_bridge_wlan_client_rt_from_wlan_info_v4;
 	int wlan_client_rt_from_wlan_info_count_v4;
-	eth_bridge_client_rt_info* eth_bridge_wlan_client_rt_from_wlan_info_v6;
+	eth_bridge_client_rt_info *eth_bridge_wlan_client_rt_from_wlan_info_v6;
 	int wlan_client_rt_from_wlan_info_count_v6;
 
 	virtual int eth_bridge_add_wlan_guest_ap_flt_rule(ipa_ip_type iptype);
@@ -132,28 +129,27 @@ private:
 
 	virtual int eth_bridge_handle_dummy_usb_client_flt_rule(ipa_ip_type iptype);
 
-	int eth_bridge_add_usb_client_flt_rule(uint8_t* mac, ipa_ip_type iptype);
+	int eth_bridge_add_usb_client_flt_rule(uint8_t *mac, ipa_ip_type iptype);
 
-	int eth_bridge_del_usb_client_flt_rule(uint8_t* mac);
+	int eth_bridge_del_usb_client_flt_rule(uint8_t *mac);
 
-	int eth_bridge_add_self_client_flt_rule(uint8_t* mac, ipa_ip_type iptype);
+	int eth_bridge_add_self_client_flt_rule(uint8_t *mac, ipa_ip_type iptype);
 
-	int eth_bridge_del_self_client_flt_rule(uint8_t* mac);
+	int eth_bridge_del_self_client_flt_rule(uint8_t *mac);
 
 	virtual int eth_bridge_install_cache_wlan_client_flt_rule(ipa_ip_type iptype);
 
 	virtual int eth_bridge_install_cache_usb_client_flt_rule(ipa_ip_type iptype);
 
-	int eth_bridge_add_wlan_client_rt_rule(uint8_t* mac, eth_bridge_src_iface src, ipa_ip_type iptype);
+	int eth_bridge_add_wlan_client_rt_rule(uint8_t *mac, eth_bridge_src_iface src, ipa_ip_type iptype);
 
-	int eth_bridge_del_wlan_client_rt_rule(uint8_t* mac, eth_bridge_src_iface src);
+	int eth_bridge_del_wlan_client_rt_rule(uint8_t *mac, eth_bridge_src_iface src);
 
-	eth_bridge_client_rt_info* eth_bridge_get_client_rt_info_ptr(uint8_t index, eth_bridge_src_iface src, ipa_ip_type iptype);
+	eth_bridge_client_rt_info *eth_bridge_get_client_rt_info_ptr(uint8_t index, eth_bridge_src_iface src, ipa_ip_type iptype);
 
-	void eth_bridge_add_wlan_client(uint8_t* mac, int if_num);
+	void eth_bridge_add_wlan_client(uint8_t *mac, int if_num);
 
-	void eth_bridge_del_wlan_client(uint8_t* mac);
-
+	void eth_bridge_del_wlan_client(uint8_t *mac);
 
 	int wlan_client_len;
 	ipa_wlan_client *wlan_client;
@@ -163,16 +159,16 @@ private:
 
 	int wlan_ap_index;
 
-	static uint32_t* dummy_flt_rule_hdl_v4;
-	static uint32_t* dummy_flt_rule_hdl_v6;
+	static uint32_t *dummy_flt_rule_hdl_v4;
+	static uint32_t *dummy_flt_rule_hdl_v6;
 
 	static int num_wlan_ap_iface;
 
 	NatApp *Nat_App;
 
-	inline ipa_wlan_client* get_client_memptr(ipa_wlan_client *param, int cnt)
+	inline ipa_wlan_client *get_client_memptr(ipa_wlan_client *param, int cnt)
 	{
-	    char *ret = ((char *)param) + (wlan_client_len * cnt);
+		char *ret = ((char *)param) + (wlan_client_len * cnt);
 		return (ipa_wlan_client *)ret;
 	}
 
@@ -182,22 +178,22 @@ private:
 		int num_wifi_client_tmp = num_wifi_client;
 
 		IPACMDBG_H("Passed MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
-						 mac_addr[0], mac_addr[1], mac_addr[2],
-						 mac_addr[3], mac_addr[4], mac_addr[5]);
+				   mac_addr[0], mac_addr[1], mac_addr[2],
+				   mac_addr[3], mac_addr[4], mac_addr[5]);
 
-		for(cnt = 0; cnt < num_wifi_client_tmp; cnt++)
+		for (cnt = 0; cnt < num_wifi_client_tmp; cnt++)
 		{
 			IPACMDBG_H("stored MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
-							 get_client_memptr(wlan_client, cnt)->mac[0],
-							 get_client_memptr(wlan_client, cnt)->mac[1],
-							 get_client_memptr(wlan_client, cnt)->mac[2],
-							 get_client_memptr(wlan_client, cnt)->mac[3],
-							 get_client_memptr(wlan_client, cnt)->mac[4],
-							 get_client_memptr(wlan_client, cnt)->mac[5]);
+					   get_client_memptr(wlan_client, cnt)->mac[0],
+					   get_client_memptr(wlan_client, cnt)->mac[1],
+					   get_client_memptr(wlan_client, cnt)->mac[2],
+					   get_client_memptr(wlan_client, cnt)->mac[3],
+					   get_client_memptr(wlan_client, cnt)->mac[4],
+					   get_client_memptr(wlan_client, cnt)->mac[5]);
 
-			if(memcmp(get_client_memptr(wlan_client, cnt)->mac,
-								mac_addr,
-								sizeof(get_client_memptr(wlan_client, cnt)->mac)) == 0)
+			if (memcmp(get_client_memptr(wlan_client, cnt)->mac,
+					   mac_addr,
+					   sizeof(get_client_memptr(wlan_client, cnt)->mac)) == 0)
 			{
 				IPACMDBG_H("Matched client index: %d\n", cnt);
 				return cnt;
@@ -213,60 +209,59 @@ private:
 		uint32_t rt_hdl;
 		int num_v6;
 
-		if(iptype == IPA_IP_v4)
+		if (iptype == IPA_IP_v4)
 		{
-		     for(tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
-		     {
-		        if((tx_prop->tx[tx_index].ip == IPA_IP_v4) && (get_client_memptr(wlan_client, clt_indx)->route_rule_set_v4==true)) /* for ipv4 */
+			for (tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
 			{
-				IPACMDBG_H("Delete client index %d ipv4 Qos rules for tx:%d \n",clt_indx,tx_index);
-				rt_hdl = get_client_memptr(wlan_client, clt_indx)->wifi_rt_hdl[tx_index].wifi_rt_rule_hdl_v4;
-
-				if(m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v4) == false)
+				if ((tx_prop->tx[tx_index].ip == IPA_IP_v4) && (get_client_memptr(wlan_client, clt_indx)->route_rule_set_v4 == true)) /* for ipv4 */
 				{
-					return IPACM_FAILURE;
-				}
-			}
-		     } /* end of for loop */
+					IPACMDBG_H("Delete client index %d ipv4 Qos rules for tx:%d \n", clt_indx, tx_index);
+					rt_hdl = get_client_memptr(wlan_client, clt_indx)->wifi_rt_hdl[tx_index].wifi_rt_rule_hdl_v4;
 
-		     /* clean the 4 Qos ipv4 RT rules for client:clt_indx */
-		     if(get_client_memptr(wlan_client, clt_indx)->route_rule_set_v4==true) /* for ipv4 */
-		     {
+					if (m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v4) == false)
+					{
+						return IPACM_FAILURE;
+					}
+				}
+			} /* end of for loop */
+
+			/* clean the 4 Qos ipv4 RT rules for client:clt_indx */
+			if (get_client_memptr(wlan_client, clt_indx)->route_rule_set_v4 == true) /* for ipv4 */
+			{
 				get_client_memptr(wlan_client, clt_indx)->route_rule_set_v4 = false;
-		     }
+			}
 		}
 
-		if(iptype == IPA_IP_v6)
+		if (iptype == IPA_IP_v6)
 		{
-		    for(tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
-		    {
+			for (tx_index = 0; tx_index < iface_query->num_tx_props; tx_index++)
+			{
 
-				if((tx_prop->tx[tx_index].ip == IPA_IP_v6) && (get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6 != 0)) /* for ipv6 */
+				if ((tx_prop->tx[tx_index].ip == IPA_IP_v6) && (get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6 != 0)) /* for ipv6 */
 				{
-					for(num_v6 =0;num_v6 < get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6;num_v6++)
+					for (num_v6 = 0; num_v6 < get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6; num_v6++)
 					{
-						IPACMDBG_H("Delete client index %d ipv6 Qos rules for %d-st ipv6 for tx:%d\n", clt_indx,num_v6,tx_index);
+						IPACMDBG_H("Delete client index %d ipv6 Qos rules for %d-st ipv6 for tx:%d\n", clt_indx, num_v6, tx_index);
 						rt_hdl = get_client_memptr(wlan_client, clt_indx)->wifi_rt_hdl[tx_index].wifi_rt_rule_hdl_v6[num_v6];
-						if(m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
+						if (m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
 						{
 							return IPACM_FAILURE;
 						}
 
 						rt_hdl = get_client_memptr(wlan_client, clt_indx)->wifi_rt_hdl[tx_index].wifi_rt_rule_hdl_v6_wan[num_v6];
-						if(m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
+						if (m_routing.DeleteRoutingHdl(rt_hdl, IPA_IP_v6) == false)
 						{
 							return IPACM_FAILURE;
 						}
 					}
-
 				}
 			} /* end of for loop */
 
-		    /* clean the 4 Qos ipv6 RT rules for client:clt_indx */
-		    if(get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6 != 0) /* for ipv6 */
-		    {
-		                 get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6 = 0;
-                    }
+			/* clean the 4 Qos ipv6 RT rules for client:clt_indx */
+			if (get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6 != 0) /* for ipv6 */
+			{
+				get_client_memptr(wlan_client, clt_indx)->route_rule_set_v6 = 0;
+			}
 		}
 
 		return IPACM_SUCCESS;
@@ -313,7 +308,7 @@ private:
 	virtual int handle_private_subnet(ipa_ip_type iptype);
 
 	/* install UL filter rule from Q6 */
-	virtual int handle_uplink_filter_rule(ipacm_ext_prop* prop, ipa_ip_type iptype);
+	virtual int handle_uplink_filter_rule(ipacm_ext_prop *prop, ipa_ip_type iptype);
 
 	/* install TCP control filter rules */
 	virtual void install_tcp_ctl_flt_rule(ipa_ip_type iptype);
@@ -321,6 +316,5 @@ private:
 	/*handle reset wifi-client rt-rules */
 	int handle_wlan_client_reset_rt(ipa_ip_type iptype);
 };
-
 
 #endif /* IPACM_WLAN_H */

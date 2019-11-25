@@ -30,42 +30,44 @@
 #define __LOC_ENG_DMN_CONN_THREAD_HELPER_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include <pthread.h>
 
-struct loc_eng_dmn_conn_thelper {
-    unsigned char   thread_exit;
-    unsigned char   thread_ready;
-    pthread_cond_t  thread_cond;
-    pthread_mutex_t thread_mutex;
-    pthread_t       thread_id;
-    void *          thread_context;
-    int             (*thread_proc_init) (void * context);
-    int             (*thread_proc_pre)  (void * context);
-    int             (*thread_proc)      (void * context);
-    int             (*thread_proc_post) (void * context);
-};
+    struct loc_eng_dmn_conn_thelper
+    {
+        unsigned char thread_exit;
+        unsigned char thread_ready;
+        pthread_cond_t thread_cond;
+        pthread_mutex_t thread_mutex;
+        pthread_t thread_id;
+        void *thread_context;
+        int (*thread_proc_init)(void *context);
+        int (*thread_proc_pre)(void *context);
+        int (*thread_proc)(void *context);
+        int (*thread_proc_post)(void *context);
+    };
 
-typedef pthread_t (* thelper_create_thread)(const char* name, void (*start)(void *), void* arg);
-int loc_eng_dmn_conn_launch_thelper(struct loc_eng_dmn_conn_thelper * thelper,
-    int (*thread_proc_init) (void * context),
-    int (*thread_proc_pre)  (void * context),
-    int (*thread_proc)      (void * context),
-    int (*thread_proc_post) (void * context),
-    thelper_create_thread   create_thread_cb,
-    void * context);
+    typedef pthread_t (*thelper_create_thread)(const char *name, void (*start)(void *), void *arg);
+    int loc_eng_dmn_conn_launch_thelper(struct loc_eng_dmn_conn_thelper *thelper,
+                                        int (*thread_proc_init)(void *context),
+                                        int (*thread_proc_pre)(void *context),
+                                        int (*thread_proc)(void *context),
+                                        int (*thread_proc_post)(void *context),
+                                        thelper_create_thread create_thread_cb,
+                                        void *context);
 
-int loc_eng_dmn_conn_unblock_thelper(struct loc_eng_dmn_conn_thelper * thelper);
-int loc_eng_dmn_conn_join_thelper(struct loc_eng_dmn_conn_thelper * thelper);
+    int loc_eng_dmn_conn_unblock_thelper(struct loc_eng_dmn_conn_thelper *thelper);
+    int loc_eng_dmn_conn_join_thelper(struct loc_eng_dmn_conn_thelper *thelper);
 
-/* if only need to use signal */
-int thelper_signal_init(struct loc_eng_dmn_conn_thelper * thelper);
-int thelper_signal_destroy(struct loc_eng_dmn_conn_thelper * thelper);
-int thelper_signal_wait(struct loc_eng_dmn_conn_thelper * thelper);
-int thelper_signal_ready(struct loc_eng_dmn_conn_thelper * thelper);
-int thelper_signal_block(struct loc_eng_dmn_conn_thelper * thelper);
+    /* if only need to use signal */
+    int thelper_signal_init(struct loc_eng_dmn_conn_thelper *thelper);
+    int thelper_signal_destroy(struct loc_eng_dmn_conn_thelper *thelper);
+    int thelper_signal_wait(struct loc_eng_dmn_conn_thelper *thelper);
+    int thelper_signal_ready(struct loc_eng_dmn_conn_thelper *thelper);
+    int thelper_signal_block(struct loc_eng_dmn_conn_thelper *thelper);
 
 #ifdef __cplusplus
 }

@@ -36,12 +36,12 @@
 typedef struct
 {
    // loc_eng_ioctl_cb_data_s_type   ioctl_cb_data;
-   gps_xtra_download_request      download_request_cb;
-   report_xtra_server             report_xtra_server_cb;
+   gps_xtra_download_request download_request_cb;
+   report_xtra_server report_xtra_server_cb;
 
    // XTRA data buffer
-   char                          *xtra_data_for_injection;  // NULL if no pending data
-   int                            xtra_data_len;
+   char *xtra_data_for_injection; // NULL if no pending data
+   int xtra_data_len;
 } loc_eng_xtra_data_s_type;
 
 #endif // LOC_ENG_XTRA_H

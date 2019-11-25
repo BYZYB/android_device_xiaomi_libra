@@ -30,19 +30,21 @@
 #include <string.h>
 #include <pthread.h>
 
-class LocThreadDelegate {
-    LocRunnable* mRunnable;
+class LocThreadDelegate
+{
+    LocRunnable *mRunnable;
     bool mJoinable;
     pthread_t mThandle;
     pthread_mutex_t mMutex;
     int mRefCount;
     ~LocThreadDelegate();
-    LocThreadDelegate(LocThread::tCreate creator, const char* threadName,
-                      LocRunnable* runnable, bool joinable);
+    LocThreadDelegate(LocThread::tCreate creator, const char *threadName,
+                      LocRunnable *runnable, bool joinable);
     void destroy();
+
 public:
-    static LocThreadDelegate* create(LocThread::tCreate creator,
-            const char* threadName, LocRunnable* runnable, bool joinable);
+    static LocThreadDelegate *create(LocThread::tCreate creator,
+                                     const char *threadName, LocRunnable *runnable, bool joinable);
     void stop();
     // bye() is for the parent thread to go away. if joinable,
     // parent must stop the spawned thread, join, and then
@@ -50,7 +52,7 @@ public:
     // ahead to destroy()
     inline void bye() { mJoinable ? stop() : destroy(); }
     inline bool isRunning() { return (NULL != mRunnable); }
-    static void* threadMain(void* arg);
+    static void *threadMain(void *arg);
 };
 
 // it is important to note that internal members must be
@@ -63,25 +65,30 @@ public:
 // must be set to  indicate failure, e.g. mRunnable, and
 // threashold approprietly for destroy(), e.g. mRefCount.
 LocThreadDelegate::LocThreadDelegate(LocThread::tCreate creator,
-        const char* threadName, LocRunnable* runnable, bool joinable) :
-    mRunnable(runnable), mJoinable(joinable), mThandle(NULL),
-    mMutex(PTHREAD_MUTEX_INITIALIZER), mRefCount(2) {
+                                     const char *threadName, LocRunnable *runnable, bool joinable) : mRunnable(runnable), mJoinable(joinable), mThandle(NULL),
+                                                                                                     mMutex(PTHREAD_MUTEX_INITIALIZER), mRefCount(2)
+{
 
     // set up thread name, if nothing is passed in
-    if (!threadName) {
+    if (!threadName)
+    {
         threadName = "LocThread";
     }
 
     // create the thread here, then if successful
     // and a name is given, we set the thread name
-    if (creator) {
+    if (creator)
+    {
         mThandle = creator(threadName, threadMain, this);
-    } else if (pthread_create(&mThandle, NULL, threadMain, this)) {
+    }
+    else if (pthread_create(&mThandle, NULL, threadMain, this))
+    {
         // pthread_create() failed
         mThandle = NULL;
     }
 
-    if (mThandle) {
+    if (mThandle)
+    {
         // set thread name
         char lname[16];
         strlcpy(lname, threadName, sizeof(lname));
@@ -89,10 +96,13 @@ LocThreadDelegate::LocThreadDelegate(LocThread::tCreate creator,
         pthread_setname_np(mThandle, lname);
 
         // detach, if not joinable
-        if (!joinable) {
+        if (!joinable)
+        {
             pthread_detach(mThandle);
         }
-    } else {
+    }
+    else
+    {
         // must set these values upon failure
         mRunnable = NULL;
         mJoinable = false;
@@ -100,18 +110,21 @@ LocThreadDelegate::LocThreadDelegate(LocThread::tCreate creator,
     }
 }
 
-inline
-LocThreadDelegate::~LocThreadDelegate() {
+inline LocThreadDelegate::~LocThreadDelegate()
+{
     // at this point nothing should need done any more
 }
 
 // factory method so that we could return NULL upon failure
-LocThreadDelegate* LocThreadDelegate::create(LocThread::tCreate creator,
-        const char* threadName, LocRunnable* runnable, bool joinable) {
-    LocThreadDelegate* thread = NULL;
-    if (runnable) {
+LocThreadDelegate *LocThreadDelegate::create(LocThread::tCreate creator,
+                                             const char *threadName, LocRunnable *runnable, bool joinable)
+{
+    LocThreadDelegate *thread = NULL;
+    if (runnable)
+    {
         thread = new LocThreadDelegate(creator, threadName, runnable, joinable);
-        if (thread && !thread->isRunning()) {
+        if (thread && !thread->isRunning())
+        {
             thread->destroy();
             thread = NULL;
         }
@@ -125,17 +138,20 @@ LocThreadDelegate* LocThreadDelegate::create(LocThread::tCreate creator,
 // join() if mJoinble must come before destroy() call, as
 // the obj must remain alive at this time so that mThandle
 // remains valud.
-void LocThreadDelegate::stop() {
+void LocThreadDelegate::stop()
+{
     // mRunnable and mJoinable are reset on different triggers.
     // mRunnable may get nulled on the spawned thread's way out;
     //           or here.
     // mJouinable (if ever been true) gets falsed when client
     //            thread triggers stop, with either a stop()
     //            call or the client releases thread obj handle.
-    if (mRunnable) {
+    if (mRunnable)
+    {
         mRunnable = NULL;
     }
-    if (mJoinable) {
+    if (mJoinable)
+    {
         mJoinable = false;
         pthread_join(mThandle, NULL);
     }
@@ -148,12 +164,14 @@ void LocThreadDelegate::stop() {
 // and the spawned thread can both try to destroy()
 // asynchronously. And we delete this obj when
 // mRefCount becomes 0.
-void LocThreadDelegate::destroy() {
+void LocThreadDelegate::destroy()
+{
     // else case shouldn't happen, unless there is a
     // leaking obj. But only our code here has such
     // obj, so if we test our code well, else case
     // will never happen
-    if (mRefCount > 0) {
+    if (mRefCount > 0)
+    {
         // we need a flag on the stack
         bool callDelete = false;
 
@@ -164,26 +182,33 @@ void LocThreadDelegate::destroy() {
         pthread_mutex_unlock(&mMutex);
 
         // upon last destroy() call we delete this obj
-        if (callDelete) {
+        if (callDelete)
+        {
             delete this;
         }
     }
 }
 
-void* LocThreadDelegate::threadMain(void* arg) {
-    LocThreadDelegate* locThread = (LocThreadDelegate*)(arg);
+void *LocThreadDelegate::threadMain(void *arg)
+{
+    LocThreadDelegate *locThread = (LocThreadDelegate *)(arg);
 
-    if (locThread) {
-        LocRunnable* runnable = locThread->mRunnable;
+    if (locThread)
+    {
+        LocRunnable *runnable = locThread->mRunnable;
 
-        if (runnable) {
-            if (locThread->isRunning()) {
+        if (runnable)
+        {
+            if (locThread->isRunning())
+            {
                 runnable->prerun();
             }
 
-            while (locThread->isRunning() && runnable->run());
+            while (locThread->isRunning() && runnable->run())
+                ;
 
-            if (locThread->isRunning()) {
+            if (locThread->isRunning())
+            {
                 runnable->postrun();
             }
 
@@ -199,16 +224,20 @@ void* LocThreadDelegate::threadMain(void* arg) {
     return NULL;
 }
 
-LocThread::~LocThread() {
-    if (mThread) {
+LocThread::~LocThread()
+{
+    if (mThread)
+    {
         mThread->bye();
         mThread = NULL;
     }
 }
 
-bool LocThread::start(tCreate creator, const char* threadName, LocRunnable* runnable, bool joinable) {
+bool LocThread::start(tCreate creator, const char *threadName, LocRunnable *runnable, bool joinable)
+{
     bool success = false;
-    if (!mThread) {
+    if (!mThread)
+    {
         mThread = LocThreadDelegate::create(creator, threadName, runnable, joinable);
         // true only if thread is created successfully
         success = (NULL != mThread);
@@ -216,8 +245,10 @@ bool LocThread::start(tCreate creator, const char* threadName, LocRunnable* runn
     return success;
 }
 
-void LocThread::stop() {
-    if (mThread) {
+void LocThread::stop()
+{
+    if (mThread)
+    {
         mThread->stop();
         mThread = NULL;
     }
@@ -229,11 +260,14 @@ void LocThread::stop() {
 #include <stdlib.h>
 #include <unistd.h>
 
-class LocRunnableTest1 : public LocRunnable {
+class LocRunnableTest1 : public LocRunnable
+{
     int mID;
+
 public:
     LocRunnableTest1(int id) : LocRunnable(), mID(id) {}
-    virtual bool run() {
+    virtual bool run()
+    {
         printf("LocRunnableTest1: %d\n", mID++);
         sleep(1);
         return true;
@@ -244,7 +278,8 @@ public:
 // compile: g++ -D__LOC_HOST_DEBUG__ -D__LOC_DEBUG__ -g -std=c++0x -I. -I../../../../vendor/qcom/proprietary/gps-internal/unit-tests/fakes_for_host -I../../../../system/core/include -lpthread LocThread.cpp
 // test detached thread: valgrind ./a.out 0
 // test joinable thread: valgrind ./a.out 1
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
     LocRunnableTest1 test(10);
 
     LocThread thread;
