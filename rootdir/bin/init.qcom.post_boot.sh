@@ -123,8 +123,8 @@ chown -h system /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
 chown -h system /sys/devices/system/cpu/cpu0/core_ctl/max_cpus
 chown -h system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 
-# Set GPU default power level to 6 (180MHz)
-echo 6 > /sys/class/kgsl/kgsl-3d0/default_pwrlevel
+# Set GPU default power level to 7 (64MHz)
+echo 7 > /sys/class/kgsl/kgsl-3d0/default_pwrlevel
 
 # Strar perfd
 rm /data/system/perfd/default_values
