@@ -215,6 +215,7 @@ BOARD_USES_QC_TIME_SERVICES := true
 # TWRP support
 ifeq ($(WITH_TWRP),true)
 -include $(DEVICE_PATH)/twrp/twrp.mk
+RECOVERY_VARIANT := twrp
 endif
 
 # Vendor
