@@ -23,8 +23,7 @@
         <value>3</value>
         <value>3</value>
     </array>
-    <!-- Different CPU speeds as reported in
-         /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
+    <!-- Different CPU speeds as reported in /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
     <array name="cpu.speeds">
         <value>302400</value>
         <value>384000</value>
