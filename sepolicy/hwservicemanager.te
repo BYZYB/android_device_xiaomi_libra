@@ -1,2 +1,0 @@
-# Hwservicemanager
-allow hwservicemanager init:{ binder dir file process } *;

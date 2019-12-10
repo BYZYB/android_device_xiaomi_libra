@@ -1,3 +1,0 @@
-# SU Execute
-allow toolbox kernel:security *;
-allow toolbox selinuxfs:{ dir file } *;
