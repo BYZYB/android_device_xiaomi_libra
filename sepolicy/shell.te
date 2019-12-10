@@ -1,18 +1,39 @@
-# Shell
+# QTI init shell
 allow qti_init_shell file_contexts_file:file *;
 allow qti_init_shell fuse:{ dir file } *;
 allow qti_init_shell kernel:security *;
 allow qti_init_shell selinuxfs:file *;
-allow qti_init_shell sysfs:file *;
 allow qti_init_shell sysfs_android_usb:file *;
 allow qti_init_shell sysfs_cpu_boost:file *;
 allow qti_init_shell sysfs_devices_system_cpu:file *;
 allow qti_init_shell sysfs_kgsl:file *;
 allow qti_init_shell sysfs_net:file *;
 allow qti_init_shell sysfs_rqstats:dir *;
+allow qti_init_shell sysfs:file *;
 allow qti_init_shell vfat:{ dir file } *;
+
+# Shell
 allow shell kernel:system *;
 allow shell socket_device:sock_file *;
+allow shell su_exec:file *;
 allow shell su:process *;
 allow shell sudaemon:unix_stream_socket *;
-allow shell su_exec:file *;
+
+# Sudaemon
+allow sudaemon activity_service:service_manager *;
+allow sudaemon appops_service:service_manager *;
+allow sudaemon devpts:chr_file *;
+allow sudaemon kernel:security *;
+allow sudaemon rootfs:{ dir file lnk_file } *;
+allow sudaemon selinuxfs:{ dir file lnk_file } *;
+allow sudaemon shell_exec:file *;
+allow sudaemon shell:{ dir file lnk_file } *;
+allow sudaemon sudaemon:capability *;
+allow sudaemon system_data_file:{ dir file lnk_file } *;
+allow sudaemon system_file:{ dir file lnk_file } *;
+allow sudaemon toolbox_exec:file *;
+allow sudaemon untrusted_app:{ dir fd fifo_file file lnk_file } *;
+
+# Toolbox
+allow toolbox kernel:security *;
+allow toolbox selinuxfs:{ dir file } *;

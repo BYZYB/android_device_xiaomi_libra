@@ -1,6 +1,0 @@
-# Cnd
-allow cnd cnd:capability *;
-allow cnd diag_device:chr_file *;
-allow cnd self:{ capability socket udp_socket } *;
-
-allowxperm cnd self:socket ioctl msm_sock_ipc_ioctls;

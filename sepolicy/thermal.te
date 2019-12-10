@@ -1,8 +1,0 @@
-# Thermal
-type thermal_data_file, file_type, data_file_type;
-
-allow thermal-engine diag_device:chr_file *;
-allow thermal-engine self:capability *;
-allow thermal-engine system_data_file:{ dir file } *;
-allow thermal-engine thermal_data_file:{ dir file } *;
-allow thermal-engine thermal-engine:capability *;

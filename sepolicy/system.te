@@ -1,0 +1,100 @@
+# Bootstat
+allow bootstat bootstat:{ capability capability2 } *;
+
+# Cnd
+allow cnd cnd:capability *;
+allow cnd diag_device:chr_file *;
+allow cnd self:{ capability socket udp_socket } *;
+allowxperm cnd self:socket ioctl msm_sock_ipc_ioctls;
+
+# Healthd
+allow healthd sysfs:{ dir file } *;
+
+# Hwservicemanager
+allow hwservicemanager init:{ binder dir file process } *;
+
+# Init
+allow init debugfs:{ dir file } *;
+allow init diag_device:chr_file *;
+allow init hal_ir_hwservice:hwservice_manager *;
+allow init hal_light_hwservice:hwservice_manager *;
+allow init hal_lineage_touch_hwservice:hwservice_manager *;
+allow init hidl_base_hwservice:hwservice_manager *;
+allow init hwservicemanager:binder *;
+allow init init:socket *;
+allow init lirc_device:chr_file *;
+allow init mm-pp-daemon:unix_stream_socket *;
+allow init pps_socket:sock_file *;
+allow init qmuxd_socket:sock_file *;
+allow init qmuxd:unix_stream_socket *;
+allow init su_exec:file *;
+allow init sysfs_graphics:file *;
+allow init sysfs_ssr:lnk_file *;
+allow init sysfs:{ dir file } *;
+allow init tmpfs:lnk_file *;
+allow init unlabeled:{ dir file } *;
+allow init vendor_file:{ dir file } *;
+
+# Kernel
+allow kernel { platform_app radio shell system_app untrusted_app }:process *;
+
+# Keystore
+allow keystore runtime_event_log_tags_file:file *;
+
+# Rfs access
+allow rfs_access rfs_access:capability *;
+
+# Servicemanager
+allow fidodaemon servicemanager:binder *;
+allow servicemanager fidodaemon:{ binder dir file process } *;
+
+# Surfaceflinger
+allow surfaceflinger default_android_service:service_manager *;
+
+# System APP
+allow priv_app device:{ dir file } *;
+allow priv_app proc_interrupts:{ dir file } *;
+allow priv_app proc:{ dir file } *;
+allow priv_app rfs_system_file:{ dir file } *;
+allow priv_app sysfs:{ dir file } *;
+allow system_app init:binder *;
+allow system_app installd:binder *;
+allow system_app logpersistd_logging_prop:{ file property_service} *;
+allow system_app mmi_prop:{ file property_service} *;
+allow system_app mpdecision_prop:{ file property_service} *;
+allow system_app msm_irqbalance_prop:{ file property_service} *;
+allow system_app msm_irqbl_sdm630_prop:{ file property_service} *;
+allow system_app net_dns_prop:{ file property_service} *;
+allow system_app netd_prop:{ file property_service} *;
+allow system_app netd_stable_secret_prop:{ file property_service} *;
+allow system_app netd:binder *;
+allow system_app nfc_nq_prop:{ file property_service} *;
+allow system_app opengles_prop:{ file property_service} *;
+allow system_app overlay_prop:{ file property_service} *;
+allow system_app perfprofd:binder *;
+allow system_app proc_pagetypeinfo:file *;
+allow system_app sysfs:{ dir file } *;
+allow system_app vold:binder *;
+allow system_app wificond:binder *;
+
+# System server
+allow adbd ctl_start_prop:property_service *;
+allow lmkd lmkd:capability2 *;
+allow netmgrd diag_device:chr_file *;
+allow per_mgr per_mgr:capability *;
+allow system_server diag_device:chr_file *;
+allow system_server init:binder *;
+allow system_server kernel:system *;
+allow system_server persist_file:{ dir file } *;
+allow system_server sysfs:{ dir file } *;
+allow time_daemon diag_device:chr_file *;
+allow wcnss_service diag_device:chr_file *;
+
+# Vold
+allow vold firmware_file:{ dir file } *;
+allow vold metadata_block_device:blk_file *;
+
+# Zygote
+allow webview_zygote mnt_expand_file:{ dir file } *;
+allow webview_zygote zygote:unix_dgram_socket *;
+allow zygote proc_cmdline:file *;
