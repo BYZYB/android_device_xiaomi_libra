@@ -295,9 +295,6 @@ PRODUCT_PACKAGES += \
     qti-telephony-common \
     telephony-ext
 
-# Thermal HAL
-PRODUCT_PACKAGES += android.hardware.thermal@1.0-impl
-
 # Touch
 PRODUCT_PACKAGES += vendor.lineage.touch@1.0-service.libra
 

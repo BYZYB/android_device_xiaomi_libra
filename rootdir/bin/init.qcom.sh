@@ -51,64 +51,64 @@ fi
 
 start_battery_monitor()
 {
-	if ls /sys/bus/spmi/devices/qpnp-bms-*/fcc_data ; then
-		chown root.system /sys/module/pm8921_bms/parameters/*
-		chown root.system /sys/module/qpnp_bms/parameters/*
-		chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_data
-		chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_temp
-		chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_chgcyl
-		chmod 0660 /sys/module/qpnp_bms/parameters/*
-		chmod 0660 /sys/module/pm8921_bms/parameters/*
-		mkdir -p /data/bms
-		chown root.system /data/bms
-		chmod 0770 /data/bms
-		start battery_monitor
-	fi
+    if ls /sys/bus/spmi/devices/qpnp-bms-*/fcc_data ; then
+        chown root.system /sys/module/pm8921_bms/parameters/*
+        chown root.system /sys/module/qpnp_bms/parameters/*
+        chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_data
+        chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_temp
+        chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_chgcyl
+        chmod 0660 /sys/module/qpnp_bms/parameters/*
+        chmod 0660 /sys/module/pm8921_bms/parameters/*
+        mkdir -p /data/bms
+        chown root.system /data/bms
+        chmod 0770 /data/bms
+        start battery_monitor
+    fi
 }
 
 start_charger_monitor()
 {
-	if ls /sys/module/qpnp_charger/parameters/charger_monitor; then
-		chown root.system /sys/module/qpnp_charger/parameters/*
-		chown root.system /sys/class/power_supply/battery/input_current_max
-		chown root.system /sys/class/power_supply/battery/input_current_trim
-		chown root.system /sys/class/power_supply/battery/input_current_settled
-		chown root.system /sys/class/power_supply/battery/voltage_min
-		chmod 0664 /sys/class/power_supply/battery/input_current_max
-		chmod 0664 /sys/class/power_supply/battery/input_current_trim
-		chmod 0664 /sys/class/power_supply/battery/input_current_settled
-		chmod 0664 /sys/class/power_supply/battery/voltage_min
-		chmod 0664 /sys/module/qpnp_charger/parameters/charger_monitor
-		start charger_monitor
-	fi
+    if ls /sys/module/qpnp_charger/parameters/charger_monitor; then
+        chown root.system /sys/module/qpnp_charger/parameters/*
+        chown root.system /sys/class/power_supply/battery/input_current_max
+        chown root.system /sys/class/power_supply/battery/input_current_trim
+        chown root.system /sys/class/power_supply/battery/input_current_settled
+        chown root.system /sys/class/power_supply/battery/voltage_min
+        chmod 0664 /sys/class/power_supply/battery/input_current_max
+        chmod 0664 /sys/class/power_supply/battery/input_current_trim
+        chmod 0664 /sys/class/power_supply/battery/input_current_settled
+        chmod 0664 /sys/class/power_supply/battery/voltage_min
+        chmod 0664 /sys/module/qpnp_charger/parameters/charger_monitor
+        start charger_monitor
+    fi
 }
 
 start_vm_bms()
 {
-	if [ -e /dev/vm_bms ]; then
-		chown root.system /sys/class/power_supply/bms/current_now
-		chown root.system /sys/class/power_supply/bms/voltage_ocv
-		chmod 0664 /sys/class/power_supply/bms/current_now
-		chmod 0664 /sys/class/power_supply/bms/voltage_ocv
-		start vm_bms
-	fi
+    if [ -e /dev/vm_bms ]; then
+        chown root.system /sys/class/power_supply/bms/current_now
+        chown root.system /sys/class/power_supply/bms/voltage_ocv
+        chmod 0664 /sys/class/power_supply/bms/current_now
+        chmod 0664 /sys/class/power_supply/bms/voltage_ocv
+        start vm_bms
+    fi
 }
 
 start_msm_irqbalance_8939()
 {
-	if [ -f /vendor/bin/msm_irqbalance ]; then
-		case "$platformid" in
-		    "239")
-			start msm_irqbalance;;
-		esac
-	fi
+    if [ -f /vendor/bin/msm_irqbalance ]; then
+        case "$platformid" in
+            "239")
+            start msm_irqbalance;;
+        esac
+    fi
 }
 
 start_msm_irqbalance()
 {
-	if [ -f /vendor/bin/msm_irqbalance ]; then
-		start msm_irqbalance
-	fi
+    if [ -f /vendor/bin/msm_irqbalance ]; then
+        start msm_irqbalance
+    fi
 }
 
 start_copying_prebuilt_qcril_db()

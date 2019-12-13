@@ -150,8 +150,8 @@
     <!-- Default list of files pinned by the Pinner Service -->
     <string-array translatable="false" name="config_defaultPinnerServiceFiles">
         <item>"/apex/com.android.media/javalib/updatable-media.jar"</item>
-        <item>"/apex/com.android.runtime/javalib/core-libart.jar"</item>
-        <item>"/apex/com.android.runtime/javalib/core-oj.jar"</item>
+        <item>"/apex/com.android.runtime.release/javalib/core-libart.jar"</item>
+        <item>"/apex/com.android.runtime.release/javalib/core-oj.jar"</item>
         <item>"/system/framework/arm64/boot-core-libart.art"</item>
         <item>"/system/framework/arm64/boot-core-libart.oat"</item>
         <item>"/system/framework/arm64/boot-framework.art"</item>
