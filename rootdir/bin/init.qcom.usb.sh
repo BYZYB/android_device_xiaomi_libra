@@ -66,10 +66,10 @@ case "$usbchgdisabled" in
         "msm8660")
         echo "$usbchgdisabled" > /sys/module/pmic8058_charger/parameters/disabled
         echo "$usbchgdisabled" > /sys/module/smb137b/parameters/disabled
-	;;
+    ;;
         "msm8960")
         echo "$usbchgdisabled" > /sys/module/pm8921_charger/parameters/disabled
-	;;
+    ;;
     esac
 esac
 
@@ -80,7 +80,7 @@ case "$usbcurrentlimit" in
     case $target in
         "msm8960")
         echo "$usbcurrentlimit" > /sys/module/pm8921_charger/parameters/usb_max_current
-	;;
+    ;;
     esac
 esac
 
@@ -138,7 +138,7 @@ case "$usb_config" in
                    setprop persist.sys.usb.config diag,diag_mdm,diag_mdm2,serial_hsic,serial_hsusb,rmnet_hsic,rmnet_hsusb,mass_storage,adb
               ;;
               *)
-		case "$target" in
+        case "$target" in
                         "msm8916")
                             setprop persist.sys.usb.config diag,serial_smd,rmnet_bam,adb
                         ;;
@@ -172,9 +172,9 @@ case "$target" in
         echo ssusb > /sys/bus/platform/devices/usb_bam/enable
     ;;
     "apq8084")
-	if [ "$baseband" == "apq" ]; then
-		echo "msm_hsic_host" > /sys/bus/platform/drivers/xhci_msm_hsic/unbind
-	fi
+    if [ "$baseband" == "apq" ]; then
+        echo "msm_hsic_host" > /sys/bus/platform/drivers/xhci_msm_hsic/unbind
+    fi
     ;;
     "msm8226")
          if [ -e /sys/bus/platform/drivers/msm_hsic_host ]; then
@@ -236,15 +236,15 @@ esac
 #
 cdromname="/system/etc/cdrom_install.iso"
 case "$target" in
-	"msm8226" | "msm8610" | "msm8916")
-		case $soc_hwplatform in
-			"QRD")
-				echo "mounting usbcdrom lun"
-				echo $cdromname > /sys/class/android_usb/android0/f_mass_storage/rom/file
-				chmod 0444 /sys/class/android_usb/android0/f_mass_storage/rom/file
-				;;
-		esac
-		;;
+    "msm8226" | "msm8610" | "msm8916")
+        case $soc_hwplatform in
+            "QRD")
+                echo "mounting usbcdrom lun"
+                echo $cdromname > /sys/class/android_usb/android0/f_mass_storage/rom/file
+                chmod 0444 /sys/class/android_usb/android0/f_mass_storage/rom/file
+                ;;
+        esac
+        ;;
 esac
 
 #
@@ -252,5 +252,5 @@ esac
 #
 diag_extra=`getprop persist.sys.usb.config.extra`
 if [ "$diag_extra" == "" ]; then
-	setprop persist.sys.usb.config.extra none
+    setprop persist.sys.usb.config.extra none
 fi
