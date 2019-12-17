@@ -239,8 +239,6 @@ PRODUCT_PACKAGES += \
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
-PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += $(LOCAL_PATH)/overlay/lineage-sdk
-PRODUCT_ENFORCE_RRO_TARGETS := *
 
 # Permissions
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.consumerir.xml:system/vendor/etc/permissions/android.hardware.consumerir.xml
