@@ -218,9 +218,6 @@ ifeq ($(WITH_TWRP),true)
 RECOVERY_VARIANT := twrp
 endif
 
-# Vendor
--include vendor/xiaomi/libra/BoardConfigVendor.mk
-
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
 BOARD_HAS_QCOM_WLAN_SDK := true
