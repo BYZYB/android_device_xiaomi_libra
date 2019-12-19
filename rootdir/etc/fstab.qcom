@@ -14,7 +14,7 @@
 /dev/block/bootdevice/by-name/userdata /data ext4 nosuid,nodev,noatime,noauto_da_alloc,nodelalloc,discard wait,check,encryptable=/dev/block/bootdevice/by-name/bk1
 /dev/block/bootdevice/by-name/userdata /data f2fs rw,nosuid,nodev,noatime,inline_xattr,discard wait,check,encryptable=/dev/block/bootdevice/by-name/bk1
 /dev/block/bootdevice/by-name/bluetooth /vendor/bt_firmware vfat ro,shortname=lower,uid=1002,gid=3002,dmask=227,fmask=337 wait
-/dev/block/bootdevice/by-name/cust /cust ext4 nosuid,nodev,noatime,nodelalloc,discard wait,check
+/dev/block/bootdevice/by-name/cust /mnt/vendor/cust ext4 nosuid,nodev,noatime,nodelalloc,discard wait,check
 /dev/block/bootdevice/by-name/misc /misc emmc defaults defaults
 /dev/block/bootdevice/by-name/modem /vendor/modem_firmware vfat ro,shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337 wait
 /dev/block/bootdevice/by-name/persist /mnt/vendor/persist ext4 nosuid,nodev,noatime,nodelalloc,discard wait,check
