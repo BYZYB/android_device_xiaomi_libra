@@ -15,7 +15,7 @@
     <item name="radio.active">300</item>
     <item name="gps.on">27</item>
     <!-- This is the battery capacity in mAh -->
-    <item name="battery.capacity">3000</item>
+    <item name="battery.capacity">3080</item>
     <!-- The current consumed by the radio when it is scanning for a signal -->
     <item name="radio.scanning">3</item>
     <!-- Current consumed by the radio at different signal strengths, when paging -->
@@ -23,40 +23,70 @@
         <value>3</value>
         <value>3</value>
     </array>
-    <!-- Different CPU speeds as reported in /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
-    <array name="cpu.speeds">
-        <value>302400</value>
-        <value>384000</value>
-        <value>480000</value>
-        <value>633600</value>
-        <value>768000</value>
-        <value>864000</value>
-        <value>960000</value>
-        <value>1248000</value>
-        <value>1344000</value>
-        <value>1440000</value>
-        <value>1536000</value>
-        <value>1632000</value>
-        <value>1689600</value>
-        <value>1824000</value>
-    </array>
     <!-- Power consumption when CPU is idle -->
     <item name="cpu.idle">3.5</item>
-    <!-- Power consumption at different speeds -->
-    <array name="cpu.active">
-        <value>85</value>
-        <value>90</value>
-        <value>95</value>
-        <value>110</value>
-        <value>136</value>
-        <value>154</value>
-        <value>174</value>
-        <value>200</value>
-        <value>290</value>
-        <value>310</value>
-        <value>390</value>
-        <value>400</value>
-        <value>440</value>
-        <value>520</value>
+    <!-- Different CPU speeds as reported in /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies -->
+    <array name="cpu.speeds.cluster0">
+        <value>302400</value>        <!-- 302 MHz -->
+        <value>384000</value>        <!-- 384 MHz -->
+        <value>460800</value>        <!-- 460 MHz -->
+        <value>600000</value>        <!-- 600 MHz -->
+        <value>672000</value>        <!-- 672 MHz -->
+        <value>787200</value>        <!-- 787 MHz -->
+        <value>864000</value>        <!-- 864 MHz -->
+        <value>960000</value>        <!-- 960 MHz -->
+        <value>1248000</value>        <!-- 1248 MHz -->
+        <value>1440000</value>        <!-- 1440 MHz -->
+        <value>1536000</value>        <!-- 1536 MHz -->
+        <value>1632000</value>        <!-- 1632 MHz -->
+    </array>
+    <!-- Additional power used by a CPU from cluster 0 when running at different speeds. Currently this measurement also includes cluster cost. -->
+    <array name="cpu.active.cluster0">
+        <value>73.233</value>        <!-- 302 MHz -->
+        <value>77.358</value>        <!-- 384 MHz -->
+        <value>82.744</value>        <!-- 460 MHz -->
+        <value>85.913</value>        <!-- 600 MHz -->
+        <value>91.972</value>        <!-- 672 MHz -->
+        <value>97.483</value>        <!-- 787 MHz -->
+        <value>105.882</value>        <!-- 864 MHz -->
+        <value>113.951</value>        <!-- 960 MHz -->
+        <value>142.006</value>        <!-- 1248 MHz -->
+        <value>165.514</value>        <!-- 1440 MHz -->
+        <value>180.233</value>        <!-- 1536 MHz -->
+        <value>196.233</value>        <!-- 1632 MHz -->
+    </array>
+    <!-- Different CPU speeds as reported in /sys/devices/system/cpu/cpu4/cpufreq/scaling_available_frequencies -->
+    <array name="cpu.speeds.cluster1">
+        <value>302400</value>        <!-- 302 MHz -->
+        <value>384000</value>        <!-- 384 MHz -->
+        <value>480000</value>        <!-- 480 MHz -->
+        <value>633600</value>        <!-- 633 MHz -->
+        <value>768000</value>        <!-- 768 MHz -->
+        <value>864000</value>        <!-- 864 MHz -->
+        <value>960000</value>        <!-- 960 MHz -->
+        <value>1248000</value>        <!-- 1248 MHz -->
+        <value>1344000</value>        <!-- 1344 MHz -->
+        <value>1440000</value>        <!-- 1440 MHz -->
+        <value>1536000</value>        <!-- 1536 MHz -->
+        <value>1632000</value>        <!-- 1632 MHz -->
+        <value>1689600</value>        <!-- 1689 MHz -->
+        <value>1824000</value>        <!-- 1824 MHz -->
+    </array>
+    <!-- Additional power used by a CPU from cluster 1 when running at different speeds. Currently this measurement also includes cluster cost. -->
+    <array name="cpu.active.cluster1">
+        <value>122.233</value>        <!-- 302 MHz -->
+        <value>132.714</value>        <!-- 384 MHz -->
+        <value>146.321</value>        <!-- 480 MHz -->
+        <value>167.495</value>        <!-- 633 MHz -->
+        <value>194.391</value>        <!-- 768 MHz -->
+        <value>211.625</value>        <!-- 864 MHz -->
+        <value>231.291</value>        <!-- 960 MHz -->
+        <value>298.062</value>        <!-- 1248 MHz -->
+        <value>325.774</value>        <!-- 1344 MHz -->
+        <value>353.432</value>        <!-- 1440 MHz -->
+        <value>389.501</value>        <!-- 1536 MHz -->
+        <value>427.866</value>        <!-- 1632 MHz -->
+        <value>440.878</value>        <!-- 1689 MHz -->
+        <value>496.031</value>        <!-- 1824 MHz -->
     </array>
 </device>
