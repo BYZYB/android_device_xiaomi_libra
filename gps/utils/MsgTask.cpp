@@ -29,12 +29,12 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_MsgTask"
 
-#include <cutils/sched_policy.h>
-#include <unistd.h>
 #include <MsgTask.h>
-#include <msg_q.h>
-#include <log_util.h>
+#include <cutils/sched_policy.h>
 #include <loc_log.h>
+#include <log_util.h>
+#include <msg_q.h>
+#include <unistd.h>
 
 static void LocMsgDestroy(void *msg)
 {

@@ -123,7 +123,6 @@ PRODUCT_PACKAGES += \
     gps.msm8992 \
     izat.conf \
     lowi.conf \
-    quipc.conf \
     sap.conf \
     xtwifi.conf
 
