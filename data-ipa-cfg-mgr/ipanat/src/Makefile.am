@@ -1,4 +1,4 @@
-AM_CFLAGS = -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs
+AM_CFLAGS = -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-trigraphs
 AM_CFLAGS += -I./../inc
 AM_CFLAGS += -O3 -g0
 

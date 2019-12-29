@@ -26,15 +26,15 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <linux/stat.h>
 #include <fcntl.h>
+#include <linux/stat.h>
 
 #include <linux/types.h>
 
-#include "log_util.h"
-#include "platform_lib_includes.h"
 #include "loc_eng_dmn_conn_glue_msg.h"
 #include "loc_eng_dmn_conn_handler.h"
+#include "log_util.h"
+#include "platform_lib_includes.h"
 
 /*===========================================================================
 FUNCTION    loc_eng_dmn_conn_glue_msgget

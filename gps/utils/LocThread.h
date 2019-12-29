@@ -29,8 +29,8 @@
 #ifndef __LOC_THREAD__
 #define __LOC_THREAD__
 
-#include <stddef.h>
 #include <pthread.h>
+#include <stddef.h>
 
 // abstract class to be implemented by client to provide a runnable class
 // which gets scheduled by LocThread

@@ -34,8 +34,8 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-#include <linux/types.h>
 #include "loc_eng_dmn_conn_glue_pipe.h"
+#include <linux/types.h>
 
     int loc_eng_dmn_conn_glue_msgget(const char *q_path, int mode);
     int loc_eng_dmn_conn_glue_msgremove(const char *q_path, int msgqid);

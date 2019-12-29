@@ -29,8 +29,8 @@
 #ifndef LOC_ENG_DATA_SERVER_HANDLER
 #define LOC_ENG_DATA_SERVER_HANDLER
 
-#include <linux/types.h>
 #include <arpa/inet.h>
+#include <linux/types.h>
 
 //for SSID_BUF_SIZE
 #include <hardware/gps.h>

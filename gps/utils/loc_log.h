@@ -35,9 +35,9 @@ extern "C"
 {
 #endif
 
+#include "loc_target.h"
 #include <ctype.h>
 #include <stdlib.h>
-#include "loc_target.h"
 
    typedef struct
    {

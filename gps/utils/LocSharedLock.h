@@ -29,9 +29,9 @@
 #ifndef __LOC_SHARED_LOCK__
 #define __LOC_SHARED_LOCK__
 
-#include <stddef.h>
 #include <cutils/atomic.h>
 #include <pthread.h>
+#include <stddef.h>
 
 // This is a utility created for use cases such that there are more than
 // one client who need to share the same lock, but it is not predictable

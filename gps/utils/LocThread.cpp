@@ -27,8 +27,8 @@
  *
  */
 #include <LocThread.h>
-#include <string.h>
 #include <pthread.h>
+#include <string.h>
 
 class LocThreadDelegate
 {

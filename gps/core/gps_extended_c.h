@@ -35,10 +35,10 @@ extern "C"
 #endif /* __cplusplus */
 
 #include <ctype.h>
+#include <hardware/gps.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <hardware/gps.h>
 
 /** Location has valid source information. */
 #define LOCATION_HAS_SOURCE_INFO 0x0020

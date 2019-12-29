@@ -15,10 +15,9 @@
  */
 
 #define LOG_TAG "bdaddr_xiaomi"
-#define LOG_NDEBUG 1
+#define LOG_NDEBUG 0
 
 #include <cutils/log.h>
-
 #include <string.h>
 
 #define MAC_ADDR_SIZE 6

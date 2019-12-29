@@ -33,17 +33,17 @@ PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/ld.config.txt:$(TARGET_COPY_OUT_SYST
 
 # Audio
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/audio/aanc_tuning_mixer.txt:system/vendor/etc/aanc_tuning_mixer.txt \
-    $(LOCAL_PATH)/audio/audio_effects.xml:system/vendor/etc/audio_effects.xml \
-    $(LOCAL_PATH)/audio/audio_output_policy.conf:system/vendor/etc/audio_output_policy.conf \
-    $(LOCAL_PATH)/audio/audio_platform_info_i2s.xml:system/vendor/etc/audio_platform_info_i2s.xml \
-    $(LOCAL_PATH)/audio/audio_platform_info.xml:system/vendor/etc/audio_platform_info.xml \
-    $(LOCAL_PATH)/audio/audio_policy_configuration.xml:system/vendor/etc/audio_policy_configuration.xml \
-    $(LOCAL_PATH)/audio/mixer_paths_i2s.xml:system/vendor/etc/mixer_paths_i2s.xml \
-    $(LOCAL_PATH)/audio/mixer_paths.xml:system/vendor/etc/mixer_paths.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_mixer_paths.xml:system/vendor/etc/sound_trigger_mixer_paths.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_platform_info.xml:system/vendor/etc/sound_trigger_platform_info.xml \
-    $(LOCAL_PATH)/audio/surround_sound_3mic/surround_sound_rec_AZ.cfg:system/vendor/etc/surround_sound_3mic/surround_sound_rec_AZ.cfg \
+    $(LOCAL_PATH)/audio/etc/aanc_tuning_mixer.txt:system/vendor/etc/aanc_tuning_mixer.txt \
+    $(LOCAL_PATH)/audio/etc/audio_effects.xml:system/vendor/etc/audio_effects.xml \
+    $(LOCAL_PATH)/audio/etc/audio_output_policy.conf:system/vendor/etc/audio_output_policy.conf \
+    $(LOCAL_PATH)/audio/etc/audio_platform_info_i2s.xml:system/vendor/etc/audio_platform_info_i2s.xml \
+    $(LOCAL_PATH)/audio/etc/audio_platform_info.xml:system/vendor/etc/audio_platform_info.xml \
+    $(LOCAL_PATH)/audio/etc/audio_policy_configuration.xml:system/vendor/etc/audio_policy_configuration.xml \
+    $(LOCAL_PATH)/audio/etc/mixer_paths_i2s.xml:system/vendor/etc/mixer_paths_i2s.xml \
+    $(LOCAL_PATH)/audio/etc/mixer_paths.xml:system/vendor/etc/mixer_paths.xml \
+    $(LOCAL_PATH)/audio/etc/sound_trigger_mixer_paths.xml:system/vendor/etc/sound_trigger_mixer_paths.xml \
+    $(LOCAL_PATH)/audio/etc/sound_trigger_platform_info.xml:system/vendor/etc/sound_trigger_platform_info.xml \
+    $(LOCAL_PATH)/audio/etc/surround_sound_rec_AZ.cfg:system/vendor/etc/surround_sound_3mic/surround_sound_rec_AZ.cfg \
     frameworks/av/services/audiopolicy/config/a2dp_audio_policy_configuration.xml:system/vendor/etc/a2dp_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/vendor/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/vendor/etc/default_volume_tables.xml \
@@ -114,20 +114,19 @@ PRODUCT_PACKAGES += android.hardware.biometrics.fingerprint@2.1-service
 # Gatekeeper HAL
 PRODUCT_PACKAGES += android.hardware.gatekeeper@1.0-impl
 
-# GNSS HAL
+# GPS
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/gps/etc/flp.conf:system/etc/flp.conf \
+    $(LOCAL_PATH)/gps/etc/gps.conf:system/etc/gps.conf \
+    $(LOCAL_PATH)/gps/etc/izat.conf:system/etc/izat.conf \
+    $(LOCAL_PATH)/gps/etc/lowi.conf:system/etc/lowi.conf  \
+    $(LOCAL_PATH)/gps/etc/sap.conf:system/etc/sap.conf \
+    $(LOCAL_PATH)/gps/etc/xtwifi.conf:system/etc/xtwifi.conf
+
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
-    libshims_get_process_name
-
-# GPS
-PRODUCT_PACKAGES += \
-    flp.conf \
-    gps.conf \
     gps.msm8992 \
-    izat.conf \
-    lowi.conf \
-    sap.conf \
-    xtwifi.conf
+    libshims_get_process_name
 
 # Graphics
 PRODUCT_PACKAGES += \
@@ -306,9 +305,9 @@ PRODUCT_PACKAGES += android.hardware.vibrator@1.0-service.lineage
 
 # Wifi
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:system/vendor/etc/wifi/p2p_supplicant_overlay.conf \
-    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:system/vendor/firmware/wlan/qca_cld/WCNSS_qcom_cfg.ini \
-    $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:system/vendor/etc/wifi/wpa_supplicant_overlay.conf
+    $(LOCAL_PATH)/wifi/etc/p2p_supplicant_overlay.conf:system/vendor/etc/wifi/p2p_supplicant_overlay.conf \
+    $(LOCAL_PATH)/wifi/etc/wpa_supplicant_overlay.conf:system/vendor/etc/wifi/wpa_supplicant_overlay.conf \
+    $(LOCAL_PATH)/wifi/firmware/WCNSS_qcom_cfg.ini:system/vendor/firmware/wlan/qca_cld/WCNSS_qcom_cfg.ini
 
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service \

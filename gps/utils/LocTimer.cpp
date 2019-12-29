@@ -27,18 +27,18 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <LocHeap.h>
+#include <LocSharedLock.h>
+#include <LocThread.h>
+#include <LocTimer.h>
+#include <MsgTask.h>
 #include <errno.h>
 #include <loc_timer.h>
-#include <sys/timerfd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/epoll.h>
-#include <LocTimer.h>
-#include <LocHeap.h>
-#include <LocThread.h>
-#include <LocSharedLock.h>
-#include <MsgTask.h>
+#include <sys/timerfd.h>
+#include <time.h>
 
 #ifdef __HOST_UNIT_TEST__
 #define EPOLLWAKEUP 0

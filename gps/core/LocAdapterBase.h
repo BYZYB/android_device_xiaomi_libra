@@ -29,9 +29,9 @@
 #ifndef LOC_API_ADAPTER_BASE_H
 #define LOC_API_ADAPTER_BASE_H
 
-#include <gps_extended.h>
-#include <UlpProxyBase.h>
 #include <ContextBase.h>
+#include <UlpProxyBase.h>
+#include <gps_extended.h>
 
 namespace loc_core
 {

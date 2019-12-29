@@ -29,11 +29,11 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_LocAdapterBase"
 
-#include <dlfcn.h>
 #include <LocAdapterBase.h>
+#include <LocAdapterProxyBase.h>
+#include <dlfcn.h>
 #include <loc_target.h>
 #include <log_util.h>
-#include <LocAdapterProxyBase.h>
 
 namespace loc_core
 {

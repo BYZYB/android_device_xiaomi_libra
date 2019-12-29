@@ -29,14 +29,14 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_CtxBase"
 
-#include <dlfcn.h>
-#include <cutils/sched_policy.h>
-#include <unistd.h>
 #include <ContextBase.h>
-#include <msg_q.h>
+#include <cutils/sched_policy.h>
+#include <dlfcn.h>
+#include <loc_log.h>
 #include <loc_target.h>
 #include <log_util.h>
-#include <loc_log.h>
+#include <msg_q.h>
+#include <unistd.h>
 
 namespace loc_core
 {

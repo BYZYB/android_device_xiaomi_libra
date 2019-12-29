@@ -31,11 +31,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "log_util.h"
-#include "platform_lib_includes.h"
-#include "loc_eng_msg.h"
 #include "loc_eng_dmn_conn.h"
 #include "loc_eng_dmn_conn_handler.h"
+#include "loc_eng_msg.h"
+#include "log_util.h"
+#include "platform_lib_includes.h"
 
 void *loc_api_handle = NULL;
 

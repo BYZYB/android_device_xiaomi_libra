@@ -29,11 +29,11 @@
 #ifndef __LOC_CONTEXT_BASE__
 #define __LOC_CONTEXT_BASE__
 
-#include <stdbool.h>
-#include <ctype.h>
-#include <MsgTask.h>
-#include <LocApiBase.h>
 #include <LBSProxyBase.h>
+#include <LocApiBase.h>
+#include <MsgTask.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 #define MAX_XTRA_SERVER_URL_LENGTH 256
 

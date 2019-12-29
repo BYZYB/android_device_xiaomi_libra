@@ -29,8 +29,8 @@
 #ifndef ULP_PROXY_BASE_H
 #define ULP_PROXY_BASE_H
 
-#include <gps_extended.h>
 #include "fused_location_extended.h"
+#include <gps_extended.h>
 
 namespace loc_core
 {

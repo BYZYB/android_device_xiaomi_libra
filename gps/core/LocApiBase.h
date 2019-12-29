@@ -29,11 +29,11 @@
 #ifndef LOC_API_BASE_H
 #define LOC_API_BASE_H
 
-#include <stddef.h>
+#include <MsgTask.h>
 #include <ctype.h>
 #include <gps_extended.h>
-#include <MsgTask.h>
 #include <log_util.h>
+#include <stddef.h>
 
 namespace loc_core
 {

@@ -30,16 +30,16 @@
 #ifndef __LOC_ENG_AGPS_H__
 #define __LOC_ENG_AGPS_H__
 
-#include <stdbool.h>
-#include <ctype.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <hardware/gps.h>
-#include <gps_extended.h>
-#include <loc_core_log.h>
-#include <linked_list.h>
-#include <loc_timer.h>
 #include <LocEngAdapter.h>
+#include <arpa/inet.h>
+#include <ctype.h>
+#include <gps_extended.h>
+#include <hardware/gps.h>
+#include <linked_list.h>
+#include <loc_core_log.h>
+#include <loc_timer.h>
+#include <stdbool.h>
+#include <string.h>
 
 // forward declaration
 class AgpsStateMachine;
