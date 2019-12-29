@@ -1,0 +1,3 @@
+# Zygote
+allow webview_zygote zygote:unix_dgram_socket *;
+allow zygote proc_cmdline:file *;

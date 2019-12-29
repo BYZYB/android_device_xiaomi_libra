@@ -10,6 +10,7 @@ LOCAL_VENDOR_MODULE := true
 
 LOCAL_MODULE_TAGS := optional
 
+LOCAL_CFLAGS += -Ofast
 ifeq ($(TARGET_DEVICE),apq8026_lw)
 LOCAL_CFLAGS += -DPDK_FEATURE_SET
 else ifeq ($(BOARD_VENDOR_QCOM_LOC_PDK_FEATURE_SET),true)
@@ -32,7 +33,8 @@ LOCAL_SRC_FILES += \
 
 LOCAL_CFLAGS += \
      -fno-short-enums \
-     -D_ANDROID_
+     -D_ANDROID_ \
+     -Ofast
 
 LOCAL_C_INCLUDES:= \
     $(TARGET_OUT_HEADERS)/gps.utils \

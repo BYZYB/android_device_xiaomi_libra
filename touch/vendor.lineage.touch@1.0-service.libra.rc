@@ -1,0 +1,8 @@
+on init
+    chown system system /proc/touchscreen/nav_button_enable
+    chmod 0660 /proc/touchscreen/nav_button_enable
+
+service vendor.touch-hal-1-0-libra /vendor/bin/hw/vendor.lineage.touch@1.0-service.libra
+    class hal
+    user system
+    group system

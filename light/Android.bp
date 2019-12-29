@@ -29,4 +29,5 @@ cc_binary {
         "libutils",
         "android.hardware.light@2.0",
     ],
+    cflags: ["-Ofast"],
 }

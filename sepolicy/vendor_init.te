@@ -1,0 +1,11 @@
+# Vendorinit
+allow vendor_init bluetooth_data_file:{ dir file } *;
+allow vendor_init dhcp_data_file:{ dir file } *;
+allow vendor_init media_rw_data_file:{ dir file } *;
+allow vendor_init proc:file *;
+allow vendor_init radio_data_file:{ dir file } *;
+allow vendor_init rootfs:{ dir file } *;
+allow vendor_init system_data_file:{ dir file } *;
+allow vendor_init unencrypted_data_file:{ dir file } *;
+allow vendor_init wifi_data_file:{ dir file } *;
+allow vendor_init wpa_socket:{ dir file } *;

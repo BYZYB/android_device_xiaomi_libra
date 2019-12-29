@@ -1,0 +1,206 @@
+# Copyright (c) 2011-2014, The Linux Foundation. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+#       copyright notice, this list of conditions and the following
+#       disclaimer in the documentation and/or other materials provided
+#       with the distribution.
+#     * Neither the name of The Linux Foundation nor the names of its
+#       contributors may be used to endorse or promote products derived
+#       from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#
+
+import /vendor/etc/init/hw/init.fpc.rc
+
+on early-init
+	mkdir /firmware 0771 system system
+	mkdir /bt_firmware 0771 system system
+
+on init
+	mkdir /cust 0771 system system
+
+on fs
+	wait /dev/block/platform/soc.0/f9824900.sdhci/mmcblk0
+	symlink /dev/block/platform/soc.0/f9824900.sdhci /dev/block/bootdevice
+	mount_all /vendor/etc/fstab.qcom
+	mkdir /persist/data 0700 system system
+	mkdir /persist/wlan_bt 0700 system system
+
+on post-fs
+	# We chown/chmod /cust again so because mount is run as root + defaults
+	chown system system /cust
+	chmod 0771 /cust
+
+	# We restorecon /cust in case the cust partition has been reset.
+	restorecon_recursive /cust
+
+	# Create the lost+found directories, so as to enforce our permissions
+	mkdir /cust/lost+found 0770 root root
+
+on post-fs-data
+	mkdir /persist/data/sfs 0700 system system
+	mkdir /persist/data/tz 0700 system system
+	mkdir /data/usf 0700 system system
+	mkdir /data/misc/dts 0770 media audio
+	mkdir /data/thermal 0771 system system
+
+on boot
+	symlink /dev/block/platform/soc.0 /dev/block/bootdevice
+	start rmt_storage
+	start rfs_access
+	write /sys/bus/i2c/devices/2-004a/update_fw 1
+	write /sys/bus/i2c/devices/2-004a/update_cfg 1
+	write /sys/bus/i2c/devices/2-0020/input/input0/update_fw 1
+
+	# Access permission for secure touch
+	chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
+	chmod 0440 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
+	chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
+	chmod 0440 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
+	chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
+	chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
+	chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
+	chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
+	write /proc/sys/kernel/sched_boost 1
+
+	# DT2W
+	chown root system /proc/touchscreen/double_tap_enable
+	chmod 0664 /proc/touchscreen/double_tap_enable
+	restorecon /proc/touchscreen/double_tap_enable
+
+	# Edge gesture
+	chown root system /proc/touchscreen/edge_touch_mode
+	chmod 0664 /proc/touchscreen/edge_touch_mode
+	restorecon /proc/touchscreen/edge_touch_mode
+
+	# Update cpuset for foreground and background apps
+	write /dev/cpuset/foreground/cpus 0-3,4-5
+	write /dev/cpuset/foreground/boost/cpus 4-5
+	write /dev/cpuset/background/cpus 0
+	write /dev/cpuset/system-background/cpus 0-1
+	mkdir /dev/cpuset/top-app/boost
+	write /dev/cpuset/top-app/cpus 0-3,4-5
+	write /dev/cpuset/top-app/boost/cpus 4-5
+	write /dev/cpuset/restricted/cpus 0-3
+	chown system system /dev/cpuset/top-app/boost
+	chown system system /dev/cpuset/top-app/boost/tasks
+	chmod 0664 /dev/cpuset/top-app/boost/tasks
+
+on property:sys.boot_completed=1
+	# Set DEADLINE I/O scheduler && Increase read ahead cache
+	setprop sys.io.scheduler "deadline"
+	write /sys/block/mmcblk0/queue/scheduler "deadline"
+	write /sys/block/mmcblk0rpmb/queue/scheduler "deadline"
+	write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+	write /sys/block/mmcblk0rpmb/queue/read_ahead_kb 2048
+
+	# Set LMK parameters
+	write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
+	write /sys/module/lowmemorykiller/parameters/debug_level 0
+
+	# Android background processes are set to nice 10. Never schedule these on the a57s.
+	write /proc/sys/kernel/sched_upmigrate_min_nice 9
+
+	# Enable TCP Fast Open by default
+	write /proc/sys/net/ipv4/tcp_fastopen 3
+
+	# Start camera server as daemon
+	service qcamerasvr /vendor/bin/mm-qcamera-daemon
+		class main
+		user camera
+		group camera system inet input graphics
+		writepid /dev/cpuset/system-background/tasks
+
+	on property:init.svc.media=restarting
+		restart qcamerasvr
+
+	on property:init.svc.servicemanager=restarting
+		restart qcamerasvr
+
+	service qseecomd /vendor/bin/qseecomd
+		class core
+		user root
+		group root
+		writepid /dev/cpuset/system-background/tasks
+
+	service per_mgr /vendor/bin/pm-service
+		class core
+		user system
+		group system net_raw
+		writepid /dev/cpuset/system-background/tasks
+
+	service per_proxy /vendor/bin/pm-proxy
+		class core
+		user system
+		group system net_raw
+		disabled
+		writepid /dev/cpuset/system-background/tasks
+
+on property:init.svc.per_mgr=running
+	start per_proxy
+
+on property:sys.shutdown.requested=*
+	stop per_proxy
+
+	service thermal-engine /system/vendor/bin/thermal-engine -T
+		class main
+		user root
+		socket thermal-send-client stream 0666 system system
+		socket thermal-recv-client stream 0660 system system
+		socket thermal-recv-passive-client stream 0666 system system
+		group root
+		writepid /dev/cpuset/system-background/tasks
+
+	service time_daemon /vendor/bin/time_daemon
+		class late_start
+		user root
+		group root
+		writepid /dev/cpuset/system-background/tasks
+
+	service adsprpcd /vendor/bin/adsprpcd
+		class main
+		user media
+		group media
+
+	service ppd /vendor/bin/mm-pp-daemon
+		class late_start
+		user system
+		socket pps stream 0660 system system
+		group system graphics
+
+on property:init.svc.surfaceflinger=stopped
+	stop ppd
+
+	service energy-awareness /vendor/bin/energy-awareness
+		class main
+		user root
+		group system
+		oneshot
+
+	service readmac /vendor/bin/readmac
+		class main
+		user root
+		group root oem_2950
+		oneshot
+
+	service fidodaemon /system/vendor/bin/fidodaemon
+		class late_start
+		user system
+		group system

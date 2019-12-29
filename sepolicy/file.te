@@ -1,2 +1,0 @@
-# for /dev/lirc0
-type lirc_device, file_type;

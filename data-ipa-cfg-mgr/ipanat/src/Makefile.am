@@ -1,6 +1,6 @@
 AM_CFLAGS = -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs
 AM_CFLAGS += -I./../inc
-#AM_CFLAGS += -DDEBUG -g
+AM_CFLAGS += -Ofast
 
 common_CFLAGS =  -DUSE_GLIB @GLIB_CFLAGS@
 common_LDFLAGS = -lrt @GLIB_LIBS@

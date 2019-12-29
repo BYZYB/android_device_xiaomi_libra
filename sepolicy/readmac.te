@@ -7,9 +7,8 @@ qmux_socket(readmac)
 diag_use(readmac)
 
 # /data/misc/wifi/wlan_mac.bin
-allow readmac wifi_data_file:file create_file_perms;
-allow readmac wifi_data_file:dir create_dir_perms;
+allow readmac readmac:capability *;
+allow readmac self:{ capability socket } *;
+allow readmac wifi_data_file:{ dir file } *;
 
-allow readmac self:socket create_socket_perms;
 allowxperm readmac self:socket ioctl msm_sock_ipc_ioctls;
-allow readmac self:capability fsetid;

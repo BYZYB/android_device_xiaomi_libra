@@ -1,0 +1,2 @@
+# Healthd
+allow healthd sysfs:{ dir file } *;

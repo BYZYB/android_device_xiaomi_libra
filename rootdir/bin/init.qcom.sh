@@ -32,18 +32,18 @@ if [ -f /sys/devices/soc0/soc_id ]; then
 else
     platformid=`cat /sys/devices/system/soc/soc0/id`
 fi
-#
+
 # Function to start sensors for DSPS enabled platforms
 #
 #start_sensors()
 #{
 #    if [ -c /dev/msm_dsps -o -c /dev/sensors ]; then
-#        chmod -h 775 /persist/sensors
-#        chmod -h 664 /persist/sensors/sensors_settings
-#        chown -h system.root /persist/sensors/sensors_settings
+#        chmod 775 /persist/sensors
+#        chmod 664 /persist/sensors/sensors_settings
+#        chown system.root /persist/sensors/sensors_settings
 
 #        mkdir -p /data/misc/sensors
-#        chmod -h 775 /data/misc/sensors
+#        chmod 775 /data/misc/sensors
 
 #        start sensors
 #    fi
@@ -52,15 +52,15 @@ fi
 start_battery_monitor()
 {
 	if ls /sys/bus/spmi/devices/qpnp-bms-*/fcc_data ; then
-		chown -h root.system /sys/module/pm8921_bms/parameters/*
-		chown -h root.system /sys/module/qpnp_bms/parameters/*
-		chown -h root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_data
-		chown -h root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_temp
-		chown -h root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_chgcyl
+		chown root.system /sys/module/pm8921_bms/parameters/*
+		chown root.system /sys/module/qpnp_bms/parameters/*
+		chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_data
+		chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_temp
+		chown root.system /sys/bus/spmi/devices/qpnp-bms-*/fcc_chgcyl
 		chmod 0660 /sys/module/qpnp_bms/parameters/*
 		chmod 0660 /sys/module/pm8921_bms/parameters/*
 		mkdir -p /data/bms
-		chown -h root.system /data/bms
+		chown root.system /data/bms
 		chmod 0770 /data/bms
 		start battery_monitor
 	fi
@@ -69,11 +69,11 @@ start_battery_monitor()
 start_charger_monitor()
 {
 	if ls /sys/module/qpnp_charger/parameters/charger_monitor; then
-		chown -h root.system /sys/module/qpnp_charger/parameters/*
-		chown -h root.system /sys/class/power_supply/battery/input_current_max
-		chown -h root.system /sys/class/power_supply/battery/input_current_trim
-		chown -h root.system /sys/class/power_supply/battery/input_current_settled
-		chown -h root.system /sys/class/power_supply/battery/voltage_min
+		chown root.system /sys/module/qpnp_charger/parameters/*
+		chown root.system /sys/class/power_supply/battery/input_current_max
+		chown root.system /sys/class/power_supply/battery/input_current_trim
+		chown root.system /sys/class/power_supply/battery/input_current_settled
+		chown root.system /sys/class/power_supply/battery/voltage_min
 		chmod 0664 /sys/class/power_supply/battery/input_current_max
 		chmod 0664 /sys/class/power_supply/battery/input_current_trim
 		chmod 0664 /sys/class/power_supply/battery/input_current_settled
@@ -86,8 +86,8 @@ start_charger_monitor()
 start_vm_bms()
 {
 	if [ -e /dev/vm_bms ]; then
-		chown -h root.system /sys/class/power_supply/bms/current_now
-		chown -h root.system /sys/class/power_supply/bms/voltage_ocv
+		chown root.system /sys/class/power_supply/bms/current_now
+		chown root.system /sys/class/power_supply/bms/voltage_ocv
 		chmod 0664 /sys/class/power_supply/bms/current_now
 		chmod 0664 /sys/class/power_supply/bms/voltage_ocv
 		start vm_bms
@@ -115,7 +115,7 @@ start_copying_prebuilt_qcril_db()
 {
     if [ -f /system/vendor/qcril.db -a ! -f /data/misc/radio/qcril.db ]; then
         cp /system/vendor/qcril.db /data/misc/radio/qcril.db
-        chown -h radio.radio /data/misc/radio/qcril.db
+        chown radio.radio /data/misc/radio/qcril.db
     fi
 }
 
@@ -170,8 +170,8 @@ fi
 fi
 
 
-chown -h system.system /sys/class/leds/button-backlight/brightness
-chown -h system.system /sys/class/leds/button-backlight1/brightness
+chown system.system /sys/class/leds/button-backlight/brightness
+chown system.system /sys/class/leds/button-backlight1/brightness
 
 # Update the panel color property
 if [ $(getprop ro.boot.hwversion | grep -e [34].*) ]; then
@@ -367,7 +367,7 @@ if [ ! -f /firmware/verinfo/ver_info.txt -o "$prev_version_info" != "$cur_versio
     mkdir /data/misc/radio/modem_config
     chmod 770 /data/misc/radio/modem_config
     cp -r /firmware/image/modem_pr/mcfg/configs/* /data/misc/radio/modem_config
-    chown -hR radio.radio /data/misc/radio/modem_config
+    chown -R radio.radio /data/misc/radio/modem_config
     cp /firmware/verinfo/ver_info.txt /data/misc/radio/ver_info.txt
     chown radio.radio /data/misc/radio/ver_info.txt
 fi

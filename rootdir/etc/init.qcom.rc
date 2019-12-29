@@ -31,6 +31,7 @@ import /vendor/etc/init/hw/init.target.rc
 on early-init
     mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
+    chown system system /sys/kernel/debug
 
 on init
     # Set permissions for persist partition
@@ -53,6 +54,13 @@ on early-boot
 
     # Allow subsystem (modem etc) debugging
     write /sys/kernel/boot_adsp/boot 1
+    chown root audio /sys/kernel/boot_adsp/boot
+
+    # SSR Setup
+    write /sys/bus/msm_subsys/devices/subsys0/restart_level "related"
+    write /sys/bus/msm_subsys/devices/subsys1/restart_level "related"
+    write /sys/bus/msm_subsys/devices/subsys2/restart_level "related"
+    write /sys/bus/msm_subsys/devices/subsys3/restart_level "related"
 
 on boot
     chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
@@ -86,7 +94,10 @@ on boot
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/device/extldo
     chmod 0660 /sys/class/rfkill/rfkill0/device/extldo
 
-    #Create QMUX deamon socket area
+    # Prevents permission denied error for telephony
+    chmod 0644 /proc/cmdline
+
+    # Create QMUX deamon socket area
     mkdir /dev/socket/qmux_radio 0770 radio radio
     chmod 2770 /dev/socket/qmux_radio
     mkdir /dev/socket/qmux_audio 0770 media audio
@@ -100,18 +111,18 @@ on boot
     chmod 0666 /sys/class/leds/flashlight/brightness
     mkdir /persist/bluetooth 0770 bluetooth bluetooth
 
-    #Create NETMGR daemon socket area
+    # Create NETMGR daemon socket area
     mkdir /dev/socket/netmgr 0750 radio radio
     setprop wifi.interface wlan0
 
-#   Define TCP buffer sizes for various networks
-#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    # Define TCP buffer sizes for various networks
+    # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.wifi    524288,2097152,4194304,262144,524288,1048576
     setprop ro.telephony.call_ring.multiple false
     chmod 0444 /sys/devices/platform/msm_hsusb/gadget/usb_state
 
-#   Define TCP buffer sizes for various networks
-#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    # Define TCP buffer sizes for various networks
+    # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,524288,4096,16384,110208
     setprop net.tcp.buffersize.lte     2097152,4194304,8388608,262144,524288,1048576
     setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
@@ -124,12 +135,12 @@ on boot
     setprop net.tcp.buffersize.evdo    4094,87380,524288,4096,16384,262144
     setprop net.tcp.2g_init_rwnd 10
 
-#   Assign TCP buffer thresholds to be ceiling value of technology maximums
-#   Increased technology maximums should be reflected here.
+    # Assign TCP buffer thresholds to be ceiling value of technology maximums
+    # Increased technology maximums should be reflected here.
     write /proc/sys/net/core/rmem_max  16777216
     write /proc/sys/net/core/wmem_max  8388608
 
-    #To allow interfaces to get v6 address when tethering is enabled
+    # To allow interfaces to get v6 address when tethering is enabled
     write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
@@ -159,10 +170,6 @@ on boot
     # an ack packet comes out of order
     write /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal 1
 
-    # NFC local data and nfcee xml storage
-    mkdir /data/nfc 0770 nfc nfc
-    mkdir /data/nfc/param 0770 nfc nfc
-
     # Allow access for CCID command/response timeout configuration
     chown system system /sys/module/ccid_bridge/parameters/bulk_msg_timeout
 
@@ -174,14 +181,14 @@ on boot
     # Wifi firmware reload path
     chown wifi wifi /sys/module/wlan/parameters/fwpath
 
-    #VibratorHW
+    # VibratorHW
     chown system system /sys/devices/virtual/timed_output/vibrator/amp
 
-    #Torch
+    # Torch
     chown system system /sys/class/leds/led:torch_0/brightness
     chmod 0666 /sys/class/leds/led:torch_0/brightness
 
-    #Dynamic FPS
+    # Dynamic FPS
     chown system graphics /sys/class/graphics/fb0/dynamic_fps
     chmod 0644 /sys/class/graphics/fb0/dynamic_fps
 
@@ -190,7 +197,7 @@ on post-fs-data
     # Create directory for TZ Apps
     mkdir /data/misc/qsee 0770 system system
 
-    #Create folder for mm-qcamera-daemon
+    # Create folder for mm-qcamera-daemon
     mkdir /data/misc/camera 0770 camera camera
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
@@ -240,21 +247,13 @@ on post-fs-data
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
 
-    #Create the symlink to qcn wpa_supplicant folder for ar6000 wpa_supplicant
-    mkdir /data/system 0775 system system
-    #symlink /data/misc/wifi/wpa_supplicant /data/system/wpa_supplicant
-
-    #Create directories for Location services
+    # Create directories for Location services
     mkdir /data/misc/location 0770 gps gps
     mkdir /data/misc/location/mq 0770 gps gps
     mkdir /data/misc/location/xtwifi 0770 gps gps
     mkdir /data/misc/location/gpsone_d 0770 system gps
     mkdir /data/misc/location/quipc 0770 gps system
     mkdir /data/misc/location/gsiff 0770 gps gps
-
-    #Create directory for FOTA
-    mkdir /data/fota 0771
-    chown system system /data/fota
 
     # Create /data/time folder for time-services
     mkdir /data/time/ 0700 system system
@@ -265,10 +264,10 @@ on post-fs-data
     mkdir /data/audio/acdbdata/delta 0770 media audio
     setprop vold.post_fs_data_done 1
 
-    #Create a folder for SRS to be able to create a usercfg file
+    # Create a folder for SRS to be able to create a usercfg file
     mkdir /data/data/media 0770 media media
 
-    #Create PERFD deamon related dirs
+    # Create PERFD deamon related dirs
     mkdir /data/system/perfd 0770 root system
     chmod 2770 /data/system/perfd
 
@@ -298,11 +297,11 @@ on post-fs-data
     restorecon /sys/class/timed_output/vibrator/vtg_max
     restorecon /sys/class/timed_output/vibrator/vtg_min
 
-    #Torch
+    # Torch
     chown system system /sys/class/leds/led:torch_0/brightness
     chmod 0666 /sys/class/leds/led:torch_0/brightness
 
-    #Dynamic FPS
+    # Dynamic FPS
     chown system graphics /sys/class/graphics/fb0/dynamic_fps
     chmod 0664 /sys/class/graphics/fb0/dynamic_fps
     chown system graphics /sys/class/graphics/fb1/dynamic_fps
@@ -322,11 +321,6 @@ service perfd /system/vendor/bin/perfd
 on property:sys.boot_completed=1
     restart cameraserver
     write /dev/kmsg "Boot completed "
-
-# corefile limit and ETB enabling
-on property:persist.debug.trace=1
-    mkdir /data/core 0777 root root
-    write /proc/sys/kernel/core_pattern "/data/core/%E.%p.%e"
 
 on property:bluetooth.isEnabled=true
     start btwlancoex
@@ -349,6 +343,7 @@ service rmt_storage /vendor/bin/rmt_storage
     class core
     user root
     shutdown critical
+    ioprio rt 0
     writepid /dev/cpuset/system-background/tasks
 
 service rfs_access /vendor/bin/rfs_access
@@ -426,10 +421,10 @@ on property:sys.sysctl.tcp_adv_win_scale=*
 service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     -O/data/vendor/wifi/wpa/sockets -puse_p2p_group_interface=1 \
     -g@android:wpa_wlan0
-#   we will start as root and wpa_supplicant will switch to user wifi
-#   after setting up the capabilities required for WEXT
-#   user wifi
-#   group wifi inet keystore
+    # we will start as root and wpa_supplicant will switch to user wifi
+    # after setting up the capabilities required for WEXT
+    # user wifi
+    # group wifi inet keystore
     interface android.hardware.wifi.supplicant@1.0::ISupplicant default
     interface android.hardware.wifi.supplicant@1.1::ISupplicant default
     class main
@@ -443,7 +438,7 @@ service cnss-daemon /vendor/bin/cnss-daemon -n -l
     group system inet net_admin wifi
 
 service loc_launcher /vendor/bin/loc_launcher
-    #loc_launcher will start as root and set its uid to gps
+    # loc_launcher will start as root and set its uid to gps
     class late_start
     group gps inet net_raw diag net_admin wifi
     writepid /dev/cpuset/system-background/tasks
@@ -466,6 +461,7 @@ service qcom-post-boot /system/vendor/bin/init.qcom.post_boot.sh
     oneshot
 
 on property:sys.boot_completed=1
+    setprop vendor.post_boot.parsed 1
     start qcom-post-boot
 
 on property:ro.data.large_tcp_window_size=true
@@ -477,7 +473,7 @@ service ril-daemon2 /system/vendor/bin/hw/rild -c 2
     socket rild2 stream 660 root radio
     socket rild-debug2 stream 660 radio system
     user root
-    group radio cache inet misc audio sdcard_r sdcard_rw oem_2950 diag log net_raw
+    group radio cache inet misc audio sdcard_r sdcard_rw diag log net_raw
 
 service charger /charger
     class charger
@@ -494,7 +490,7 @@ on property:sys.qbcharger.enable=true
 
 on property:sys.qbcharger.enable=false
     stop qbcharger
-    
+
 service msm_irqbalance /vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
     socket msm_irqbalance seqpacket 660 root system
     class core

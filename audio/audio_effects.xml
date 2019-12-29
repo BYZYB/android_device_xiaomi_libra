@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<audio_effects_conf version="2.0" xmlns="http://schemas.android.com/audio/audio_effects_conf/v2_0">
+<audio_effects_conf version="2.0" 
+    xmlns="http://schemas.android.com/audio/audio_effects_conf/v2_0">
     <libraries>
         <library name="bundle" path="libbundlewrapper.so"/>
         <library name="reverb" path="libreverbwrapper.so"/>

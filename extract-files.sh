@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2016 The CyanogenMod Project
+# Copyright (C) 2019 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,18 +13,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 set -e
 
+DEVICE=libra
+VENDOR=xiaomi
 
-# Load extractutils and do some sanity checks
+# Load extract_utils and do some sanity checks
 MY_DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 
-MK_ROOT="$MY_DIR"/../../..
+if [[ ! -d "$MY_DIR" ]]; then
+    MY_DIR="$PWD"
+fi
 
-HELPER="$MK_ROOT"/vendor/mk/build/tools/extract_utils.sh
+LINEAGE_ROOT="$MY_DIR"/../../..
+HELPER="$LINEAGE_ROOT"/vendor/lineage/build/tools/extract_utils.sh
+
 if [ ! -f "$HELPER" ]; then
     echo "Unable to find helper script at $HELPER"
     exit 1
@@ -52,15 +56,27 @@ if [ -z "$SRC" ]; then
     SRC=adb
 fi
 
-# Initialize the helper for common device
-setup_vendor "$DEVICE_COMMON" "$VENDOR" "$MK_ROOT" true "$CLEAN_VENDOR"
+if [ $# -eq 0 ]; then
+    SRC=adb
+else
+    if [ $# -eq 1 ]; then
+        SRC=$1
+    elif [ $# -eq 2 ]; then
+        SRC=$1
+        RADIO_SRC=$2
+    else
+        echo "$0: bad number of arguments"
+        echo ""
+        echo "usage: $0 [PATH_TO_EXPANDED_ROM] [PATH_TO_RADIO_FOLDER]"
+        echo ""
+        echo "If PATH_TO_EXPANDED_ROM is not specified, blobs will be extracted from"
+        echo "the device using adb pull."
+        exit 1
+    fi
+fi
 
-extract "$MY_DIR"/common-proprietary-files.txt "$SRC" "$SECTION"
-
-# Reinitialize the helper for device
-setup_vendor "$DEVICE" "$VENDOR" "$MK_ROOT" false "$CLEAN_VENDOR"
-
-extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
-extract "$MY_DIR"/../$DEVICE/device-proprietary-files.txt "$SRC" "$SECTION"
+# Initialize the helper
+setup_vendor "$DEVICE" "$VENDOR" "$LINEAGE_ROOT"
+extract "$MY_DIR"/proprietary-files.txt "$SRC"
 
 "$MY_DIR"/setup-makefiles.sh

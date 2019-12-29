@@ -1,5 +1,2 @@
-allow kernel platform_app:process setsched;
-allow kernel radio:process setsched;
-allow kernel shell:process setsched;
-allow kernel system_app:process setsched;
-allow kernel untrusted_app:process setsched;
+# Kernel
+allow kernel { platform_app radio shell system_app untrusted_app }:process *;

@@ -1,0 +1,19 @@
+# Tee
+allow tee block_device:dir *;
+allow tee device:dir *;
+allow tee fingerprintd_data_file:{ dir file sock_file } *;
+allow tee firmware_file:{ dir file } *;
+allow tee graphics_device:{ chr_file dir } *;
+allow tee persist_data_file:{ dir file } *;
+allow tee persist_drm_file:{ dir file } *;
+allow tee persist_file:dir *;
+allow tee self:capability *;
+allow tee system_app:unix_dgram_socket *;
+allow tee system_data_file:dir *;
+allow tee tee_device:chr_file *;
+allow tee time_daemon:unix_stream_socket *;
+allow tee vfat:file *;
+
+binder_call(tee, surfaceflinger)
+binder_use(tee)
+r_dir_file(tee, persist_data_file)

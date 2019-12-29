@@ -1,2 +1,12 @@
-# Consumerir
-allow system_server lirc_device:chr_file rw_file_perms;
+# System Server
+allow adbd ctl_start_prop:property_service *;
+allow lmkd lmkd:capability2 *;
+allow netmgrd diag_device:chr_file *;
+allow per_mgr per_mgr:capability *;
+allow system_server init:binder *;
+allow system_server diag_device:chr_file *;
+allow system_server kernel:system *;
+allow system_server persist_file:{ dir file } *;
+allow system_server sysfs:{ dir file } *;
+allow time_daemon diag_device:chr_file *;
+allow wcnss_service diag_device:chr_file *;

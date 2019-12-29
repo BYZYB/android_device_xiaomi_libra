@@ -1,0 +1,5 @@
+# for /dev/lirc0
+type lirc_device, file_type;
+
+# Consumerir
+allow system_server lirc_device:chr_file *;
