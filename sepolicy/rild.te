@@ -1,0 +1,4 @@
+# Rild
+allow rild diag_device:chr_file *;
+allow rild rild:capability *;
+allow rild system_prop:property_service *;

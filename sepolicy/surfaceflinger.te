@@ -1,0 +1,2 @@
+# Surfaceflinger
+allow surfaceflinger default_android_service:service_manager *;

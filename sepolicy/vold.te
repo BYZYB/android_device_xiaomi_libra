@@ -1,0 +1,3 @@
+# Vold
+allow vold metadata_block_device:blk_file *;
+allow vold firmware_file:{ dir file } *;

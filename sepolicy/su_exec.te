@@ -1,0 +1,16 @@
+# SU Execute
+allow sudaemon activity_service:service_manager *;
+allow sudaemon appops_service:service_manager *;
+allow sudaemon devpts:chr_file *;
+allow sudaemon kernel:security *;
+allow sudaemon rootfs:{ dir file lnk_file } *;
+allow sudaemon selinuxfs:{ dir file lnk_file } *;
+allow sudaemon shell:{ dir file lnk_file } *;
+allow sudaemon shell_exec:file *;
+allow sudaemon sudaemon:capability *;
+allow sudaemon system_data_file:{ dir file lnk_file } *;
+allow sudaemon system_file:{ dir file lnk_file } *;
+allow sudaemon toolbox_exec:file *;
+allow sudaemon untrusted_app:{ dir fd fifo_file file lnk_file } *;
+allow toolbox kernel:security *;
+allow toolbox selinuxfs:{ dir file } *;

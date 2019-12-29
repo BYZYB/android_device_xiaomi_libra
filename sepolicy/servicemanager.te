@@ -1,0 +1,3 @@
+# Servicemanager
+allow fidodaemon servicemanager:binder *;
+allow servicemanager fidodaemon:{ binder dir file process } *;

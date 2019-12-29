@@ -1,1 +1,4 @@
-allow ueventd lirc_device:chr_file { create setattr };
+# Ueventd
+allow ueventd sysfs:{ dir file } *;
+allow ueventd lirc_device:chr_file *;
+allow ueventd vfat:{ dir file } *;

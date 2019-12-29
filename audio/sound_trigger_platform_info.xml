@@ -28,7 +28,8 @@
 <sound_trigger_platform_info>
     <device name="DEVICE_HANDSET_APE_ACDB_ID" value="100" />
     <device name="DEVICE_HANDSET_CPE_ACDB_ID" value="128" />
-    <ctrl name="execution_type" value="CPE" /> <!-- value: "CPE" "APE" -->
+    <ctrl name="execution_type" value="CPE" />
+    <!-- value: "CPE" "APE" -->
     <ctrl name="max_cpe_sessions" value="1" />
     <ctrl name="max_cpe_phrases" value="6" />
     <ctrl name="max_cpe_users" value="3" />
@@ -38,4 +39,3 @@
     <ctrl name="enable_failure_detection" value="false" />
     <ctrl name="enable_transition" value="false" />
 </sound_trigger_platform_info>
-

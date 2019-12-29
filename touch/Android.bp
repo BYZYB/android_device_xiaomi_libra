@@ -1,0 +1,16 @@
+cc_binary {
+    name: "vendor.lineage.touch@1.0-service.libra",
+    defaults: ["hidl_defaults"],
+    relative_install_path: "hw",
+    init_rc: ["vendor.lineage.touch@1.0-service.libra.rc"],
+    srcs: ["service.cpp", "KeyDisabler.cpp"],
+    cflags: ["-Ofast"],
+    shared_libs: [
+        "libbase",
+        "libhidlbase",
+        "libhidltransport",
+        "libutils",
+        "vendor.lineage.touch@1.0",
+    ],
+    vendor: true,
+}

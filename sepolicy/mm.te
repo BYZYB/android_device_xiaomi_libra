@@ -1,0 +1,20 @@
+type mmbn-daemon, domain;
+type mmbn-daemon_exec, exec_type, file_type;
+
+init_daemon_domain(mmbn-daemon)
+
+qmux_socket(mmbn-daemon)
+diag_use(mmbn-daemon)
+
+# Allow access to firmware
+allow mm-pp-daemon default_android_service:service_manager *;
+allow mm-pp-daemon diag_device:chr_file *;
+allow mm-pp-daemon surfaceflinger:binder *;
+allow mm-qcamerad camera_prop:file *;
+allow mm-qcamerad sysfs:{ dir file } *;
+allow mmbn-daemon firmware_file:{ dir file } *;
+allow mmbn-daemon mmbn-daemon:capability *;
+allow mmbn-daemon self:socket *;
+allow mmbn-daemon vfat:{ dir file } *;
+
+allowxperm mmbn-daemon self:socket ioctl msm_sock_ipc_ioctls;
