@@ -29,11 +29,11 @@
 
 #define LOG_NDDEBUG 0
 
+#include "loc_log.h"
+#include "msg_q.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include "loc_log.h"
-#include "msg_q.h"
 #ifdef USE_GLIB
 #include <time.h>
 #endif /* USE_GLIB  */

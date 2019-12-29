@@ -28,9 +28,9 @@
  */
 #include <stdio.h>
 
+#include "loc_eng_dmn_conn_thread_helper.h"
 #include "log_util.h"
 #include "platform_lib_includes.h"
-#include "loc_eng_dmn_conn_thread_helper.h"
 
 /*===========================================================================
 FUNCTION    thelper_signal_init

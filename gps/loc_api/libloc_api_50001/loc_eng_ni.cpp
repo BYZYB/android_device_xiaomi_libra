@@ -30,16 +30,16 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_eng"
 
+#include <MsgTask.h>
+#include <ctype.h>
+#include <errno.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <pthread.h>
-#include <errno.h>
 #include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#include <sys/time.h>
 #include <time.h>
-#include <MsgTask.h>
+#include <unistd.h>
 
 #include <loc_eng.h>
 

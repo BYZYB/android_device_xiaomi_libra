@@ -26,11 +26,11 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+#include <ctype.h>
+#include <loc_misc_utils.h>
+#include <log_util.h>
 #include <stdio.h>
 #include <string.h>
-#include <log_util.h>
-#include <loc_misc_utils.h>
-#include <ctype.h>
 
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_misc_utils"

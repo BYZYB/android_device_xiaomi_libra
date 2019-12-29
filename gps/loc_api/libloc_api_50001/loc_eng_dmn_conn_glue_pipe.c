@@ -26,15 +26,15 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+#include <errno.h>
 #include <string.h>
 #include <unistd.h>
-#include <errno.h>
 
 // #include <linux/stat.h>
 #include <fcntl.h>
 // #include <linux/types.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include "loc_eng_dmn_conn_glue_pipe.h"
 #include "log_util.h"

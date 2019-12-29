@@ -49,15 +49,14 @@ extern "C"
 #define FALSE 0
 #endif
 
+#include <LocEngAdapter.h>
 #include <loc.h>
-#include <loc_eng_xtra.h>
-#include <loc_eng_ni.h>
-#include <loc_eng_agps.h>
 #include <loc_cfg.h>
+#include <loc_eng_agps.h>
+#include <loc_eng_ni.h>
+#include <loc_eng_xtra.h>
 #include <loc_log.h>
 #include <log_util.h>
-#include <loc_eng_agps.h>
-#include <LocEngAdapter.h>
 
 // The data connection minimal open time
 #define DATA_OPEN_MIN_TIME 1 /* sec */

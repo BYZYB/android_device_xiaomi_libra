@@ -30,27 +30,27 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_eng"
 
+#include <LocEngAdapter.h>
+#include <arpa/inet.h>
+#include <ctype.h>
+#include <dlfcn.h>
+#include <math.h>
+#include <netdb.h>
+#include <netinet/in.h> /* struct sockaddr_in */
+#include <new>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <ctype.h>
-#include <math.h>
-#include <pthread.h>
-#include <arpa/inet.h>
-#include <netinet/in.h> /* struct sockaddr_in */
 #include <sys/socket.h>
 #include <sys/time.h>
-#include <netdb.h>
 #include <time.h>
-#include <new>
-#include <LocEngAdapter.h>
+#include <unistd.h>
 
 #include <cutils/sched_policy.h>
 #ifndef USE_GLIB
-#include <utils/SystemClock.h>
 #include <utils/Log.h>
+#include <utils/SystemClock.h>
 #endif /* USE_GLIB */
 
 #ifdef USE_GLIB
@@ -60,18 +60,18 @@
 
 #include <string.h>
 
+#include "loc_core_log.h"
+#include "loc_eng_log.h"
+#include "log_util.h"
+#include "platform_lib_includes.h"
+#include <loc.h>
 #include <loc_eng.h>
-#include <loc_eng_ni.h>
 #include <loc_eng_dmn_conn.h>
 #include <loc_eng_dmn_conn_handler.h>
 #include <loc_eng_msg.h>
+#include <loc_eng_ni.h>
 #include <loc_eng_nmea.h>
 #include <msg_q.h>
-#include <loc.h>
-#include "log_util.h"
-#include "platform_lib_includes.h"
-#include "loc_core_log.h"
-#include "loc_eng_log.h"
 
 #define SUCCESS TRUE
 #define FAILURE FALSE

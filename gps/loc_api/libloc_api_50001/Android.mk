@@ -11,8 +11,6 @@ LOCAL_VENDOR_MODULE := true
 
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_CFLAGS += -O3 -g0
-
 LOCAL_SHARED_LIBRARIES := \
     libutils \
     libcutils \
@@ -39,7 +37,9 @@ LOCAL_SRC_FILES += \
 
 LOCAL_CFLAGS += \
      -fno-short-enums \
-     -D_ANDROID_
+     -D_ANDROID_ \
+     -O3 \
+     -g0
 
 LOCAL_C_INCLUDES:= \
     $(TARGET_OUT_HEADERS)/gps.utils \

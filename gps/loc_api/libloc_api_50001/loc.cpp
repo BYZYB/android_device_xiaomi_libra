@@ -30,20 +30,18 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_afw"
 
-#include <hardware/gps.h>
-#include <gps_extended.h>
-#include <loc_eng.h>
-#include <loc_target.h>
-#include <loc_log.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <dlfcn.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
 #include <LocDualContext.h>
 #include <cutils/properties.h>
+#include <dlfcn.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <gps_extended.h>
+#include <hardware/gps.h>
+#include <loc_eng.h>
+#include <loc_log.h>
+#include <loc_target.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace loc_core;
 

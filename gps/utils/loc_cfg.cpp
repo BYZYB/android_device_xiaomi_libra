@@ -30,16 +30,16 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_utils_cfg"
 
+#include <ctype.h>
+#include <loc_cfg.h>
+#include <loc_misc_utils.h>
+#include <log_util.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <string.h>
-#include <ctype.h>
-#include <unistd.h>
 #include <time.h>
-#include <loc_cfg.h>
-#include <log_util.h>
-#include <loc_misc_utils.h>
+#include <unistd.h>
 #ifdef USE_GLIB
 #include <glib.h>
 #endif

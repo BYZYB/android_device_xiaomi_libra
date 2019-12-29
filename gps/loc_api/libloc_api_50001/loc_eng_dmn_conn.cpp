@@ -27,22 +27,22 @@
  *
  */
 
+#include <errno.h>
+#include <fcntl.h>
+#include <grp.h>
+#include <linux/stat.h>
+#include <linux/types.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <linux/stat.h>
-#include <fcntl.h>
-#include <linux/types.h>
-#include <unistd.h>
-#include <errno.h>
-#include <grp.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
-#include "log_util.h"
-#include "platform_lib_includes.h"
+#include "loc_eng_dmn_conn.h"
 #include "loc_eng_dmn_conn_glue_msg.h"
 #include "loc_eng_dmn_conn_handler.h"
-#include "loc_eng_dmn_conn.h"
 #include "loc_eng_msg.h"
+#include "log_util.h"
+#include "platform_lib_includes.h"
 
 static int loc_api_server_msgqid;
 static int loc_api_resp_msgqid;

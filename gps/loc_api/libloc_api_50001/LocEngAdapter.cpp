@@ -29,13 +29,13 @@
 #define LOG_NDDEBUG 0
 #define LOG_TAG "LocSvc_EngAdapter"
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <ctype.h>
-#include <cutils/properties.h>
-#include <LocEngAdapter.h>
 #include "loc_eng_msg.h"
 #include "loc_log.h"
+#include <LocEngAdapter.h>
+#include <ctype.h>
+#include <cutils/properties.h>
+#include <errno.h>
+#include <sys/stat.h>
 
 #define CHIPSET_SERIAL_NUMBER_MAX_LEN 16
 #define USER_AGENT_MAX_LEN 512

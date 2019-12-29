@@ -5,8 +5,6 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS += -O3 -g0
-
 ## Libs
 LOCAL_SHARED_LIBRARIES := \
     libutils \

@@ -30,8 +30,8 @@
 #ifndef LOC_CFG_H
 #define LOC_CFG_H
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define LOC_MAX_PARAM_NAME 80
 #define LOC_MAX_PARAM_STRING 80

@@ -30,8 +30,8 @@
 #ifndef LOC_ENG_NI_H
 #define LOC_ENG_NI_H
 
-#include <stdbool.h>
 #include <LocEngAdapter.h>
+#include <stdbool.h>
 
 #define LOC_NI_NO_RESPONSE_TIME 20 /* secs */
 #define LOC_NI_NOTIF_KEY_ADDRESS "Address"

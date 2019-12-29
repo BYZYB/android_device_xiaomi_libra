@@ -29,14 +29,14 @@
 #ifndef LOC_API_ENG_ADAPTER_H
 #define LOC_API_ENG_ADAPTER_H
 
+#include <LocAdapterBase.h>
+#include <LocDualContext.h>
+#include <UlpProxyBase.h>
 #include <ctype.h>
 #include <hardware/gps.h>
 #include <loc.h>
 #include <loc_eng_log.h>
 #include <log_util.h>
-#include <LocAdapterBase.h>
-#include <LocDualContext.h>
-#include <UlpProxyBase.h>
 #include <platform_lib_includes.h>
 
 #define MAX_URL_LEN 256

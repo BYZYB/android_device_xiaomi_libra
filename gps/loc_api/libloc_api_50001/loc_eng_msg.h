@@ -29,15 +29,15 @@
 #ifndef LOC_ENG_MSG_H
 #define LOC_ENG_MSG_H
 
-#include <hardware/gps.h>
+#include <LocEngAdapter.h>
+#include <MsgTask.h>
 #include <gps_extended.h>
+#include <hardware/gps.h>
+#include <loc_eng.h>
+#include <loc_eng_log.h>
+#include <log_util.h>
 #include <stdlib.h>
 #include <string.h>
-#include <log_util.h>
-#include <loc_eng_log.h>
-#include <loc_eng.h>
-#include <MsgTask.h>
-#include <LocEngAdapter.h>
 
 #ifndef SSID_BUF_SIZE
 #define SSID_BUF_SIZE (32 + 1)

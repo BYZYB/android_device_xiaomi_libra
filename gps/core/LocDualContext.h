@@ -29,10 +29,10 @@
 #ifndef __LOC_ENG_CONTEXT__
 #define __LOC_ENG_CONTEXT__
 
-#include <stdbool.h>
+#include <ContextBase.h>
 #include <ctype.h>
 #include <dlfcn.h>
-#include <ContextBase.h>
+#include <stdbool.h>
 
 namespace loc_core
 {

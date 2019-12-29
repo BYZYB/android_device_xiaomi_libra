@@ -28,6 +28,7 @@
 
 #include <stdlib.h>
 #include <sys/time.h>
+
 #include "platform_lib_time.h"
 
 int64_t systemTime(int clock)
