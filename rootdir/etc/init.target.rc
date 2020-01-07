@@ -29,13 +29,6 @@
 
 import /vendor/etc/init/hw/init.fpc.rc
 
-on early-init
-    mkdir /firmware 0771 system system
-    mkdir /bt_firmware 0771 system system
-
-on init
-    mkdir /cust 0771 system system
-
 on fs
     wait /dev/block/platform/soc.0/f9824900.sdhci/mmcblk0
     symlink /dev/block/platform/soc.0/f9824900.sdhci /dev/block/bootdevice
@@ -44,10 +37,6 @@ on fs
     mkdir /persist/wlan_bt 0700 system system
 
 on post-fs
-    # We chown/chmod /cust again so because mount is run as root + defaults
-    chown system system /cust
-    chmod 0771 /cust
-
     # We restorecon /cust in case the cust partition has been reset.
     restorecon_recursive /cust
 
