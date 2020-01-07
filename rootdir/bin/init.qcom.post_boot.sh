@@ -143,3 +143,31 @@ echo 10 > /sys/devices/soc0/select_image
 echo $image_version > /sys/devices/soc0/image_version
 echo $image_variant > /sys/devices/soc0/image_variant
 echo $oem_version > /sys/devices/soc0/image_crm_version
+
+# Do fstrim for all partitions
+for path in /*;
+do
+busybox fstrim -v $path;
+done
+
+# Remove useless directories
+rm -rf /data/anr
+rm -rf /data/lineageos_updates
+rm -rf /data/local/traces
+rm -rf /data/misc/boottrace
+rm -rf /data/misc/gcov
+rm -rf /data/misc/perfprofd
+rm -rf /data/misc/profman
+rm -rf /data/misc/trace
+rm -rf /data/misc/update_engine
+rm -rf /data/misc/update_engine_log
+rm -rf /data/misc/wmtrace
+rm -rf /data/nfc
+rm -rf /data/ota
+rm -rf /data/ota_package
+rm -rf /data/ss
+rm -rf /data/ssh
+rm -rf /data/system/dropbox
+rm -rf /data/system/heapdump
+rm -rf /data/tombstones
+rm -rf /data/vendor/tombstones
