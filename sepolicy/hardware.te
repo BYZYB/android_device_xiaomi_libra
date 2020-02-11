@@ -12,6 +12,7 @@ allow hal_fingerprint_default sysfs:{ dir file } *;
 allow hal_fingerprint_default tee_device:{ chr_file file } *;
 allow hal_fingerprint_default uhid_device:{ chr_file file } *;
 allow hal_power_default sysfs:{ dir file } *;
+allow hal_wifi_default proc_net:{ dir file } *;
 allow hal_wifi_default vendor_tombstone_data_file:{ dir file } *;
 
 # Rild

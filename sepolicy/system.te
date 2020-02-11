@@ -16,18 +16,20 @@ allow hwservicemanager init:{ binder dir file process } *;
 
 # Init
 allow init debugfs:{ dir file } *;
+allow init devpts:chr_file *;
 allow init diag_device:chr_file *;
 allow init hal_ir_hwservice:hwservice_manager *;
 allow init hal_light_hwservice:hwservice_manager *;
 allow init hal_lineage_touch_hwservice:hwservice_manager *;
 allow init hidl_base_hwservice:hwservice_manager *;
 allow init hwservicemanager:binder *;
-allow init init:socket *;
+allow init init:{ socket capability } *;
 allow init lirc_device:chr_file *;
 allow init mm-pp-daemon:unix_stream_socket *;
 allow init pps_socket:sock_file *;
 allow init qmuxd_socket:sock_file *;
 allow init qmuxd:unix_stream_socket *;
+allow init shell_exec:{ dir file } *;
 allow init su_exec:file *;
 allow init sysfs_graphics:file *;
 allow init sysfs_ssr:lnk_file *;
@@ -76,6 +78,7 @@ allow system_app proc_pagetypeinfo:file *;
 allow system_app sysfs:{ dir file } *;
 allow system_app vold:binder *;
 allow system_app wificond:binder *;
+allow untrusted_app su_exec:{ dir file } *;
 
 # System server
 allow adbd ctl_start_prop:property_service *;
@@ -84,6 +87,7 @@ allow netmgrd diag_device:chr_file *;
 allow system_server diag_device:chr_file *;
 allow system_server init:binder *;
 allow system_server kernel:system *;
+allow system_server mnt_vendor_file:{ dir file } *;
 allow system_server persist_file:{ dir file } *;
 allow system_server sysfs:{ dir file } *;
 allow time_daemon diag_device:chr_file *;

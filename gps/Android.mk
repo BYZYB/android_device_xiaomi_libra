@@ -16,3 +16,16 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(call all-subdir-makefiles,$(LOCAL_PATH))
+
+LOCAL_CFLAGS += \
+    -Wno-mismatched-tags \
+    -Wno-unused-variable \
+    -Wno-format \
+    -Wno-macro-redefined \
+    -Wno-missing-braces \
+    -Wno-missing-field-initializers \
+    -Wno-overloaded-virtual \
+    -Wno-reorder \
+    -Wno-unneeded-internal-declaration \
+    -Wno-unused-const-variable \
+    -Wno-unused-parameter

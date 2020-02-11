@@ -42,18 +42,18 @@
     </array>
     <!-- Additional power used by a CPU from cluster 0 when running at different speeds. Currently this measurement also includes cluster cost. -->
     <array name="cpu.active.cluster0">
-        <value>73.233</value>        <!-- 302 MHz -->
-        <value>77.358</value>        <!-- 384 MHz -->
-        <value>82.744</value>        <!-- 460 MHz -->
-        <value>85.913</value>        <!-- 600 MHz -->
-        <value>91.972</value>        <!-- 672 MHz -->
-        <value>97.483</value>        <!-- 787 MHz -->
-        <value>105.882</value>        <!-- 864 MHz -->
-        <value>113.951</value>        <!-- 960 MHz -->
-        <value>142.006</value>        <!-- 1248 MHz -->
-        <value>165.514</value>        <!-- 1440 MHz -->
-        <value>180.233</value>        <!-- 1536 MHz -->
-        <value>196.233</value>        <!-- 1632 MHz -->
+        <value>73</value>        <!-- 302 MHz -->
+        <value>77</value>        <!-- 384 MHz -->
+        <value>82</value>        <!-- 460 MHz -->
+        <value>85</value>        <!-- 600 MHz -->
+        <value>91</value>        <!-- 672 MHz -->
+        <value>97</value>        <!-- 787 MHz -->
+        <value>105</value>        <!-- 864 MHz -->
+        <value>113</value>        <!-- 960 MHz -->
+        <value>142</value>        <!-- 1248 MHz -->
+        <value>165</value>        <!-- 1440 MHz -->
+        <value>180</value>        <!-- 1536 MHz -->
+        <value>196</value>        <!-- 1632 MHz -->
     </array>
     <!-- Different CPU speeds as reported in /sys/devices/system/cpu/cpu4/cpufreq/scaling_available_frequencies -->
     <array name="cpu.speeds.cluster1">
@@ -74,19 +74,19 @@
     </array>
     <!-- Additional power used by a CPU from cluster 1 when running at different speeds. Currently this measurement also includes cluster cost. -->
     <array name="cpu.active.cluster1">
-        <value>122.233</value>        <!-- 302 MHz -->
-        <value>132.714</value>        <!-- 384 MHz -->
-        <value>146.321</value>        <!-- 480 MHz -->
-        <value>167.495</value>        <!-- 633 MHz -->
-        <value>194.391</value>        <!-- 768 MHz -->
-        <value>211.625</value>        <!-- 864 MHz -->
-        <value>231.291</value>        <!-- 960 MHz -->
-        <value>298.062</value>        <!-- 1248 MHz -->
-        <value>325.774</value>        <!-- 1344 MHz -->
-        <value>353.432</value>        <!-- 1440 MHz -->
-        <value>389.501</value>        <!-- 1536 MHz -->
-        <value>427.866</value>        <!-- 1632 MHz -->
-        <value>440.878</value>        <!-- 1689 MHz -->
-        <value>496.031</value>        <!-- 1824 MHz -->
+        <value>122</value>        <!-- 302 MHz -->
+        <value>132</value>        <!-- 384 MHz -->
+        <value>146</value>        <!-- 480 MHz -->
+        <value>167</value>        <!-- 633 MHz -->
+        <value>194</value>        <!-- 768 MHz -->
+        <value>211</value>        <!-- 864 MHz -->
+        <value>231</value>        <!-- 960 MHz -->
+        <value>298</value>        <!-- 1248 MHz -->
+        <value>325</value>        <!-- 1344 MHz -->
+        <value>353</value>        <!-- 1440 MHz -->
+        <value>389</value>        <!-- 1536 MHz -->
+        <value>427</value>        <!-- 1632 MHz -->
+        <value>440</value>        <!-- 1689 MHz -->
+        <value>496</value>        <!-- 1824 MHz -->
     </array>
 </device>
