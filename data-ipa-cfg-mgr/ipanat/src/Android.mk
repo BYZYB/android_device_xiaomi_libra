@@ -12,6 +12,15 @@ LOCAL_MODULE_PATH_32 := $(TARGET_OUT_VENDOR)/lib
 LOCAL_MODULE := libipanat
 LOCAL_MODULE_TAGS := optional
 LOCAL_PRELINK_MODULE := false
-LOCAL_CFLAGS += -O3 -g0
+LOCAL_CFLAGS += \
+    -O3 \
+    -g0 \
+    -Wno-constant-logical-operand \
+    -Wno-format \
+    -Wno-uninitialized \
+    -Wno-unused-comparison \
+    -Wno-unused-parameter \
+    -Wno-writable-strings \
+    -Wno-unused-variable
 
 include $(BUILD_SHARED_LIBRARY)

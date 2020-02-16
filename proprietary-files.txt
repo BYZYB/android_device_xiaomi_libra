@@ -13,8 +13,8 @@ vendor/lib64/libadsprpc.so
 vendor/lib64/libmdsprpc.so
 
 # AptX
-vendor/lib64/libaptX_encoder.so|0cebad28afcf29f931bdc2d24fce2730dc882ecf
-vendor/lib64/libaptXHD_encoder.so|90f47f10af28b3ead143200cb4370b847c513127
+vendor/lib64/libaptX_encoder.so
+vendor/lib64/libaptXHD_encoder.so
 
 # Audio
 etc/acdbdata/Forte/Forte_Bluetooth_cal.acdb
