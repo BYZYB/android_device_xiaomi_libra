@@ -36,10 +36,21 @@ LOCAL_SRC_FILES += \
     loc_eng_dmn_conn_glue_pipe.c
 
 LOCAL_CFLAGS += \
-     -fno-short-enums \
-     -D_ANDROID_ \
-     -O3 \
-     -g0
+    -fno-short-enums \
+    -D_ANDROID_ \
+    -O3 \
+    -g0 \
+    -Wno-mismatched-tags \
+    -Wno-unused-variable \
+    -Wno-format \
+    -Wno-macro-redefined \
+    -Wno-missing-braces \
+    -Wno-missing-field-initializers \
+    -Wno-overloaded-virtual \
+    -Wno-reorder \
+    -Wno-unneeded-internal-declaration \
+    -Wno-unused-const-variable \
+    -Wno-unused-parameter
 
 LOCAL_C_INCLUDES:= \
     $(TARGET_OUT_HEADERS)/gps.utils \

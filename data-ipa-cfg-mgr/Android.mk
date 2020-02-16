@@ -16,12 +16,3 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(call first-makefiles-under,$(LOCAL_PATH))
-
-LOCAL_CFLAGS += \
-    -Wno-constant-logical-operand \
-    -Wno-format \
-    -Wno-uninitialized \
-    -Wno-unused-comparison \
-    -Wno-unused-parameter \
-    -Wno-writable-strings \
-    -Wno-unused-variable
