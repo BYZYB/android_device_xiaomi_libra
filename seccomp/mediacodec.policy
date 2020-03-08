@@ -4,6 +4,7 @@ pselect6: 1
 eventfd2: 1
 sendto: 1
 recvfrom: 1
+_llseek: 1
 sysinfo: 1
 getcwd: 1
 inotify_init1: 1
