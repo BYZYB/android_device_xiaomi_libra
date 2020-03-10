@@ -454,9 +454,17 @@ service qcom-post-boot /system/vendor/bin/init.qcom.post_boot.sh
     disabled
     oneshot
 
+service custom-post-boot /system/vendor/bin/init.custom.post_boot.sh
+    class late_start
+    user root
+    seclabel u:r:qti_init_shell:s0
+    disabled
+    oneshot
+
 on property:sys.boot_completed=1
     setprop vendor.post_boot.parsed 1
     start qcom-post-boot
+    start custom-post-boot
 
 on property:ro.data.large_tcp_window_size=true
     # Adjust socket buffer to enlarge TCP receive window for high bandwidth (e.g. DO-RevB)
