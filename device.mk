@@ -240,6 +240,7 @@ PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/privapp-permissions-qti.xml:system/e
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.qcom \
+    init.custom.post_boot.sh \
     init.fpc.rc \
     init.qcom.post_boot.sh \
     init.qcom.rc \
