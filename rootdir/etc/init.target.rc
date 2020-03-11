@@ -104,9 +104,6 @@ on boot
     chmod 0664 /dev/cpuset/top-app/boost/tasks
 
 on property:sys.boot_completed=1
-    # Enable ZRAM on boot_complete
-    swapon_all /vendor/etc/fstab.qcom
-
     # Set DEADLINE I/O scheduler && Increase read ahead cache
     setprop sys.io.scheduler "deadline"
     write /sys/block/mmcblk0/queue/scheduler "deadline"
@@ -207,3 +204,6 @@ on property:init.svc.surfaceflinger=stopped
         class late_start
         user system
         group system
+
+on property:ro.product.ram=2g
+    swapon_all /vendor/etc/fstab.qcom

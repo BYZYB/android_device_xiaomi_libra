@@ -27,10 +27,11 @@
 
 #include <fstream>
 #include <sys/sysinfo.h>
+
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
-#include <sys/_system_properties.h>
 
 #include "property_service.h"
+#include <sys/_system_properties.h>
 
 using android::init::property_set;
 
@@ -55,10 +56,11 @@ char const *heapstartsize;
 char const *heapgrowthlimit;
 char const *heapsize;
 char const *heapminfree;
+char const *ram;
 
 uint8_t board_id;
 
-void set_dalvik_values()
+void set_init_values()
 {
     struct sysinfo sys;
 
@@ -71,6 +73,7 @@ void set_dalvik_values()
         heapgrowthlimit = "288m";
         heapsize = "768m";
         heapminfree = "512k";
+        ram = "3g";
     }
     else
     {
@@ -79,6 +82,7 @@ void set_dalvik_values()
         heapgrowthlimit = "192m";
         heapsize = "512m";
         heapminfree = "2m";
+        ram = "2g";
     }
 }
 
@@ -103,7 +107,7 @@ void set_board_id()
 
 void vendor_load_properties()
 {
-    set_dalvik_values();
+    set_init_values();
 
     property_set("dalvik.vm.heapstartsize", heapstartsize);
     property_set("dalvik.vm.heapgrowthlimit", heapgrowthlimit);
@@ -111,6 +115,7 @@ void vendor_load_properties()
     property_set("dalvik.vm.heaptargetutilization", "0.75");
     property_set("dalvik.vm.heapminfree", heapminfree);
     property_set("dalvik.vm.heapmaxfree", "8m");
+    property_set("ro.product.ram", ram);
 
     set_board_id();
 
