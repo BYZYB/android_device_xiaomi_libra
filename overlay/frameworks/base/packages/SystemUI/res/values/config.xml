@@ -2,8 +2,6 @@
 <resources>
     <!-- Whether recents should use hardware layers for its taskviews. This flag can be enabled for devices where the java drawing of round rects may be slow -->
     <bool name="config_recents_use_hardware_layers">true</bool>
-    <!-- Whether or not we show the number in the bar. -->
-    <bool name="config_statusBarShowNumber">true</bool>
     <!-- Whether to enable dimming navigation buttons when wallpaper is not visible, should be enabled for OLED devices to reduce/prevent burn in on the navigation bar (because of the black background and static button placements) and disabled for all other devices to prevent wasting cpu cycles on the dimming animation -->
     <bool name="config_navigation_bar_enable_auto_dim_no_visible_wallpaper">false</bool>
     <!-- Whether to show activity indicators in the status bar -->
