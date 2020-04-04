@@ -22,5 +22,4 @@ LOCAL_SRC_FILES += xiaomi_readmac.c
 LOCAL_MODULE := readmac
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROPRIETARY_MODULE := true
-LOCAL_CFLAGS += -O3 -g0
 include $(BUILD_EXECUTABLE)
