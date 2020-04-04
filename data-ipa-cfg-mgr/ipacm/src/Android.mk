@@ -18,16 +18,7 @@ LOCAL_HEADER_LIBRARIES := generated_kernel_headers
 
 LOCAL_CFLAGS := -v
 LOCAL_CFLAGS += -DFEATURE_IPA_ANDROID
-LOCAL_CFLAGS += \
-	-O3 \
-	-g0 \
-	-Wno-constant-logical-operand \
-	-Wno-format \
-	-Wno-uninitialized \
-	-Wno-unused-comparison \
-	-Wno-unused-parameter \
-	-Wno-writable-strings \
-	-Wno-unused-variable
+LOCAL_CFLAGS += -DDEBUG
 
 ifeq ($(TARGET_ARCH),arm)
 LOCAL_CFLAGS += -include bionic/libc/kernel/arch-arm/asm/posix_types.h

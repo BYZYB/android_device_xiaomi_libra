@@ -1,6 +1,6 @@
-AM_CFLAGS = -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-trigraphs
+AM_CFLAGS = -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs
 AM_CFLAGS += -I./../inc
-AM_CFLAGS += -O3 -g0
+# AM_CFLAGS += -DDEBUG -g
 
 common_CFLAGS =  -DUSE_GLIB @GLIB_CFLAGS@
 common_LDFLAGS = -lrt @GLIB_LIBS@

@@ -12,12 +12,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 
 cc_library_static {
     name: "libinit_libra",
     srcs: ["init_libra.cpp"],
-    cflags: ["-O3", "-g0"],
     include_dirs: [
         "system/core/base/include",
         "system/core/init"
