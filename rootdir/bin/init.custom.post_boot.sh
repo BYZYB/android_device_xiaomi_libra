@@ -13,7 +13,6 @@ rm -rf /data/misc/update_engine_log
 rm -rf /data/misc/wmtrace
 rm -rf /data/nfc
 rm -rf /data/ota
-rm -rf /data/ota_package
 rm -rf /data/ss
 rm -rf /data/ssh
 rm -rf /data/system/dropbox
