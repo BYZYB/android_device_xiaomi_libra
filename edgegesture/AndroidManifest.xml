@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.lineageos.settings.device" android:versionCode="6" android:versionName="2.5" android:sharedUserId="android.uid.system">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.lineageos.settings.device" android:versionCode="7" android:versionName="2.6" android:sharedUserId="android.uid.system">
     <uses-permission android:name="lineageos.permission.HARDWARE_ABSTRACTION_ACCESS" />
     <uses-sdk android:minSdkVersion="28" />
     <application android:icon="@mipmap/ic_launcher" android:label="@string/device_settings_app_name" android:theme="@style/Theme.Main" android:defaultToDeviceProtectedStorage="true" android:directBootAware="true">
@@ -33,7 +33,7 @@
         </activity>
         <receiver android:name=".Startup">
             <intent-filter>
-                <action android:name="lineageos.intent.action.INITIALIZE_MK_HARDWARE" />
+                <action android:name="lineageos.intent.action.INITIALIZE_LINEAGE_HARDWARE" />
             </intent-filter>
         </receiver>
     </application>

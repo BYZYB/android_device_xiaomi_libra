@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="button_panel_title">边缘触控</string>
-    <string name="device_settings_app_name">边缘触控</string>
-    <string name="edge_gesture_summary">单指双击手机侧边，可返回上一级</string>
-    <string name="edge_gesture_title">边缘触控</string>
+    <string name="button_panel_title">边缘手势</string>
+    <string name="device_settings_app_name">边缘手势</string>
+    <string name="edge_gesture_summary">单指双击手机侧边以返回上一级</string>
+    <string name="edge_gesture_title">轻击返回</string>
 </resources>
