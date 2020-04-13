@@ -1,3 +1,65 @@
+# Bluetooth
+r_dir_file(bluetooth, firmware_file)
+
+# Bootstat
+allow bootstat bootstat:{ capability capability2 } *;
+
+# Cnd
+allow cnd cnd:capability *;
+allow cnd diag_device:chr_file *;
+allow cnd self:{ capability socket udp_socket } *;
+allowxperm cnd self:socket ioctl msm_sock_ipc_ioctls;
+
+# Consumerir
+type lirc_device, file_type;
+allow system_server lirc_device:chr_file *;
+
+# HAL
+allow hal_fingerprint_default fingerprintd_data_file:{ dir file sock_file } *;
+allow hal_fingerprint_default input_device:{ chr_file file } *;
+allow hal_fingerprint_default sysfs:{ dir file } *;
+allow hal_fingerprint_default tee_device:{ chr_file file } *;
+allow hal_fingerprint_default uhid_device:{ chr_file file } *;
+allow hal_power_default sysfs:{ dir file } *;
+allow hal_wifi_default proc_net:{ dir file } *;
+allow hal_wifi_default vendor_tombstone_data_file:{ dir file } *;
+
+# Healthd
+allow healthd sysfs:{ dir file } *;
+
+# Hwservicemanager
+allow hwservicemanager runtime_event_log_tags_file:file *;
+allow hwservicemanager init:{ binder dir file process } *;
+
+# Init
+allow init debugfs:{ dir file } *;
+allow init devpts:chr_file *;
+allow init diag_device:chr_file *;
+allow init hal_ir_hwservice:hwservice_manager *;
+allow init hal_light_hwservice:hwservice_manager *;
+allow init hal_lineage_touch_hwservice:hwservice_manager *;
+allow init hidl_base_hwservice:hwservice_manager *;
+allow init hwservicemanager:binder *;
+allow init init:{ socket capability } *;
+allow init lirc_device:chr_file *;
+allow init mm-pp-daemon:unix_stream_socket *;
+allow init pps_socket:sock_file *;
+allow init qmuxd_socket:sock_file *;
+allow init qmuxd:unix_stream_socket *;
+allow init shell_exec:{ dir file } *;
+allow init sysfs_graphics:file *;
+allow init sysfs_ssr:lnk_file *;
+allow init sysfs:{ dir file } *;
+allow init tmpfs:lnk_file *;
+allow init unlabeled:{ dir file } *;
+allow init vendor_file:{ dir file } *;
+
+# Kernel
+allow kernel { platform_app radio shell system_app untrusted_app }:process *;
+
+# Keystore
+allow keystore runtime_event_log_tags_file:file *;
+
 # MM
 type mmbn-daemon, domain;
 type mmbn-daemon_exec, exec_type, file_type;
@@ -26,6 +88,86 @@ allow readmac self:{ capability socket } *;
 allow readmac wifi_data_file:{ dir file } *;
 allowxperm readmac self:socket ioctl msm_sock_ipc_ioctls;
 
+# Rfs access
+allow rfs_access rfs_access:capability *;
+
+# Rild
+allow rild diag_device:chr_file *;
+allow rild rild:capability *;
+allow rild system_prop:property_service *;
+
+# Servicemanager
+allow fidodaemon servicemanager:binder *;
+allow servicemanager fidodaemon:{ binder dir file process } *;
+
+# Surfaceflinger
+allow surfaceflinger default_android_service:service_manager *;
+
+# System APP
+allow priv_app device:{ dir file } *;
+allow priv_app proc_interrupts:{ dir file } *;
+allow priv_app proc:{ dir file } *;
+allow priv_app sysfs:{ dir file } *;
+allow system_app init:binder *;
+allow system_app installd:binder *;
+allow system_app logpersistd_logging_prop:{ file property_service} *;
+allow system_app mmi_prop:{ file property_service} *;
+allow system_app mpdecision_prop:{ file property_service} *;
+allow system_app msm_irqbalance_prop:{ file property_service} *;
+allow system_app msm_irqbl_sdm630_prop:{ file property_service} *;
+allow system_app net_dns_prop:{ file property_service} *;
+allow system_app netd_prop:{ file property_service} *;
+allow system_app netd_stable_secret_prop:{ file property_service} *;
+allow system_app netd:binder *;
+allow system_app nfc_nq_prop:{ file property_service} *;
+allow system_app opengles_prop:{ file property_service} *;
+allow system_app overlay_prop:{ file property_service} *;
+allow system_app perfprofd:binder *;
+allow system_app proc_pagetypeinfo:file *;
+allow system_app sysfs:{ dir file } *;
+allow system_app vold:binder *;
+allow system_app wificond:binder *;
+
+# System server
+allow adbd ctl_start_prop:property_service *;
+allow lmkd lmkd:capability2 *;
+allow netmgrd diag_device:chr_file *;
+allow system_server diag_device:chr_file *;
+allow system_server init:binder *;
+allow system_server kernel:system *;
+allow system_server mnt_vendor_file:{ dir file } *;
+allow system_server persist_file:{ dir file } *;
+allow system_server sysfs:{ dir file } *;
+allow time_daemon diag_device:chr_file *;
+allow wcnss_service diag_device:chr_file *;
+
+# Tee
+binder_call(tee, surfaceflinger)
+binder_use(tee)
+r_dir_file(tee, persist_data_file)
+allow tee block_device:dir *;
+allow tee device:dir *;
+allow tee fingerprintd_data_file:{ dir file sock_file } *;
+allow tee firmware_file:{ dir file } *;
+allow tee graphics_device:{ chr_file dir } *;
+allow tee persist_data_file:{ dir file } *;
+allow tee persist_drm_file:{ dir file } *;
+allow tee persist_file:dir *;
+allow tee self:capability *;
+allow tee system_app:unix_dgram_socket *;
+allow tee system_data_file:dir *;
+allow tee tee_device:chr_file *;
+allow tee time_daemon:unix_stream_socket *;
+allow tee vfat:file *;
+
+# Thermal
+type thermal_data_file, file_type, data_file_type;
+allow thermal-engine diag_device:chr_file *;
+allow thermal-engine self:capability *;
+allow thermal-engine system_data_file:{ dir file } *;
+allow thermal-engine thermal_data_file:{ dir file } *;
+allow thermal-engine thermal-engine:capability *;
+
 # Ueventd
 allow ueventd lirc_device:chr_file *;
 allow ueventd sysfs:{ dir file } *;
@@ -42,3 +184,12 @@ allow vendor_init system_data_file:{ dir file } *;
 allow vendor_init unencrypted_data_file:{ dir file } *;
 allow vendor_init wifi_data_file:{ dir file } *;
 allow vendor_init wpa_socket:{ dir file } *;
+
+# Vold
+allow vold firmware_file:{ dir file } *;
+allow vold metadata_block_device:blk_file *;
+
+# Zygote
+allow webview_zygote mnt_expand_file:{ dir file } *;
+allow webview_zygote zygote:unix_dgram_socket *;
+allow zygote proc_cmdline:file *;

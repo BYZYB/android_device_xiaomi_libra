@@ -1,4 +1,6 @@
-# Shell
+# SU
+# Please remove this file if sepolicy errors happened!
+allow init su_exec:file *;
 allow qti_init_shell file_contexts_file:file *;
 allow qti_init_shell fuse:{ dir file } *;
 allow qti_init_shell kernel:security *;
@@ -19,3 +21,4 @@ allow shell su:process *;
 allow toolbox kernel:security *;
 allow toolbox selinuxfs:{ dir file } *;
 allow toolbox toolbox:capability *;
+allow untrusted_app su_exec:{ dir file } *;
