@@ -17,9 +17,6 @@
 BOARD_VENDOR := xiaomi
 DEVICE_PATH := device/xiaomi/libra
 
-# ANT+
-BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
-
 # Arch
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
