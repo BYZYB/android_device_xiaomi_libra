@@ -53,5 +53,10 @@ $(RFS_MSM_MPSS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_MPSS_SYMLINKS)
 
 # WLAN symlinks
-$(shell mkdir -p $(TARGET_OUT_ETC)/firmware/wlan/qca_cld; ln -sf /data/misc/wifi/wlan_mac.bin $(TARGET_OUT_ETC)/firmware/wlan/qca_cld/wlan_mac.bin)
+WLAN_SYMLINKS := $(TARGET_OUT_ETC)/firmware/wlan/
+$(WLAN_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
+	@rm -rf $@/*
+	@mkdir -p $(dir $@)/qca_cld
+	$(hide) ln -sf /data/misc/wifi/wlan_mac.bin $@/qca_cld/wlan_mac.bin
+ALL_DEFAULT_INSTALLED_MODULES += $(WLAN_SYMLINKS)
 endif
