@@ -26,7 +26,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# Ensure at most two A57 is online when thermal hotplug is disabled
+# Ensure all A57 cores are online before configuring governor settings
 echo 1 > /sys/devices/system/cpu/cpu4/online
 echo 1 > /sys/devices/system/cpu/cpu5/online
 
@@ -35,20 +35,24 @@ echo 0 > /sys/module/lpm_levels/parameters/sleep_disabled
 
 # Disable thermal and bcl hotplug
 echo 0 > /sys/module/msm_thermal/core_control/enabled
+
 for mode in /sys/devices/soc.0/qcom,bcl.*/mode
 do
     echo -n disable > $mode
 done
+
 for hotplug_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_mask
 do
     bcl_hotplug_mask=`cat $hotplug_mask`
     echo 0 > $hotplug_mask
 done
+
 for hotplug_soc_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask
 do
     bcl_soc_hotplug_mask=`cat $hotplug_soc_mask`
     echo 0 > $hotplug_soc_mask
 done
+
 for mode in /sys/devices/soc.0/qcom,bcl.*/mode
 do
     echo -n enable > $mode
@@ -68,7 +72,7 @@ echo 0 > /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled
 
 # Configure governor settings for little cluster
 echo 302400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-echo 1632000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo 1440000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 echo "sched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 # Configure governor settings for big cluster
@@ -78,18 +82,22 @@ echo "sched" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
 
 # Re-enable thermal and bcl hotplug
 echo 1 > /sys/module/msm_thermal/core_control/enabled
+
 for mode in /sys/devices/soc.0/qcom,bcl.*/mode
 do
     echo -n disable > $mode
 done
+
 for hotplug_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_mask
 do
     echo $bcl_hotplug_mask > $hotplug_mask
 done
+
 for hotplug_soc_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask
 do
     echo $bcl_soc_hotplug_mask > $hotplug_soc_mask
 done
+
 for mode in /sys/devices/soc.0/qcom,bcl.*/mode
 do
     echo -n enable > $mode
@@ -107,6 +115,7 @@ for devfreq_gov in /sys/class/devfreq/qcom,cpubw*/governor
 do
     echo "bw_hwmon" > $devfreq_gov
 done
+
 for devfreq_gov in /sys/class/devfreq/qcom,mincpubw*/governor
 do
     echo "cpufreq" > $devfreq_gov
@@ -126,10 +135,6 @@ chown -h system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 # Set GPU default power level to 7 (64MHz)
 echo 7 > /sys/class/kgsl/kgsl-3d0/default_pwrlevel
 
-# Strar perfd
-rm /data/system/perfd/default_values
-start perfd
-
 # Let kernel know our image version/variant/crm_version
 image_version="10:"
 image_version+=`getprop ro.build.id`
@@ -143,3 +148,7 @@ echo 10 > /sys/devices/soc0/select_image
 echo $image_version > /sys/devices/soc0/image_version
 echo $image_variant > /sys/devices/soc0/image_variant
 echo $oem_version > /sys/devices/soc0/image_crm_version
+
+# Strar perfd
+rm /data/system/perfd/default_values
+start perfd
