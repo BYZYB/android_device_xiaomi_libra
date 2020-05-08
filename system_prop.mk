@@ -135,7 +135,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.ssr.enable_ramdumps=0 \
     persist.sys.ssr.restart_level=modem \
-    ril.subscription.types=RUIM \
+    ril.subscription.types=NV,RUIM \
     rild.libargs=-d[SPACE]/dev/smd0 \
     rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
 
