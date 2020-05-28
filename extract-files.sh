@@ -40,14 +40,17 @@ CLEAN_VENDOR=true
 
 while [ "$1" != "" ]; do
     case $1 in
-        -n | --no-cleanup )     CLEAN_VENDOR=false
-                                ;;
-        -s | --section )        shift
-                                SECTION=$1
-                                CLEAN_VENDOR=false
-                                ;;
-        * )                     SRC=$1
-                                ;;
+    -n | --no-cleanup)
+        CLEAN_VENDOR=false
+        ;;
+    -s | --section)
+        shift
+        SECTION=$1
+        CLEAN_VENDOR=false
+        ;;
+    *)
+        SRC=$1
+        ;;
     esac
     shift
 done
