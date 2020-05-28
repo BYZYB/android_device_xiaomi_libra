@@ -152,10 +152,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.default_network=10 \
     telephony.lteOnCdmaDevice=1
 
-# Time services
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.timed.enable=true
-
 # Video
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.composition.type=c2d \

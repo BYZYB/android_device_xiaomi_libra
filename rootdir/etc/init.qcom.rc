@@ -248,11 +248,8 @@ on post-fs-data
     mkdir /data/misc/location/quipc 0770 gps system
     mkdir /data/misc/location/gsiff 0770 gps gps
 
-    # Create /data/time folder for time-services
-    mkdir /data/time/ 0700 system system
-    mkdir /data/audio/ 0770 media audio
-
     # Create a folder for audio delta files
+    mkdir /data/audio/ 0770 media audio
     mkdir /data/audio/acdbdata 0770 media audio
     mkdir /data/audio/acdbdata/delta 0770 media audio
     setprop vold.post_fs_data_done 1
