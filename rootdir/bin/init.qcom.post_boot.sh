@@ -27,98 +27,88 @@
 #
 
 # Ensure all A57 cores are online before configuring governor settings
-echo 1 > /sys/devices/system/cpu/cpu4/online
-echo 1 > /sys/devices/system/cpu/cpu5/online
+echo 1 >/sys/devices/system/cpu/cpu4/online
+echo 1 >/sys/devices/system/cpu/cpu5/online
 
 # Enable LPM sleep
-echo 0 > /sys/module/lpm_levels/parameters/sleep_disabled
+echo 0 >/sys/module/lpm_levels/parameters/sleep_disabled
 
 # Disable thermal and bcl hotplug
-echo 0 > /sys/module/msm_thermal/core_control/enabled
+echo 0 >/sys/module/msm_thermal/core_control/enabled
 
-for mode in /sys/devices/soc.0/qcom,bcl.*/mode
-do
-    echo -n disable > $mode
+for mode in /sys/devices/soc.0/qcom,bcl.*/mode; do
+    echo -n disable >$mode
 done
 
-for hotplug_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_mask
-do
-    bcl_hotplug_mask=`cat $hotplug_mask`
-    echo 0 > $hotplug_mask
+for hotplug_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_mask; do
+    bcl_hotplug_mask=$(cat $hotplug_mask)
+    echo 0 >$hotplug_mask
 done
 
-for hotplug_soc_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask
-do
-    bcl_soc_hotplug_mask=`cat $hotplug_soc_mask`
-    echo 0 > $hotplug_soc_mask
+for hotplug_soc_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask; do
+    bcl_soc_hotplug_mask=$(cat $hotplug_soc_mask)
+    echo 0 >$hotplug_soc_mask
 done
 
-for mode in /sys/devices/soc.0/qcom,bcl.*/mode
-do
-    echo -n enable > $mode
+for mode in /sys/devices/soc.0/qcom,bcl.*/mode; do
+    echo -n enable >$mode
 done
 
 # Disable CPU retention
-echo 0 > /sys/module/lpm_levels/system/a53/cpu0/retention/idle_enabled
-echo 0 > /sys/module/lpm_levels/system/a53/cpu1/retention/idle_enabled
-echo 0 > /sys/module/lpm_levels/system/a53/cpu2/retention/idle_enabled
-echo 0 > /sys/module/lpm_levels/system/a53/cpu3/retention/idle_enabled
-echo 0 > /sys/module/lpm_levels/system/a57/cpu4/retention/idle_enabled
-echo 0 > /sys/module/lpm_levels/system/a57/cpu5/retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a53/cpu0/retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a53/cpu1/retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a53/cpu2/retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a53/cpu3/retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a57/cpu4/retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a57/cpu5/retention/idle_enabled
 
 # Disable L2 retention
-echo 0 > /sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled
-echo 0 > /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled
+echo 0 >/sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled
 
 # Configure governor settings for little cluster
-echo 302400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-echo 1440000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-echo "sched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+echo 302400 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+echo 1440000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo "sched" >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 # Configure governor settings for big cluster
-echo 302400 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
-echo 1824000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
-echo "sched" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+echo 302400 >/sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+echo 1824000 >/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+echo "sched" >/sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
 
 # Re-enable thermal and bcl hotplug
-echo 1 > /sys/module/msm_thermal/core_control/enabled
+echo 1 >/sys/module/msm_thermal/core_control/enabled
 
-for mode in /sys/devices/soc.0/qcom,bcl.*/mode
-do
-    echo -n disable > $mode
+for mode in /sys/devices/soc.0/qcom,bcl.*/mode; do
+    echo -n disable >$mode
 done
 
-for hotplug_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_mask
-do
-    echo $bcl_hotplug_mask > $hotplug_mask
+for hotplug_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_mask; do
+    echo $bcl_hotplug_mask >$hotplug_mask
 done
 
-for hotplug_soc_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask
-do
-    echo $bcl_soc_hotplug_mask > $hotplug_soc_mask
+for hotplug_soc_mask in /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask; do
+    echo $bcl_soc_hotplug_mask >$hotplug_soc_mask
 done
 
-for mode in /sys/devices/soc.0/qcom,bcl.*/mode
-do
-    echo -n enable > $mode
+for mode in /sys/devices/soc.0/qcom,bcl.*/mode; do
+    echo -n enable >$mode
 done
 
 # Set core_ctl module parameters
-echo 1 > /sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster
-echo 2 > /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
+echo 1 >/sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster
+echo 2 >/sys/devices/system/cpu/cpu4/core_ctl/min_cpus
 
 # Enable rps static configuration
-echo 8 >  /sys/class/net/rmnet_ipa0/queues/rx-0/rps_cpus
+echo 8 >/sys/class/net/rmnet_ipa0/queues/rx-0/rps_cpus
 
 # Set GPU governors
-for devfreq_gov in /sys/class/devfreq/qcom,cpubw*/governor
-do
-    echo "bw_hwmon" > $devfreq_gov
+for devfreq_gov in /sys/class/devfreq/qcom,cpubw*/governor; do
+    echo "bw_hwmon" >$devfreq_gov
 done
 
-for devfreq_gov in /sys/class/devfreq/qcom,mincpubw*/governor
-do
-    echo "cpufreq" > $devfreq_gov
+for devfreq_gov in /sys/class/devfreq/qcom,mincpubw*/governor; do
+    echo "cpufreq" >$devfreq_gov
 done
 
 # Some files in /sys/devices/system/cpu are created after the restorecon of
@@ -133,21 +123,21 @@ chown -h system /sys/devices/system/cpu/cpu0/core_ctl/max_cpus
 chown -h system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 
 # Set GPU default power level to 7 (64MHz)
-echo 7 > /sys/class/kgsl/kgsl-3d0/default_pwrlevel
+echo 7 >/sys/class/kgsl/kgsl-3d0/default_pwrlevel
 
 # Let kernel know our image version/variant/crm_version
 image_version="10:"
-image_version+=`getprop ro.build.id`
+image_version+=$(getprop ro.build.id)
 image_version+=":"
-image_version+=`getprop ro.build.version.incremental`
-image_variant=`getprop ro.product.name`
+image_version+=$(getprop ro.build.version.incremental)
+image_variant=$(getprop ro.product.name)
 image_variant+="-"
-image_variant+=`getprop ro.build.type`
-oem_version=`getprop ro.build.version.codename`
-echo 10 > /sys/devices/soc0/select_image
-echo $image_version > /sys/devices/soc0/image_version
-echo $image_variant > /sys/devices/soc0/image_variant
-echo $oem_version > /sys/devices/soc0/image_crm_version
+image_variant+=$(getprop ro.build.type)
+oem_version=$(getprop ro.build.version.codename)
+echo 10 >/sys/devices/soc0/select_image
+echo $image_version >/sys/devices/soc0/image_version
+echo $image_variant >/sys/devices/soc0/image_variant
+echo $oem_version >/sys/devices/soc0/image_crm_version
 
 # Strar perfd
 rm /data/system/perfd/default_values
