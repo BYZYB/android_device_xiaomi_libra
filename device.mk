@@ -274,6 +274,11 @@ PRODUCT_PACKAGES += \
     qti-telephony-common \
     telephony-ext
 
+# TimeKeep
+PRODUCT_PACKAGES += \
+    timekeep \
+    TimeKeep
+
 # Touch
 PRODUCT_PACKAGES += vendor.lineage.touch@1.0-service.libra
 

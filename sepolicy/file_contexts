@@ -23,3 +23,7 @@
 /system/vendor/bin/init\.qcom\.post_boot\.sh    u:object_r:qti_init_shell_exec:s0
 /system/vendor/bin/init\.qcom\.sh               u:object_r:qti_init_shell_exec:s0
 /system/vendor/bin/init\.qcom\.usb\.sh          u:object_r:qti_init_shell_exec:s0
+
+# TimeKeep
+/sys/devices/soc\.0/qpnp-rtc-8/rtc/rtc0(/.*)?   u:object_r:sysfs_rtc:s0
+/system/vendor/bin/timekeep            u:object_r:timekeep_exec:s0
