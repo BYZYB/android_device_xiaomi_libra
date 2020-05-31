@@ -67,7 +67,6 @@ on boot
     chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
     chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
     chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
-    write /proc/sys/kernel/sched_boost 1
 
     # DT2W
     chown root system /proc/touchscreen/double_tap_enable
