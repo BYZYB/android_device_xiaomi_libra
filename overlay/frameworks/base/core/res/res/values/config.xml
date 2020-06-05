@@ -171,7 +171,6 @@
         <item>"/system/framework/oat/arm64/services.odex"</item>
         <item>"/system/framework/oat/arm64/services.vdex"</item>
         <item>"/system/framework/services.jar"</item>
-        <item>"/system/lib/libsurfaceflinger.so"</item>
         <item>"/system/lib64/libsurfaceflinger.so"</item>
         <item>"/system/product/priv-app/SystemUI/oat/arm64/SystemUI.odex"</item>
         <item>"/system/product/priv-app/SystemUI/oat/arm64/SystemUI.vdex"</item>
