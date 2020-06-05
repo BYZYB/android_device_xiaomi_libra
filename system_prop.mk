@@ -61,7 +61,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sf.lcd_density=480 \
     ro.sys.display.support=23
 
 # Fingerpirnt

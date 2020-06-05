@@ -97,6 +97,9 @@ WITH_DEXPREOPT := true
 WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false
 WITH_DEXPREOPT_DEBUG_INFO := false
 
+# Display
+TARGET_SCREEN_DENSITY := 480
+
 # DT2W
 TARGET_TAP_TO_WAKE_NODE := "/proc/touchscreen/double_tap_enable"
 
