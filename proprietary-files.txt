@@ -38,9 +38,6 @@ vendor/lib/liblistensoundmodel2.so
 vendor/lib/libnative_audio_latency_jni.so
 vendor/lib/libqct_resampler.so
 vendor/lib/libsurround_3mic_proc.so
-vendor/lib/soundfx/libqcbassboost.so
-vendor/lib/soundfx/libqcreverb.so
-vendor/lib/soundfx/libqcvirt.so
 vendor/lib64/libacdb-fts.so
 vendor/lib64/libacdbloader.so|fc4fa2965123498bb6028b1a29526f7ea0ea70e4
 vendor/lib64/libacdbmapper.so
