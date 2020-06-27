@@ -417,9 +417,6 @@
          in hardware. -->
     <bool name="config_setColorTransformAccelerated">true</bool>
 
-    <!-- Whether device supports double tap to wake -->
-    <bool name="config_supportDoubleTapWake">true</bool>
-
     <!-- Specifies whether the permissions needed by a legacy app should be
          reviewed before any of its components can run. A legacy app is one
          with targetSdkVersion < 23, i.e apps using the old permission model.
