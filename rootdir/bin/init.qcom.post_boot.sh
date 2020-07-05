@@ -96,8 +96,9 @@ for mode in /sys/devices/soc.0/qcom,bcl.*/mode; do
 done
 
 # Set core_ctl module parameters
-echo 1 >/sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster
+echo 4 >/sys/devices/system/cpu/cpu0/core_ctl/min_cpus
 echo 2 >/sys/devices/system/cpu/cpu4/core_ctl/min_cpus
+echo 1 >/sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster
 
 # Enable rps static configuration
 echo 8 >/sys/class/net/rmnet_ipa0/queues/rx-0/rps_cpus
@@ -117,10 +118,10 @@ done
 restorecon -R /sys/devices/system/cpu
 
 # Relax access permission for display power consumption
-chown -h system /sys/devices/system/cpu/cpu0/core_ctl/min_cpus
-chown -h system /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
-chown -h system /sys/devices/system/cpu/cpu0/core_ctl/max_cpus
-chown -h system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
+chown system:system /sys/devices/system/cpu/cpu0/core_ctl/min_cpus
+chown system:system /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
+chown system:system /sys/devices/system/cpu/cpu0/core_ctl/max_cpus
+chown system:system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 
 # Set GPU default power level to 7 (64MHz)
 echo 7 >/sys/class/kgsl/kgsl-3d0/default_pwrlevel
@@ -138,7 +139,3 @@ echo 10 >/sys/devices/soc0/select_image
 echo $image_version >/sys/devices/soc0/image_version
 echo $image_variant >/sys/devices/soc0/image_variant
 echo $oem_version >/sys/devices/soc0/image_crm_version
-
-# Strar perfd
-rm /data/system/perfd/default_values
-start perfd

@@ -113,8 +113,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     DEVICE_PROVISIONED=1 \
     persist.android.strictmode=0 \
-    persist.power.useautobrightadj=true \
-    ro.vendor.extension_library=libqti-perfd-client.so
+    persist.power.useautobrightadj=true
 
 # Qualcomm specifics
 PRODUCT_PROPERTY_OVERRIDES += \

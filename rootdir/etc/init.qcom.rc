@@ -257,10 +257,6 @@ on post-fs-data
     # Create a folder for SRS to be able to create a usercfg file
     mkdir /data/data/media 0770 media media
 
-    # Create PERFD deamon related dirs
-    mkdir /data/system/perfd 0770 root system
-    chmod 2770 /data/system/perfd
-
     # RIDL data
     mkdir /data/misc/SelfHost/ 0710 system shell
     mkdir /data/misc/SelfHost/QCLogs/ 2750 system shell
@@ -301,13 +297,6 @@ on post-fs-data
     chown system graphics /sys/class/graphics/fb1/ad
     chmod 0664 /sys/class/graphics/fb1/ad
 
-service perfd /system/vendor/bin/perfd
-   class main
-   user root
-   disabled
-   socket perfd seqpacket 0666 root system
-   writepid /dev/cpuset/system-background/tasks
-
 on property:sys.boot_completed=1
     restart cameraserver
     write /dev/kmsg "Boot completed "
@@ -340,11 +329,6 @@ service rfs_access /vendor/bin/rfs_access
     class core
     user root
     group system net_raw
-    writepid /dev/cpuset/system-background/tasks
-
-service tftp_server /vendor/bin/tftp_server
-    class core
-    user root
     writepid /dev/cpuset/system-background/tasks
 
 on property:vendor.wc_transport.start_hci=true

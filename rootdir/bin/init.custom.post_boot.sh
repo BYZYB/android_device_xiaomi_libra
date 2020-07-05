@@ -17,6 +17,8 @@ rm -rf /data/ss
 rm -rf /data/ssh
 rm -rf /data/system/dropbox
 rm -rf /data/system/heapdump
+rm -rf /data/system/perfd
+rm -rf /data/thermal
 rm -rf /data/tombstones
 rm -rf /data/vendor/tombstones
 

@@ -138,7 +138,6 @@ allow system_server kernel:system *;
 allow system_server mnt_vendor_file:{ dir file } *;
 allow system_server persist_file:{ dir file } *;
 allow system_server sysfs:{ dir file } *;
-allow time_daemon diag_device:chr_file *;
 allow wcnss_service diag_device:chr_file *;
 
 # Tee
@@ -157,16 +156,7 @@ allow tee self:capability *;
 allow tee system_app:unix_dgram_socket *;
 allow tee system_data_file:dir *;
 allow tee tee_device:chr_file *;
-allow tee time_daemon:unix_stream_socket *;
 allow tee vfat:file *;
-
-# Thermal
-type thermal_data_file, file_type, data_file_type;
-allow thermal-engine diag_device:chr_file *;
-allow thermal-engine self:capability *;
-allow thermal-engine system_data_file:{ dir file } *;
-allow thermal-engine thermal_data_file:{ dir file } *;
-allow thermal-engine thermal-engine:capability *;
 
 # Time
 type timekeep_exec, exec_type, vendor_file_type, file_type;
