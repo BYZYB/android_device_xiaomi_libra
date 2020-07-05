@@ -554,7 +554,6 @@ bin/netmgrd:vendor/bin/netmgrd|80cda795a0c03b12152e3be6ce17c129f9d8ed5b
 bin/qmuxd:vendor/bin/qmuxd|17943aae2e1f91b1d98d817abae382de205b2c84
 bin/rfs_access:vendor/bin/rfs_access
 bin/rmt_storage:vendor/bin/rmt_storage
-bin/tftp_server:vendor/bin/tftp_server
 etc/data/dsi_config.xml:vendor/etc/data/dsi_config.xml
 etc/data/netmgr_config.xml:vendor/etc/data/netmgr_config.xml
 etc/data/qmi_config.xml:vendor/etc/data/qmi_config.xml
@@ -605,18 +604,10 @@ vendor/lib64/libsensor_reg.so
 # Thermal
 bin/energy-awareness:vendor/bin/energy-awareness
 bin/msm_irqbalance:vendor/bin/msm_irqbalance
-etc/thermal-engine-8992.conf:vendor/etc/thermal-engine-8992.conf
-vendor/bin/perfd
-vendor/bin/thermal-engine|5c0edf1e5202c8948179f2151e7ff2211a5da9e2
 vendor/lib/libqti-at.so
 vendor/lib/libqti-gt.so
-vendor/lib/libqti-perfd-client.so
-vendor/lib/libthermalclient.so
 vendor/lib64/libqti-at.so
 vendor/lib64/libqti-gt.so
-vendor/lib64/libqti-perfd-client.so
-vendor/lib64/libthermalclient.so
-vendor/lib64/libthermalioctl.so
 
 # Time services
 -app/TimeService/TimeService.apk:vendor/app/TimeService/TimeService.apk

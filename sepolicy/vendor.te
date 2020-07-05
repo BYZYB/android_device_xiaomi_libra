@@ -155,14 +155,6 @@ allow tee tee_device:chr_file *;
 allow tee time_daemon:unix_stream_socket *;
 allow tee vfat:file *;
 
-# Thermal
-type thermal_data_file, file_type, data_file_type;
-allow thermal-engine diag_device:chr_file *;
-allow thermal-engine self:capability *;
-allow thermal-engine system_data_file:{ dir file } *;
-allow thermal-engine thermal_data_file:{ dir file } *;
-allow thermal-engine thermal-engine:capability *;
-
 # Ueventd
 allow ueventd lirc_device:chr_file *;
 allow ueventd sysfs:{ dir file } *;
