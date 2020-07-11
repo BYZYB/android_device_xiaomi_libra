@@ -71,8 +71,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
+    debug.cpurend.vsync=false \
     debug.sf.disable_backpressure=1 \
-    debug.sf.enable_gl_backpressure=1 \
     debug.sf.latch_unsignaled=1 \
     ro.opengles.version=196610 \
     ro.surface_flinger.force_hwc_copy_for_virtual_displays=true \
