@@ -48,7 +48,7 @@
 /dev/dpl_ctrl             0660   usb        usb
 /dev/tspdrv               0660   system     system
 
-#permissions for CSVT
+# permissions for CSVT
 /dev/smd11                0660   radio      radio
 /dev/radio0               0640   system     system
 /dev/rfcomm0              0660   bluetooth  bluetooth
@@ -201,7 +201,7 @@
 # for lirc
 /dev/lirc0          0660   system     system
 
-#for sensor-hub
+# for sensor-hub
 /dev/iio:device* 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/iio:device* accel_offset_data 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/iio:device* magn_offset_data 0660 system system
@@ -209,7 +209,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/iio:device* flush 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/iio:device* force_magn_calibration 0660 system system
 
-#accelerometer
+# accelerometer
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel.0/iio:device* sampling_frequency 0660 system system
@@ -223,7 +223,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel.0/iio:device* in_accel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel.0/iio:device* in_accel_z_scale 0660 system system
 
-#magnetometer
+# magnetometer
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn.0/iio:device* sampling_frequency 0660 system system
@@ -239,7 +239,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn.0/iio:device* in_magn_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn.0/iio:device* force_magn_calibration 0660 system system
 
-#gyroscope
+# gyroscope
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro.0/iio:device* sampling_frequency 0660 system system
@@ -253,7 +253,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro.0/iio:device* in_anglvel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro.0/iio:device* in_anglvel_z_scale 0660 system system
 
-#magnetometer uncalibrated
+# magnetometer uncalibrated
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u.0/iio:device* sampling_frequency 0660 system system
@@ -267,7 +267,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u.0/iio:device* in_magn_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u.0/iio:device* in_magn_z_scale 0660 system system
 
-#gyroscope uncalibrated
+# gyroscope uncalibrated
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u.0/iio:device* sampling_frequency 0660 system system
@@ -281,13 +281,13 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u.0/iio:device* in_anglvel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u.0/iio:device* in_anglvel_z_scale 0660 system system
 
-#significant motion
+# significant motion
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_sign_motion.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_sign_motion.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_sign_motion.0/iio:device* scan_elements/in_sign_motion_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_sign_motion.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 
-#quaternion
+# quaternion
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat.0/iio:device* sampling_frequency 0660 system system
@@ -304,7 +304,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat.0/iio:device* in_quaternion_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat.0/iio:device* in_quaternion_module_scale 0660 system system
 
-#step detector
+# step detector
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d.0/iio:device* batch_mode 0660 system system
@@ -312,7 +312,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d.0/iio:device* scan_elements/in_step_detector_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 
-#euler angles
+# euler angles
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler.0/iio:device* sampling_frequency 0660 system system
@@ -327,7 +327,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler.0/iio:device* in_euler_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler.0/iio:device* in_euler_z_scale 0660 system system
 
-#step counter
+# step counter
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c.0/iio:device* sampling_frequency 0660 system system
@@ -338,7 +338,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c.0/iio:device* max_delivery_rate 0660 system system
 
-#game quaternion
+# game quaternion
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat.0/iio:device* sampling_frequency 0660 system system
@@ -355,7 +355,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat.0/iio:device* in_quaternion_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat.0/iio:device* in_quaternion_module_scale 0660 system system
 
-#linear acceleration
+# linear acceleration
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear.0/iio:device* sampling_frequency 0660 system system
@@ -369,7 +369,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear.0/iio:device* in_linear_accel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear.0/iio:device* in_linear_accel_z_scale 0660 system system
 
-#gravity
+# gravity
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity.0/iio:device* sampling_frequency 0660 system system
@@ -383,7 +383,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity.0/iio:device* in_gravity_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity.0/iio:device* in_gravity_z_scale 0660 system system
 
-#geomag quaternion
+# geomag quaternion
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat.0/iio:device* sampling_frequency 0660 system system
@@ -400,7 +400,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat.0/iio:device* in_quaternion_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat.0/iio:device* in_quaternion_module_scale 0660 system system
 
-#accelerometer wk
+# accelerometer wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel_wk.0/iio:device* sampling_frequency 0660 system system
@@ -414,7 +414,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel_wk.0/iio:device* in_accel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_accel_wk.0/iio:device* in_accel_z_scale 0660 system system
 
-#magnetometer wk
+# magnetometer wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_wk.0/iio:device* sampling_frequency 0660 system system
@@ -430,7 +430,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_wk.0/iio:device* in_magn_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_wk.0/iio:device* force_magn_calibration 0660 system system
 
-#gyroscope wk
+# gyroscope wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_wk.0/iio:device* sampling_frequency 0660 system system
@@ -444,7 +444,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_wk.0/iio:device* in_anglvel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_wk.0/iio:device* in_anglvel_z_scale 0660 system system
 
-#magnetometer uncalibrated wk
+# magnetometer uncalibrated wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u_wk.0/iio:device* sampling_frequency 0660 system system
@@ -458,7 +458,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u_wk.0/iio:device* in_magn_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_magn_u_wk.0/iio:device* in_magn_z_scale 0660 system system
 
-#gyroscope uncalibrated wk
+# gyroscope uncalibrated wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u_wk.0/iio:device* sampling_frequency 0660 system system
@@ -472,7 +472,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u_wk.0/iio:device* in_anglvel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gyro_u_wk.0/iio:device* in_anglvel_z_scale 0660 system system
 
-#quaternion wk
+# quaternion wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat_wk.0/iio:device* sampling_frequency 0660 system system
@@ -489,7 +489,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat_wk.0/iio:device* in_quaternion_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_quat_wk.0/iio:device* in_quaternion_module_scale 0660 system system
 
-#step detector wk
+# step detector wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d_wk.0/iio:device* batch_mode 0660 system system
@@ -497,7 +497,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d_wk.0/iio:device* scan_elements/in_step_detector_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_d_wk.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 
-#euler angles wk
+# euler angles wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler_wk.0/iio:device* sampling_frequency 0660 system system
@@ -512,7 +512,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler_wk.0/iio:device* in_euler_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_euler_wk.0/iio:device* in_euler_z_scale 0660 system system
 
-#step counter wk
+# step counter wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c_wk.0/iio:device* sampling_frequency 0660 system system
@@ -523,7 +523,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c_wk.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_step_c_wk.0/iio:device* max_delivery_rate 0660 system system
 
-#game quaternion wk
+# game quaternion wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat_wk.0/iio:device* sampling_frequency 0660 system system
@@ -540,7 +540,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat_wk.0/iio:device* in_quaternion_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_game_quat_wk.0/iio:device* in_quaternion_module_scale 0660 system system
 
-#linear acceleration wk
+# linear acceleration wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear_wk.0/iio:device* sampling_frequency 0660 system system
@@ -554,7 +554,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear_wk.0/iio:device* in_linear_accel_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_linear_wk.0/iio:device* in_linear_accel_z_scale 0660 system system
 
-#gravity wk
+# gravity wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity_wk.0/iio:device* sampling_frequency 0660 system system
@@ -568,7 +568,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity_wk.0/iio:device* in_gravity_y_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_gravity_wk.0/iio:device* in_gravity_z_scale 0660 system system
 
-#geomag quaternion wk
+# geomag quaternion wk
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat_wk.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat_wk.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat_wk.0/iio:device* sampling_frequency 0660 system system
@@ -585,21 +585,21 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat_wk.0/iio:device* in_quaternion_z_scale 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_geo_quat_wk.0/iio:device* in_quaternion_module_scale 0660 system system
 
-#tap tap
+# tap tap
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tap_tap.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tap_tap.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tap_tap.0/iio:device* config_parameters 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tap_tap.0/iio:device* scan_elements/in_tap_tap_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tap_tap.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 
-#tilt
+# tilt
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tilt.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tilt.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tilt.0/iio:device* config_parameters 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tilt.0/iio:device* scan_elements/in_tilt_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_tilt.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 
-#activity
+# activity
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_activity.0/iio:device* buffer/enable 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_activity.0/iio:device* buffer/length 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_activity.0/iio:device* batch_mode 0660 system system
@@ -607,7 +607,7 @@
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_activity.0/iio:device* scan_elements/in_activity_en 0660 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-0008/lsm6db0_activity.0/iio:device* scan_elements/in_timestamp_en 0660 system system
 
-#PL sensor
+# PL sensor
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0060/iio:device* buffer/enable          0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0060/iio:device* buffer/length          0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0060/iio:device* scan_elements/in_in_en     0600 system system
@@ -622,14 +622,14 @@
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0060/iio:device* prox_thres_near        0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0060/iio:device* prox_thres_far         0600 system system
 
-#pressure sensor
+# pressure sensor
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0077/iio:device* buffer/enable                  0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0077/iio:device* buffer/length                  0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0077/iio:device* scan_elements/in_pressure_en   0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0077/iio:device* scan_elements/in_timestamp_en  0600 system system
 /sys/devices/soc.0/f9963000.i2c/i2c-7/7-0077/iio:device* in_pressure_scale              0600 system system
 
-#for x7 sensorhub
+# for x7 sensorhub
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-006b/iio:device* debug_reg_dump       0600 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-006b/iio:device* out_command          0600 system system
 /sys/devices/soc.0/f9927000.i2c/i2c-13/13-006b/iio:device* in_data          0600 system system
@@ -678,11 +678,6 @@
 /dev/wcnss_wlan           0660   system     system
 /dev/wcnss_ctrl           0660   system     system
 /sys/devices/pci0000:00/0000:00:00.0/0000:01:00.0/net/wlan0/queues/rx-* rps_cpus 0660 system system
-
-#nfc permissions
-/dev/nfc-nci              0660    nfc         nfc
-/dev/nq-nci               0660    nfc         nfc
-/dev/assd                 0660    nfc         nfc
 
 # UIO devices
 /dev/uio0                 0660   system     system
