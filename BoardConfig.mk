@@ -81,6 +81,11 @@ USE_DEVICE_SPECIFIC_CAMERA := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Dexpreopt
+# All apps are pre-compiled with "speed" filter in this rom, which conflicts with the build rules and needs a patch to work.
+# Patch: see "target/product/runtime_libart.mk" of "repo/repo_16.diff" in "useful_android_scripts".
+# The "speed" filter provides bettter performance, but also make app installation longer than defualt values.
+# If you got trouble with "speed" filter, try using the following line instead:
+# WITH_DEXPREOPT := true
 BOARD_USES_SYSTEM_OTHER_ODEX := false
 DEX_PREOPT_DEFAULT := true
 DONT_DEXPREOPT_PREBUILTS := false
@@ -142,6 +147,9 @@ TARGET_RECOVERY_DEVICE_MODULES := libinit_libra
 USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
 # Kernel
+# To build the kernel with GCC 10 (or newer), please install "gcc-10-aarch64-linux-gnu" on your build OS.
+# For Ubuntu 20.10, "sudo apt install gcc-aarch64-linux-gnu" should finish these things properly.
+# If you'd like to build with other toolchains, please modify "TARGET_KERNEL_CROSS_COMPILE_PREFIX" to right values.
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive ehci-hcd.park=3 msm_rtb.filter=0x37 user_debug=31
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
