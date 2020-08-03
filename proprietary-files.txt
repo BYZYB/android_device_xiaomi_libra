@@ -545,10 +545,6 @@ vendor/lib64/libqmiservices.so
 vendor/lib64/libsmemlog.so
 
 # Radio
--app/QtiTelephonyService/QtiTelephonyService.apk:vendor/app/QtiTelephonyService/QtiTelephonyService.apk
--app/datastatusnotification/datastatusnotification.apk:vendor/app/datastatusnotification/datastatusnotification.apk
--app/fastdormancy/fastdormancy.apk:vendor/app/fastdormancy/fastdormancy.apk
--app/shutdownlistener/shutdownlistener.apk:vendor/app/shutdownlistener/shutdownlistener.apk
 bin/irsc_util:vendor/bin/irsc_util
 bin/netmgrd:vendor/bin/netmgrd|80cda795a0c03b12152e3be6ce17c129f9d8ed5b
 bin/qmuxd:vendor/bin/qmuxd|17943aae2e1f91b1d98d817abae382de205b2c84
@@ -563,7 +559,6 @@ etc/permissions/telephonyservice.xml:vendor/etc/permissions/telephonyservice.xml
 -framework/QtiTelephonyServicelibrary.jar:vendor/framework/QtiTelephonyServicelibrary.jar
 -framework/qcnvitems.jar:vendor/framework/qcnvitems.jar
 -framework/qcrilhook.jar:vendor/framework/qcrilhook.jar
--priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
 vendor/bin/qti
 vendor/lib/libconfigdb.so
 vendor/lib/liblqe.so

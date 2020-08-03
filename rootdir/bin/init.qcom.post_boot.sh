@@ -95,11 +95,6 @@ for mode in /sys/devices/soc.0/qcom,bcl.*/mode; do
     echo -n enable >$mode
 done
 
-# Set core_ctl module parameters
-echo 4 >/sys/devices/system/cpu/cpu0/core_ctl/min_cpus
-echo 2 >/sys/devices/system/cpu/cpu4/core_ctl/min_cpus
-echo 1 >/sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster
-
 # Enable rps static configuration
 echo 8 >/sys/class/net/rmnet_ipa0/queues/rx-0/rps_cpus
 
@@ -116,12 +111,6 @@ done
 # /sys/. These files receive the default label "sysfs".
 # Restorecon again to give new files the correct label.
 restorecon -R /sys/devices/system/cpu
-
-# Relax access permission for display power consumption
-chown system:system /sys/devices/system/cpu/cpu0/core_ctl/min_cpus
-chown system:system /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
-chown system:system /sys/devices/system/cpu/cpu0/core_ctl/max_cpus
-chown system:system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 
 # Set GPU default power level to 7 (64MHz)
 echo 7 >/sys/class/kgsl/kgsl-3d0/default_pwrlevel

@@ -106,8 +106,6 @@ on boot
     chmod 2770 /dev/socket/qmux_bluetooth
     mkdir /dev/socket/qmux_gps 0770 gps gps
     chmod 2770 /dev/socket/qmux_gps
-    mkdir /dev/socket/qmux_nfc 0770 nfc nfc
-    chmod 2770 /dev/socket/qmux_nfc
     chmod 0666 /sys/class/leds/flashlight/brightness
     mkdir /persist/bluetooth 0770 bluetooth bluetooth
 
@@ -374,7 +372,7 @@ service port-bridge /vendor/bin/port-bridge /dev/mhi_pipe_32 /dev/ttyGS0
 service qmuxd /vendor/bin/qmuxd
     class main
     user root
-    group radio audio bluetooth gps nfc diag
+    group radio audio bluetooth gps diag
     writepid /dev/cpuset/system-background/tasks
 
 service netmgrd /vendor/bin/netmgrd
