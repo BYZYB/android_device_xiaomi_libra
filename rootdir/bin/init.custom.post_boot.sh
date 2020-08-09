@@ -27,10 +27,9 @@ find /data/data/com.tencent.mm/MicroMsg/*/appbrand/* -mtime +3 -exec rm -rf {} \
 find /data/data/com.tencent.mm/MicroMsg/*/avatar/* -mtime +3 -exec rm -rf {} \;
 find /data/data/com.tencent.mm/MicroMsg/appbrand/* -mtime +3 -exec rm -rf {} \;
 find /data/media/0/Android/data/com.tencent.mm/MicroMsg/*/* -mtime +3 -exec rm -rf {} \;
-find /data/media/0/tencent/MicroMsg/*/* -mtime +3 -exec rm -rf {} \;
-find /data/media/0/tencent/MicroMsg/*/*/* -mtime +3 -exec rm -rf {} \;
-find /data/media/0/tencent/MobileQQi/*/* -mtime +3 -exec rm -rf {} \;
-find /data/media/0/tencent/MobileQQi/*/*/* -mtime +3 -exec rm -rf {} \;
+find /data/media/0/Android/data/com.tencent.mm/MicroMsg/*/*/* -mtime +3 -exec rm -rf {} \;
+find /data/media/0/tencent/MobileQQ*/*/* -mtime +3 -exec rm -rf {} \;
+find /data/media/0/tencent/MobileQQ*/*/*/* -mtime +3 -exec rm -rf {} \;
 rm -f /data/system/uiderrors.txt
 rm -rf /cache/*.*
 rm -rf /cache/recovery/*
