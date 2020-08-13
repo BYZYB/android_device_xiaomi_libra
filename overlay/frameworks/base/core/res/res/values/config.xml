@@ -142,14 +142,6 @@
     <bool name="config_useDevInputEventForAudioJack">true</bool>
     <!-- Set to true if the wifi display supports compositing content stored in gralloc protected buffers.  For this to be true, there must exist a protected hardware path for surface flinger to composite and send protected buffers to the wifi display video encoder. If this flag is false, we advise applications not to use protected buffers (if possible) when presenting content to a wifi display because the content may be blanked. This flag controls whether the {@link Display#FLAG_SUPPORTS_PROTECTED_BUFFERS} flag is set for wifi displays. -->
     <bool name="config_wifiDisplaySupportsProtectedBuffers">true</bool>
-    <!-- Flag specifying whether VoLTE is available on device -->
-    <bool name="config_device_volte_available">true</bool>
-    <!-- Flag specifying whether VoLTE should be available for carrier: independent of carrier provisioning. If false: hard disabled. If true: then depends on carrier provisioning, availability etc -->
-    <bool name="config_carrier_volte_available">true</bool>
-    <!-- Flag specifying whether VT is available on device -->
-    <bool name="config_device_vt_available">true</bool>
-    <!-- Flag specifying whether VT should be available for carrier: independent of carrier provisioning. If false: hard disabled. If true: then depends on carrier provisioning, availability etc -->
-    <bool name="config_carrier_vt_available">true</bool>
     <!-- Config determines whether to update phone object when voice registration state changes. Voice radio tech change will always trigger an update of phone object irrespective of this config -->
     <bool name="config_switch_phone_on_voice_reg_state_change">false</bool>
     <!-- Disable Manual Network Selection in Global Mode -->
