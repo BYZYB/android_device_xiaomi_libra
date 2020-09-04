@@ -87,9 +87,6 @@ PRODUCT_PACKAGES += \
     libcnefeatureconfig \
     services-ext
 
-# EdgeGesture
-PRODUCT_PACKAGES += EdgeGesture
-
 # Fingerprint
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/uinput-fpc.idc:system/vendor/usr/idc/uinput-fpc.idc \
