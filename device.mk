@@ -66,11 +66,6 @@ PRODUCT_PACKAGES += \
 TARGET_SCREEN_HEIGHT := 1920
 TARGET_SCREEN_WIDTH := 1080
 
-# Busybox
-# This could be removed if busybox is not needed in your rom.
-# The binary here is fetched from "https://github.com/Magisk-Modules-Repo/busybox-ndk/blob/master/busybox-arm64-selinux".
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/rootdir/bin/busybox:system/xbin/busybox
-
 # Camera
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
