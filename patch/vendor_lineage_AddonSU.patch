@@ -1,0 +1,187 @@
+From 1c5dc6c06d754ad7bd6b30b19a6c6297a2dee2c6 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <********@outlook.com>
+Date: Mon, 7 Sep 2020 11:18:24 +0800
+Subject: [PATCH] vendor_lineage_AddonSU
+
+Change-Id: Idf42a3836d71fe4af8cce673455e6fda25124690
+---
+ addonsu/51-addonsu.sh             | 41 +++++++++++++++++++++++++++++++
+ addonsu/mount-system.sh           | 34 +++++++++++++++++++++++++
+ addonsu/unmount-system.sh         | 15 +++++++++++
+ addonsu/updater-script-install    | 17 +++++++++++++
+ addonsu/updater-script-remove     | 16 ++++++++++++
+ prebuilt/common/bin/backuptool.sh |  1 +
+ 6 files changed, 124 insertions(+)
+ create mode 100644 addonsu/51-addonsu.sh
+ create mode 100644 addonsu/mount-system.sh
+ create mode 100644 addonsu/unmount-system.sh
+ create mode 100644 addonsu/updater-script-install
+ create mode 100644 addonsu/updater-script-remove
+
+diff --git a/addonsu/51-addonsu.sh b/addonsu/51-addonsu.sh
+new file mode 100644
+index 00000000..a17f5450
+--- /dev/null
++++ b/addonsu/51-addonsu.sh
+@@ -0,0 +1,41 @@
++#!/sbin/sh
++#
++# ADDOND_VERSION=2
++#
++
++. /tmp/backuptool.functions
++
++list_files() {
++  cat <<EOF
++bin/su
++etc/init/superuser.rc
++xbin/su
++EOF
++}
++
++case "$1" in
++backup)
++  list_files | while read FILE DUMMY; do
++    backup_file $S/"$FILE"
++  done
++  ;;
++restore)
++  list_files | while read FILE REPLACEMENT; do
++    R=""
++    [ -n "$REPLACEMENT" ] && R="$S/$REPLACEMENT"
++    restore_file $S/"$FILE" "$R"
++  done
++  ;;
++pre-backup)
++  # Stub
++  ;;
++post-backup)
++  # Stub
++  ;;
++pre-restore)
++  # Stub
++  ;;
++post-restore)
++  # Stub
++  ;;
++esac
+diff --git a/addonsu/mount-system.sh b/addonsu/mount-system.sh
+new file mode 100644
+index 00000000..3bc9c3e5
+--- /dev/null
++++ b/addonsu/mount-system.sh
+@@ -0,0 +1,34 @@
++#!/sbin/sh
++
++# Modern devices use /system as root ("/")
++system_as_root=$(getprop ro.build.system_root_image)
++if [ "$system_as_root" == "true" ]; then
++  if mount /system_root; then
++    exit 0
++  fi
++
++  active_slot=$(getprop ro.boot.slot_suffix)
++  if [ ! -z "$active_slot" ]; then
++    block=/dev/block/bootdevice/by-name/system$active_slot
++  else
++    block=/dev/block/bootdevice/by-name/system
++  fi
++  mkdir -p /system_root
++  if mount -o rw $block /system_root ||
++    mount -o rw $block /system_root -t ext4 ||
++    mount -o rw $block /system_root -t f2fs; then
++    exit 0
++  fi
++else
++  if mount /system; then
++    exit 0
++  fi
++
++  # Try to get the block from /etc/recovery.fstab
++  block=$(cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1)
++  if [ -n "$block" ] && mount $block /system; then
++    exit 0
++  fi
++fi
++
++exit 1
+diff --git a/addonsu/unmount-system.sh b/addonsu/unmount-system.sh
+new file mode 100644
+index 00000000..017e3de0
+--- /dev/null
++++ b/addonsu/unmount-system.sh
+@@ -0,0 +1,15 @@
++#!/sbin/sh
++
++# Modern devices use /system as root ("/")
++system_as_root=$(getprop ro.build.system_root_image)
++if [ "$system_as_root" == "true" ]; then
++  if umount /system_root; then
++    exit 0
++  fi
++else
++  if umount /system; then
++    exit 0
++  fi
++fi
++
++exit 1
+diff --git a/addonsu/updater-script-install b/addonsu/updater-script-install
+new file mode 100644
+index 00000000..ee8a4661
+--- /dev/null
++++ b/addonsu/updater-script-install
+@@ -0,0 +1,17 @@
++ui_print("Installing su addon...");
++ifelse(is_mounted("/system"), unmount("/system"));
++package_extract_file("mount-system.sh", "/tmp/mount-system.sh");
++package_extract_file("unmount-system.sh", "/tmp/unmount-system.sh");
++set_metadata("/tmp/mount-system.sh", "uid", 0, "gid", 0, "mode", 0755);
++set_metadata("/tmp/unmount-system.sh", "uid", 0, "gid", 0, "mode", 0755);
++run_program("/tmp/mount-system.sh") == 0 || abort("Could not mount /system");
++
++package_extract_dir("system", "/system/system");
++set_metadata("/system/system/addon.d/51-addonsu.sh", "uid", 0, "gid", 0, "mode", 0755, "selabel", "u:object_r:system_file:s0");
++set_metadata("/system/system/etc/init/superuser.rc", "uid", 0, "gid", 0, "mode", 0644, "selabel", "u:object_r:system_file:s0");
++set_metadata("/system/system/xbin/su", "uid", 0, "gid", 2000, "mode", 0755, "selabel", "u:object_r:su_exec:s0");
++symlink("/system/system/xbin/su", "/system/system/bin/su");
++
++run_program("/tmp/unmount-system.sh") == 0 || ui_print("Could not unmount /system");
++ui_print("Done");
++set_progress(1.000000);
+diff --git a/addonsu/updater-script-remove b/addonsu/updater-script-remove
+new file mode 100644
+index 00000000..677d3f37
+--- /dev/null
++++ b/addonsu/updater-script-remove
+@@ -0,0 +1,16 @@
++ui_print("Removing su addon...");
++ifelse(is_mounted("/system"), unmount("/system"));
++package_extract_file("mount-system.sh", "/tmp/mount-system.sh");
++package_extract_file("unmount-system.sh", "/tmp/unmount-system.sh");
++set_metadata("/tmp/mount-system.sh", "uid", 0, "gid", 0, "mode", 0755);
++set_metadata("/tmp/unmount-system.sh", "uid", 0, "gid", 0, "mode", 0755);
++run_program("/tmp/mount-system.sh") == 0 || abort("Could not mount /system");
++
++  delete("/system/system/addon.d/51-addonsu.sh");
++  delete("/system/system/bin/su");
++  delete("/system/system/etc/init/superuser.rc");
++  delete("/system/system/xbin/su");
++
++run_program("/tmp/unmount-system.sh") == 0 || ui_print("Could not unmount /system");
++ui_print("Done");
++set_progress(1.000000);
+diff --git a/prebuilt/common/bin/backuptool.sh b/prebuilt/common/bin/backuptool.sh
+index 662b4673..3bdf07e9 100755
+--- a/prebuilt/common/bin/backuptool.sh
++++ b/prebuilt/common/bin/backuptool.sh
+@@ -97,6 +97,7 @@ case "$1" in
+       run_stage restore
+       run_stage post-restore
+       restore_addon_d
++      chmod 755 $S/xbin/su
+       rm -rf $C
+       sync
+     fi
+--
+2.27.0

@@ -1,0 +1,243 @@
+From 0101c8a8d9ff248d6b27c6bf8b35ad1e618c2f1d Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Mon, 7 Sep 2020 11:33:37 +0800
+Subject: [PATCH] packages_apps_Settings_AddonSU
+
+Change-Id: I073c07de2f37f6f21fd08fed5a31717de721822e
+---
+ res/values-zh-rCN/cm_strings.xml              |   3 +
+ res/values/cm_strings.xml                     |   5 +
+ res/values/lineage_arrays.xml                 |  29 +++++
+ res/xml/development_settings.xml              |   5 +
+ .../AdbRootPreferenceController.java          |   2 +-
+ .../DevelopmentSettingsDashboardFragment.java |   1 +
+ .../RootAccessPreferenceController.java       | 111 ++++++++++++++++++
+ 7 files changed, 155 insertions(+), 1 deletion(-)
+ create mode 100644 res/values/lineage_arrays.xml
+ create mode 100644 src/com/android/settings/development/RootAccessPreferenceController.java
+
+diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
+index 48601ee426..c1cdfd4c31 100644
+--- a/res/values-zh-rCN/cm_strings.xml
++++ b/res/values-zh-rCN/cm_strings.xml
+@@ -62,6 +62,9 @@
+     <string name="volume_link_notification_title">链接铃声和通知的音量</string>
+     <string name="directly_show_lock">直接解锁</string>
+     <string name="directly_show_lock_summary">跳过滑动解锁屏幕直接开始输入密码</string>
++    <string name="root_access">Root 授权</string>
++    <string name="root_access_none">已禁用</string>
++    <string name="root_access_all">应用与 ADB</string>
+     <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="tablet">在您平板的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
+     <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="device">在您设备的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
+     <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="default">在您手机的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
+diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
+index ed43c74d0e..c2de11c0f8 100644
+--- a/res/values/cm_strings.xml
++++ b/res/values/cm_strings.xml
+@@ -144,6 +144,11 @@
+     <string name="proximity_wake_title">Prevent accidental wake-up</string>
+     <string name="proximity_wake_summary">Check the proximity sensor prior to waking up screen</string>
+
++    <!-- Setting checkbox title for root access -->
++    <string name="root_access">Root access</string>
++    <string name="root_access_none">Disabled</string>
++    <string name="root_access_all">Apps and ADB</string>
++
+     <!-- Wake on plug -->
+     <string name="wake_when_plugged_or_unplugged_title">Wake on plug</string>
+     <string name="wake_when_plugged_or_unplugged_summary">Turn the screen on when connecting or disconnecting a power source</string>
+diff --git a/res/values/lineage_arrays.xml b/res/values/lineage_arrays.xml
+new file mode 100644
+index 0000000000..1442570e59
+--- /dev/null
++++ b/res/values/lineage_arrays.xml
+@@ -0,0 +1,29 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++     Copyright (C) 2012-2016 The CyanogenMod Project
++     Copyright (C) 2017-2020 The LineageOS Project
++
++     Licensed under the Apache License, Version 2.0 (the "License");
++     you may not use this file except in compliance with the License.
++     You may obtain a copy of the License at
++
++          http://www.apache.org/licenses/LICENSE-2.0
++
++     Unless required by applicable law or agreed to in writing, software
++     distributed under the License is distributed on an "AS IS" BASIS,
++     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++     See the License for the specific language governing permissions and
++     limitations under the License.
++-->
++<resources>
++    <!-- Arrays for root access capability -->
++    <string-array name="root_access_entries" translatable="false">
++        <item>@string/root_access_none</item>
++        <item>@string/root_access_all</item>
++    </string-array>
++
++    <string-array name="root_access_values" translatable="false">
++        <item>0</item>
++        <item>1</item>
++    </string-array>
++</resources>
+diff --git a/res/xml/development_settings.xml b/res/xml/development_settings.xml
+index 0262556d09..79323fb795 100644
+--- a/res/xml/development_settings.xml
++++ b/res/xml/development_settings.xml
+@@ -126,6 +126,11 @@
+             android:fragment="com.android.settings.development.qstile.DevelopmentTileConfigFragment"
+             settings:searchable="false" />
+
++        <ListPreference
++            android:key="root_access"
++            android:title="@string/root_access"
++            android:persistent="false" />
++
+     <!-- Configure trust agent behavior -->
+     <SwitchPreference
+         android:key="security_setting_trust_agents_extend_unlock"
+diff --git a/src/com/android/settings/development/AdbRootPreferenceController.java b/src/com/android/settings/development/AdbRootPreferenceController.java
+index 5f7d65da35..8cdc24ff8a 100644
+--- a/src/com/android/settings/development/AdbRootPreferenceController.java
++++ b/src/com/android/settings/development/AdbRootPreferenceController.java
+@@ -53,7 +53,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
+
+     @Override
+     public boolean isAvailable() {
+-        return Build.IS_DEBUGGABLE;
++        return true;
+     }
+
+     @Override
+diff --git a/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java b/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
+index f18225e8fb..ac5dd9b418 100644
+--- a/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
++++ b/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
+@@ -515,6 +515,7 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
+         controllers.add(new ShortcutManagerThrottlingPreferenceController(context));
+         controllers.add(new BubbleGlobalPreferenceController(context));
+         controllers.add(new EnableGnssRawMeasFullTrackingPreferenceController(context));
++        controllers.add(new RootAccessPreferenceController(context, fragment));
+         controllers.add(new DefaultLaunchPreferenceController(context, "running_apps"));
+         controllers.add(new DefaultLaunchPreferenceController(context, "demo_mode"));
+         controllers.add(new DefaultLaunchPreferenceController(context, "quick_settings_tiles"));
+diff --git a/src/com/android/settings/development/RootAccessPreferenceController.java b/src/com/android/settings/development/RootAccessPreferenceController.java
+new file mode 100644
+index 0000000000..53ba434281
+--- /dev/null
++++ b/src/com/android/settings/development/RootAccessPreferenceController.java
+@@ -0,0 +1,111 @@
++/*
++ * Copyright (C) 2020 The LineageOS Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.settings.development;
++
++import android.content.Context;
++import android.os.Build;
++import android.os.ServiceManager;
++import android.os.SystemProperties;
++import android.os.UserManager;
++import android.provider.Settings;
++import androidx.annotation.VisibleForTesting;
++import androidx.preference.ListPreference;
++import androidx.preference.Preference;
++import androidx.preference.PreferenceScreen;
++
++import com.android.settings.R;
++import com.android.settings.Utils;
++import com.android.settings.core.PreferenceControllerMixin;
++import com.android.settingslib.development.DeveloperOptionsPreferenceController;
++
++import org.lineageos.internal.util.FileUtils;
++
++public class RootAccessPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
++    private static final String TAG = "RootAccessPreferenceController";
++    private static final String PREF_KEY = "root_access";
++    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
++
++    private final DevelopmentSettingsDashboardFragment mFragment;
++    private Object mPendingRootAccessValue;
++
++    public RootAccessPreferenceController(Context context, DevelopmentSettingsDashboardFragment fragment) {
++        super(context);
++
++        mFragment = fragment;
++    }
++
++    @Override
++    public boolean isAvailable() {
++        // Not only eng or userdebug builds, user builds could also get root now
++        return true;
++    }
++
++    @Override
++    public String getPreferenceKey() {
++        return PREF_KEY;
++    }
++
++    @Override
++    public void displayPreference(PreferenceScreen screen) {
++        super.displayPreference(screen);
++        ((ListPreference) mPreference).setEntries(R.array.root_access_entries);
++        ((ListPreference) mPreference).setEntryValues(R.array.root_access_values);
++        updatePreference();
++
++        if (!isAdminUser()) {
++            mPreference.setEnabled(false);
++        }
++    }
++
++    @Override
++    public boolean onPreferenceChange(Preference preference, Object newValue) {
++        writeRootAccessOptions(newValue);
++        return true;
++    }
++
++    @Override
++    protected void onDeveloperOptionsSwitchEnabled() {
++        if (isAdminUser()) {
++            mPreference.setEnabled(true);
++        }
++    }
++
++    public void onRootAccessDialogConfirmed() {
++        writeRootAccessOptions(mPendingRootAccessValue);
++    }
++
++    public void onRootAccessDialogDismissed() {
++        updatePreference();
++    }
++
++    private void writeRootAccessOptions(Object newValue) {
++        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
++        SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
++        updatePreference();
++    }
++
++    private void updatePreference() {
++        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
++        ((ListPreference) mPreference).setValue(value);
++        ((ListPreference) mPreference).setSummary(mContext.getResources().getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
++    }
++
++    @VisibleForTesting
++    boolean isAdminUser() {
++        return ((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser();
++    }
++}
+--
+2.27.0
