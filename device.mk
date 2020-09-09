@@ -267,6 +267,10 @@ PRODUCT_PACKAGES += \
     qti-telephony-common \
     telephony-ext
 
+# Thermal
+PRODUCT_PACKAGES += \
+    android.hardware.thermal@1.0-libra
+
 # TimeKeep
 PRODUCT_PACKAGES += \
     timekeep \
