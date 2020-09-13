@@ -2374,6 +2374,7 @@ index 00000000..1d72d997
 +    disabled
 +
 +on property:persist.sys.root_access=0
++    # exec /system/bin/setenforce 1
 +    stop su_daemon
 +
 +on property:persist.sys.root_access=1
