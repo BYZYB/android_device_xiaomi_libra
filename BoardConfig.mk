@@ -142,8 +142,9 @@ USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
 # Kernel
 # To build the kernel with GCC 10 (or newer), please install "gcc-10-aarch64-linux-gnu" on your build OS.
-# For Ubuntu 20.10, "sudo apt install gcc-aarch64-linux-gnu" should finish these things properly.
-# If you'd like to build with other toolchains, please modify "TARGET_KERNEL_CROSS_COMPILE_PREFIX" to right values.
+# For Ubuntu, "sudo apt install gcc-aarch64-linux-gnu" should finish these things properly.
+# If you'd like to build with other toolchains, please modify "TARGET_KERNEL_CROSS_COMPILE_PREFIX" to proper values.
+# It's not recommend to build the kernel with android-gcc-4.9, which may cause build errors.
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive ehci-hcd.park=3 msm_rtb.filter=0x37
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
@@ -218,7 +219,7 @@ BOARD_USES_QC_TIME_SERVICES := true
 
 # TWRP support
 ifeq ($(WITH_TWRP),true)
--include $(DEVICE_PATH)/twrp/twrp.mk
+include $(DEVICE_PATH)/twrp/twrp.mk
 RECOVERY_VARIANT := twrp
 endif
 
