@@ -157,7 +157,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/vendor/etc/permissions/handheld_core_hardware.xml
 
 # IR
-PRODUCT_PACKAGES += android.hardware.ir@1.0-service.libra
+PRODUCT_PACKAGES += android.hardware.ir@1.0-service.xiaomi
 
 # IRQ
 PRODUCT_COPY_FILES += $(LOCAL_PATH)/configs/msm_irqbalance.conf:system/vendor/etc/msm_irqbalance.conf
@@ -256,8 +256,13 @@ PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
     sensors.msm8992
 
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += \
+    $(LOCAL_PATH) \
+    hardware/xiaomi
+
 # System properties
--include $(LOCAL_PATH)/system_prop.mk
+include $(LOCAL_PATH)/system_prop.mk
 
 # Telephony
 PRODUCT_BOOT_JARS += telephony-ext

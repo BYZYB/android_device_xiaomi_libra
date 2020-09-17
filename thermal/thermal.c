@@ -42,7 +42,7 @@ const int CPU_SENSORS[] = {8, 8, 9, 10, 13, 14};
 #define TEMPERATURE_NUM 9
 
 // qcom, therm-reset-temp
-#define CPU_SHUTDOWN_THRESHOLD 100
+#define CPU_SHUTDOWN_THRESHOLD 115
 // qcom, limit-temp
 #define CPU_THROTTLING_THRESHOLD 55
 #define BATTERY_SHUTDOWN_THRESHOLD 60
