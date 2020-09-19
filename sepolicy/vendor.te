@@ -71,6 +71,21 @@ allow mmbn-daemon self:socket *;
 allow mmbn-daemon vfat:{ dir file } *;
 allowxperm mmbn-daemon self:socket ioctl msm_sock_ipc_ioctls;
 
+# QTI init
+allow init su_exec:file *;
+allow qti_init_shell file_contexts_file:file *;
+allow qti_init_shell fuse:{ dir file } *;
+allow qti_init_shell kernel:security *;
+allow qti_init_shell selinuxfs:file *;
+allow qti_init_shell sysfs_android_usb:file *;
+allow qti_init_shell sysfs_cpu_boost:file *;
+allow qti_init_shell sysfs_devices_system_cpu:file *;
+allow qti_init_shell sysfs_kgsl:file *;
+allow qti_init_shell sysfs_net:file *;
+allow qti_init_shell sysfs_rqstats:dir *;
+allow qti_init_shell sysfs:file *;
+allow qti_init_shell vfat:{ dir file } *;
+
 # Readmac
 type readmac, domain;
 type readmac_exec, exec_type, vendor_file_type, file_type;
