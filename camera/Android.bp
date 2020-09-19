@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2017 The LineageOS Project
+// Copyright (C) 2020 The LineageOS Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,23 +13,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-cc_binary {
-    defaults: ["hidl_defaults"],
-    init_rc: ["android.hardware.light@2.0-service.xiaomi_msm8994.rc"],
-    name: "android.hardware.light@2.0-service.xiaomi_msm8994",
+cc_library_shared {
+    header_libs: ["libnativebase_headers"],
+    include_dirs: [
+        "frameworks/native/include/media/openmax",
+        "system/media/camera/include",
+    ],
+    name: "camera.msm8992",
     proprietary: true,
     relative_install_path: "hw",
     shared_libs: [
-        "android.hardware.light@2.0",
+        "android.hardware.graphics.bufferqueue@1.0",
+        "android.hardware.graphics.bufferqueue@2.0",
+        "android.hidl.token@1.0-utils",
+        "libcamera_client",
+        "libcutils",
         "libhardware",
-        "libhidlbase",
-        "libhidltransport",
         "liblog",
-        "libhwbinder",
+        "libnativewindow",
+        "libsensor",
         "libutils",
     ],
-    srcs: [
-        "Light.cpp",
-        "service.cpp",
+    static_libs: [
+        "libarect",
+        "libbase",
     ],
+    srcs: ["CameraWrapper.cpp"],
 }

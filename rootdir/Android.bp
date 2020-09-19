@@ -1,0 +1,66 @@
+//
+// Copyright (C) 2020 The LineageOS Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+cc_prebuilt_binary {
+    name: "init.custom.post_boot.sh",
+    proprietary: true,
+    srcs: ["bin/init.custom.post_boot.sh"],
+}
+
+cc_prebuilt_binary {
+    name: "init.qcom.post_boot.sh",
+    proprietary: true,
+    srcs: ["bin/init.qcom.post_boot.sh"],
+}
+
+cc_prebuilt_binary {
+    name: "init.qcom.sh",
+    proprietary: true,
+    srcs: ["bin/init.qcom.sh"],
+}
+
+prebuilt_etc {
+    name: "fstab.qcom",
+    proprietary: true,
+    src: "etc/fstab.qcom",
+}
+
+prebuilt_etc {
+    name: "init.fpc.rc",
+    proprietary: true,
+    src: "etc/init.fpc.rc",
+    sub_dir: "init/hw",
+}
+
+prebuilt_etc {
+    name: "init.qcom.rc",
+    proprietary: true,
+    src: "etc/init.qcom.rc",
+    sub_dir: "init/hw",
+}
+
+prebuilt_etc {
+    name: "init.qcom.usb.rc",
+    proprietary: true,
+    src: "etc/init.qcom.usb.rc",
+    sub_dir: "init/hw",
+}
+
+prebuilt_etc {
+    name: "init.target.rc",
+    proprietary: true,
+    src: "etc/init.target.rc",
+    sub_dir: "init/hw",
+}

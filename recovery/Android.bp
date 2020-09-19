@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2019 The LineageOS Project
+// Copyright (C) 2020 The LineageOS Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 
 cc_library_static {
     include_dirs: [
-        "system/core/base/include",
-        "system/core/init",
+        "bootable/recovery",
+        "bootable/recovery/edify/include",
+        "bootable/recovery/otautil/include",
+        "bootable/recovery/updater/include",
     ],
-    name: "libinit_libra",
-    srcs: ["init_libra.cpp"],
+    name: "librecovery_updater_msm8994",
+    srcs: ["recovery_updater.cpp"],
 }

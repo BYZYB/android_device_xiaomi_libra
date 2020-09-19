@@ -18,8 +18,8 @@ cc_library_shared {
     proprietary: true,
     relative_install_path: "hw",
     shared_libs: [
-        "liblog",
         "libcutils",
+        "liblog",
     ],
     srcs: ["thermal.c"],
 }

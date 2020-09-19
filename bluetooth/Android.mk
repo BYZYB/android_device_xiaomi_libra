@@ -16,9 +16,9 @@
 LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE           := bdaddr_xiaomi
-LOCAL_MODULE_TAGS      := optional
-LOCAL_SRC_FILES        := bdaddr_xiaomi.c
+LOCAL_MODULE := bdaddr_xiaomi
+LOCAL_MODULE_TAGS := optional
 LOCAL_PROPRIETARY_MODULE := true
-LOCAL_SHARED_LIBRARIES := libc libcutils libutils liblog libqminvapi
+LOCAL_SHARED_LIBRARIES := libc libcutils liblog libutils libqminvapi
+LOCAL_SRC_FILES := bdaddr_xiaomi.c
 include $(BUILD_EXECUTABLE)

@@ -16,10 +16,9 @@
 LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_SHARED_LIBRARIES := libc libcutils libutils liblog
-LOCAL_SHARED_LIBRARIES += libqminvapi
-LOCAL_SRC_FILES += xiaomi_readmac.c
 LOCAL_MODULE := readmac
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROPRIETARY_MODULE := true
+LOCAL_SHARED_LIBRARIES := libc libcutils liblog libqminvapi libutils
+LOCAL_SRC_FILES := xiaomi_readmac.c
 include $(BUILD_EXECUTABLE)

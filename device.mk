@@ -230,7 +230,7 @@ PRODUCT_PACKAGES += \
     init.qcom.sh \
     init.qcom.usb.rc \
     init.target.rc \
-    ueventd.qcom.rc
+    ueventd.rc
 
 # Recovery
 PRODUCT_PACKAGES += librecovery_updater_msm8994
