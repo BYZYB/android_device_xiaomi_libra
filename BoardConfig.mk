@@ -211,7 +211,7 @@ BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 include device/qcom/sepolicy-legacy/sepolicy.mk
 
 # Shims
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/hw/camera.vendor.msm8992.so|libshim_camera.so:/system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so:/system/vendor/lib64/libizat_core.so|libshim_get_process_name.so:/system/vendor/lib64/libril-qc-qmi-1.so|libshim_rild_socket.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/hw/camera.vendor.msm8992.so|libshim_camera.so:/system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so:/system/vendor/lib64/libizat_core.so|libshim_get_process_name.so:/system/vendor/lib64/libril-qc-qmi-1.so|libshim_audioclient.so:/system/vendor/lib64/libril-qc-qmi-1.so|libshim_rild_socket.so
 
 # Time services
 BOARD_USES_QC_TIME_SERVICES := true

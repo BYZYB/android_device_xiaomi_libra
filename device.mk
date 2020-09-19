@@ -239,6 +239,7 @@ PRODUCT_PACKAGES += android.hardware.renderscript@1.0-impl
 # RIL
 PRODUCT_PACKAGES += \
     librmnetctl \
+    libshim_audioclient \
     libshim_rild_socket \
     libxml2
 
