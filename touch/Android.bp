@@ -14,16 +14,19 @@
 // limitations under the License.
 
 cc_binary {
-    name: "vendor.lineage.touch@1.0-service.libra",
     defaults: ["hidl_defaults"],
-    relative_install_path: "hw",
     init_rc: ["vendor.lineage.touch@1.0-service.libra.rc"],
-    srcs: ["service.cpp", "KeyDisabler.cpp"],
+    name: "vendor.lineage.touch@1.0-service.libra",
+    proprietary: true,
+    relative_install_path: "hw",
     shared_libs: [
         "libbase",
         "libhidlbase",
         "libutils",
         "vendor.lineage.touch@1.0",
     ],
-    vendor: true,
+    srcs: [
+        "KeyDisabler.cpp",
+        "service.cpp",
+    ],
 }

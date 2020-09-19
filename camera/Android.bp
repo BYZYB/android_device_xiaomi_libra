@@ -14,12 +14,29 @@
 // limitations under the License.
 
 cc_library_shared {
-    name: "android.hardware.thermal@1.0-libra",
+    header_libs: ["libnativebase_headers"],
+    include_dirs: [
+        "frameworks/native/include/media/openmax",
+        "system/media/camera/include",
+    ],
+    name: "camera.msm8992",
     proprietary: true,
     relative_install_path: "hw",
     shared_libs: [
+        "android.hardware.graphics.bufferqueue@1.0",
+        "android.hardware.graphics.bufferqueue@2.0",
+        "android.hidl.token@1.0-utils",
+        "libcamera_client",
         "libcutils",
+        "libhardware",
         "liblog",
+        "libnativewindow",
+        "libsensor",
+        "libutils",
     ],
-    srcs: ["thermal.c"],
+    static_libs: [
+        "libarect",
+        "libbase",
+    ],
+    srcs: ["CameraWrapper.cpp"],
 }
