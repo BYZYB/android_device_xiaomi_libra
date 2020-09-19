@@ -198,10 +198,6 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
-# Releasetools
-TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_msm8994
-TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
-
 # Ril
 FEATURE_QCRIL_UIM_SAP_SERVER_MODE := true
 TARGET_RIL_VARIANT := caf
@@ -224,12 +220,6 @@ TARGET_USE_SDCLANG := true
 
 # Time services
 BOARD_USES_QC_TIME_SERVICES := true
-
-# TWRP support
-ifeq ($(WITH_TWRP),true)
-include $(DEVICE_PATH)/twrp/twrp.mk
-RECOVERY_VARIANT := twrp
-endif
 
 # Wifi
 BOARD_HAS_QCOM_WLAN := true

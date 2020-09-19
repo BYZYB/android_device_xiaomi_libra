@@ -232,9 +232,6 @@ PRODUCT_PACKAGES += \
     init.target.rc \
     ueventd.rc
 
-# Recovery
-PRODUCT_PACKAGES += librecovery_updater_msm8994
-
 # RenderScript HAL
 PRODUCT_PACKAGES += android.hardware.renderscript@1.0-impl
 
