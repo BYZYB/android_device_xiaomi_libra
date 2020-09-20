@@ -31,14 +31,14 @@ LOCAL_VENDOR_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := libshims_get_process_name
+LOCAL_MODULE := libshim_get_process_name
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := get_process_name.c
 LOCAL_VENDOR_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := rild_socket
+LOCAL_MODULE := libshim_rild_socket
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := rild_socket.c
 LOCAL_VENDOR_MODULE := true

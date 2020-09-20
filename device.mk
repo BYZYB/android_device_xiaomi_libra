@@ -105,7 +105,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
     gps.msm8992 \
-    libshims_get_process_name
+    libshim_get_process_name
 
 # Graphics
 PRODUCT_PACKAGES += \
@@ -241,8 +241,8 @@ PRODUCT_PACKAGES += android.hardware.renderscript@1.0-impl
 # RIL
 PRODUCT_PACKAGES += \
     librmnetctl \
-    libxml2 \
-    rild_socket
+    libshim_rild_socket \
+    libxml2
 
 # Seccomp
 PRODUCT_COPY_FILES += $(LOCAL_PATH)/seccomp/mediacodec.policy:system/vendor/etc/seccomp_policy/mediacodec.policy
