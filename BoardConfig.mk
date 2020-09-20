@@ -211,7 +211,7 @@ BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 include device/qcom/sepolicy-legacy/sepolicy.mk
 
 # Shims
-TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libril-qc-qmi-1.so|rild_socket.so:/system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so:/system/vendor/lib64/libizat_core.so|libshims_get_process_name.so:/system/vendor/lib/hw/camera.vendor.msm8992.so|libshim_camera.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/hw/camera.vendor.msm8992.so|libshim_camera.so:/system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so:/system/vendor/lib64/libizat_core.so|libshim_get_process_name.so:/system/vendor/lib64/libril-qc-qmi-1.so|libshim_rild_socket.so
 
 # SDCLANG
 SDCLANG_LTO_DEFS := vendor/lineage/build/core/sdllvm-lto-defs.mk
