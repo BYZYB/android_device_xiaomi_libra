@@ -168,10 +168,3 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.hdmi.enable=true \
     vidc.debug.level=0 \
     vidc.enc.dcvs.extra-buff-count=2
-
-# Wireless display
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.debug.wfd.enable=1 \
-    persist.hwc.enable_vds=1 \
-    persist.sys.wfd.virtual=0 \
-    vendor.audio.tunnel.encode=false
