@@ -7,7 +7,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     audio.offload.pcm.24bit.enable=true \
     audio.offload.track.enable=false \
     audio.offload.video=true \
-    persist.audio.dirac.speaker=true \
     persist.audio.ssr.3mic=false \
     persist.vendor.audio.fluence.speaker=true \
     persist.vendor.audio.fluence.voicecall=true \
