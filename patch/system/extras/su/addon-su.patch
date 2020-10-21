@@ -1,7 +1,7 @@
 From 30fc437af394b722f5204b31f992063b24680988 Mon Sep 17 00:00:00 2001
 From: WJXXBSH <********@outlook.com>
 Date: Mon, 7 Sep 2020 11:13:13 +0800
-Subject: [PATCH] system_extras_su_AddonSU
+Subject: [PATCH] Add addon-su support
 
 Change-Id: I572ba7a0aca8ff8debc6630ee52394f4d37a471d
 ---

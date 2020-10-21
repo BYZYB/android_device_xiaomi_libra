@@ -1,23 +1,23 @@
-From 0101c8a8d9ff248d6b27c6bf8b35ad1e618c2f1d Mon Sep 17 00:00:00 2001
-From: WJXXBSH <zyb_1998@outlook.com>
-Date: Mon, 7 Sep 2020 11:33:37 +0800
-Subject: [PATCH] packages_apps_Settings_AddonSU
+From b99b6a811932d546f65aca09c882727d0d78dad7 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <********@outlook.com>
+Date: Sat, 31 Oct 2020 15:28:30 +0800
+Subject: [PATCH] Add addon-su and adb_root support
 
-Change-Id: I073c07de2f37f6f21fd08fed5a31717de721822e
+Change-Id: Ifda8cca51c3985feaccc2cf50fe9539ce09533a4
 ---
  res/values-zh-rCN/cm_strings.xml              |   3 +
  res/values/cm_strings.xml                     |   5 +
  res/values/lineage_arrays.xml                 |  29 +++++
  res/xml/development_settings.xml              |   5 +
- .../AdbRootPreferenceController.java          |   2 +-
+ .../AdbRootPreferenceController.java          |   4 +-
  .../DevelopmentSettingsDashboardFragment.java |   1 +
- .../RootAccessPreferenceController.java       | 111 ++++++++++++++++++
- 7 files changed, 155 insertions(+), 1 deletion(-)
+ .../RootAccessPreferenceController.java       | 119 ++++++++++++++++++
+ 7 files changed, 165 insertions(+), 1 deletion(-)
  create mode 100644 res/values/lineage_arrays.xml
  create mode 100644 src/com/android/settings/development/RootAccessPreferenceController.java
 
 diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
-index 48601ee426..c1cdfd4c31 100644
+index a841914..d8de425 100644
 --- a/res/values-zh-rCN/cm_strings.xml
 +++ b/res/values-zh-rCN/cm_strings.xml
 @@ -62,6 +62,9 @@
@@ -31,7 +31,7 @@ index 48601ee426..c1cdfd4c31 100644
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="device">在您设备的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="default">在您手机的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
 diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
-index ed43c74d0e..c2de11c0f8 100644
+index ed43c74..c2de11c 100644
 --- a/res/values/cm_strings.xml
 +++ b/res/values/cm_strings.xml
 @@ -144,6 +144,11 @@
@@ -48,7 +48,7 @@ index ed43c74d0e..c2de11c0f8 100644
      <string name="wake_when_plugged_or_unplugged_summary">Turn the screen on when connecting or disconnecting a power source</string>
 diff --git a/res/values/lineage_arrays.xml b/res/values/lineage_arrays.xml
 new file mode 100644
-index 0000000000..1442570e59
+index 0000000..1442570
 --- /dev/null
 +++ b/res/values/lineage_arrays.xml
 @@ -0,0 +1,29 @@
@@ -82,7 +82,7 @@ index 0000000000..1442570e59
 +    </string-array>
 +</resources>
 diff --git a/res/xml/development_settings.xml b/res/xml/development_settings.xml
-index 0262556d09..79323fb795 100644
+index 0262556..79323fb 100644
 --- a/res/xml/development_settings.xml
 +++ b/res/xml/development_settings.xml
 @@ -126,6 +126,11 @@
@@ -98,20 +98,36 @@ index 0262556d09..79323fb795 100644
      <SwitchPreference
          android:key="security_setting_trust_agents_extend_unlock"
 diff --git a/src/com/android/settings/development/AdbRootPreferenceController.java b/src/com/android/settings/development/AdbRootPreferenceController.java
-index 5f7d65da35..8cdc24ff8a 100644
+index 5f7d65d..a72770d 100644
 --- a/src/com/android/settings/development/AdbRootPreferenceController.java
 +++ b/src/com/android/settings/development/AdbRootPreferenceController.java
-@@ -53,7 +53,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
+@@ -20,6 +20,7 @@ import android.adb.ADBRootService;
+ import android.content.Context;
+ import android.os.Build;
+ import android.os.UserManager;
++import android.os.SystemProperties;
+
+ import androidx.preference.Preference;
+ import androidx.preference.PreferenceScreen;
+@@ -36,6 +37,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
+
+     private static final String TAG = "AdbRootPreferenceController";
+     private static final String PREF_KEY = "enable_adb_root";
++    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+
+     private final ADBRootService mADBRootService;
+
+@@ -53,7 +55,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
 
      @Override
      public boolean isAvailable() {
 -        return Build.IS_DEBUGGABLE;
-+        return true;
++        return Integer.parseInt(SystemProperties.get(ROOT_ACCESS_PROPERTY, "0")) > 0 ? true : Build.IS_DEBUGGABLE;
      }
 
      @Override
 diff --git a/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java b/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
-index f18225e8fb..ac5dd9b418 100644
+index f18225e..ac5dd9b 100644
 --- a/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
 +++ b/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
 @@ -515,6 +515,7 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
@@ -124,10 +140,10 @@ index f18225e8fb..ac5dd9b418 100644
          controllers.add(new DefaultLaunchPreferenceController(context, "quick_settings_tiles"));
 diff --git a/src/com/android/settings/development/RootAccessPreferenceController.java b/src/com/android/settings/development/RootAccessPreferenceController.java
 new file mode 100644
-index 0000000000..53ba434281
+index 0000000..9df2f32
 --- /dev/null
 +++ b/src/com/android/settings/development/RootAccessPreferenceController.java
-@@ -0,0 +1,111 @@
+@@ -0,0 +1,119 @@
 +/*
 + * Copyright (C) 2020 The LineageOS Project
 + *
@@ -167,6 +183,8 @@ index 0000000000..53ba434281
 +public class RootAccessPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
 +    private static final String TAG = "RootAccessPreferenceController";
 +    private static final String PREF_KEY = "root_access";
++    private static final String ADB_ROOT_PROPERTY = "service.adb.root";
++    private static final String RESTART_SERVICE_PROPERTY = "ctl.restart";
 +    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
 +
 +    private final DevelopmentSettingsDashboardFragment mFragment;
@@ -196,7 +214,7 @@ index 0000000000..53ba434281
 +        ((ListPreference) mPreference).setEntryValues(R.array.root_access_values);
 +        updatePreference();
 +
-+        if (!isAdminUser()) {
++        if (!((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser()) {
 +            mPreference.setEnabled(false);
 +        }
 +    }
@@ -209,7 +227,7 @@ index 0000000000..53ba434281
 +
 +    @Override
 +    protected void onDeveloperOptionsSwitchEnabled() {
-+        if (isAdminUser()) {
++        if (((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser()) {
 +            mPreference.setEnabled(true);
 +        }
 +    }
@@ -225,6 +243,17 @@ index 0000000000..53ba434281
 +    private void writeRootAccessOptions(Object newValue) {
 +        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
 +        SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
++
++        if (!oldValue.equals(newValue)) {
++            if (Integer.valueOf(newValue.toString()) < 1) {
++                SystemProperties.set(ADB_ROOT_PROPERTY, "0");
++                SystemProperties.set(RESTART_SERVICE_PROPERTY, "adbd");
++            } else {
++                SystemProperties.set(ADB_ROOT_PROPERTY, "1");
++                SystemProperties.set(RESTART_SERVICE_PROPERTY, "adbd");
++            }
++        }
++
 +        updatePreference();
 +    }
 +
@@ -232,11 +261,6 @@ index 0000000000..53ba434281
 +        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
 +        ((ListPreference) mPreference).setValue(value);
 +        ((ListPreference) mPreference).setSummary(mContext.getResources().getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
-+    }
-+
-+    @VisibleForTesting
-+    boolean isAdminUser() {
-+        return ((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser();
 +    }
 +}
 --

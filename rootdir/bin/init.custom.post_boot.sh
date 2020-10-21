@@ -46,6 +46,12 @@ rm -rf /data/media/0/Pictures/.thumbnails/*
 rm -rf /data/user_de/*/*/cache/*
 rm -rf /data/user_de/*/*/code_cache/*
 
+# Enable ADB root if root access is enabled
+if [ $(getprop persist.sys.root_access) -gt 0 ]; then
+    setprop service.adb.root 1
+    setprop ctl.restart adbd
+fi
+
 # Enable SELinux when root access is disabled
 if [ $(getprop persist.sys.root_access) -le 0 ]; then
     setenforce 1

@@ -1,0 +1,73 @@
+From 57d413216670646b124669f50fee8aad586610db Mon Sep 17 00:00:00 2001
+From: WJXXBSH <********@outlook.com>
+Date: Wed, 21 Oct 2020 21:33:13 +0800
+Subject: [PATCH] Add addon-su and adb_root support
+
+Change-Id: I3de98083c0f282d4236aa4f47ae3358509feeab7
+---
+ adb/daemon/main.cpp          |  3 ++-
+ adb/root/adb_root.rc         | 12 ++++++++++++
+ adb/root/adbroot_service.cpp |  7 +++++--
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
+index 8521b5f..828a5cb 100644
+--- a/adb/daemon/main.cpp
++++ b/adb/daemon/main.cpp
+@@ -69,6 +69,7 @@ static bool should_drop_privileges() {
+     //
+     // ro.secure:
+     //   Drop privileges by default. Set to 1 on userdebug and user builds.
++    bool persist_sys_root_access = android::base::GetBoolProperty("persist.sys.root_access", false);
+     bool ro_secure = android::base::GetBoolProperty("ro.secure", true);
+     bool ro_debuggable = __android_log_is_debuggable();
+
+@@ -79,7 +80,7 @@ static bool should_drop_privileges() {
+     std::string prop = android::base::GetProperty("service.adb.root", "");
+     bool adb_root = (prop == "1");
+     bool adb_unroot = (prop == "0");
+-    if (ro_debuggable && adb_root) {
++    if (ro_debuggable || (adb_root && persist_sys_root_access)) {
+         drop = false;
+     }
+     // ... and "adb unroot" lets you explicitly drop privileges.
+diff --git a/adb/root/adb_root.rc b/adb/root/adb_root.rc
+index bd08c23..4f928e7 100644
+--- a/adb/root/adb_root.rc
++++ b/adb/root/adb_root.rc
+@@ -5,3 +5,15 @@ service adb_root /system/bin/adb_root
+
+ on post-fs-data
+     mkdir /data/adbroot 0700 root root
++
++# Root access is disabled
++on property:persist.sys.root_access=0
++    write /data/adbroot/enabled 0
++    setprop service.adb.root 0
++    setprop ctl.restart adbd
++
++# Root access is Apps and ADB
++on property:persist.sys.root_access=1
++    write /data/adbroot/enabled 1
++    setprop service.adb.root 1
++    setprop ctl.restart adbd
+diff --git a/adb/root/adbroot_service.cpp b/adb/root/adbroot_service.cpp
+index b0c7ece..37a4987 100644
+--- a/adb/root/adbroot_service.cpp
++++ b/adb/root/adbroot_service.cpp
+@@ -66,8 +66,11 @@ binder::Status ADBRootService::setEnabled(bool enabled) {
+         enabled_ = enabled;
+         WriteStringToFile(std::to_string(enabled), kStoragePath + kEnabled);
+
+-        // Turning off adb root, restart adbd.
+-        if (!enabled) {
++        // Turning on/off adb root, restart adbd.
++        if (enabled) {
++            base::SetProperty("service.adb.root", "1");
++            base::SetProperty("ctl.restart", "adbd");
++        } else {
+             base::SetProperty("service.adb.root", "0");
+             base::SetProperty("ctl.restart", "adbd");
+         }
+--
+2.27.0

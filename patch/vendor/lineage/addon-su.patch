@@ -1,7 +1,7 @@
 From 1c5dc6c06d754ad7bd6b30b19a6c6297a2dee2c6 Mon Sep 17 00:00:00 2001
 From: WJXXBSH <********@outlook.com>
 Date: Mon, 7 Sep 2020 11:18:24 +0800
-Subject: [PATCH] vendor_lineage_AddonSU
+Subject: [PATCH] Add addon-su support
 
 Change-Id: Idf42a3836d71fe4af8cce673455e6fda25124690
 ---
