@@ -216,6 +216,9 @@ TARGET_LD_SHIM_LIBS += /system/vendor/lib/hw/camera.vendor.msm8992.so|libshim_ca
 # Time services
 BOARD_USES_QC_TIME_SERVICES := true
 
+# Vintf
+PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
+
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
 BOARD_HAS_QCOM_WLAN_SDK := true
