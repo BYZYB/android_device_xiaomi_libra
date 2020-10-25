@@ -221,7 +221,7 @@ DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.consumerir.xml:system/vendor/etc/permissions/android.hardware.consumerir.xml
 
 # Power
-PRODUCT_PACKAGES += android.hardware.power@1.2-service-qti
+PRODUCT_PACKAGES += android.hardware.power-service-qti
 
 # Ramdisk
 PRODUCT_PACKAGES += \
