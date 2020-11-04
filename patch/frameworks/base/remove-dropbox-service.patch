@@ -1,0 +1,1846 @@
+From ec639862e297fbc3ff6301910078298aac4510fd Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Thu, 5 Nov 2020 00:00:47 +0800
+Subject: [PATCH] Remove DropBoxManagerService from framework
+
+Change-Id: Iccdfcab0ea8bae531999ad7aaf8fd39ab2507625
+---
+ .../android/app/SystemServiceRegistry.java    |   11 -
+ .../com/android/server/BatteryService.java    |    7 -
+ .../android/server/DropBoxManagerService.java | 1110 -----------------
+ .../android/server/StorageManagerService.java |    8 -
+ .../java/com/android/server/Watchdog.java     |   20 -
+ .../server/am/ActivityManagerService.java     |  261 ----
+ .../com/android/server/am/ProcessRecord.java  |    2 -
+ .../server/net/NetworkStatsRecorder.java      |   17 +-
+ .../server/net/NetworkStatsService.java       |   39 +-
+ .../watchlist/WatchlistLoggingHandler.java    |   31 -
+ .../java/com/android/server/SystemServer.java |    7 -
+ 11 files changed, 4 insertions(+), 1509 deletions(-)
+ delete mode 100644 services/core/java/com/android/server/DropBoxManagerService.java
+
+diff --git a/core/java/android/app/SystemServiceRegistry.java b/core/java/android/app/SystemServiceRegistry.java
+index d1090a34..66e976c2 100644
+--- a/core/java/android/app/SystemServiceRegistry.java
++++ b/core/java/android/app/SystemServiceRegistry.java
+@@ -131,7 +131,6 @@ import android.os.BatteryStats;
+ import android.os.BugreportManager;
+ import android.os.Build;
+ import android.os.DeviceIdleManager;
+-import android.os.DropBoxManager;
+ import android.os.HardwarePropertiesManager;
+ import android.os.IBatteryPropertiesRegistrar;
+ import android.os.IBinder;
+@@ -194,7 +193,6 @@ import com.android.internal.app.IBatteryStats;
+ import com.android.internal.app.ISoundTriggerService;
+ import com.android.internal.appwidget.IAppWidgetService;
+ import com.android.internal.net.INetworkWatchlistManager;
+-import com.android.internal.os.IDropBoxManagerService;
+ import com.android.internal.policy.PhoneLayoutInflater;
+
+ import java.util.Map;
+@@ -412,15 +410,6 @@ final class SystemServiceRegistry {
+                 return new NfcManager(ctx);
+             }});
+
+-        registerService(Context.DROPBOX_SERVICE, DropBoxManager.class,
+-                new CachedServiceFetcher<DropBoxManager>() {
+-            @Override
+-            public DropBoxManager createService(ContextImpl ctx) throws ServiceNotFoundException {
+-                IBinder b = ServiceManager.getServiceOrThrow(Context.DROPBOX_SERVICE);
+-                IDropBoxManagerService service = IDropBoxManagerService.Stub.asInterface(b);
+-                return new DropBoxManager(ctx, service);
+-            }});
+-
+         registerService(Context.INPUT_SERVICE, InputManager.class,
+                 new StaticServiceFetcher<InputManager>() {
+             @Override
+diff --git a/services/core/java/com/android/server/BatteryService.java b/services/core/java/com/android/server/BatteryService.java
+index d041476a..acb98e9c 100644
+--- a/services/core/java/com/android/server/BatteryService.java
++++ b/services/core/java/com/android/server/BatteryService.java
+@@ -37,7 +37,6 @@ import android.os.BatteryProperty;
+ import android.os.BatteryStats;
+ import android.os.Binder;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.FileUtils;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+@@ -775,9 +774,6 @@ public final class BatteryService extends SystemService {
+         IBinder batteryInfoService = ServiceManager.getService(BatteryStats.SERVICE_NAME);
+         if (batteryInfoService == null) return;
+
+-        DropBoxManager db = (DropBoxManager) mContext.getSystemService(Context.DROPBOX_SERVICE);
+-        if (db == null || !db.isTagEnabled("BATTERY_DISCHARGE_INFO")) return;
+-
+         File dumpFile = null;
+         FileOutputStream dumpStream = null;
+         try {
+@@ -786,9 +782,6 @@ public final class BatteryService extends SystemService {
+             dumpStream = new FileOutputStream(dumpFile);
+             batteryInfoService.dump(dumpStream.getFD(), DUMPSYS_ARGS);
+             FileUtils.sync(dumpStream);
+-
+-            // add dump file to drop box
+-            db.addFile("BATTERY_DISCHARGE_INFO", dumpFile, DropBoxManager.IS_TEXT);
+         } catch (RemoteException e) {
+             Slog.e(TAG, "failed to dump battery service", e);
+         } catch (IOException e) {
+diff --git a/services/core/java/com/android/server/DropBoxManagerService.java b/services/core/java/com/android/server/DropBoxManagerService.java
+deleted file mode 100644
+index 33b846f7..00000000
+--- a/services/core/java/com/android/server/DropBoxManagerService.java
++++ /dev/null
+@@ -1,1110 +0,0 @@
+-/*
+- * Copyright (C) 2009 The Android Open Source Project
+- *
+- * Licensed under the Apache License, Version 2.0 (the "License");
+- * you may not use this file except in compliance with the License.
+- * You may obtain a copy of the License at
+- *
+- *      http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the License is distributed on an "AS IS" BASIS,
+- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- * See the License for the specific language governing permissions and
+- * limitations under the License.
+- */
+-
+-package com.android.server;
+-
+-import android.app.ActivityManager;
+-import android.app.AppOpsManager;
+-import android.content.BroadcastReceiver;
+-import android.content.ContentResolver;
+-import android.content.Context;
+-import android.content.Intent;
+-import android.content.IntentFilter;
+-import android.content.res.Resources;
+-import android.database.ContentObserver;
+-import android.net.Uri;
+-import android.os.Binder;
+-import android.os.Debug;
+-import android.os.DropBoxManager;
+-import android.os.FileUtils;
+-import android.os.Handler;
+-import android.os.Looper;
+-import android.os.Message;
+-import android.os.ResultReceiver;
+-import android.os.ShellCallback;
+-import android.os.ShellCommand;
+-import android.os.StatFs;
+-import android.os.SystemClock;
+-import android.os.UserHandle;
+-import android.provider.Settings;
+-import android.text.TextUtils;
+-import android.text.format.Time;
+-import android.util.ArrayMap;
+-import android.util.ArraySet;
+-import android.util.Slog;
+-
+-import com.android.internal.R;
+-import com.android.internal.annotations.GuardedBy;
+-import com.android.internal.annotations.VisibleForTesting;
+-import com.android.internal.os.IDropBoxManagerService;
+-import com.android.internal.util.DumpUtils;
+-import com.android.internal.util.ObjectUtils;
+-
+-import libcore.io.IoUtils;
+-
+-import java.io.BufferedOutputStream;
+-import java.io.File;
+-import java.io.FileDescriptor;
+-import java.io.FileOutputStream;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.io.InputStreamReader;
+-import java.io.OutputStream;
+-import java.io.PrintWriter;
+-import java.util.ArrayList;
+-import java.util.SortedSet;
+-import java.util.TreeSet;
+-import java.util.zip.GZIPOutputStream;
+-
+-/**
+- * Implementation of {@link IDropBoxManagerService} using the filesystem.
+- * Clients use {@link DropBoxManager} to access this service.
+- */
+-public final class DropBoxManagerService extends SystemService {
+-    private static final String TAG = "DropBoxManagerService";
+-    private static final int DEFAULT_AGE_SECONDS = 3 * 86400;
+-    private static final int DEFAULT_MAX_FILES = 1000;
+-    private static final int DEFAULT_MAX_FILES_LOWRAM = 300;
+-    private static final int DEFAULT_QUOTA_KB = 5 * 1024;
+-    private static final int DEFAULT_QUOTA_PERCENT = 10;
+-    private static final int DEFAULT_RESERVE_PERCENT = 10;
+-    private static final int QUOTA_RESCAN_MILLIS = 5000;
+-
+-    private static final boolean PROFILE_DUMP = false;
+-
+-    // TODO: This implementation currently uses one file per entry, which is
+-    // inefficient for smallish entries -- consider using a single queue file
+-    // per tag (or even globally) instead.
+-
+-    // The cached context and derived objects
+-
+-    private final ContentResolver mContentResolver;
+-    private final File mDropBoxDir;
+-
+-    // Accounting of all currently written log files (set in init()).
+-
+-    private FileList mAllFiles = null;
+-    private ArrayMap<String, FileList> mFilesByTag = null;
+-
+-    private long mLowPriorityRateLimitPeriod = 0;
+-    private ArraySet<String> mLowPriorityTags = null;
+-
+-    // Various bits of disk information
+-
+-    private StatFs mStatFs = null;
+-    private int mBlockSize = 0;
+-    private int mCachedQuotaBlocks = 0;  // Space we can use: computed from free space, etc.
+-    private long mCachedQuotaUptimeMillis = 0;
+-
+-    private volatile boolean mBooted = false;
+-
+-    // Provide a way to perform sendBroadcast asynchronously to avoid deadlocks.
+-    private final DropBoxManagerBroadcastHandler mHandler;
+-
+-    private int mMaxFiles = -1; // -1 means uninitialized.
+-
+-    /** Receives events that might indicate a need to clean up files. */
+-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+-        @Override
+-        public void onReceive(Context context, Intent intent) {
+-            // For ACTION_DEVICE_STORAGE_LOW:
+-            mCachedQuotaUptimeMillis = 0;  // Force a re-check of quota size
+-
+-            // Run the initialization in the background (not this main thread).
+-            // The init() and trimToFit() methods are synchronized, so they still
+-            // block other users -- but at least the onReceive() call can finish.
+-            new Thread() {
+-                public void run() {
+-                    try {
+-                        init();
+-                        trimToFit();
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Can't init", e);
+-                    }
+-                }
+-            }.start();
+-        }
+-    };
+-
+-    private final IDropBoxManagerService.Stub mStub = new IDropBoxManagerService.Stub() {
+-        @Override
+-        public void add(DropBoxManager.Entry entry) {
+-            DropBoxManagerService.this.add(entry);
+-        }
+-
+-        @Override
+-        public boolean isTagEnabled(String tag) {
+-            return DropBoxManagerService.this.isTagEnabled(tag);
+-        }
+-
+-        @Override
+-        public DropBoxManager.Entry getNextEntry(String tag, long millis, String callingPackage) {
+-            return DropBoxManagerService.this.getNextEntry(tag, millis, callingPackage);
+-        }
+-
+-        @Override
+-        public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
+-            DropBoxManagerService.this.dump(fd, pw, args);
+-        }
+-
+-        @Override
+-        public void onShellCommand(FileDescriptor in, FileDescriptor out,
+-                                   FileDescriptor err, String[] args, ShellCallback callback,
+-                                   ResultReceiver resultReceiver) {
+-            (new ShellCmd()).exec(this, in, out, err, args, callback, resultReceiver);
+-        }
+-    };
+-
+-    private class ShellCmd extends ShellCommand {
+-        @Override
+-        public int onCommand(String cmd) {
+-            if (cmd == null) {
+-                return handleDefaultCommands(cmd);
+-            }
+-            final PrintWriter pw = getOutPrintWriter();
+-            try {
+-                switch (cmd) {
+-                    case "set-rate-limit":
+-                        final long period = Long.parseLong(getNextArgRequired());
+-                        DropBoxManagerService.this.setLowPriorityRateLimit(period);
+-                        break;
+-                    case "add-low-priority":
+-                        final String addedTag = getNextArgRequired();
+-                        DropBoxManagerService.this.addLowPriorityTag(addedTag);
+-                        break;
+-                    case "remove-low-priority":
+-                        final String removeTag = getNextArgRequired();
+-                        DropBoxManagerService.this.removeLowPriorityTag(removeTag);
+-                        break;
+-                    case "restore-defaults":
+-                        DropBoxManagerService.this.restoreDefaults();
+-                        break;
+-                    default:
+-                        return handleDefaultCommands(cmd);
+-                }
+-            } catch (Exception e) {
+-                pw.println(e);
+-            }
+-            return 0;
+-        }
+-
+-        @Override
+-        public void onHelp() {
+-            PrintWriter pw = getOutPrintWriter();
+-            pw.println("Dropbox manager service commands:");
+-            pw.println("  help");
+-            pw.println("    Print this help text.");
+-            pw.println("  set-rate-limit PERIOD");
+-            pw.println("    Sets low priority broadcast rate limit period to PERIOD ms");
+-            pw.println("  add-low-priority TAG");
+-            pw.println("    Add TAG to dropbox low priority list");
+-            pw.println("  remove-low-priority TAG");
+-            pw.println("    Remove TAG from dropbox low priority list");
+-            pw.println("  restore-defaults");
+-            pw.println("    restore dropbox settings to defaults");
+-        }
+-    }
+-
+-    private class DropBoxManagerBroadcastHandler extends Handler {
+-        private final Object mLock = new Object();
+-
+-        static final int MSG_SEND_BROADCAST = 1;
+-        static final int MSG_SEND_DEFERRED_BROADCAST = 2;
+-
+-        @GuardedBy("mLock")
+-        private final ArrayMap<String, Intent> mDeferredMap = new ArrayMap();
+-
+-        DropBoxManagerBroadcastHandler(Looper looper) {
+-            super(looper);
+-        }
+-
+-        @Override
+-        public void handleMessage(Message msg) {
+-            switch (msg.what) {
+-                case MSG_SEND_BROADCAST:
+-                    prepareAndSendBroadcast((Intent) msg.obj);
+-                    break;
+-                case MSG_SEND_DEFERRED_BROADCAST:
+-                    Intent deferredIntent;
+-                    synchronized (mLock) {
+-                        deferredIntent = mDeferredMap.remove((String) msg.obj);
+-                    }
+-                    if (deferredIntent != null) {
+-                        prepareAndSendBroadcast(deferredIntent);
+-                    }
+-                    break;
+-            }
+-        }
+-
+-        private void prepareAndSendBroadcast(Intent intent) {
+-            if (!DropBoxManagerService.this.mBooted) {
+-                intent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
+-            }
+-            getContext().sendBroadcastAsUser(intent, UserHandle.SYSTEM,
+-                    android.Manifest.permission.READ_LOGS);
+-        }
+-
+-        private Intent createIntent(String tag, long time) {
+-            final Intent dropboxIntent = new Intent(DropBoxManager.ACTION_DROPBOX_ENTRY_ADDED);
+-            dropboxIntent.putExtra(DropBoxManager.EXTRA_TAG, tag);
+-            dropboxIntent.putExtra(DropBoxManager.EXTRA_TIME, time);
+-            return dropboxIntent;
+-        }
+-
+-        /**
+-         * Schedule a dropbox broadcast to be sent asynchronously.
+-         */
+-        public void sendBroadcast(String tag, long time) {
+-            sendMessage(obtainMessage(MSG_SEND_BROADCAST, createIntent(tag, time)));
+-        }
+-
+-        /**
+-         * Possibly schedule a delayed dropbox broadcast. The broadcast will only be scheduled if
+-         * no broadcast is currently scheduled. Otherwise updated the scheduled broadcast with the
+-         * new intent information, effectively dropping the previous broadcast.
+-         */
+-        public void maybeDeferBroadcast(String tag, long time) {
+-            synchronized (mLock) {
+-                final Intent intent = mDeferredMap.get(tag);
+-                if (intent == null) {
+-                    // Schedule new delayed broadcast.
+-                    mDeferredMap.put(tag, createIntent(tag, time));
+-                    sendMessageDelayed(obtainMessage(MSG_SEND_DEFERRED_BROADCAST, tag),
+-                            mLowPriorityRateLimitPeriod);
+-                } else {
+-                    // Broadcast is already scheduled. Update intent with new data.
+-                    intent.putExtra(DropBoxManager.EXTRA_TIME, time);
+-                    final int dropped = intent.getIntExtra(DropBoxManager.EXTRA_DROPPED_COUNT, 0);
+-                    intent.putExtra(DropBoxManager.EXTRA_DROPPED_COUNT, dropped + 1);
+-                    return;
+-                }
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Creates an instance of managed drop box storage using the default dropbox
+-     * directory.
+-     *
+-     * @param context to use for receiving free space & gservices intents
+-     */
+-    public DropBoxManagerService(final Context context) {
+-        this(context, new File("/data/system/dropbox"), FgThread.get().getLooper());
+-    }
+-
+-    /**
+-     * Creates an instance of managed drop box storage.  Normally there is one of these
+-     * run by the system, but others can be created for testing and other purposes.
+-     *
+-     * @param context to use for receiving free space & gservices intents
+-     * @param path to store drop box entries in
+-     */
+-    @VisibleForTesting
+-    public DropBoxManagerService(final Context context, File path, Looper looper) {
+-        super(context);
+-        mDropBoxDir = path;
+-        mContentResolver = getContext().getContentResolver();
+-        mHandler = new DropBoxManagerBroadcastHandler(looper);
+-    }
+-
+-    @Override
+-    public void onStart() {
+-        publishBinderService(Context.DROPBOX_SERVICE, mStub);
+-
+-        // The real work gets done lazily in init() -- that way service creation always
+-        // succeeds, and things like disk problems cause individual method failures.
+-    }
+-
+-    @Override
+-    public void onBootPhase(int phase) {
+-        switch (phase) {
+-            case PHASE_SYSTEM_SERVICES_READY:
+-                IntentFilter filter = new IntentFilter();
+-                filter.addAction(Intent.ACTION_DEVICE_STORAGE_LOW);
+-                getContext().registerReceiver(mReceiver, filter);
+-
+-                mContentResolver.registerContentObserver(
+-                    Settings.Global.CONTENT_URI, true,
+-                    new ContentObserver(new Handler()) {
+-                        @Override
+-                        public void onChange(boolean selfChange) {
+-                            mReceiver.onReceive(getContext(), (Intent) null);
+-                        }
+-                    });
+-
+-                getLowPriorityResourceConfigs();
+-                break;
+-
+-            case PHASE_BOOT_COMPLETED:
+-                mBooted = true;
+-                break;
+-        }
+-    }
+-
+-    /** Retrieves the binder stub -- for test instances */
+-    public IDropBoxManagerService getServiceStub() {
+-        return mStub;
+-    }
+-
+-    public void add(DropBoxManager.Entry entry) {
+-        File temp = null;
+-        InputStream input = null;
+-        OutputStream output = null;
+-        final String tag = entry.getTag();
+-        try {
+-            int flags = entry.getFlags();
+-            Slog.i(TAG, "add tag=" + tag + " isTagEnabled=" + isTagEnabled(tag)
+-                    + " flags=0x" + Integer.toHexString(flags));
+-            if ((flags & DropBoxManager.IS_EMPTY) != 0) throw new IllegalArgumentException();
+-
+-            init();
+-            if (!isTagEnabled(tag)) return;
+-            long max = trimToFit();
+-            long lastTrim = System.currentTimeMillis();
+-
+-            byte[] buffer = new byte[mBlockSize];
+-            input = entry.getInputStream();
+-
+-            // First, accumulate up to one block worth of data in memory before
+-            // deciding whether to compress the data or not.
+-
+-            int read = 0;
+-            while (read < buffer.length) {
+-                int n = input.read(buffer, read, buffer.length - read);
+-                if (n <= 0) break;
+-                read += n;
+-            }
+-
+-            // If we have at least one block, compress it -- otherwise, just write
+-            // the data in uncompressed form.
+-
+-            temp = new File(mDropBoxDir, "drop" + Thread.currentThread().getId() + ".tmp");
+-            int bufferSize = mBlockSize;
+-            if (bufferSize > 4096) bufferSize = 4096;
+-            if (bufferSize < 512) bufferSize = 512;
+-            FileOutputStream foutput = new FileOutputStream(temp);
+-            output = new BufferedOutputStream(foutput, bufferSize);
+-            if (read == buffer.length && ((flags & DropBoxManager.IS_GZIPPED) == 0)) {
+-                output = new GZIPOutputStream(output);
+-                flags = flags | DropBoxManager.IS_GZIPPED;
+-            }
+-
+-            do {
+-                output.write(buffer, 0, read);
+-
+-                long now = System.currentTimeMillis();
+-                if (now - lastTrim > 30 * 1000) {
+-                    max = trimToFit();  // In case data dribbles in slowly
+-                    lastTrim = now;
+-                }
+-
+-                read = input.read(buffer);
+-                if (read <= 0) {
+-                    FileUtils.sync(foutput);
+-                    output.close();  // Get a final size measurement
+-                    output = null;
+-                } else {
+-                    output.flush();  // So the size measurement is pseudo-reasonable
+-                }
+-
+-                long len = temp.length();
+-                if (len > max) {
+-                    Slog.w(TAG, "Dropping: " + tag + " (" + temp.length() + " > "
+-                            + max + " bytes)");
+-                    temp.delete();
+-                    temp = null;  // Pass temp = null to createEntry() to leave a tombstone
+-                    break;
+-                }
+-            } while (read > 0);
+-
+-            long time = createEntry(temp, tag, flags);
+-            temp = null;
+-
+-            // Call sendBroadcast after returning from this call to avoid deadlock. In particular
+-            // the caller may be holding the WindowManagerService lock but sendBroadcast requires a
+-            // lock in ActivityManagerService. ActivityManagerService has been caught holding that
+-            // very lock while waiting for the WindowManagerService lock.
+-            if (mLowPriorityTags != null && mLowPriorityTags.contains(tag)) {
+-                // Rate limit low priority Dropbox entries
+-                mHandler.maybeDeferBroadcast(tag, time);
+-            } else {
+-                mHandler.sendBroadcast(tag, time);
+-            }
+-        } catch (IOException e) {
+-            Slog.e(TAG, "Can't write: " + tag, e);
+-        } finally {
+-            IoUtils.closeQuietly(output);
+-            IoUtils.closeQuietly(input);
+-            entry.close();
+-            if (temp != null) temp.delete();
+-        }
+-    }
+-
+-    public boolean isTagEnabled(String tag) {
+-        final long token = Binder.clearCallingIdentity();
+-        try {
+-            return !"disabled".equals(Settings.Global.getString(
+-                    mContentResolver, Settings.Global.DROPBOX_TAG_PREFIX + tag));
+-        } finally {
+-            Binder.restoreCallingIdentity(token);
+-        }
+-    }
+-
+-    private boolean checkPermission(int callingUid, String callingPackage) {
+-        // Callers always need this permission
+-        getContext().enforceCallingOrSelfPermission(
+-                android.Manifest.permission.READ_LOGS, TAG);
+-
+-        // Callers also need the ability to read usage statistics
+-        switch (getContext().getSystemService(AppOpsManager.class)
+-                .noteOp(AppOpsManager.OP_GET_USAGE_STATS, callingUid, callingPackage)) {
+-            case AppOpsManager.MODE_ALLOWED:
+-                return true;
+-            case AppOpsManager.MODE_DEFAULT:
+-                getContext().enforceCallingOrSelfPermission(
+-                        android.Manifest.permission.PACKAGE_USAGE_STATS, TAG);
+-                return true;
+-            default:
+-                return false;
+-        }
+-    }
+-
+-    public synchronized DropBoxManager.Entry getNextEntry(String tag, long millis,
+-            String callingPackage) {
+-        if (!checkPermission(Binder.getCallingUid(), callingPackage)) {
+-            return null;
+-        }
+-
+-        try {
+-            init();
+-        } catch (IOException e) {
+-            Slog.e(TAG, "Can't init", e);
+-            return null;
+-        }
+-
+-        FileList list = tag == null ? mAllFiles : mFilesByTag.get(tag);
+-        if (list == null) return null;
+-
+-        for (EntryFile entry : list.contents.tailSet(new EntryFile(millis + 1))) {
+-            if (entry.tag == null) continue;
+-            if ((entry.flags & DropBoxManager.IS_EMPTY) != 0) {
+-                return new DropBoxManager.Entry(entry.tag, entry.timestampMillis);
+-            }
+-            final File file = entry.getFile(mDropBoxDir);
+-            try {
+-                return new DropBoxManager.Entry(
+-                        entry.tag, entry.timestampMillis, file, entry.flags);
+-            } catch (IOException e) {
+-                Slog.wtf(TAG, "Can't read: " + file, e);
+-                // Continue to next file
+-            }
+-        }
+-
+-        return null;
+-    }
+-
+-    private synchronized void setLowPriorityRateLimit(long period) {
+-        mLowPriorityRateLimitPeriod = period;
+-    }
+-
+-    private synchronized void addLowPriorityTag(String tag) {
+-        mLowPriorityTags.add(tag);
+-    }
+-
+-    private synchronized void removeLowPriorityTag(String tag) {
+-        mLowPriorityTags.remove(tag);
+-    }
+-
+-    private synchronized void restoreDefaults() {
+-        getLowPriorityResourceConfigs();
+-    }
+-
+-    public synchronized void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
+-        if (!DumpUtils.checkDumpAndUsageStatsPermission(getContext(), TAG, pw)) return;
+-
+-        try {
+-            init();
+-        } catch (IOException e) {
+-            pw.println("Can't initialize: " + e);
+-            Slog.e(TAG, "Can't init", e);
+-            return;
+-        }
+-
+-        if (PROFILE_DUMP) Debug.startMethodTracing("/data/trace/dropbox.dump");
+-
+-        StringBuilder out = new StringBuilder();
+-        boolean doPrint = false, doFile = false;
+-        ArrayList<String> searchArgs = new ArrayList<String>();
+-        for (int i = 0; args != null && i < args.length; i++) {
+-            if (args[i].equals("-p") || args[i].equals("--print")) {
+-                doPrint = true;
+-            } else if (args[i].equals("-f") || args[i].equals("--file")) {
+-                doFile = true;
+-            } else if (args[i].equals("-h") || args[i].equals("--help")) {
+-                pw.println("Dropbox (dropbox) dump options:");
+-                pw.println("  [-h|--help] [-p|--print] [-f|--file] [timestamp]");
+-                pw.println("    -h|--help: print this help");
+-                pw.println("    -p|--print: print full contents of each entry");
+-                pw.println("    -f|--file: print path of each entry's file");
+-                pw.println("  [timestamp] optionally filters to only those entries.");
+-                return;
+-            } else if (args[i].startsWith("-")) {
+-                out.append("Unknown argument: ").append(args[i]).append("\n");
+-            } else {
+-                searchArgs.add(args[i]);
+-            }
+-        }
+-
+-        out.append("Drop box contents: ").append(mAllFiles.contents.size()).append(" entries\n");
+-        out.append("Max entries: ").append(mMaxFiles).append("\n");
+-
+-        out.append("Low priority rate limit period: ");
+-        out.append(mLowPriorityRateLimitPeriod).append(" ms\n");
+-        out.append("Low priority tags: ").append(mLowPriorityTags).append("\n");
+-
+-        if (!searchArgs.isEmpty()) {
+-            out.append("Searching for:");
+-            for (String a : searchArgs) out.append(" ").append(a);
+-            out.append("\n");
+-        }
+-
+-        int numFound = 0, numArgs = searchArgs.size();
+-        Time time = new Time();
+-        out.append("\n");
+-        for (EntryFile entry : mAllFiles.contents) {
+-            time.set(entry.timestampMillis);
+-            String date = time.format("%Y-%m-%d %H:%M:%S");
+-            boolean match = true;
+-            for (int i = 0; i < numArgs && match; i++) {
+-                String arg = searchArgs.get(i);
+-                match = (date.contains(arg) || arg.equals(entry.tag));
+-            }
+-            if (!match) continue;
+-
+-            numFound++;
+-            if (doPrint) out.append("========================================\n");
+-            out.append(date).append(" ").append(entry.tag == null ? "(no tag)" : entry.tag);
+-
+-            final File file = entry.getFile(mDropBoxDir);
+-            if (file == null) {
+-                out.append(" (no file)\n");
+-                continue;
+-            } else if ((entry.flags & DropBoxManager.IS_EMPTY) != 0) {
+-                out.append(" (contents lost)\n");
+-                continue;
+-            } else {
+-                out.append(" (");
+-                if ((entry.flags & DropBoxManager.IS_GZIPPED) != 0) out.append("compressed ");
+-                out.append((entry.flags & DropBoxManager.IS_TEXT) != 0 ? "text" : "data");
+-                out.append(", ").append(file.length()).append(" bytes)\n");
+-            }
+-
+-            if (doFile || (doPrint && (entry.flags & DropBoxManager.IS_TEXT) == 0)) {
+-                if (!doPrint) out.append("    ");
+-                out.append(file.getPath()).append("\n");
+-            }
+-
+-            if ((entry.flags & DropBoxManager.IS_TEXT) != 0 && (doPrint || !doFile)) {
+-                DropBoxManager.Entry dbe = null;
+-                InputStreamReader isr = null;
+-                try {
+-                    dbe = new DropBoxManager.Entry(
+-                             entry.tag, entry.timestampMillis, file, entry.flags);
+-
+-                    if (doPrint) {
+-                        isr = new InputStreamReader(dbe.getInputStream());
+-                        char[] buf = new char[4096];
+-                        boolean newline = false;
+-                        for (;;) {
+-                            int n = isr.read(buf);
+-                            if (n <= 0) break;
+-                            out.append(buf, 0, n);
+-                            newline = (buf[n - 1] == '\n');
+-
+-                            // Flush periodically when printing to avoid out-of-memory.
+-                            if (out.length() > 65536) {
+-                                pw.write(out.toString());
+-                                out.setLength(0);
+-                            }
+-                        }
+-                        if (!newline) out.append("\n");
+-                    } else {
+-                        String text = dbe.getText(70);
+-                        out.append("    ");
+-                        if (text == null) {
+-                            out.append("[null]");
+-                        } else {
+-                            boolean truncated = (text.length() == 70);
+-                            out.append(text.trim().replace('\n', '/'));
+-                            if (truncated) out.append(" ...");
+-                        }
+-                        out.append("\n");
+-                    }
+-                } catch (IOException e) {
+-                    out.append("*** ").append(e.toString()).append("\n");
+-                    Slog.e(TAG, "Can't read: " + file, e);
+-                } finally {
+-                    if (dbe != null) dbe.close();
+-                    if (isr != null) {
+-                        try {
+-                            isr.close();
+-                        } catch (IOException unused) {
+-                        }
+-                    }
+-                }
+-            }
+-
+-            if (doPrint) out.append("\n");
+-        }
+-
+-        if (numFound == 0) out.append("(No entries found.)\n");
+-
+-        if (args == null || args.length == 0) {
+-            if (!doPrint) out.append("\n");
+-            out.append("Usage: dumpsys dropbox [--print|--file] [YYYY-mm-dd] [HH:MM:SS] [tag]\n");
+-        }
+-
+-        pw.write(out.toString());
+-        if (PROFILE_DUMP) Debug.stopMethodTracing();
+-    }
+-
+-    ///////////////////////////////////////////////////////////////////////////
+-
+-    /** Chronologically sorted list of {@link EntryFile} */
+-    private static final class FileList implements Comparable<FileList> {
+-        public int blocks = 0;
+-        public final TreeSet<EntryFile> contents = new TreeSet<EntryFile>();
+-
+-        /** Sorts bigger FileList instances before smaller ones. */
+-        public final int compareTo(FileList o) {
+-            if (blocks != o.blocks) return o.blocks - blocks;
+-            if (this == o) return 0;
+-            if (hashCode() < o.hashCode()) return -1;
+-            if (hashCode() > o.hashCode()) return 1;
+-            return 0;
+-        }
+-    }
+-
+-    /**
+-     * Metadata describing an on-disk log file.
+-     *
+-     * Note its instances do no have knowledge on what directory they're stored, just to save
+-     * 4/8 bytes per instance.  Instead, {@link #getFile} takes a directory so it can build a
+-     * fullpath.
+-     */
+-    @VisibleForTesting
+-    static final class EntryFile implements Comparable<EntryFile> {
+-        public final String tag;
+-        public final long timestampMillis;
+-        public final int flags;
+-        public final int blocks;
+-
+-        /** Sorts earlier EntryFile instances before later ones. */
+-        public final int compareTo(EntryFile o) {
+-            int comp = Long.compare(timestampMillis, o.timestampMillis);
+-            if (comp != 0) return comp;
+-
+-            comp = ObjectUtils.compare(tag, o.tag);
+-            if (comp != 0) return comp;
+-
+-            comp = Integer.compare(flags, o.flags);
+-            if (comp != 0) return comp;
+-
+-            return Integer.compare(hashCode(), o.hashCode());
+-        }
+-
+-        /**
+-         * Moves an existing temporary file to a new log filename.
+-         *
+-         * @param temp file to rename
+-         * @param dir to store file in
+-         * @param tag to use for new log file name
+-         * @param timestampMillis of log entry
+-         * @param flags for the entry data
+-         * @param blockSize to use for space accounting
+-         * @throws IOException if the file can't be moved
+-         */
+-        public EntryFile(File temp, File dir, String tag,long timestampMillis,
+-                         int flags, int blockSize) throws IOException {
+-            if ((flags & DropBoxManager.IS_EMPTY) != 0) throw new IllegalArgumentException();
+-
+-            this.tag = TextUtils.safeIntern(tag);
+-            this.timestampMillis = timestampMillis;
+-            this.flags = flags;
+-
+-            final File file = this.getFile(dir);
+-            if (!temp.renameTo(file)) {
+-                throw new IOException("Can't rename " + temp + " to " + file);
+-            }
+-            this.blocks = (int) ((file.length() + blockSize - 1) / blockSize);
+-        }
+-
+-        /**
+-         * Creates a zero-length tombstone for a file whose contents were lost.
+-         *
+-         * @param dir to store file in
+-         * @param tag to use for new log file name
+-         * @param timestampMillis of log entry
+-         * @throws IOException if the file can't be created.
+-         */
+-        public EntryFile(File dir, String tag, long timestampMillis) throws IOException {
+-            this.tag = TextUtils.safeIntern(tag);
+-            this.timestampMillis = timestampMillis;
+-            this.flags = DropBoxManager.IS_EMPTY;
+-            this.blocks = 0;
+-            new FileOutputStream(getFile(dir)).close();
+-        }
+-
+-        /**
+-         * Extracts metadata from an existing on-disk log filename.
+-         *
+-         * Note when a filename is not recognizable, it will create an instance that
+-         * {@link #hasFile()} would return false on, and also remove the file.
+-         *
+-         * @param file name of existing log file
+-         * @param blockSize to use for space accounting
+-         */
+-        public EntryFile(File file, int blockSize) {
+-
+-            boolean parseFailure = false;
+-
+-            String name = file.getName();
+-            int flags = 0;
+-            String tag = null;
+-            long millis = 0;
+-
+-            final int at = name.lastIndexOf('@');
+-            if (at < 0) {
+-                parseFailure = true;
+-            } else {
+-                tag = Uri.decode(name.substring(0, at));
+-                if (name.endsWith(".gz")) {
+-                    flags |= DropBoxManager.IS_GZIPPED;
+-                    name = name.substring(0, name.length() - 3);
+-                }
+-                if (name.endsWith(".lost")) {
+-                    flags |= DropBoxManager.IS_EMPTY;
+-                    name = name.substring(at + 1, name.length() - 5);
+-                } else if (name.endsWith(".txt")) {
+-                    flags |= DropBoxManager.IS_TEXT;
+-                    name = name.substring(at + 1, name.length() - 4);
+-                } else if (name.endsWith(".dat")) {
+-                    name = name.substring(at + 1, name.length() - 4);
+-                } else {
+-                    parseFailure = true;
+-                }
+-                if (!parseFailure) {
+-                    try {
+-                        millis = Long.parseLong(name);
+-                    } catch (NumberFormatException e) {
+-                        parseFailure = true;
+-                    }
+-                }
+-            }
+-            if (parseFailure) {
+-                Slog.wtf(TAG, "Invalid filename: " + file);
+-
+-                // Remove the file and return an empty instance.
+-                file.delete();
+-                this.tag = null;
+-                this.flags = DropBoxManager.IS_EMPTY;
+-                this.timestampMillis = 0;
+-                this.blocks = 0;
+-                return;
+-            }
+-
+-            this.blocks = (int) ((file.length() + blockSize - 1) / blockSize);
+-            this.tag = TextUtils.safeIntern(tag);
+-            this.flags = flags;
+-            this.timestampMillis = millis;
+-        }
+-
+-        /**
+-         * Creates a EntryFile object with only a timestamp for comparison purposes.
+-         * @param millis to compare with.
+-         */
+-        public EntryFile(long millis) {
+-            this.tag = null;
+-            this.timestampMillis = millis;
+-            this.flags = DropBoxManager.IS_EMPTY;
+-            this.blocks = 0;
+-        }
+-
+-        /**
+-         * @return whether an entry actually has a backing file, or it's an empty "tombstone"
+-         * entry.
+-         */
+-        public boolean hasFile() {
+-            return tag != null;
+-        }
+-
+-        /** @return File extension for the flags. */
+-        private String getExtension() {
+-            if ((flags &  DropBoxManager.IS_EMPTY) != 0) {
+-                return ".lost";
+-            }
+-            return ((flags & DropBoxManager.IS_TEXT) != 0 ? ".txt" : ".dat") +
+-                    ((flags & DropBoxManager.IS_GZIPPED) != 0 ? ".gz" : "");
+-        }
+-
+-        /**
+-         * @return filename for this entry without the pathname.
+-         */
+-        public String getFilename() {
+-            return hasFile() ? Uri.encode(tag) + "@" + timestampMillis + getExtension() : null;
+-        }
+-
+-        /**
+-         * Get a full-path {@link File} representing this entry.
+-         * @param dir Parent directly.  The caller needs to pass it because {@link EntryFile}s don't
+-         *            know in which directory they're stored.
+-         */
+-        public File getFile(File dir) {
+-            return hasFile() ? new File(dir, getFilename()) : null;
+-        }
+-
+-        /**
+-         * If an entry has a backing file, remove it.
+-         */
+-        public void deleteFile(File dir) {
+-            if (hasFile()) {
+-                getFile(dir).delete();
+-            }
+-        }
+-    }
+-
+-    ///////////////////////////////////////////////////////////////////////////
+-
+-    /** If never run before, scans disk contents to build in-memory tracking data. */
+-    private synchronized void init() throws IOException {
+-        if (mStatFs == null) {
+-            if (!mDropBoxDir.isDirectory() && !mDropBoxDir.mkdirs()) {
+-                throw new IOException("Can't mkdir: " + mDropBoxDir);
+-            }
+-            try {
+-                mStatFs = new StatFs(mDropBoxDir.getPath());
+-                mBlockSize = mStatFs.getBlockSize();
+-            } catch (IllegalArgumentException e) {  // StatFs throws this on error
+-                throw new IOException("Can't statfs: " + mDropBoxDir);
+-            }
+-        }
+-
+-        if (mAllFiles == null) {
+-            File[] files = mDropBoxDir.listFiles();
+-            if (files == null) throw new IOException("Can't list files: " + mDropBoxDir);
+-
+-            mAllFiles = new FileList();
+-            mFilesByTag = new ArrayMap<>();
+-
+-            // Scan pre-existing files.
+-            for (File file : files) {
+-                if (file.getName().endsWith(".tmp")) {
+-                    Slog.i(TAG, "Cleaning temp file: " + file);
+-                    file.delete();
+-                    continue;
+-                }
+-
+-                EntryFile entry = new EntryFile(file, mBlockSize);
+-
+-                if (entry.hasFile()) {
+-                    // Enroll only when the filename is valid.  Otherwise the above constructor
+-                    // has removed the file already.
+-                    enrollEntry(entry);
+-                }
+-            }
+-        }
+-    }
+-
+-    /** Adds a disk log file to in-memory tracking for accounting and enumeration. */
+-    private synchronized void enrollEntry(EntryFile entry) {
+-        mAllFiles.contents.add(entry);
+-        mAllFiles.blocks += entry.blocks;
+-
+-        // mFilesByTag is used for trimming, so don't list empty files.
+-        // (Zero-length/lost files are trimmed by date from mAllFiles.)
+-
+-        if (entry.hasFile() && entry.blocks > 0) {
+-            FileList tagFiles = mFilesByTag.get(entry.tag);
+-            if (tagFiles == null) {
+-                tagFiles = new FileList();
+-                mFilesByTag.put(TextUtils.safeIntern(entry.tag), tagFiles);
+-            }
+-            tagFiles.contents.add(entry);
+-            tagFiles.blocks += entry.blocks;
+-        }
+-    }
+-
+-    /** Moves a temporary file to a final log filename and enrolls it. */
+-    private synchronized long createEntry(File temp, String tag, int flags) throws IOException {
+-        long t = System.currentTimeMillis();
+-
+-        // Require each entry to have a unique timestamp; if there are entries
+-        // >10sec in the future (due to clock skew), drag them back to avoid
+-        // keeping them around forever.
+-
+-        SortedSet<EntryFile> tail = mAllFiles.contents.tailSet(new EntryFile(t + 10000));
+-        EntryFile[] future = null;
+-        if (!tail.isEmpty()) {
+-            future = tail.toArray(new EntryFile[tail.size()]);
+-            tail.clear();  // Remove from mAllFiles
+-        }
+-
+-        if (!mAllFiles.contents.isEmpty()) {
+-            t = Math.max(t, mAllFiles.contents.last().timestampMillis + 1);
+-        }
+-
+-        if (future != null) {
+-            for (EntryFile late : future) {
+-                mAllFiles.blocks -= late.blocks;
+-                FileList tagFiles = mFilesByTag.get(late.tag);
+-                if (tagFiles != null && tagFiles.contents.remove(late)) {
+-                    tagFiles.blocks -= late.blocks;
+-                }
+-                if ((late.flags & DropBoxManager.IS_EMPTY) == 0) {
+-                    enrollEntry(new EntryFile(late.getFile(mDropBoxDir), mDropBoxDir,
+-                            late.tag, t++, late.flags, mBlockSize));
+-                } else {
+-                    enrollEntry(new EntryFile(mDropBoxDir, late.tag, t++));
+-                }
+-            }
+-        }
+-
+-        if (temp == null) {
+-            enrollEntry(new EntryFile(mDropBoxDir, tag, t));
+-        } else {
+-            enrollEntry(new EntryFile(temp, mDropBoxDir, tag, t, flags, mBlockSize));
+-        }
+-        return t;
+-    }
+-
+-    /**
+-     * Trims the files on disk to make sure they aren't using too much space.
+-     * @return the overall quota for storage (in bytes)
+-     */
+-    private synchronized long trimToFit() throws IOException {
+-        // Expunge aged items (including tombstones marking deleted data).
+-
+-        int ageSeconds = Settings.Global.getInt(mContentResolver,
+-                Settings.Global.DROPBOX_AGE_SECONDS, DEFAULT_AGE_SECONDS);
+-        mMaxFiles = Settings.Global.getInt(mContentResolver,
+-                Settings.Global.DROPBOX_MAX_FILES,
+-                (ActivityManager.isLowRamDeviceStatic()
+-                        ?  DEFAULT_MAX_FILES_LOWRAM : DEFAULT_MAX_FILES));
+-        long cutoffMillis = System.currentTimeMillis() - ageSeconds * 1000;
+-        while (!mAllFiles.contents.isEmpty()) {
+-            EntryFile entry = mAllFiles.contents.first();
+-            if (entry.timestampMillis > cutoffMillis && mAllFiles.contents.size() < mMaxFiles) {
+-                break;
+-            }
+-
+-            FileList tag = mFilesByTag.get(entry.tag);
+-            if (tag != null && tag.contents.remove(entry)) tag.blocks -= entry.blocks;
+-            if (mAllFiles.contents.remove(entry)) mAllFiles.blocks -= entry.blocks;
+-            entry.deleteFile(mDropBoxDir);
+-        }
+-
+-        // Compute overall quota (a fraction of available free space) in blocks.
+-        // The quota changes dynamically based on the amount of free space;
+-        // that way when lots of data is available we can use it, but we'll get
+-        // out of the way if storage starts getting tight.
+-
+-        long uptimeMillis = SystemClock.uptimeMillis();
+-        if (uptimeMillis > mCachedQuotaUptimeMillis + QUOTA_RESCAN_MILLIS) {
+-            int quotaPercent = Settings.Global.getInt(mContentResolver,
+-                    Settings.Global.DROPBOX_QUOTA_PERCENT, DEFAULT_QUOTA_PERCENT);
+-            int reservePercent = Settings.Global.getInt(mContentResolver,
+-                    Settings.Global.DROPBOX_RESERVE_PERCENT, DEFAULT_RESERVE_PERCENT);
+-            int quotaKb = Settings.Global.getInt(mContentResolver,
+-                    Settings.Global.DROPBOX_QUOTA_KB, DEFAULT_QUOTA_KB);
+-
+-            String dirPath = mDropBoxDir.getPath();
+-            try {
+-                mStatFs.restat(dirPath);
+-            } catch (IllegalArgumentException e) {  // restat throws this on error
+-                throw new IOException("Can't restat: " + mDropBoxDir);
+-            }
+-            int available = mStatFs.getAvailableBlocks();
+-            int nonreserved = available - mStatFs.getBlockCount() * reservePercent / 100;
+-            int maximum = quotaKb * 1024 / mBlockSize;
+-            mCachedQuotaBlocks = Math.min(maximum, Math.max(0, nonreserved * quotaPercent / 100));
+-            mCachedQuotaUptimeMillis = uptimeMillis;
+-        }
+-
+-        // If we're using too much space, delete old items to make room.
+-        //
+-        // We trim each tag independently (this is why we keep per-tag lists).
+-        // Space is "fairly" shared between tags -- they are all squeezed
+-        // equally until enough space is reclaimed.
+-        //
+-        // A single circular buffer (a la logcat) would be simpler, but this
+-        // way we can handle fat/bursty data (like 1MB+ bugreports, 300KB+
+-        // kernel crash dumps, and 100KB+ ANR reports) without swamping small,
+-        // well-behaved data streams (event statistics, profile data, etc).
+-        //
+-        // Deleted files are replaced with zero-length tombstones to mark what
+-        // was lost.  Tombstones are expunged by age (see above).
+-
+-        if (mAllFiles.blocks > mCachedQuotaBlocks) {
+-            // Find a fair share amount of space to limit each tag
+-            int unsqueezed = mAllFiles.blocks, squeezed = 0;
+-            TreeSet<FileList> tags = new TreeSet<FileList>(mFilesByTag.values());
+-            for (FileList tag : tags) {
+-                if (squeezed > 0 && tag.blocks <= (mCachedQuotaBlocks - unsqueezed) / squeezed) {
+-                    break;
+-                }
+-                unsqueezed -= tag.blocks;
+-                squeezed++;
+-            }
+-            int tagQuota = (mCachedQuotaBlocks - unsqueezed) / squeezed;
+-
+-            // Remove old items from each tag until it meets the per-tag quota.
+-            for (FileList tag : tags) {
+-                if (mAllFiles.blocks < mCachedQuotaBlocks) break;
+-                while (tag.blocks > tagQuota && !tag.contents.isEmpty()) {
+-                    EntryFile entry = tag.contents.first();
+-                    if (tag.contents.remove(entry)) tag.blocks -= entry.blocks;
+-                    if (mAllFiles.contents.remove(entry)) mAllFiles.blocks -= entry.blocks;
+-
+-                    try {
+-                        entry.deleteFile(mDropBoxDir);
+-                        enrollEntry(new EntryFile(mDropBoxDir, entry.tag, entry.timestampMillis));
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Can't write tombstone file", e);
+-                    }
+-                }
+-            }
+-        }
+-
+-        return mCachedQuotaBlocks * mBlockSize;
+-    }
+-
+-    private void getLowPriorityResourceConfigs() {
+-        mLowPriorityRateLimitPeriod = Resources.getSystem().getInteger(
+-                R.integer.config_dropboxLowPriorityBroadcastRateLimitPeriod);
+-
+-        final String[] lowPrioritytags = Resources.getSystem().getStringArray(
+-                R.array.config_dropboxLowPriorityTags);
+-        final int size = lowPrioritytags.length;
+-        if (size == 0) {
+-            mLowPriorityTags = null;
+-            return;
+-        }
+-        mLowPriorityTags = new ArraySet(size);
+-        for (int i = 0; i < size; i++) {
+-            mLowPriorityTags.add(lowPrioritytags[i]);
+-        }
+-    }
+-}
+diff --git a/services/core/java/com/android/server/StorageManagerService.java b/services/core/java/com/android/server/StorageManagerService.java
+index 263efacb..9404aedf 100644
+--- a/services/core/java/com/android/server/StorageManagerService.java
++++ b/services/core/java/com/android/server/StorageManagerService.java
+@@ -70,7 +70,6 @@ import android.content.res.ObbInfo;
+ import android.database.ContentObserver;
+ import android.net.Uri;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.os.Environment;
+ import android.os.Environment.UserEnvironment;
+ import android.os.FileUtils;
+@@ -1874,10 +1873,6 @@ class StorageManagerService extends IStorageManager.Stub
+                     final long run = extras.getLong("run");
+                     final long destroy = extras.getLong("destroy");
+
+-                    final DropBoxManager dropBox = mContext.getSystemService(DropBoxManager.class);
+-                    dropBox.addText(TAG_STORAGE_BENCHMARK, scrubPath(path)
+-                            + " " + ident + " " + create + " " + run + " " + destroy);
+-
+                     synchronized (mLock) {
+                         final VolumeRecord rec = findRecordForPath(path);
+                         if (rec != null) {
+@@ -2037,9 +2032,6 @@ class StorageManagerService extends IStorageManager.Stub
+                         final long bytes = extras.getLong("bytes");
+                         final long time = extras.getLong("time");
+
+-                        final DropBoxManager dropBox = mContext.getSystemService(DropBoxManager.class);
+-                        dropBox.addText(TAG_STORAGE_TRIM, scrubPath(path) + " " + bytes + " " + time);
+-
+                         synchronized (mLock) {
+                             final VolumeRecord rec = findRecordForPath(path);
+                             if (rec != null) {
+diff --git a/services/core/java/com/android/server/Watchdog.java b/services/core/java/com/android/server/Watchdog.java
+index 5b9c78f6..289bdd31 100644
+--- a/services/core/java/com/android/server/Watchdog.java
++++ b/services/core/java/com/android/server/Watchdog.java
+@@ -613,26 +613,6 @@ public class Watchdog extends Thread {
+             doSysRq('w');
+             doSysRq('l');
+
+-            // Try to add the error to the dropbox, but assuming that the ActivityManager
+-            // itself may be deadlocked.  (which has happened, causing this statement to
+-            // deadlock and the watchdog as a whole to be ineffective)
+-            Thread dropboxThread = new Thread("watchdogWriteToDropbox") {
+-                    public void run() {
+-                        // If a watched thread hangs before init() is called, we don't have a
+-                        // valid mActivity. So we can't log the error to dropbox.
+-                        if (mActivity != null) {
+-                            mActivity.addErrorToDropBox(
+-                                    "watchdog", null, "system_server", null, null, null,
+-                                    subject, null, stack, null);
+-                        }
+-                        StatsLog.write(StatsLog.SYSTEM_SERVER_WATCHDOG_OCCURRED, subject);
+-                    }
+-                };
+-            dropboxThread.start();
+-            try {
+-                dropboxThread.join(2000);  // wait up to 2 seconds for it to return.
+-            } catch (InterruptedException ignored) {}
+-
+             IActivityController controller;
+             synchronized (this) {
+                 controller = mController;
+diff --git a/services/core/java/com/android/server/am/ActivityManagerService.java b/services/core/java/com/android/server/am/ActivityManagerService.java
+index c4edda37..d8a94bde 100644
+--- a/services/core/java/com/android/server/am/ActivityManagerService.java
++++ b/services/core/java/com/android/server/am/ActivityManagerService.java
+@@ -241,7 +241,6 @@ import android.os.BinderProxy;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.os.Debug;
+-import android.os.DropBoxManager;
+ import android.os.FactoryTest;
+ import android.os.FileUtils;
+ import android.os.Handler;
+@@ -484,8 +483,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+
+     static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+-    // How many bytes to write into the dropbox log before truncating
+-    static final int DROPBOX_MAX_SIZE = 192 * 1024;
+     // Assumes logcat entries average around 100 bytes; that's not perfect stack traces count
+     // as one line, but close enough for now.
+     static final int RESERVED_BYTES_PER_LOGCAT_LINE = 100;
+@@ -9260,9 +9257,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+             crashInfo.crashTag = crashInfo.crashTag + " " + relaunchReasonString;
+         }
+
+-        addErrorToDropBox(
+-                eventType, r, processName, null, null, null, null, null, null, crashInfo);
+-
+         mAppErrors.crashApplication(r, crashInfo);
+     }
+
+@@ -9293,9 +9287,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+                     mAlreadyLoggedViolatedStacks.add(stackFingerprint);
+                 }
+             }
+-            if (logIt) {
+-                logStrictModeViolationToDropBox(r, info);
+-            }
+         }
+
+         if ((penaltyMask & StrictMode.PENALTY_DIALOG) != 0) {
+@@ -9319,68 +9310,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+     }
+
+-    // Depending on the policy in effect, there could be a bunch of
+-    // these in quick succession so we try to batch these together to
+-    // minimize disk writes, number of dropbox entries, and maximize
+-    // compression, by having more fewer, larger records.
+-    private void logStrictModeViolationToDropBox(
+-            ProcessRecord process,
+-            StrictMode.ViolationInfo info) {
+-        if (info == null) {
+-            return;
+-        }
+-        final boolean isSystemApp = process == null ||
+-                (process.info.flags & (ApplicationInfo.FLAG_SYSTEM |
+-                                       ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
+-        final String processName = process == null ? "unknown" : process.processName;
+-        final DropBoxManager dbox = (DropBoxManager)
+-                mContext.getSystemService(Context.DROPBOX_SERVICE);
+-
+-        // Exit early if the dropbox isn't configured to accept this report type.
+-        final String dropboxTag = processClass(process) + "_strictmode";
+-        if (dbox == null || !dbox.isTagEnabled(dropboxTag)) return;
+-
+-        final StringBuilder sb = new StringBuilder(1024);
+-        synchronized (sb) {
+-            appendDropBoxProcessHeaders(process, processName, sb);
+-            sb.append("Build: ").append(Build.FINGERPRINT).append("\n");
+-            sb.append("System-App: ").append(isSystemApp).append("\n");
+-            sb.append("Uptime-Millis: ").append(info.violationUptimeMillis).append("\n");
+-            if (info.violationNumThisLoop != 0) {
+-                sb.append("Loop-Violation-Number: ").append(info.violationNumThisLoop).append("\n");
+-            }
+-            if (info.numAnimationsRunning != 0) {
+-                sb.append("Animations-Running: ").append(info.numAnimationsRunning).append("\n");
+-            }
+-            if (info.broadcastIntentAction != null) {
+-                sb.append("Broadcast-Intent-Action: ").append(info.broadcastIntentAction).append("\n");
+-            }
+-            if (info.durationMillis != -1) {
+-                sb.append("Duration-Millis: ").append(info.durationMillis).append("\n");
+-            }
+-            if (info.numInstances != -1) {
+-                sb.append("Instance-Count: ").append(info.numInstances).append("\n");
+-            }
+-            if (info.tags != null) {
+-                for (String tag : info.tags) {
+-                    sb.append("Span-Tag: ").append(tag).append("\n");
+-                }
+-            }
+-            sb.append("\n");
+-            sb.append(info.getStackTrace());
+-            sb.append("\n");
+-            if (info.getViolationDetails() != null) {
+-                sb.append(info.getViolationDetails());
+-                sb.append("\n");
+-            }
+-        }
+-
+-        final String res = sb.toString();
+-        IoThread.getHandler().post(() -> {
+-            dbox.addText(dropboxTag, res);
+-        });
+-    }
+-
+     /**
+      * Used by {@link Log} via {@link com.android.internal.os.RuntimeInit} to report serious errors.
+      * @param app object of the crashing app, null for the system server
+@@ -9433,8 +9362,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         StatsLog.write(StatsLog.WTF_OCCURRED, callingUid, tag, processName,
+                 callingPid, (r != null) ? r.getProcessClassEnum() : 0);
+
+-        addErrorToDropBox("wtf", r, processName, null, null, null, tag, null, null, crashInfo);
+-
+         return r;
+     }
+
+@@ -9452,54 +9379,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+     }
+
+-    /**
+-     * Utility function for addErrorToDropBox and handleStrictModeViolation's logging
+-     * to append various headers to the dropbox log text.
+-     */
+-    private void appendDropBoxProcessHeaders(ProcessRecord process, String processName,
+-            StringBuilder sb) {
+-        // Watchdog thread ends up invoking this function (with
+-        // a null ProcessRecord) to add the stack file to dropbox.
+-        // Do not acquire a lock on this (am) in such cases, as it
+-        // could cause a potential deadlock, if and when watchdog
+-        // is invoked due to unavailability of lock on am and it
+-        // would prevent watchdog from killing system_server.
+-        if (process == null) {
+-            sb.append("Process: ").append(processName).append("\n");
+-            return;
+-        }
+-        // Note: ProcessRecord 'process' is guarded by the service
+-        // instance.  (notably process.pkgList, which could otherwise change
+-        // concurrently during execution of this method)
+-        synchronized (this) {
+-            sb.append("Process: ").append(processName).append("\n");
+-            sb.append("PID: ").append(process.pid).append("\n");
+-            sb.append("UID: ").append(process.uid).append("\n");
+-            int flags = process.info.flags;
+-            IPackageManager pm = AppGlobals.getPackageManager();
+-            sb.append("Flags: 0x").append(Integer.toHexString(flags)).append("\n");
+-            for (int ip=0; ip<process.pkgList.size(); ip++) {
+-                String pkg = process.pkgList.keyAt(ip);
+-                sb.append("Package: ").append(pkg);
+-                try {
+-                    PackageInfo pi = pm.getPackageInfo(pkg, 0, UserHandle.getCallingUserId());
+-                    if (pi != null) {
+-                        sb.append(" v").append(pi.getLongVersionCode());
+-                        if (pi.versionName != null) {
+-                            sb.append(" (").append(pi.versionName).append(")");
+-                        }
+-                    }
+-                } catch (RemoteException e) {
+-                    Slog.e(TAG, "Error getting package info: " + pkg, e);
+-                }
+-                sb.append("\n");
+-            }
+-            if (process.info.isInstantApp()) {
+-                sb.append("Instant-App: true\n");
+-            }
+-        }
+-    }
+-
+     private static String processClass(ProcessRecord process) {
+         if (process == null || process.pid == MY_PID) {
+             return "system_server";
+@@ -9513,144 +9392,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+     private volatile long mWtfClusterStart;
+     private volatile int mWtfClusterCount;
+
+-    /**
+-     * Write a description of an error (crash, WTF, ANR) to the drop box.
+-     * @param eventType to include in the drop box tag ("crash", "wtf", etc.)
+-     * @param process which caused the error, null means the system server
+-     * @param activityShortComponentName which triggered the error, null if unknown
+-     * @param parentShortComponentName activity related to the error, null if unknown
+-     * @param parentProcess parent process
+-     * @param subject line related to the error, null if absent
+-     * @param report in long form describing the error, null if absent
+-     * @param dataFile text file to include in the report, null if none
+-     * @param crashInfo giving an application stack trace, null if absent
+-     */
+-    public void addErrorToDropBox(String eventType,
+-            ProcessRecord process, String processName, String activityShortComponentName,
+-            String parentShortComponentName, ProcessRecord parentProcess,
+-            String subject, final String report, final File dataFile,
+-            final ApplicationErrorReport.CrashInfo crashInfo) {
+-        // NOTE -- this must never acquire the ActivityManagerService lock,
+-        // otherwise the watchdog may be prevented from resetting the system.
+-
+-        // Bail early if not published yet
+-        if (ServiceManager.getService(Context.DROPBOX_SERVICE) == null) return;
+-        final DropBoxManager dbox = mContext.getSystemService(DropBoxManager.class);
+-
+-        // Exit early if the dropbox isn't configured to accept this report type.
+-        final String dropboxTag = processClass(process) + "_" + eventType;
+-        if (dbox == null || !dbox.isTagEnabled(dropboxTag)) return;
+-
+-        // Rate-limit how often we're willing to do the heavy lifting below to
+-        // collect and record logs; currently 5 logs per 10 second period.
+-        final long now = SystemClock.elapsedRealtime();
+-        if (now - mWtfClusterStart > 10 * DateUtils.SECOND_IN_MILLIS) {
+-            mWtfClusterStart = now;
+-            mWtfClusterCount = 1;
+-        } else {
+-            if (mWtfClusterCount++ >= 5) return;
+-        }
+-
+-        final StringBuilder sb = new StringBuilder(1024);
+-        appendDropBoxProcessHeaders(process, processName, sb);
+-        if (process != null) {
+-            sb.append("Foreground: ")
+-                    .append(process.isInterestingToUserLocked() ? "Yes" : "No")
+-                    .append("\n");
+-        }
+-        if (activityShortComponentName != null) {
+-            sb.append("Activity: ").append(activityShortComponentName).append("\n");
+-        }
+-        if (parentShortComponentName != null) {
+-            if (parentProcess != null && parentProcess.pid != process.pid) {
+-                sb.append("Parent-Process: ").append(parentProcess.processName).append("\n");
+-            }
+-            if (!parentShortComponentName.equals(activityShortComponentName)) {
+-                sb.append("Parent-Activity: ").append(parentShortComponentName).append("\n");
+-            }
+-        }
+-        if (subject != null) {
+-            sb.append("Subject: ").append(subject).append("\n");
+-        }
+-        sb.append("Build: ").append(Build.FINGERPRINT).append("\n");
+-        if (Debug.isDebuggerConnected()) {
+-            sb.append("Debugger: Connected\n");
+-        }
+-        if (crashInfo != null && crashInfo.crashTag != null && !crashInfo.crashTag.isEmpty()) {
+-            sb.append("Crash-Tag: ").append(crashInfo.crashTag).append("\n");
+-        }
+-        sb.append("\n");
+-
+-        // Do the rest in a worker thread to avoid blocking the caller on I/O
+-        // (After this point, we shouldn't access AMS internal data structures.)
+-        Thread worker = new Thread("Error dump: " + dropboxTag) {
+-            @Override
+-            public void run() {
+-                if (report != null) {
+-                    sb.append(report);
+-                }
+-
+-                String setting = Settings.Global.ERROR_LOGCAT_PREFIX + dropboxTag;
+-                int lines = Settings.Global.getInt(mContext.getContentResolver(), setting, 0);
+-                int maxDataFileSize = DROPBOX_MAX_SIZE - sb.length()
+-                        - lines * RESERVED_BYTES_PER_LOGCAT_LINE;
+-
+-                if (dataFile != null && maxDataFileSize > 0) {
+-                    try {
+-                        sb.append(FileUtils.readTextFile(dataFile, maxDataFileSize,
+-                                    "\n\n[[TRUNCATED]]"));
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Error reading " + dataFile, e);
+-                    }
+-                }
+-                if (crashInfo != null && crashInfo.stackTrace != null) {
+-                    sb.append(crashInfo.stackTrace);
+-                }
+-
+-                if (lines > 0) {
+-                    sb.append("\n");
+-
+-                    // Merge several logcat streams, and take the last N lines
+-                    InputStreamReader input = null;
+-                    try {
+-                        java.lang.Process logcat = new ProcessBuilder(
+-                                "/system/bin/timeout", "-k", "15s", "10s",
+-                                "/system/bin/logcat", "-v", "threadtime", "-b", "events", "-b", "system",
+-                                "-b", "main", "-b", "crash", "-t", String.valueOf(lines))
+-                                        .redirectErrorStream(true).start();
+-
+-                        try { logcat.getOutputStream().close(); } catch (IOException e) {}
+-                        try { logcat.getErrorStream().close(); } catch (IOException e) {}
+-                        input = new InputStreamReader(logcat.getInputStream());
+-
+-                        int num;
+-                        char[] buf = new char[8192];
+-                        while ((num = input.read(buf)) > 0) sb.append(buf, 0, num);
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Error running logcat", e);
+-                    } finally {
+-                        if (input != null) try { input.close(); } catch (IOException e) {}
+-                    }
+-                }
+-
+-                dbox.addText(dropboxTag, sb.toString());
+-            }
+-        };
+-
+-        if (process == null) {
+-            // If process is null, we are being called from some internal code
+-            // and may be about to die -- run this synchronously.
+-            final int oldMask = StrictMode.allowThreadDiskWritesMask();
+-            try {
+-                worker.run();
+-            } finally {
+-                StrictMode.setThreadPolicyMask(oldMask);
+-            }
+-        } else {
+-            worker.start();
+-        }
+-    }
+-
+     @Override
+     public List<ActivityManager.ProcessErrorStateInfo> getProcessesInErrorState() {
+         enforceNotIsolatedCaller("getProcessesInErrorState");
+@@ -13563,8 +13304,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+         dropBuilder.append(catSw.toString());
+         StatsLog.write(StatsLog.LOW_MEM_REPORTED);
+-        addErrorToDropBox("lowmem", null, "system_server", null,
+-                null, null, tag.toString(), dropBuilder.toString(), null, null);
+         //Slog.i(TAG, "Sent to dropbox:");
+         //Slog.i(TAG, dropBuilder.toString());
+         synchronized (ActivityManagerService.this) {
+diff --git a/services/core/java/com/android/server/am/ProcessRecord.java b/services/core/java/com/android/server/am/ProcessRecord.java
+index ea308427..df24a871 100644
+--- a/services/core/java/com/android/server/am/ProcessRecord.java
++++ b/services/core/java/com/android/server/am/ProcessRecord.java
+@@ -1558,8 +1558,6 @@ class ProcessRecord implements WindowProcessListener {
+                 (this.info != null) ? this.info.packageName : "");
+         final ProcessRecord parentPr = parentProcess != null
+                 ? (ProcessRecord) parentProcess.mOwner : null;
+-        mService.addErrorToDropBox("anr", this, processName, activityShortComponentName,
+-                parentShortComponentName, parentPr, annotation, cpuInfo, tracesFile, null);
+
+         if (mWindowProcessController.appNotResponding(info.toString(), () -> kill("anr", true),
+                 () -> {
+diff --git a/services/core/java/com/android/server/net/NetworkStatsRecorder.java b/services/core/java/com/android/server/net/NetworkStatsRecorder.java
+index 06ec341d..9d2c0276 100644
+--- a/services/core/java/com/android/server/net/NetworkStatsRecorder.java
++++ b/services/core/java/com/android/server/net/NetworkStatsRecorder.java
+@@ -29,7 +29,6 @@ import android.net.NetworkStatsHistory;
+ import android.net.NetworkTemplate;
+ import android.net.TrafficStats;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.service.NetworkStatsRecorderProto;
+ import android.util.Log;
+ import android.util.MathUtils;
+@@ -74,8 +73,6 @@ public class NetworkStatsRecorder {
+     private static final boolean DUMP_BEFORE_DELETE = true;
+
+     private final FileRotator mRotator;
+-    private final NonMonotonicObserver<String> mObserver;
+-    private final DropBoxManager mDropBox;
+     private final String mCookie;
+
+     private final long mBucketDuration;
+@@ -96,8 +93,6 @@ public class NetworkStatsRecorder {
+      */
+     public NetworkStatsRecorder() {
+         mRotator = null;
+-        mObserver = null;
+-        mDropBox = null;
+         mCookie = null;
+
+         // set the bucket big enough to have all data in one bucket, but allow some
+@@ -114,11 +109,9 @@ public class NetworkStatsRecorder {
+     /**
+      * Persisted recorder.
+      */
+-    public NetworkStatsRecorder(FileRotator rotator, NonMonotonicObserver<String> observer,
+-            DropBoxManager dropBox, String cookie, long bucketDuration, boolean onlyTags) {
++    public NetworkStatsRecorder(FileRotator rotator,
++            String cookie, long bucketDuration, boolean onlyTags) {
+         mRotator = checkNotNull(rotator, "missing FileRotator");
+-        mObserver = checkNotNull(observer, "missing NonMonotonicObserver");
+-        mDropBox = checkNotNull(dropBox, "missing DropBoxManager");
+         mCookie = cookie;
+
+         mBucketDuration = bucketDuration;
+@@ -220,7 +213,7 @@ public class NetworkStatsRecorder {
+         final NetworkStatsCollection complete = mComplete != null ? mComplete.get() : null;
+
+         final NetworkStats delta = NetworkStats.subtract(
+-                snapshot, mLastSnapshot, mObserver, mCookie);
++                snapshot, mLastSnapshot, null, mCookie);
+         final long end = currentTimeMillis;
+         final long start = end - delta.getElapsedRealtime();
+
+@@ -231,9 +224,6 @@ public class NetworkStatsRecorder {
+             // As a last-ditch sanity check, report any negative values and
+             // clamp them so recording below doesn't croak.
+             if (entry.isNegative()) {
+-                if (mObserver != null) {
+-                    mObserver.foundNonMonotonic(delta, i, mCookie);
+-                }
+                 entry.rxBytes = Math.max(entry.rxBytes, 0);
+                 entry.rxPackets = Math.max(entry.rxPackets, 0);
+                 entry.txBytes = Math.max(entry.txBytes, 0);
+@@ -499,7 +489,6 @@ public class NetworkStatsRecorder {
+             } finally {
+                 IoUtils.closeQuietly(os);
+             }
+-            mDropBox.addData(TAG_NETSTATS_DUMP, os.toByteArray(), 0);
+         }
+
+         mRotator.deleteAll();
+diff --git a/services/core/java/com/android/server/net/NetworkStatsService.java b/services/core/java/com/android/server/net/NetworkStatsService.java
+index d1b5534e..79f1aa1a 100644
+--- a/services/core/java/com/android/server/net/NetworkStatsService.java
++++ b/services/core/java/com/android/server/net/NetworkStatsService.java
+@@ -99,7 +99,6 @@ import android.net.NetworkTemplate;
+ import android.net.TrafficStats;
+ import android.os.BestClock;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.os.Environment;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+@@ -266,9 +265,6 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+     @GuardedBy("mStatsLock")
+     private Network[] mDefaultNetworks = new Network[0];
+
+-    private final DropBoxNonMonotonicObserver mNonMonotonicObserver =
+-            new DropBoxNonMonotonicObserver();
+-
+     @GuardedBy("mStatsLock")
+     private NetworkStatsRecorder mDevRecorder;
+     @GuardedBy("mStatsLock")
+@@ -439,11 +435,9 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+
+     private NetworkStatsRecorder buildRecorder(
+             String prefix, NetworkStatsSettings.Config config, boolean includeTags) {
+-        final DropBoxManager dropBox = (DropBoxManager) mContext.getSystemService(
+-                Context.DROPBOX_SERVICE);
+         return new NetworkStatsRecorder(new FileRotator(
+                 mBaseDir, prefix, config.rotateAgeMillis, config.deleteAgeMillis),
+-                mNonMonotonicObserver, dropBox, prefix, config.bucketDuration, includeTags);
++                prefix, config.bucketDuration, includeTags);
+     }
+
+     @GuardedBy("mStatsLock")
+@@ -1772,37 +1766,6 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+         }
+     }
+
+-    private class DropBoxNonMonotonicObserver implements NonMonotonicObserver<String> {
+-        @Override
+-        public void foundNonMonotonic(NetworkStats left, int leftIndex, NetworkStats right,
+-                int rightIndex, String cookie) {
+-            Log.w(TAG, "Found non-monotonic values; saving to dropbox");
+-
+-            // record error for debugging
+-            final StringBuilder builder = new StringBuilder();
+-            builder.append("found non-monotonic " + cookie + " values at left[" + leftIndex
+-                    + "] - right[" + rightIndex + "]\n");
+-            builder.append("left=").append(left).append('\n');
+-            builder.append("right=").append(right).append('\n');
+-
+-            mContext.getSystemService(DropBoxManager.class).addText(TAG_NETSTATS_ERROR,
+-                    builder.toString());
+-        }
+-
+-        @Override
+-        public void foundNonMonotonic(
+-                NetworkStats stats, int statsIndex, String cookie) {
+-            Log.w(TAG, "Found non-monotonic values; saving to dropbox");
+-
+-            final StringBuilder builder = new StringBuilder();
+-            builder.append("Found non-monotonic " + cookie + " values at [" + statsIndex + "]\n");
+-            builder.append("stats=").append(stats).append('\n');
+-
+-            mContext.getSystemService(DropBoxManager.class).addText(TAG_NETSTATS_ERROR,
+-                    builder.toString());
+-        }
+-    }
+-
+     /**
+      * Default external settings that read from
+      * {@link android.provider.Settings.Global}.
+diff --git a/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java b/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
+index 3b3ee587..ddd3a0fb 100644
+--- a/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
++++ b/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
+@@ -24,7 +24,6 @@ import android.content.pm.PackageManager;
+ import android.content.pm.PackageManager.NameNotFoundException;
+ import android.content.pm.UserInfo;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.os.Message;
+@@ -66,10 +65,8 @@ class WatchlistLoggingHandler extends Handler {
+     static final int FORCE_REPORT_RECORDS_NOW_FOR_TEST_MSG = 3;
+
+     private static final long ONE_DAY_MS = TimeUnit.DAYS.toMillis(1);
+-    private static final String DROPBOX_TAG = "network_watchlist_report";
+
+     private final Context mContext;
+-    private final @Nullable DropBoxManager mDropBoxManager;
+     private final ContentResolver mResolver;
+     private final PackageManager mPm;
+     private final WatchlistReportDbHelper mDbHelper;
+@@ -97,7 +94,6 @@ class WatchlistLoggingHandler extends Handler {
+         mDbHelper = WatchlistReportDbHelper.getInstance(context);
+         mConfig = WatchlistConfig.getInstance();
+         mSettings = WatchlistSettings.getInstance();
+-        mDropBoxManager = mContext.getSystemService(DropBoxManager.class);
+         mPrimaryUserId = getPrimaryUserId();
+     }
+
+@@ -259,29 +255,6 @@ class WatchlistLoggingHandler extends Handler {
+                 Slog.i(TAG, "No need to aggregate record yet.");
+                 return;
+             }
+-            Slog.i(TAG, "Start aggregating watchlist records.");
+-            if (mDropBoxManager != null && mDropBoxManager.isTagEnabled(DROPBOX_TAG)) {
+-                Settings.Global.putLong(mResolver,
+-                        Settings.Global.NETWORK_WATCHLIST_LAST_REPORT_TIME,
+-                        lastRecordTime);
+-                final WatchlistReportDbHelper.AggregatedResult aggregatedResult =
+-                        mDbHelper.getAggregatedRecords(lastRecordTime);
+-                if (aggregatedResult == null) {
+-                    Slog.i(TAG, "Cannot get result from database");
+-                    return;
+-                }
+-                // Get all digests for watchlist report, it should include all installed
+-                // application digests and previously recorded app digests.
+-                final List<String> digestsForReport = getAllDigestsForReport(aggregatedResult);
+-                final byte[] secretKey = mSettings.getPrivacySecretKey();
+-                final byte[] encodedResult = ReportEncoder.encodeWatchlistReport(mConfig,
+-                        secretKey, digestsForReport, aggregatedResult);
+-                if (encodedResult != null) {
+-                    addEncodedReportToDropBox(encodedResult);
+-                }
+-            } else {
+-                Slog.w(TAG, "Network Watchlist dropbox tag is not enabled");
+-            }
+             mDbHelper.cleanup(lastRecordTime);
+         } finally {
+             long endTime = System.currentTimeMillis();
+@@ -317,10 +290,6 @@ class WatchlistLoggingHandler extends Handler {
+         return new ArrayList<>(result);
+     }
+
+-    private void addEncodedReportToDropBox(byte[] encodedReport) {
+-        mDropBoxManager.addData(DROPBOX_TAG, encodedReport, 0);
+-    }
+-
+     /**
+      * Get app digest from app uid.
+      * Return null if system cannot get digest from uid.
+diff --git a/services/java/com/android/server/SystemServer.java b/services/java/com/android/server/SystemServer.java
+index 844b7928..edfba58f 100644
+--- a/services/java/com/android/server/SystemServer.java
++++ b/services/java/com/android/server/SystemServer.java
+@@ -1004,13 +1004,6 @@ public final class SystemServer {
+             SQLiteCompatibilityWalFlags.reset();
+             traceEnd();
+
+-            // Records errors and logs, for example wtf()
+-            // Currently this service indirectly depends on SettingsProvider so do this after
+-            // InstallSystemProviders.
+-            traceBeginAndSlog("StartDropBoxManager");
+-            mSystemServiceManager.startService(DropBoxManagerService.class);
+-            traceEnd();
+-
+             traceBeginAndSlog("StartVibratorService");
+             vibrator = new VibratorService(context);
+             ServiceManager.addService("vibrator", vibrator);
+--
+2.27.0

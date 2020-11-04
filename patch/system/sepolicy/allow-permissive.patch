@@ -1,15 +1,15 @@
-From 2660c72eb225acea1542434228c6ce9086cfe120 Mon Sep 17 00:00:00 2001
-From: WJXXBSH <********@outlook.com>
-Date: Thu, 17 Sep 2020 16:40:43 +0800
-Subject: [PATCH] UserBuild
+From 74abfc1993a7ea8af02133153e1ca2b6e516472d Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:05:28 +0800
+Subject: [PATCH] Allow permissive in user build variant
 
-Change-Id: Ie32baf8a4e81aa6997220265e3415026ff3ef83d
+Change-Id: I24652bf2616573e465a7d53557c68111068e166c
 ---
  Android.mk | 12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/Android.mk b/Android.mk
-index dadd7b0a..1c922225 100644
+index dadd7b0..1c92222 100644
 --- a/Android.mk
 +++ b/Android.mk
 @@ -81,10 +81,12 @@ ifndef BOARD_SEPOLICY_VERS

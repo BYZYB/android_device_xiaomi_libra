@@ -1,9 +1,9 @@
-From b99b6a811932d546f65aca09c882727d0d78dad7 Mon Sep 17 00:00:00 2001
-From: WJXXBSH <********@outlook.com>
-Date: Sat, 31 Oct 2020 15:28:30 +0800
-Subject: [PATCH] Add addon-su and adb_root support
+From e56629467f80e2f1b9feb85fcbb29e642146ec65 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:42:11 +0800
+Subject: [PATCH] Forwardport addon-su from lineage-16.0
 
-Change-Id: Ifda8cca51c3985feaccc2cf50fe9539ce09533a4
+Change-Id: I7aedbdf2ec2a428a21db56ebfd696ae7cc84b50d
 ---
  res/values-zh-rCN/cm_strings.xml              |   3 +
  res/values/cm_strings.xml                     |   5 +
@@ -31,7 +31,7 @@ index a841914..d8de425 100644
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="device">在您设备的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="default">在您手机的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
 diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
-index ed43c74..c2de11c 100644
+index 959d8be..6070006 100644
 --- a/res/values/cm_strings.xml
 +++ b/res/values/cm_strings.xml
 @@ -144,6 +144,11 @@

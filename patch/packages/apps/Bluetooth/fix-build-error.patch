@@ -1,0 +1,142 @@
+From 6b8c0b6a6b71348ffd2374dca34f25a7bc66e21c Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 22:55:16 +0800
+Subject: [PATCH] Fix build errors caused by wrong path
+
+Change-Id: I153bcf89001205b997e51641f3e81865e86e0b59
+---
+ Android.mk                 |  6 ++---
+ tests/Android.mk           |  5 ----
+ tests/robotests/Android.mk | 47 --------------------------------------
+ tests/unit/Android.mk      | 31 -------------------------
+ 4 files changed, 3 insertions(+), 86 deletions(-)
+ delete mode 100644 tests/Android.mk
+ delete mode 100644 tests/robotests/Android.mk
+ delete mode 100644 tests/unit/Android.mk
+
+diff --git a/Android.mk b/Android.mk
+index 1f73091..2cee897 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -59,8 +59,8 @@ include $(call all-makefiles-under,$(LOCAL_PATH))
+
+ include $(CLEAR_VARS)
+
+-COMMON_LIBS_PATH := ../../../../../prebuilts/tools/common/m2/repository
+-ROOM_LIBS_PATH := ../../lib/room
++COMMON_LIBS_PATH := ../../../prebuilts/tools/common/m2/repository
++ROOM_LIBS_PATH := ./lib/room
+
+ LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := \
+         bt-androidx-annotation-nodeps:$(ROOM_LIBS_PATH)/annotation-1.0.0-beta01.jar \
+@@ -73,6 +73,6 @@ LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := \
+         bt-javapoet-nodeps:$(COMMON_LIBS_PATH)/com/squareup/javapoet/1.8.0/javapoet-1.8.0.jar \
+         bt-kotlin-metadata-nodeps:$(COMMON_LIBS_PATH)/me/eugeniomarletti/kotlin-metadata/1.2.1/kotlin-metadata-1.2.1.jar \
+         bt-sqlite-jdbc-nodeps:$(COMMON_LIBS_PATH)/org/xerial/sqlite-jdbc/3.20.1/sqlite-jdbc-3.20.1.jar \
+-        bt-jetbrain-nodeps:../../../../../prebuilts/tools/common/m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar
++        bt-jetbrain-nodeps:$(COMMON_LIBS_PATH)/org/jetbrains/annotations/13.0/annotations-13.0.jar
+
+ include $(BUILD_HOST_PREBUILT)
+diff --git a/tests/Android.mk b/tests/Android.mk
+deleted file mode 100644
+index fd297e3..0000000
+--- a/tests/Android.mk
++++ /dev/null
+@@ -1,5 +0,0 @@
+-LOCAL_PATH := $(call my-dir)
+-include $(CLEAR_VARS)
+-
+-# Include all makefiles in subdirectories
+-include $(call all-makefiles-under,$(LOCAL_PATH))
+diff --git a/tests/robotests/Android.mk b/tests/robotests/Android.mk
+deleted file mode 100644
+index 0cb6917..0000000
+--- a/tests/robotests/Android.mk
++++ /dev/null
+@@ -1,47 +0,0 @@
+-#############################################################
+-# Bluetooth Robolectric test target.                        #
+-#############################################################
+-LOCAL_PATH := $(call my-dir)
+-include $(CLEAR_VARS)
+-
+-LOCAL_MODULE := BluetoothRoboTests
+-
+-LOCAL_SRC_FILES := $(call all-java-files-under, src)
+-
+-LOCAL_RESOURCE_DIR := \
+-    $(LOCAL_PATH)/res
+-
+-LOCAL_JAVA_RESOURCE_DIRS := config
+-
+-# Include the testing libraries
+-LOCAL_JAVA_LIBRARIES := \
+-    robolectric_android-all-stub \
+-    Robolectric_all-target \
+-    mockito-robolectric-prebuilt \
+-    truth-prebuilt
+-
+-LOCAL_INSTRUMENTATION_FOR := Bluetooth
+-
+-LOCAL_MODULE_TAGS := optional
+-
+-include $(BUILD_STATIC_JAVA_LIBRARY)
+-
+-#############################################################
+-# Bluetooth runner target to run the previous target.       #
+-#############################################################
+-include $(CLEAR_VARS)
+-
+-LOCAL_MODULE := RunBluetoothRoboTests
+-
+-LOCAL_JAVA_LIBRARIES := \
+-    BluetoothRoboTests \
+-    robolectric_android-all-stub \
+-    Robolectric_all-target \
+-    mockito-robolectric-prebuilt \
+-    truth-prebuilt
+-
+-LOCAL_TEST_PACKAGE := Bluetooth
+-
+-LOCAL_INSTRUMENT_SOURCE_DIRS := $(dir $(LOCAL_PATH))../src
+-
+-include external/robolectric-shadows/run_robotests.mk
+diff --git a/tests/unit/Android.mk b/tests/unit/Android.mk
+deleted file mode 100644
+index 0ba6f37..0000000
+--- a/tests/unit/Android.mk
++++ /dev/null
+@@ -1,31 +0,0 @@
+-LOCAL_PATH:= $(call my-dir)
+-include $(CLEAR_VARS)
+-
+-# We only want this apk build for tests.
+-LOCAL_MODULE_TAGS := tests
+-LOCAL_CERTIFICATE := platform
+-
+-LOCAL_JAVA_LIBRARIES := \
+-    javax.obex \
+-    android.test.runner \
+-    telephony-common \
+-    libprotobuf-java-micro \
+-    android.test.base \
+-    android.test.mock
+-
+-LOCAL_STATIC_JAVA_LIBRARIES :=  \
+-    androidx.test.rules \
+-    mockito-target \
+-    androidx.test.espresso.intents
+-
+-# Include all test java files.
+-LOCAL_SRC_FILES := $(call all-java-files-under, src)
+-
+-LOCAL_PACKAGE_NAME := BluetoothInstrumentationTests
+-LOCAL_PRIVATE_PLATFORM_APIS := true
+-
+-LOCAL_COMPATIBILITY_SUITE := device-tests
+-
+-LOCAL_INSTRUMENTATION_FOR := Bluetooth
+-
+-include $(BUILD_PACKAGE)
+--
+2.27.0

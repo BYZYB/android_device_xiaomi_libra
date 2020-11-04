@@ -1,0 +1,351 @@
+From 5b84b745b06823b5e44e7594cccfb6acb4eb486c Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:09:18 +0800
+Subject: [PATCH] Remove unnecessary apex packages
+
+Change-Id: Ia5d61594ceb1147c5ec25e77ccbf64009b0938fa
+---
+ apexd/Android.bp      |  47 ----------
+ shim/Android.bp       |  66 --------------
+ shim/build/Android.bp | 202 ------------------------------------------
+ 3 files changed, 315 deletions(-)
+ delete mode 100644 shim/Android.bp
+ delete mode 100644 shim/build/Android.bp
+
+diff --git a/apexd/Android.bp b/apexd/Android.bp
+index 6c6f75d..9e568cc 100644
+--- a/apexd/Android.bp
++++ b/apexd/Android.bp
+@@ -286,50 +286,3 @@ genrule {
+        "$(location zipalign) -f 4096 $(genDir)/unaligned.apex " +
+        "$(genDir)/apex.apexd_test_corrupt_apex.apex"
+ }
+-
+-cc_test {
+-  name: "apexservice_test",
+-  defaults: ["apex_defaults"],
+-  cflags: [
+-    // Otherwise libgmock won't compile.
+-    "-Wno-used-but-marked-unused",
+-  ],
+-  data: [
+-    ":apex.apexd_test",
+-    ":apex.apexd_test_different_app",
+-    ":apex.apexd_test_v2",
+-    ":apex.apexd_test_no_inst_key",
+-    ":apex.apexd_test_preinstall",
+-    ":apex.apexd_test_postinstall",
+-    ":apex.apexd_test_prepostinstall.fail",
+-    ":gen_bad_apexes",
+-    ":gen_corrupt_apex",
+-    ":com.android.apex.cts.shim.v1_prebuilt",
+-    ":com.android.apex.cts.shim.v2_prebuilt",
+-    ":com.android.apex.cts.shim.v2_wrong_sha_prebuilt",
+-    ":com.android.apex.cts.shim.v2_additional_file_prebuilt",
+-    ":com.android.apex.cts.shim.v2_additional_folder_prebuilt",
+-    ":com.android.apex.cts.shim.v2_with_pre_install_hook_prebuilt",
+-    ":com.android.apex.cts.shim.v2_with_post_install_hook_prebuilt",
+-  ],
+-  srcs: ["apexservice_test.cpp"],
+-  host_supported: false,
+-  compile_multilib: "first",
+-  static_libs: [
+-    "apex_aidl_interface-cpp",
+-    "libapex",
+-    "libapexd",
+-    "libavb",
+-    "libdm",
+-    "libgmock",
+-    "libvold_binder",
+-  ],
+-  shared_libs: [
+-    "libbinder",
+-    "libselinux",
+-    "libutils",
+-  ],
+-  test_suites: ["device-tests"],
+-  test_config: "apexservice_test_config.xml",
+-}
+-
+diff --git a/shim/Android.bp b/shim/Android.bp
+deleted file mode 100644
+index 8573e1c..0000000
+--- a/shim/Android.bp
++++ /dev/null
+@@ -1,66 +0,0 @@
+-// Copyright (C) 2019 The Android Open Source Project
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-// TODO: consider removing _prebuilt suffix from module names and make use of
+-// 'prefer: true'
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v1_prebuilt",
+-  src: "com.android.apex.cts.shim.v1.apex",
+-  filename: "com.android.apex.cts.shim.apex",
+-  prefer: true,
+-  installable: true,
+-}
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v2_prebuilt",
+-  src: "com.android.apex.cts.shim.v2.apex",
+-  filename: "com.android.apex.cts.shim.v2.apex",
+-  installable: false,
+-}
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v2_wrong_sha_prebuilt",
+-  src: "com.android.apex.cts.shim.v2_wrong_sha.apex",
+-  filename: "com.android.apex.cts.shim.v2_wrong_sha.apex",
+-  installable: false,
+-}
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v2_additional_file_prebuilt",
+-  src: "com.android.apex.cts.shim.v2_additional_file.apex",
+-  filename: "com.android.apex.cts.shim.v2_additional_file.apex",
+-  installable: false,
+-}
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v2_additional_folder_prebuilt",
+-  src: "com.android.apex.cts.shim.v2_additional_folder.apex",
+-  filename: "com.android.apex.cts.shim.v2_additional_folder.apex",
+-  installable: false,
+-}
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v2_with_pre_install_hook_prebuilt",
+-  src: "com.android.apex.cts.shim.v2_with_pre_install_hook.apex",
+-  filename: "com.android.apex.cts.shim.v2_with_pre_install_hook.apex",
+-  installable: false,
+-}
+-
+-prebuilt_apex {
+-  name: "com.android.apex.cts.shim.v2_with_post_install_hook_prebuilt",
+-  src: "com.android.apex.cts.shim.v2_with_post_install_hook.apex",
+-  filename: "com.android.apex.cts.shim.v2_with_post_install_hook.apex",
+-  installable: false,
+-}
+diff --git a/shim/build/Android.bp b/shim/build/Android.bp
+deleted file mode 100644
+index 71f847c..0000000
+--- a/shim/build/Android.bp
++++ /dev/null
+@@ -1,202 +0,0 @@
+-// Copyright (C) 2019 The Android Open Source Project
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-// Build rules to build shim apexes.
+-
+-genrule {
+-  name: "com.android.apex.cts.shim.pem",
+-  out: ["com.android.apex.cts.shim.pem"],
+-  cmd: "openssl genrsa -out $(out) 4096",
+-}
+-
+-genrule {
+-  name: "com.android.apex.cts.shim.pubkey",
+-  srcs: [":com.android.apex.cts.shim.pem"],
+-  out: ["com.android.apex.cts.shim.pubkey"],
+-  tools: ["avbtool"],
+-  cmd: "$(location avbtool) extract_public_key --key $(in) --output $(out)",
+-}
+-
+-apex_key {
+-  name: "com.android.apex.cts.shim.key",
+-  private_key: ":com.android.apex.cts.shim.pem",
+-  public_key: ":com.android.apex.cts.shim.pubkey",
+-  installable: false,
+-}
+-
+-genrule {
+-  name: "generate_hash_of_dev_null",
+-  out: ["hash.txt"],
+-  cmd: "sha512sum -b /dev/null | cut -d' ' -f1 | tee $(out)",
+-}
+-
+-prebuilt_etc {
+-  name: "hash_of_dev_null",
+-  src: ":generate_hash_of_dev_null",
+-  filename: "hash.txt",
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v3",
+-  manifest: "manifest_v3.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_of_dev_null"],
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v2",
+-  manifest: "manifest_v2.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_of_dev_null"],
+-  installable: false,
+-}
+-
+-genrule {
+-  name: "generate_empty_hash",
+-  out: ["hash.txt"],
+-  cmd: "touch $(out)",
+-}
+-
+-prebuilt_etc {
+-  name: "empty_hash",
+-  src: ":generate_empty_hash",
+-  filename: "hash.txt",
+-  installable: false,
+-}
+-
+-// Use empty hash.txt to make sure that this apex has wrong SHA512, hence trying
+-// to stage it should fail.
+-apex {
+-  name: "com.android.apex.cts.shim.v2_wrong_sha",
+-  manifest: "manifest_v2.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["empty_hash"],
+-  installable: false,
+-}
+-
+-prebuilt_etc {
+-  name: "apex_shim_additional_file",
+-  src: "additional_file",
+-  filename: "additional_file",
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v2_additional_file",
+-  manifest: "manifest_v2.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_of_dev_null", "apex_shim_additional_file"],
+-  installable: false,
+-}
+-
+-prebuilt_etc {
+-  name: "apex_shim_additional_folder",
+-  src: "additional_file",
+-  filename: "additional_file",
+-  sub_dir: "additional_folder",
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v2_additional_folder",
+-  manifest: "manifest_v2.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_of_dev_null", "apex_shim_additional_folder"],
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v2_with_pre_install_hook",
+-  manifest: "manifest_v2_with_pre_install_hook.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_of_dev_null"],
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v2_with_post_install_hook",
+-  manifest: "manifest_v2_with_post_install_hook.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_of_dev_null"],
+-  installable: false,
+-}
+-
+-genrule {
+-  name: "generate_hash_v1",
+-  srcs: [
+-    ":com.android.apex.cts.shim.v2",
+-    ":com.android.apex.cts.shim.v2_additional_file",
+-    ":com.android.apex.cts.shim.v2_additional_folder",
+-    ":com.android.apex.cts.shim.v2_with_pre_install_hook",
+-    ":com.android.apex.cts.shim.v2_with_post_install_hook",
+-    ":com.android.apex.cts.shim.v3",
+-  ],
+-  out: ["hash.txt"],
+-  cmd: "sha512sum -b $(in) | cut -d' ' -f1 | tee $(out)",
+-}
+-
+-prebuilt_etc {
+-  name: "hash_v1",
+-  src: ":generate_hash_v1",
+-  filename: "hash.txt",
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim.v1",
+-  manifest: "manifest.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim.key",
+-  prebuilts: ["hash_v1"],
+-  installable: false,
+-}
+-
+-genrule {
+-  name: "com.android.apex.cts.shim_not_pre_installed.pem",
+-  out: ["com.android.apex.cts.shim_not_pre_installed.pem"],
+-  cmd: "openssl genrsa -out $(out) 4096",
+-}
+-
+-genrule {
+-  name: "com.android.apex.cts.shim_not_pre_installed.pubkey",
+-  srcs: [":com.android.apex.cts.shim_not_pre_installed.pem"],
+-  out: ["com.android.apex.cts.shim_not_pre_installed.pubkey"],
+-  tools: ["avbtool"],
+-  cmd: "$(location avbtool) extract_public_key --key $(in) --output $(out)",
+-}
+-
+-apex_key {
+-  name: "com.android.apex.cts.shim_not_pre_installed.key",
+-  private_key: ":com.android.apex.cts.shim_not_pre_installed.pem",
+-  public_key: ":com.android.apex.cts.shim_not_pre_installed.pubkey",
+-  installable: false,
+-}
+-
+-apex {
+-  name: "com.android.apex.cts.shim_not_pre_installed",
+-  manifest: "manifest_not_pre_installed.json",
+-  file_contexts: "apex.test",
+-  key: "com.android.apex.cts.shim_not_pre_installed.key",
+-  prebuilts: ["hash_of_dev_null"],
+-  installable: false,
+-}
+--
+2.27.0

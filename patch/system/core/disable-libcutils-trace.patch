@@ -1,0 +1,63 @@
+From f5524518efe93de615c1bef93e40c6933a2e3bfd Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:49:46 +0800
+Subject: [PATCH] Disable libcutils trace
+
+Change-Id: Ic06c8db91ad6ff5133f8f81e5029ba569070c4f0
+---
+ libcutils/trace-dev.cpp | 12 ++----------
+ libcutils/trace-dev.inc |  3 ++-
+ 2 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/libcutils/trace-dev.cpp b/libcutils/trace-dev.cpp
+index 4da8215..07afa2f 100644
+--- a/libcutils/trace-dev.cpp
++++ b/libcutils/trace-dev.cpp
+@@ -24,22 +24,14 @@ static pthread_once_t atrace_once_control = PTHREAD_ONCE_INIT;
+ // the Zygote process from tracing.
+ void atrace_set_tracing_enabled(bool enabled)
+ {
++    enabled = false;
+     atomic_store_explicit(&atrace_is_enabled, enabled, memory_order_release);
+     atrace_update_tags();
+ }
+
+ static void atrace_init_once()
+ {
+-    atrace_marker_fd = open("/sys/kernel/debug/tracing/trace_marker", O_WRONLY | O_CLOEXEC);
+-    if (atrace_marker_fd == -1) {
+-        ALOGE("Error opening trace file: %s (%d)", strerror(errno), errno);
+-        atrace_enabled_tags = 0;
+-        goto done;
+-    }
+-
+-    atrace_enabled_tags = atrace_get_property();
+-
+-done:
++    atrace_enabled_tags = 0;
+     atomic_store_explicit(&atrace_is_ready, true, memory_order_release);
+ }
+
+diff --git a/libcutils/trace-dev.inc b/libcutils/trace-dev.inc
+index e3da77b..33ae155 100644
+--- a/libcutils/trace-dev.inc
++++ b/libcutils/trace-dev.inc
+@@ -45,7 +45,7 @@ atomic_bool             atrace_is_ready      = ATOMIC_VAR_INIT(false);
+ int                     atrace_marker_fd     = -1;
+ uint64_t                atrace_enabled_tags  = ATRACE_TAG_NOT_READY;
+ static bool             atrace_is_debuggable = false;
+-static atomic_bool      atrace_is_enabled    = ATOMIC_VAR_INIT(true);
++static atomic_bool      atrace_is_enabled    = ATOMIC_VAR_INIT(false);
+ static pthread_mutex_t  atrace_tags_mutex    = PTHREAD_MUTEX_INITIALIZER;
+
+ // Set whether this process is debuggable, which determines whether
+@@ -53,6 +53,7 @@ static pthread_mutex_t  atrace_tags_mutex    = PTHREAD_MUTEX_INITIALIZER;
+ // is not set to '1'.
+ void atrace_set_debuggable(bool debuggable)
+ {
++    debuggable = false;
+     atrace_is_debuggable = debuggable;
+     atrace_update_tags();
+ }
+--
+2.27.0

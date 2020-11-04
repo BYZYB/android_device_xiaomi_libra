@@ -1,9 +1,9 @@
-From 30fc437af394b722f5204b31f992063b24680988 Mon Sep 17 00:00:00 2001
-From: WJXXBSH <********@outlook.com>
-Date: Mon, 7 Sep 2020 11:13:13 +0800
-Subject: [PATCH] Add addon-su support
+From 6edfec2b062c42dddb863727697672f6ad187b38 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:07:46 +0800
+Subject: [PATCH] Forwardport addon-su from lineage-16.0
 
-Change-Id: I572ba7a0aca8ff8debc6630ee52394f4d37a471d
+Change-Id: Iabf7af5c639e5ce0c5e29485f0ac3e7aba3ce045
 ---
  su/Android.mk             |  32 +-
  su/MODULE_LICENSE_APACHE2 |   0
@@ -14,10 +14,10 @@ Change-Id: I572ba7a0aca8ff8debc6630ee52394f4d37a471d
  su/su.c                   | 592 +++++++++++++++++++++++++++++++
  su/su.cpp                 | 144 --------
  su/su.h                   | 121 +++++++
- su/superuser.rc           |  12 +
+ su/superuser.rc           |  13 +
  su/utils.c                |  53 +++
  su/utils.h                |  23 ++
- 12 files changed, 2023 insertions(+), 340 deletions(-)
+ 12 files changed, 2024 insertions(+), 340 deletions(-)
  delete mode 100644 su/MODULE_LICENSE_APACHE2
  delete mode 100644 su/NOTICE
  create mode 100644 su/daemon.c
@@ -31,7 +31,7 @@ Change-Id: I572ba7a0aca8ff8debc6630ee52394f4d37a471d
  create mode 100644 su/utils.h
 
 diff --git a/su/Android.mk b/su/Android.mk
-index e3da4f21..4833d33a 100644
+index e3da4f2..4833d33 100644
 --- a/su/Android.mk
 +++ b/su/Android.mk
 @@ -1,12 +1,32 @@
@@ -75,10 +75,10 @@ index e3da4f21..4833d33a 100644
 +    $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(SYMLINKS)
 diff --git a/su/MODULE_LICENSE_APACHE2 b/su/MODULE_LICENSE_APACHE2
 deleted file mode 100644
-index e69de29b..00000000
+index e69de29..0000000
 diff --git a/su/NOTICE b/su/NOTICE
 deleted file mode 100644
-index c5b1efa7..00000000
+index c5b1efa..0000000
 --- a/su/NOTICE
 +++ /dev/null
 @@ -1,190 +0,0 @@
@@ -274,7 +274,7 @@ index c5b1efa7..00000000
 -
 diff --git a/su/daemon.c b/su/daemon.c
 new file mode 100644
-index 00000000..0a405683
+index 0000000..0a40568
 --- /dev/null
 +++ b/su/daemon.c
 @@ -0,0 +1,711 @@
@@ -991,7 +991,7 @@ index 00000000..0a405683
 +}
 diff --git a/su/pts.c b/su/pts.c
 new file mode 100644
-index 00000000..dcd7846c
+index 0000000..dcd7846
 --- /dev/null
 +++ b/su/pts.c
 @@ -0,0 +1,369 @@
@@ -1366,7 +1366,7 @@ index 00000000..dcd7846c
 +}
 diff --git a/su/pts.h b/su/pts.h
 new file mode 100644
-index 00000000..241f6e2d
+index 0000000..241f6e2
 --- /dev/null
 +++ b/su/pts.h
 @@ -0,0 +1,116 @@
@@ -1488,7 +1488,7 @@ index 00000000..241f6e2d
 +#endif
 diff --git a/su/su.c b/su/su.c
 new file mode 100644
-index 00000000..88d5d821
+index 0000000..88d5d82
 --- /dev/null
 +++ b/su/su.c
 @@ -0,0 +1,592 @@
@@ -2086,7 +2086,7 @@ index 00000000..88d5d821
 +}
 diff --git a/su/su.cpp b/su/su.cpp
 deleted file mode 100644
-index 1a1ab6bf..00000000
+index 1a1ab6b..0000000
 --- a/su/su.cpp
 +++ /dev/null
 @@ -1,144 +0,0 @@
@@ -2236,7 +2236,7 @@ index 1a1ab6bf..00000000
 -}
 diff --git a/su/su.h b/su/su.h
 new file mode 100644
-index 00000000..a977c824
+index 0000000..a977c82
 --- /dev/null
 +++ b/su/su.h
 @@ -0,0 +1,121 @@
@@ -2363,10 +2363,10 @@ index 00000000..a977c824
 +#endif
 diff --git a/su/superuser.rc b/su/superuser.rc
 new file mode 100644
-index 00000000..1d72d997
+index 0000000..3150d49
 --- /dev/null
 +++ b/su/superuser.rc
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +# su daemon
 +service su_daemon /system/xbin/su --daemon
 +    user root
@@ -2382,7 +2382,7 @@ index 00000000..1d72d997
 +    start su_daemon
 diff --git a/su/utils.c b/su/utils.c
 new file mode 100644
-index 00000000..c6e41ece
+index 0000000..c6e41ec
 --- /dev/null
 +++ b/su/utils.c
 @@ -0,0 +1,53 @@
@@ -2441,7 +2441,7 @@ index 00000000..c6e41ece
 +}
 diff --git a/su/utils.h b/su/utils.h
 new file mode 100644
-index 00000000..f6f5a227
+index 0000000..f6f5a22
 --- /dev/null
 +++ b/su/utils.h
 @@ -0,0 +1,23 @@

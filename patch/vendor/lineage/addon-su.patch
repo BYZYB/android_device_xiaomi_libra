@@ -1,26 +1,29 @@
-From 1c5dc6c06d754ad7bd6b30b19a6c6297a2dee2c6 Mon Sep 17 00:00:00 2001
-From: WJXXBSH <********@outlook.com>
-Date: Mon, 7 Sep 2020 11:18:24 +0800
-Subject: [PATCH] Add addon-su support
+From 50d2865472f315f4988e1b6c9a41435246f59d1e Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Thu, 5 Nov 2020 10:17:05 +0800
+Subject: [PATCH] Add addon-su and adb_root support
 
-Change-Id: Idf42a3836d71fe4af8cce673455e6fda25124690
+Change-Id: I15f0f970aceed418fd7c9b1c04a8730fa80e8256
 ---
- addonsu/51-addonsu.sh             | 41 +++++++++++++++++++++++++++++++
+ addonsu/51-addonsu.sh             | 41 ++++++++++++++++++++++++++++++
  addonsu/mount-system.sh           | 34 +++++++++++++++++++++++++
  addonsu/unmount-system.sh         | 15 +++++++++++
  addonsu/updater-script-install    | 17 +++++++++++++
  addonsu/updater-script-remove     | 16 ++++++++++++
+ build/tasks/addonsu.mk            | 42 +++++++++++++++++++++++++++++++
+ config/common.mk                  |  7 +-----
  prebuilt/common/bin/backuptool.sh |  1 +
- 6 files changed, 124 insertions(+)
+ 8 files changed, 167 insertions(+), 6 deletions(-)
  create mode 100644 addonsu/51-addonsu.sh
  create mode 100644 addonsu/mount-system.sh
  create mode 100644 addonsu/unmount-system.sh
  create mode 100644 addonsu/updater-script-install
  create mode 100644 addonsu/updater-script-remove
+ create mode 100644 build/tasks/addonsu.mk
 
 diff --git a/addonsu/51-addonsu.sh b/addonsu/51-addonsu.sh
 new file mode 100644
-index 00000000..a17f5450
+index 0000000..a17f545
 --- /dev/null
 +++ b/addonsu/51-addonsu.sh
 @@ -0,0 +1,41 @@
@@ -67,7 +70,7 @@ index 00000000..a17f5450
 +esac
 diff --git a/addonsu/mount-system.sh b/addonsu/mount-system.sh
 new file mode 100644
-index 00000000..3bc9c3e5
+index 0000000..3bc9c3e
 --- /dev/null
 +++ b/addonsu/mount-system.sh
 @@ -0,0 +1,34 @@
@@ -107,7 +110,7 @@ index 00000000..3bc9c3e5
 +exit 1
 diff --git a/addonsu/unmount-system.sh b/addonsu/unmount-system.sh
 new file mode 100644
-index 00000000..017e3de0
+index 0000000..017e3de
 --- /dev/null
 +++ b/addonsu/unmount-system.sh
 @@ -0,0 +1,15 @@
@@ -128,7 +131,7 @@ index 00000000..017e3de0
 +exit 1
 diff --git a/addonsu/updater-script-install b/addonsu/updater-script-install
 new file mode 100644
-index 00000000..ee8a4661
+index 0000000..ee8a466
 --- /dev/null
 +++ b/addonsu/updater-script-install
 @@ -0,0 +1,17 @@
@@ -151,7 +154,7 @@ index 00000000..ee8a4661
 +set_progress(1.000000);
 diff --git a/addonsu/updater-script-remove b/addonsu/updater-script-remove
 new file mode 100644
-index 00000000..677d3f37
+index 0000000..677d3f3
 --- /dev/null
 +++ b/addonsu/updater-script-remove
 @@ -0,0 +1,16 @@
@@ -171,8 +174,75 @@ index 00000000..677d3f37
 +run_program("/tmp/unmount-system.sh") == 0 || ui_print("Could not unmount /system");
 +ui_print("Done");
 +set_progress(1.000000);
+diff --git a/build/tasks/addonsu.mk b/build/tasks/addonsu.mk
+new file mode 100644
+index 0000000..163be1f
+--- /dev/null
++++ b/build/tasks/addonsu.mk
+@@ -0,0 +1,42 @@
++ADDONSU_PREBUILTS_PATH := vendor/lineage/addonsu/
++
++ADDONSU_INSTALL_NAME := addonsu-$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_ARCH).zip
++ADDONSU_INSTALL_OUT := $(PRODUCT_OUT)/addonsu-install/
++ADDONSU_INSTALL_TARGET := $(PRODUCT_OUT)/$(ADDONSU_INSTALL_NAME)
++
++$(ADDONSU_INSTALL_TARGET): $(ALL_MODULES.updater.BUILT) \
++		$(ALL_MODULES.su.BUILT) $(ALL_MODULES.su.PATH)/superuser.rc
++	$(hide) rm -rf $@ $(ADDONSU_INSTALL_OUT)
++	$(hide) mkdir -p $(ADDONSU_INSTALL_OUT)/META-INF/com/google/android/
++	$(hide) mkdir -p $(ADDONSU_INSTALL_OUT)/system/xbin
++	$(hide) mkdir -p $(ADDONSU_INSTALL_OUT)/system/addon.d
++	$(hide) mkdir -p $(ADDONSU_INSTALL_OUT)/system/etc/init
++	$(hide) cp $(ALL_MODULES.su.BUILT) $(ADDONSU_INSTALL_OUT)/system/xbin/
++	$(hide) cp $(ALL_MODULES.su.PATH)/superuser.rc $(ADDONSU_INSTALL_OUT)/system/etc/init/
++	$(hide) cp $(ALL_MODULES.updater.BUILT) $(ADDONSU_INSTALL_OUT)/META-INF/com/google/android/update-binary
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/51-addonsu.sh $(ADDONSU_INSTALL_OUT)/system/addon.d/
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/mount-system.sh $(ADDONSU_INSTALL_OUT)/
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/unmount-system.sh $(ADDONSU_INSTALL_OUT)/
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/updater-script-install $(ADDONSU_INSTALL_OUT)/META-INF/com/google/android/updater-script
++	$(hide) (cd $(ADDONSU_INSTALL_OUT) && zip -qr ../$(ADDONSU_INSTALL_NAME) *)
++
++.PHONY: addonsu
++addonsu: $(ADDONSU_INSTALL_TARGET)
++	@echo "Done: $(ADDONSU_INSTALL_TARGET)"
++
++
++ADDONSU_REMOVE_OUT := $(PRODUCT_OUT)/addonsu-remove/
++ADDONSU_REMOVE_TARGET := $(PRODUCT_OUT)/addonsu-remove-$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_ARCH).zip
++
++$(ADDONSU_REMOVE_TARGET): $(ALL_MODULES.updater.BUILT)
++	$(hide) rm -rf $@ $(ADDONSU_REMOVE_OUT)
++	$(hide) mkdir -p $(ADDONSU_REMOVE_OUT)/META-INF/com/google/android/
++	$(hide) cp $(ALL_MODULES.updater.BUILT) $(ADDONSU_REMOVE_OUT)/META-INF/com/google/android/update-binary
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/mount-system.sh $(ADDONSU_REMOVE_OUT)/
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/unmount-system.sh $(ADDONSU_REMOVE_OUT)/
++	$(hide) cp $(ADDONSU_PREBUILTS_PATH)/updater-script-remove $(ADDONSU_REMOVE_OUT)/META-INF/com/google/android/updater-script
++	$(hide) (cd $(ADDONSU_REMOVE_OUT) && zip -qr $@ *)
++
++.PHONY: addonsu-remove
++addonsu-remove: $(ADDONSU_REMOVE_TARGET)
++	@echo "Done: $(ADDONSU_REMOVE_TARGET)"
+diff --git a/config/common.mk b/config/common.mk
+index 2fe9cb0..97d1ade 100644
+--- a/config/common.mk
++++ b/config/common.mk
+@@ -175,13 +175,8 @@ PRODUCT_PACKAGES_DEBUG += \
+
+ # Root
+ PRODUCT_PACKAGES += \
+-    adb_root
+-ifneq ($(TARGET_BUILD_VARIANT),user)
+-ifeq ($(WITH_SU),true)
+-PRODUCT_PACKAGES += \
++    adb_root \
+     su
+-endif
+-endif
+
+ # Dex preopt
+ PRODUCT_DEXPREOPT_SPEED_APPS += \
 diff --git a/prebuilt/common/bin/backuptool.sh b/prebuilt/common/bin/backuptool.sh
-index 662b4673..3bdf07e9 100755
+index 662b467..3bdf07e 100755
 --- a/prebuilt/common/bin/backuptool.sh
 +++ b/prebuilt/common/bin/backuptool.sh
 @@ -97,6 +97,7 @@ case "$1" in
@@ -184,4 +254,4 @@ index 662b4673..3bdf07e9 100755
        sync
      fi
 --
-2.27.0
+2.28.0

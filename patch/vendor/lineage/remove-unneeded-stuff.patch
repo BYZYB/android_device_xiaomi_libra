@@ -1,0 +1,307 @@
+From 611cde348a7a946fcfdb7327800acb90af423e08 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Thu, 5 Nov 2020 10:23:20 +0800
+Subject: [PATCH] Remove unneeded stuffs
+
+Change-Id: Id086d3ec64499bce9a7bc3923d99627bf65d3714
+---
+ config/common.mk                              | 36 +------------------
+ config/common_full.mk                         | 10 ------
+ config/common_mobile.mk                       | 12 ++-----
+ config/data_only.mk                           |  5 ---
+ config/telephony.mk                           |  4 +--
+ .../base/core/res/res/values/colors.xml       | 23 ------------
+ .../SettingsProvider/res/values/defaults.xml  |  2 --
+ .../res/values/defaults.xml                   | 22 ------------
+ prebuilt/common/etc/fonts_customization.xml   | 24 -------------
+ prebuilt/common/etc/init/lineage-ssh.rc       |  3 --
+ prebuilt/common/etc/init/lineage-system.rc    |  7 ----
+ prebuilt/common/etc/init/lineage-updates.rc   |  4 ---
+ 12 files changed, 5 insertions(+), 147 deletions(-)
+ delete mode 100644 overlay/common/frameworks/base/core/res/res/values/colors.xml
+ delete mode 100644 overlay/common/lineage-sdk/packages/LineageSettingsProvider/res/values/defaults.xml
+ delete mode 100644 prebuilt/common/etc/fonts_customization.xml
+ delete mode 100644 prebuilt/common/etc/init/lineage-ssh.rc
+ delete mode 100644 prebuilt/common/etc/init/lineage-updates.rc
+
+diff --git a/config/common.mk b/config/common.mk
+index 97d1ade..ccf6a04 100644
+--- a/config/common.mk
++++ b/config/common.mk
+@@ -101,10 +101,6 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
+ # Disable vendor restrictions
+ PRODUCT_RESTRICT_VENDOR_FILES := false
+
+-# Bootanimation
+-PRODUCT_PACKAGES += \
+-    bootanimation.zip
+-
+ # AOSP packages
+ PRODUCT_PACKAGES += \
+     Terminal
+@@ -123,24 +119,8 @@ PRODUCT_PACKAGES += \
+
+ # Extra tools in Lineage
+ PRODUCT_PACKAGES += \
+-    7z \
+-    awk \
+-    bash \
+-    bzip2 \
+     curl \
+-    getcap \
+-    htop \
+-    lib7z \
+-    libsepol \
+-    nano \
+-    pigz \
+-    powertop \
+-    setcap \
+-    unrar \
+-    unzip \
+-    vim \
+-    wget \
+-    zip
++    wget
+
+ # Filesystems tools
+ PRODUCT_PACKAGES += \
+@@ -151,20 +131,6 @@ PRODUCT_PACKAGES += \
+     mkfs.ntfs \
+     mount.ntfs
+
+-# Openssh
+-PRODUCT_PACKAGES += \
+-    scp \
+-    sftp \
+-    ssh \
+-    sshd \
+-    sshd_config \
+-    ssh-keygen \
+-    start-ssh
+-
+-# rsync
+-PRODUCT_PACKAGES += \
+-    rsync
+-
+ # Storage manager
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     ro.storage_manager.enabled=true
+diff --git a/config/common_full.mk b/config/common_full.mk
+index 91bf198..67bfa73 100644
+--- a/config/common_full.mk
++++ b/config/common_full.mk
+@@ -3,16 +3,6 @@ $(call inherit-product, vendor/lineage/config/common_mobile.mk)
+
+ PRODUCT_SIZE := full
+
+-# Include {Lato,Rubik} fonts
+-$(call inherit-product-if-exists, external/google-fonts/lato/fonts.mk)
+-$(call inherit-product-if-exists, external/google-fonts/rubik/fonts.mk)
+-
+-# Fonts
+-PRODUCT_PACKAGES += \
+-    fonts_customization.xml \
+-    LineageLatoFont \
+-    LineageRubikFont
+-
+ # Recorder
+ PRODUCT_PACKAGES += \
+     Recorder
+diff --git a/config/common_mobile.mk b/config/common_mobile.mk
+index e15120e..b33e8e1 100644
+--- a/config/common_mobile.mk
++++ b/config/common_mobile.mk
+@@ -13,27 +13,21 @@ endif
+
+ # Optional packages
+ PRODUCT_PACKAGES += \
+-    LiveWallpapersPicker \
+-    PhotoTable
++    LiveWallpapersPicker
+
+ # AOSP packages
+ PRODUCT_PACKAGES += \
+-    Email \
+-    ExactCalculator \
+-    Exchange2
++    ExactCalculator
+
+ # Lineage packages
+ PRODUCT_PACKAGES += \
+-    AudioFX \
+     Backgrounds \
+     Eleven \
+     Etar \
+     Jelly \
+-    LockClock \
+     Profiles \
+     Seedvault \
+-    TrebuchetQuickStep \
+-    WeatherProvider
++    TrebuchetQuickStep
+
+ # Accents
+ PRODUCT_PACKAGES += \
+diff --git a/config/data_only.mk b/config/data_only.mk
+index e45a2d5..ab70301 100644
+--- a/config/data_only.mk
++++ b/config/data_only.mk
+@@ -1,8 +1,3 @@
+ # World APN list
+ PRODUCT_PACKAGES += \
+     apns-conf.xml
+-
+-# Telephony packages
+-PRODUCT_PACKAGES += \
+-    Stk \
+-    CellBroadcastReceiver
+diff --git a/config/telephony.mk b/config/telephony.mk
+index 43bbaa9..3e488db 100644
+--- a/config/telephony.mk
++++ b/config/telephony.mk
+@@ -8,9 +8,7 @@ PRODUCT_PACKAGES += \
+
+ # Telephony packages
+ PRODUCT_PACKAGES += \
+-    messaging \
+-    Stk \
+-    CellBroadcastReceiver
++    messaging
+
+ # Default ringtone
+ PRODUCT_PRODUCT_PROPERTIES += \
+diff --git a/overlay/common/frameworks/base/core/res/res/values/colors.xml b/overlay/common/frameworks/base/core/res/res/values/colors.xml
+deleted file mode 100644
+index 27fd690..0000000
+--- a/overlay/common/frameworks/base/core/res/res/values/colors.xml
++++ /dev/null
+@@ -1,23 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<!--
+-    Copyright (c) 2018, The LineageOS Project
+-
+-    Licensed under the Apache License, Version 2.0 (the "License");
+-    you may not use this file except in compliance with the License.
+-    You may obtain a copy of the License at
+-
+-        http://www.apache.org/licenses/LICENSE-2.0
+-
+-    Unless required by applicable law or agreed to in writing, software
+-    distributed under the License is distributed on an "AS IS" BASIS,
+-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-    See the License for the specific language governing permissions and
+-    limitations under the License.
+--->
+-<resources>
+-    <color name="accent_device_default_700">#167C80</color>
+-    <color name="accent_device_default_dark">#167C80</color>
+-    <color name="accent_device_default_light">#167C80</color>
+-    <color name="material_deep_teal_200">#167C80</color>
+-    <color name="material_deep_teal_500">#167C80</color>
+-</resources>
+diff --git a/overlay/common/frameworks/base/packages/SettingsProvider/res/values/defaults.xml b/overlay/common/frameworks/base/packages/SettingsProvider/res/values/defaults.xml
+index fd15ab8..4514a53 100644
+--- a/overlay/common/frameworks/base/packages/SettingsProvider/res/values/defaults.xml
++++ b/overlay/common/frameworks/base/packages/SettingsProvider/res/values/defaults.xml
+@@ -17,7 +17,5 @@
+  */
+ -->
+ <resources>
+-    <bool name="def_wifi_on">true</bool>
+-
+     <string name="def_backup_transport">com.google.android.gms/.backup.BackupTransportService</string>
+ </resources>
+diff --git a/overlay/common/lineage-sdk/packages/LineageSettingsProvider/res/values/defaults.xml b/overlay/common/lineage-sdk/packages/LineageSettingsProvider/res/values/defaults.xml
+deleted file mode 100644
+index 56031b7..0000000
+--- a/overlay/common/lineage-sdk/packages/LineageSettingsProvider/res/values/defaults.xml
++++ /dev/null
+@@ -1,22 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<!--
+-     Copyright (C) 2014-2015 The CyanogenMod Project
+-
+-     Licensed under the Apache License, Version 2.0 (the "License");
+-     you may not use this file except in compliance with the License.
+-     You may obtain a copy of the License at
+-
+-          http://www.apache.org/licenses/LICENSE-2.0
+-
+-     Unless required by applicable law or agreed to in writing, software
+-     distributed under the License is distributed on an "AS IS" BASIS,
+-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-     See the License for the specific language governing permissions and
+-     limitations under the License.
+--->
+-<resources>
+-    <!-- Defaults for Secure -->
+-
+-    <!-- Default for LineageSettings.Secure.STATS_COLLECTION -->
+-    <bool name="def_stats_collection">true</bool>
+-</resources>
+diff --git a/prebuilt/common/etc/fonts_customization.xml b/prebuilt/common/etc/fonts_customization.xml
+deleted file mode 100644
+index 0c9a7fb..0000000
+--- a/prebuilt/common/etc/fonts_customization.xml
++++ /dev/null
+@@ -1,24 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<fonts-modification version="1">
+-    <family customizationType="new-named-family" name="lato">
+-        <font weight="400" style="normal">Lato-Regular.ttf</font>
+-        <font weight="400" style="italic">Lato-Italic.ttf</font>
+-        <font weight="500" style="normal">Lato-Medium.ttf</font>
+-        <font weight="500" style="italic">Lato-MediumItalic.ttf</font>
+-        <font weight="700" style="normal">Lato-Bold.ttf</font>
+-        <font weight="700" style="italic">Lato-BoldItalic.ttf</font>
+-    </family>
+-    <alias name="lato-medium" to="lato" weight="500" />
+-    <alias name="lato-bold" to="lato" weight="700" />
+-
+-    <family customizationType="new-named-family" name="rubik">
+-        <font weight="400" style="normal">Rubik-Regular.ttf</font>
+-        <font weight="400" style="italic">Rubik-Italic.ttf</font>
+-        <font weight="500" style="normal">Rubik-Medium.ttf</font>
+-        <font weight="500" style="italic">Rubik-MediumItalic.ttf</font>
+-        <font weight="700" style="normal">Rubik-Bold.ttf</font>
+-        <font weight="700" style="italic">Rubik-BoldItalic.ttf</font>
+-    </family>
+-    <alias name="rubik-medium" to="rubik" weight="500" />
+-    <alias name="rubik-bold" to="rubik" weight="700" />
+-</fonts-modification>
+diff --git a/prebuilt/common/etc/init/lineage-ssh.rc b/prebuilt/common/etc/init/lineage-ssh.rc
+deleted file mode 100644
+index edf3863..0000000
+--- a/prebuilt/common/etc/init/lineage-ssh.rc
++++ /dev/null
+@@ -1,3 +0,0 @@
+-on post-fs-data
+-    mkdir /data/ssh 0750 root shell
+-    mkdir /data/ssh/empty 0600 root shell
+diff --git a/prebuilt/common/etc/init/lineage-system.rc b/prebuilt/common/etc/init/lineage-system.rc
+index 29e795f..deb4c99 100644
+--- a/prebuilt/common/etc/init/lineage-system.rc
++++ b/prebuilt/common/etc/init/lineage-system.rc
+@@ -8,10 +8,3 @@ on post-fs-data
+     # Change permissions on fsck log so it can be added to the dropbox
+     chown root log /dev/fscklogs/log
+     chmod 0640 /dev/fscklogs/log
+-
+-# bugreport is triggered by holding down volume down, volume up and power
+-service bugreport /system/bin/dumpstate -d -p -B -z \
+-        -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
+-    oneshot
+-    disabled
+-    keycodes 114 115 116
+diff --git a/prebuilt/common/etc/init/lineage-updates.rc b/prebuilt/common/etc/init/lineage-updates.rc
+deleted file mode 100644
+index 3a9b481..0000000
+--- a/prebuilt/common/etc/init/lineage-updates.rc
++++ /dev/null
+@@ -1,4 +0,0 @@
+-on post-fs-data
+-    # Create an additional OTA package directory that unlike /data/ota_package
+-    # will not be touched by GmsCore.
+-    mkdir /data/lineageos_updates 0770 system cache
+--
+2.28.0

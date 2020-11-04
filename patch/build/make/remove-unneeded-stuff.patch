@@ -1,0 +1,248 @@
+From 173a605e05bb9756c24063aa5f1c26e164922197 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Thu, 5 Nov 2020 10:33:46 +0800
+Subject: [PATCH] Remove unneeded stuffs
+
+Change-Id: Ie9e915786d5803805dafb582a04fe4a0c844ea5a
+---
+ core/main.mk                       |  4 ----
+ target/product/base_system.mk      | 18 +-----------------
+ target/product/full_base.mk        |  3 +--
+ target/product/handheld_system.mk  |  5 -----
+ target/product/media_system.mk     | 10 ----------
+ target/product/runtime_libart.mk   |  5 -----
+ target/product/telephony_system.mk |  4 +---
+ target/product/updatable_apex.mk   |  1 -
+ 8 files changed, 3 insertions(+), 47 deletions(-)
+
+diff --git a/core/main.mk b/core/main.mk
+index e8a1c4f..a7eda93 100644
+--- a/core/main.mk
++++ b/core/main.mk
+@@ -292,8 +292,6 @@ ifneq (,$(user_variant))
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
+
+ else # !user_variant
+-  # Turn on checkjni for non-user builds.
+-  ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
+   # Set device insecure for non-user builds.
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+   # Allow mock locations by default for non user builds
+@@ -303,8 +301,6 @@ endif # !user_variant
+ ifeq (true,$(strip $(enable_target_debugging)))
+   # Target is more debuggable and adbd is on by default
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
+-  # Enable Dalvik lock contention logging.
+-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
+ else # !enable_target_debugging
+   # Target is less debuggable and adbd is off by default
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
+diff --git a/target/product/base_system.mk b/target/product/base_system.mk
+index 699b9c7..77b02b5 100644
+--- a/target/product/base_system.mk
++++ b/target/product/base_system.mk
+@@ -34,7 +34,6 @@ PRODUCT_PACKAGES += \
+     app_process \
+     appwidget \
+     ashmemd \
+-    atrace \
+     audioserver \
+     BackupRestoreConfirmation \
+     bcc \
+@@ -45,8 +44,6 @@ PRODUCT_PACKAGES += \
+     bootstat \
+     bpfloader \
+     bu \
+-    bugreport \
+-    bugreportz \
+     cgroups.json \
+     charger \
+     cmd \
+@@ -58,10 +55,6 @@ PRODUCT_PACKAGES += \
+     com.android.tzdata \
+     ContactsProvider \
+     content \
+-    crash_dump \
+-    CtsShimPrebuilt \
+-    CtsShimPrivPrebuilt \
+-    debuggerd\
+     device_config \
+     dmctl \
+     dnsmasq \
+@@ -69,7 +62,6 @@ PRODUCT_PACKAGES += \
+     dpm \
+     dumpstate \
+     dumpsys \
+-    DynamicSystemInstallationService \
+     e2fsck \
+     ExtServices \
+     ExtShared \
+@@ -82,8 +74,6 @@ PRODUCT_PACKAGES += \
+     fs_config_dirs_system \
+     gsid \
+     gsi_tool \
+-    heapprofd \
+-    heapprofd_client \
+     gatekeeperd \
+     gpuservice \
+     hid \
+@@ -249,9 +239,6 @@ PRODUCT_PACKAGES += \
+     tc \
+     telecom \
+     telephony-common \
+-    tombstoned \
+-    traced \
+-    traced_probes \
+     tune2fs \
+     tzdatacheck \
+     uiautomator \
+@@ -261,7 +248,6 @@ PRODUCT_PACKAGES += \
+     viewcompiler \
+     voip-common \
+     vold \
+-    WallpaperBackup \
+     watchdogd \
+     wificond \
+     wifi-service \
+@@ -274,7 +260,6 @@ PRODUCT_PACKAGES += \
+
+ # Host tools to install
+ PRODUCT_HOST_PACKAGES += \
+-    BugReport \
+     adb \
+     art-tools \
+     atest \
+@@ -344,8 +329,6 @@ endif
+ PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
+ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
+
+-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
+-
+ # Packages included only for eng or userdebug builds, previously debug tagged
+ PRODUCT_PACKAGES_DEBUG := \
+     adb_keys \
+@@ -371,8 +354,7 @@ PRODUCT_PACKAGES_DEBUG := \
+
+ # The set of packages whose code can be loaded by the system server.
+ PRODUCT_SYSTEM_SERVER_APPS += \
+-    SettingsProvider \
+-    WallpaperBackup
++    SettingsProvider
+
+ # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
+ PRODUCT_PACKAGES_DEBUG_ASAN := \
+diff --git a/target/product/full_base.mk b/target/product/full_base.mk
+index f3fb8c3..832a1c7 100644
+--- a/target/product/full_base.mk
++++ b/target/product/full_base.mk
+@@ -24,8 +24,7 @@ PRODUCT_PACKAGES := \
+     WAPPushManager
+
+ PRODUCT_PACKAGES += \
+-    LiveWallpapersPicker \
+-    PhotoTable
++    LiveWallpapersPicker
+
+ # Bluetooth:
+ #   audio.a2dp.default is a system module. Generic system image includes
+diff --git a/target/product/handheld_system.mk b/target/product/handheld_system.mk
+index e5771cc..2824014 100644
+--- a/target/product/handheld_system.mk
++++ b/target/product/handheld_system.mk
+@@ -32,11 +32,9 @@ $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
+ $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
+
+ PRODUCT_PACKAGES += \
+-    BasicDreams \
+     BlockedNumberProvider \
+     Bluetooth \
+     BluetoothMidiService \
+-    BookmarkProvider \
+     BuiltInPrintService \
+     CalendarProvider \
+     cameraserver \
+@@ -46,7 +44,6 @@ PRODUCT_PACKAGES += \
+     clatd.conf \
+     DocumentsUI \
+     DownloadProviderUi \
+-    EasterEgg \
+     ExternalStorageProvider \
+     FusedLocation \
+     InputDevices \
+@@ -63,12 +60,10 @@ PRODUCT_PACKAGES += \
+     ProxyHandler \
+     screenrecord \
+     SecureElement \
+-    SharedStorageBackup \
+     SimAppDialog \
+     Telecom \
+     TelephonyProvider \
+     TeleService \
+-    Traceur \
+     UserDictionaryProvider \
+     VpnDialogs \
+     vr \
+diff --git a/target/product/media_system.mk b/target/product/media_system.mk
+index 0489b28..d29350b 100644
+--- a/target/product/media_system.mk
++++ b/target/product/media_system.mk
+@@ -68,16 +68,6 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+     frameworks/base/dirty-image-objects-phone:system/etc/dirty-image-objects)
+
+-# On userdebug builds, collect more tombstones by default.
+-ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-    tombstoned.max_tombstone_count=50
+-endif
+-
+-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+-    ro.logd.size.stats=64K \
+-    log.tag.stats_log=I
+-
+ # Enable CFI for security-sensitive components
+ $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+ $(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
+diff --git a/target/product/runtime_libart.mk b/target/product/runtime_libart.mk
+index a88ba3c..125b42e 100644
+--- a/target/product/runtime_libart.mk
++++ b/target/product/runtime_libart.mk
+@@ -87,11 +87,6 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     dalvik.vm.dex2oat-max-image-block-size=524288
+
+-# Enable minidebuginfo generation unless overridden.
+-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-    dalvik.vm.minidebuginfo=true \
+-    dalvik.vm.dex2oat-minidebuginfo=true
+-
+ # Disable iorapd by default
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     ro.iorapd.enable=false
+diff --git a/target/product/telephony_system.mk b/target/product/telephony_system.mk
+index 584cf1e..d910c6b 100644
+--- a/target/product/telephony_system.mk
++++ b/target/product/telephony_system.mk
+@@ -19,8 +19,6 @@
+
+ PRODUCT_PACKAGES := \
+     ONS \
+-    CarrierDefaultApp \
+-    CallLogBackup \
+-    CellBroadcastReceiver \
++    CarrierDefaultApp
+
+ PRODUCT_COPY_FILES := \
+diff --git a/target/product/updatable_apex.mk b/target/product/updatable_apex.mk
+index 3d5e8e2..bdaf545 100644
+--- a/target/product/updatable_apex.mk
++++ b/target/product/updatable_apex.mk
+@@ -18,6 +18,5 @@
+
+ ifneq ($(OVERRIDE_TARGET_FLATTEN_APEX),true)
+   PRODUCT_PROPERTY_OVERRIDES := ro.apex.updatable=true
+-  PRODUCT_PACKAGES := com.android.apex.cts.shim.v1_prebuilt
+   TARGET_FLATTEN_APEX := false
+ endif
+--
+2.28.0

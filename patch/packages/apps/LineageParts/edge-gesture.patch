@@ -1,9 +1,9 @@
-From e2e3bdbf3531b2c9eb6f5f0a9c52b2010fc8bb01 Mon Sep 17 00:00:00 2001
-From: WJXXBSH <********@outlook.com>
-Date: Fri, 4 Sep 2020 15:54:06 +0800
-Subject: [PATCH] EdgeGesture
+From 0e268b7b00ef9cbc6170bbdae891c1f4b9d12d47 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:01:09 +0800
+Subject: [PATCH] Add edge gesture support
 
-Change-Id: I7db847c12a6f83b7509cc1a71b4cfa35567ab179
+Change-Id: Ibbd126196c0c2ab100c3872a7a8b25d31848ffd1
 ---
  res/values-zh-rCN/strings.xml                 |  2 +
  res/values/strings.xml                        |  2 +
@@ -12,7 +12,7 @@ Change-Id: I7db847c12a6f83b7509cc1a71b4cfa35567ab179
  4 files changed, 49 insertions(+)
 
 diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
-index c735876..bdae702 100644
+index fa31646..7d6dc1d 100644
 --- a/res/values-zh-rCN/strings.xml
 +++ b/res/values-zh-rCN/strings.xml
 @@ -179,6 +179,8 @@
@@ -53,7 +53,7 @@ index 37adfed..37c477b 100644
 
  </PreferenceScreen>
 diff --git a/src/org/lineageos/lineageparts/input/ButtonSettings.java b/src/org/lineageos/lineageparts/input/ButtonSettings.java
-index 98ceb33..d6adbb9 100644
+index 4b7dc11..268da6c 100644
 --- a/src/org/lineageos/lineageparts/input/ButtonSettings.java
 +++ b/src/org/lineageos/lineageparts/input/ButtonSettings.java
 @@ -53,6 +53,9 @@ import org.lineageos.internal.util.ScreenType;

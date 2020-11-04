@@ -1,0 +1,86 @@
+From 1fd0495bd94c7a06ecf49e6962ce6764d199face Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Thu, 5 Nov 2020 10:35:14 +0800
+Subject: [PATCH] Always use speed filter for dex2oat
+
+Change-Id: I5d406d37617c870fcddcfe7e86fe1aa0c8cf6cb8
+---
+ core/main.mk                     |  2 +-
+ core/product.mk                  | 10 ++++++++--
+ target/product/runtime_libart.mk | 16 ++++++++--------
+ 3 files changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/core/main.mk b/core/main.mk
+index a7eda93..a86e777 100644
+--- a/core/main.mk
++++ b/core/main.mk
+@@ -318,7 +318,7 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
+ endif
+ ifndef is_sdk_build
+   # To speedup startup of non-preopted builds, don't verify or compile the boot image.
+-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
++  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=speed
+ endif
+ endif
+
+diff --git a/core/product.mk b/core/product.mk
+index da316cc..05ab2e4 100644
+--- a/core/product.mk
++++ b/core/product.mk
+@@ -493,11 +493,17 @@ _readonly_late_variables := \
+
+ # Modified internally in the build system
+ _readonly_late_variables += \
++  PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD \
+   PRODUCT_CFI_INCLUDE_PATHS \
+   PRODUCT_COPY_FILES \
+-  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
+   PRODUCT_DEX_PREOPT_BOOT_FLAGS \
+-  PRODUCT_SOONG_NAMESPACES
++  PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER \
++  PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
++  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
++  PRODUCT_OTHER_JAVA_DEBUG_INFO \
++  PRODUCT_SOONG_NAMESPACES \
++  PRODUCT_SYSTEM_SERVER_COMPILER_FILTER \
++  PRODUCT_SYSTEM_SERVER_DEBUG_INFO
+
+ _readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
+
+diff --git a/target/product/runtime_libart.mk b/target/product/runtime_libart.mk
+index 125b42e..ed19be9 100644
+--- a/target/product/runtime_libart.mk
++++ b/target/product/runtime_libart.mk
+@@ -61,22 +61,22 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+ # On eng builds, make "boot" reasons only extract for faster turnaround.
+ ifeq (eng,$(TARGET_BUILD_VARIANT))
+     PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-        pm.dexopt.first-boot=extract \
+-        pm.dexopt.boot=extract
++        pm.dexopt.first-boot=speed \
++        pm.dexopt.boot=speed
+ else
+     PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-        pm.dexopt.first-boot=quicken \
+-        pm.dexopt.boot=verify
++        pm.dexopt.first-boot=speed \
++        pm.dexopt.boot=speed
+ endif
+
+ # The install filter is speed-profile in order to enable the use of
+ # profiles from the dex metadata files. Note that if a profile is not provided
+ # or if it is empty speed-profile is equivalent to (quicken + empty app image).
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-    pm.dexopt.install=speed-profile \
+-    pm.dexopt.bg-dexopt=speed-profile \
+-    pm.dexopt.ab-ota=speed-profile \
+-    pm.dexopt.inactive=verify \
++    pm.dexopt.install=speed \
++    pm.dexopt.bg-dexopt=speed \
++    pm.dexopt.ab-ota=speed \
++    pm.dexopt.inactive=speed \
+     pm.dexopt.shared=speed
+
+ # Enable resolution of startup const strings.
+--
+2.28.0

@@ -1,14 +1,13 @@
-From 57d413216670646b124669f50fee8aad586610db Mon Sep 17 00:00:00 2001
-From: WJXXBSH <********@outlook.com>
-Date: Wed, 21 Oct 2020 21:33:13 +0800
-Subject: [PATCH] Add addon-su and adb_root support
+From 66e518bc1b5f1ab0a60d98d77e9da26a90a769e0 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:44:34 +0800
+Subject: [PATCH] Forwardport addon-su from lineage-16.0
 
-Change-Id: I3de98083c0f282d4236aa4f47ae3358509feeab7
+Change-Id: I9cf563ee2105f1d4a709b38d9f180713219b0d19
 ---
- adb/daemon/main.cpp          |  3 ++-
- adb/root/adb_root.rc         | 12 ++++++++++++
- adb/root/adbroot_service.cpp |  7 +++++--
- 3 files changed, 19 insertions(+), 3 deletions(-)
+ adb/daemon/main.cpp          | 3 ++-
+ adb/root/adbroot_service.cpp | 7 +++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
 index 8521b5f..828a5cb 100644
@@ -31,26 +30,6 @@ index 8521b5f..828a5cb 100644
          drop = false;
      }
      // ... and "adb unroot" lets you explicitly drop privileges.
-diff --git a/adb/root/adb_root.rc b/adb/root/adb_root.rc
-index bd08c23..4f928e7 100644
---- a/adb/root/adb_root.rc
-+++ b/adb/root/adb_root.rc
-@@ -5,3 +5,15 @@ service adb_root /system/bin/adb_root
-
- on post-fs-data
-     mkdir /data/adbroot 0700 root root
-+
-+# Root access is disabled
-+on property:persist.sys.root_access=0
-+    write /data/adbroot/enabled 0
-+    setprop service.adb.root 0
-+    setprop ctl.restart adbd
-+
-+# Root access is Apps and ADB
-+on property:persist.sys.root_access=1
-+    write /data/adbroot/enabled 1
-+    setprop service.adb.root 1
-+    setprop ctl.restart adbd
 diff --git a/adb/root/adbroot_service.cpp b/adb/root/adbroot_service.cpp
 index b0c7ece..37a4987 100644
 --- a/adb/root/adbroot_service.cpp

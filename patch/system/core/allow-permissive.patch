@@ -1,0 +1,116 @@
+From e144bacc484e2a374413df3c8e287977bb9482d7 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 4 Nov 2020 23:46:42 +0800
+Subject: [PATCH] Allow permissive in user build variant
+
+Change-Id: Ie43056acdd8348bd5af67579b9d8ed64e82af5c6
+---
+ healthd/Android.bp | 12 +++---------
+ healthd/Android.mk |  6 ++----
+ init/Android.bp    |  2 +-
+ init/Android.mk    |  2 +-
+ 4 files changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/healthd/Android.bp b/healthd/Android.bp
+index 2cf6be9..04790bb 100644
+--- a/healthd/Android.bp
++++ b/healthd/Android.bp
+@@ -10,7 +10,7 @@ cc_library_headers {
+ cc_library_static {
+     name: "libbatterymonitor",
+     srcs: ["BatteryMonitor.cpp"],
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+     vendor_available: true,
+     recovery_available: true,
+     export_include_dirs: ["include"],
+@@ -25,10 +25,7 @@ cc_library_static {
+ cc_defaults {
+     name: "android.hardware.health@2.0-service_defaults",
+
+-    cflags: [
+-        "-Wall",
+-        "-Werror",
+-    ],
++    cflags: ["-Wall"],
+
+     static_libs: [
+         "android.hardware.health@2.0-impl",
+@@ -92,10 +89,7 @@ cc_library_static {
+         "healthd_mode_charger_nops.cpp",
+     ],
+
+-    cflags: [
+-        "-Wall",
+-        "-Werror",
+-    ],
++    cflags: ["-Wall"],
+
+     header_libs: [
+         "libhealthd_headers",
+diff --git a/healthd/Android.mk b/healthd/Android.mk
+index 4eb98da..fb50aad 100644
+--- a/healthd/Android.mk
++++ b/healthd/Android.mk
+@@ -31,7 +31,6 @@ include $(BUILD_STATIC_LIBRARY)
+ ### libhealthd_charger ###
+ include $(CLEAR_VARS)
+
+-LOCAL_CFLAGS := -Werror
+ ifeq ($(strip $(BOARD_CHARGER_DISABLE_INIT_BLANK)),true)
+ LOCAL_CFLAGS += -DCHARGER_DISABLE_INIT_BLANK
+ endif
+@@ -82,7 +81,6 @@ LOCAL_SRC_FILES := \
+ LOCAL_MODULE := charger
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+
+-LOCAL_CFLAGS := -Werror
+ ifeq ($(strip $(LOCAL_CHARGER_NO_UI)),true)
+ LOCAL_CFLAGS += -DCHARGER_NO_UI
+ endif
+@@ -140,7 +138,7 @@ LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/system/bin
+ LOCAL_MODULE_STEM := charger
+
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+-LOCAL_CFLAGS := -Wall -Werror
++LOCAL_CFLAGS := -Wall
+ LOCAL_CFLAGS += -DCHARGER_NO_UI
+
+ # charger.recovery doesn't link against libhealthd_{charger,draw} or libminui, since it doesn't need
+@@ -174,7 +172,7 @@ include $(BUILD_EXECUTABLE)
+ include $(CLEAR_VARS)
+ LOCAL_MODULE := charger_test
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+-LOCAL_CFLAGS := -Wall -Werror -DCHARGER_NO_UI
++LOCAL_CFLAGS := -Wall -DCHARGER_NO_UI
+ LOCAL_STATIC_LIBRARIES := $(CHARGER_STATIC_LIBRARIES)
+ LOCAL_SHARED_LIBRARIES := $(CHARGER_SHARED_LIBRARIES)
+ LOCAL_SRC_FILES := \
+diff --git a/init/Android.bp b/init/Android.bp
+index 377a374..7ab7f3b 100644
+--- a/init/Android.bp
++++ b/init/Android.bp
+@@ -27,7 +27,7 @@ cc_defaults {
+         "-Wno-unused-parameter",
+         "-Werror",
+         "-DALLOW_LOCAL_PROP_OVERRIDE=0",
+-        "-DALLOW_PERMISSIVE_SELINUX=0",
++        "-DALLOW_PERMISSIVE_SELINUX=1",
+         "-DREBOOT_BOOTLOADER_ON_PANIC=0",
+         "-DWORLD_WRITABLE_KMSG=0",
+         "-DDUMP_ON_UMOUNT_FAILURE=0",
+diff --git a/init/Android.mk b/init/Android.mk
+index c4f7d34..8739e56 100644
+--- a/init/Android.mk
++++ b/init/Android.mk
+@@ -16,7 +16,7 @@ init_options += \
+ else
+ init_options += \
+     -DALLOW_LOCAL_PROP_OVERRIDE=0 \
+-    -DALLOW_PERMISSIVE_SELINUX=0 \
++    -DALLOW_PERMISSIVE_SELINUX=1 \
+     -DREBOOT_BOOTLOADER_ON_PANIC=0 \
+     -DWORLD_WRITABLE_KMSG=0 \
+     -DDUMP_ON_UMOUNT_FAILURE=0
+--
+2.27.0
