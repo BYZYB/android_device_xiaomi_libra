@@ -20,5 +20,6 @@ cc_library_static {
     ],
     name: "libinit_libra",
     recovery_available: true,
+    shared_libs: ["libbase"],
     srcs: ["init_libra.cpp"],
 }
