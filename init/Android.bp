@@ -19,5 +19,6 @@ cc_library_static {
         "system/core/init",
     ],
     name: "libinit_libra",
+    shared_libs: ["libbase"],
     srcs: ["init_libra.cpp"],
 }
