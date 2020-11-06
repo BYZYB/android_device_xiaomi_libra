@@ -87,7 +87,7 @@ void set_init_values()
         property_override("dalvik.vm.heapminfree", "512k");
         property_override("dalvik.vm.heapsize", "768m");
         property_override("dalvik.vm.heapstartsize", "8m");
-        property_override("ro.product.ram", "3g");
+        property_override("ro.product.ramsize", "3g");
     }
     else
     {
@@ -96,7 +96,7 @@ void set_init_values()
         property_override("dalvik.vm.heapminfree", "2m");
         property_override("dalvik.vm.heapsize", "512m");
         property_override("dalvik.vm.heapstartsize", "16m");
-        property_override("ro.product.ram", "2g");
+        property_override("ro.product.ramsize", "2g");
     }
 }
 
