@@ -102,75 +102,6 @@ on property:sys.boot_completed=1
     # Enable TCP Fast Open by default
     write /proc/sys/net/ipv4/tcp_fastopen 3
 
-    # Start camera server as daemon
-    service qcamerasvr /vendor/bin/mm-qcamera-daemon
-        class main
-        user camera
-        group camera system inet input graphics
-        writepid /dev/cpuset/system-background/tasks
-
-    on property:init.svc.media=restarting
-        restart qcamerasvr
-
-    on property:init.svc.servicemanager=restarting
-        restart qcamerasvr
-
-    service qseecomd /vendor/bin/qseecomd
-        class core
-        user root
-        group root
-        writepid /dev/cpuset/system-background/tasks
-
-    service per_mgr /vendor/bin/pm-service
-        class core
-        user system
-        group system net_raw
-        writepid /dev/cpuset/system-background/tasks
-
-    service per_proxy /vendor/bin/pm-proxy
-        class core
-        user system
-        group system net_raw
-        disabled
-        writepid /dev/cpuset/system-background/tasks
-
-on property:init.svc.per_mgr=running
-    start per_proxy
-
-on property:sys.shutdown.requested=*
-    stop per_proxy
-
-    service adsprpcd /vendor/bin/adsprpcd
-        class main
-        user media
-        group media
-
-    service ppd /vendor/bin/mm-pp-daemon
-        class late_start
-        user system
-        socket pps stream 0660 system system
-        group system graphics
-
-on property:init.svc.surfaceflinger=stopped
-    stop ppd
-
-    service energy-awareness /vendor/bin/energy-awareness
-        class main
-        user root
-        group system
-        oneshot
-
-    service readmac /vendor/bin/readmac
-        class main
-        user root
-        group root oem_2950
-        oneshot
-
-    service fidodaemon /system/vendor/bin/fidodaemon
-        class late_start
-        user system
-        group system
-
 on property:sys.io.scheduler=cfq
     write /sys/block/mmcblk0/queue/scheduler cfq
     write /sys/block/mmcblk0rpmb/queue/scheduler cfq
@@ -187,5 +118,75 @@ on property:sys.io.scheduler=row
     write /sys/block/mmcblk0/queue/scheduler row
     write /sys/block/mmcblk0rpmb/queue/scheduler row
 
-on property:ro.product.ram=2g
+on property:ro.product.ramsize=2g
+    # Mount zram image on devices with 2GB ram
     swapon_all /vendor/etc/fstab.qcom
+
+# Start camera server as daemon
+service qcamerasvr /vendor/bin/mm-qcamera-daemon
+    class main
+    user camera
+    group camera system inet input graphics
+    writepid /dev/cpuset/system-background/tasks
+
+on property:init.svc.media=restarting
+    restart qcamerasvr
+
+on property:init.svc.servicemanager=restarting
+    restart qcamerasvr
+
+service qseecomd /vendor/bin/qseecomd
+    class core
+    user root
+    group root
+    writepid /dev/cpuset/system-background/tasks
+
+service per_mgr /vendor/bin/pm-service
+    class core
+    user system
+    group system net_raw
+    writepid /dev/cpuset/system-background/tasks
+
+service per_proxy /vendor/bin/pm-proxy
+    class core
+    user system
+    group system net_raw
+    disabled
+    writepid /dev/cpuset/system-background/tasks
+
+on property:init.svc.per_mgr=running
+    start per_proxy
+
+on property:sys.shutdown.requested=*
+    stop per_proxy
+
+service adsprpcd /vendor/bin/adsprpcd
+    class main
+    user media
+    group media
+
+service ppd /vendor/bin/mm-pp-daemon
+    class late_start
+    user system
+    socket pps stream 0660 system system
+    group system graphics
+
+on property:init.svc.surfaceflinger=stopped
+    stop ppd
+
+service energy-awareness /vendor/bin/energy-awareness
+    class main
+    user root
+    group system
+    oneshot
+
+service readmac /vendor/bin/readmac
+    class main
+    user root
+    group root oem_2950
+    oneshot
+
+service fidodaemon /system/vendor/bin/fidodaemon
+    class late_start
+    user system
+    group system
