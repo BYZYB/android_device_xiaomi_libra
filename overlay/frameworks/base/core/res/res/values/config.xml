@@ -155,9 +155,14 @@
         <item>"/system/framework/arm64/boot-framework.oat"</item>
         <item>"/system/framework/arm64/boot.art"</item>
         <item>"/system/framework/arm64/boot.oat"</item>
+        <item>"/system/framework/boot-core-libart.vdex"</item>
+        <item>"/system/framework/boot-framework.vdex"</item>
+        <item>"/system/framework/boot.vdex"</item>
         <item>"/system/framework/framework.jar"</item>
+        <item>"/system/framework/oat/arm64/services.art"</item>
         <item>"/system/framework/oat/arm64/services.odex"</item>
         <item>"/system/framework/oat/arm64/services.vdex"</item>
+        <item>"/system/framework/services.jar.prof"</item>
         <item>"/system/framework/services.jar"</item>
         <item>"/system/lib64/libsurfaceflinger.so"</item>
         <item>"/system/product/priv-app/SystemUI/oat/arm64/SystemUI.odex"</item>
