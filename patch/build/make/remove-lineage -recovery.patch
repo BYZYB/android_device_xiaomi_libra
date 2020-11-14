@@ -1,0 +1,163 @@
+From 61c0243f9ec69be5239dcbe1f632371d76936d17 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Sat, 14 Nov 2020 22:31:59 +0800
+Subject: [PATCH] Remove lineage recovery
+
+Change-Id: Ie0251c8976f0b9e2f84b640433a07c1d743d5c9f
+---
+ tools/releasetools/common.py                | 79 ---------------------
+ tools/releasetools/ota_from_target_files.py |  8 ---
+ tools/releasetools/target_files_diff.py     |  4 --
+ tools/releasetools/test_common.py           |  6 --
+ 4 files changed, 97 deletions(-)
+
+diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
+index b2afaf1..99a9a0a 100644
+--- a/tools/releasetools/common.py
++++ b/tools/releasetools/common.py
+@@ -2304,85 +2304,6 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
+   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+   use_bsdiff = info_dict.get("no_gzip_recovery_ramdisk") == "true"
+
+-  if full_recovery_image:
+-    output_sink("etc/recovery.img", recovery_img.data)
+-
+-  else:
+-    system_root_image = info_dict.get("system_root_image") == "true"
+-    path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+-    # With system-root-image, boot and recovery images will have mismatching
+-    # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
+-    # to handle such a case.
+-    if system_root_image or use_bsdiff:
+-      diff_program = ["bsdiff"]
+-      bonus_args = ""
+-      assert not os.path.exists(path)
+-    else:
+-      diff_program = ["imgdiff"]
+-      if os.path.exists(path):
+-        diff_program.append("-b")
+-        diff_program.append(path)
+-        bonus_args = "--bonus /system/etc/recovery-resource.dat"
+-      else:
+-        bonus_args = ""
+-
+-    d = Difference(recovery_img, boot_img, diff_program=diff_program)
+-    _, _, patch = d.ComputePatch()
+-    output_sink("recovery-from-boot.p", patch)
+-
+-  try:
+-    # The following GetTypeAndDevice()s need to use the path in the target
+-    # info_dict instead of source_info_dict.
+-    boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
+-    recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict)
+-  except KeyError:
+-    return
+-
+-  if full_recovery_image:
+-    sh = """#!/system/bin/sh
+-if ! applypatch --check %(type)s:%(device)s:%(size)d:%(sha1)s; then
+-  applypatch \\
+-          --flash /system/etc/recovery.img \\
+-          --target %(type)s:%(device)s:%(size)d:%(sha1)s && \\
+-      log -t recovery "Installing new recovery image: succeeded" || \\
+-      log -t recovery "Installing new recovery image: failed"
+-else
+-  log -t recovery "Recovery image already installed"
+-fi
+-""" % {'type': recovery_type,
+-       'device': recovery_device,
+-       'sha1': recovery_img.sha1,
+-       'size': recovery_img.size}
+-  else:
+-    sh = """#!/system/bin/sh
+-if ! applypatch --check %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
+-  applypatch %(bonus_args)s \\
+-          --patch /system/recovery-from-boot.p \\
+-          --source %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s \\
+-          --target %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s && \\
+-      log -t recovery "Installing new recovery image: succeeded" || \\
+-      log -t recovery "Installing new recovery image: failed"
+-else
+-  log -t recovery "Recovery image already installed"
+-fi
+-""" % {'boot_size': boot_img.size,
+-       'boot_sha1': boot_img.sha1,
+-       'recovery_size': recovery_img.size,
+-       'recovery_sha1': recovery_img.sha1,
+-       'boot_type': boot_type,
+-       'boot_device': boot_device,
+-       'recovery_type': recovery_type,
+-       'recovery_device': recovery_device,
+-       'bonus_args': bonus_args}
+-
+-  # The install script location moved from /system/etc to /system/bin
+-  # in the L release.
+-  sh_location = "bin/install-recovery.sh"
+-
+-  logger.info("putting script in %s", sh_location)
+-
+-  output_sink(sh_location, sh.encode())
+-
+
+ class DynamicPartitionUpdate(object):
+   def __init__(self, src_group=None, tgt_group=None, progress=None,
+diff --git a/tools/releasetools/ota_from_target_files.py b/tools/releasetools/ota_from_target_files.py
+index 0cff60f..489345e 100755
+--- a/tools/releasetools/ota_from_target_files.py
++++ b/tools/releasetools/ota_from_target_files.py
+@@ -716,12 +716,6 @@ def _WriteRecoveryImageToBoot(script, output_zip):
+     script.WriteRawImage("/boot", "recovery.img")
+
+
+-def HasRecoveryPatch(target_files_zip):
+-  namelist = [name for name in target_files_zip.namelist()]
+-  return ("SYSTEM/recovery-from-boot.p" in namelist or
+-          "SYSTEM/etc/recovery.img" in namelist)
+-
+-
+ def HasPartition(target_files_zip, partition):
+   try:
+     target_files_zip.getinfo(partition.upper() + "/")
+@@ -993,8 +987,6 @@ def WriteFullOTAPackage(input_zip, output_file):
+       metadata=metadata,
+       info_dict=OPTIONS.info_dict)
+
+-  assert HasRecoveryPatch(input_zip)
+-
+   # Assertions (e.g. downgrade check, device properties check).
+   #ts = target_info.GetBuildProp("ro.build.date.utc")
+   #ts_text = target_info.GetBuildProp("ro.build.date")
+diff --git a/tools/releasetools/target_files_diff.py b/tools/releasetools/target_files_diff.py
+index 4402c8d..8a92885 100755
+--- a/tools/releasetools/target_files_diff.py
++++ b/tools/releasetools/target_files_diff.py
+@@ -41,10 +41,6 @@ def ignore(name):
+   # We're looking at the files that make the images, so no need to search them
+   if name in ['IMAGES']:
+     return True
+-  # These are packages of the recovery partition, which we're already diffing
+-  if name in ['SYSTEM/etc/recovery-resource.dat',
+-              'SYSTEM/recovery-from-boot.p']:
+-    return True
+
+   # These files are just the BUILD_NUMBER, and will always be different
+   if name in ['BOOT/RAMDISK/selinux_version',
+diff --git a/tools/releasetools/test_common.py b/tools/releasetools/test_common.py
+index 3a73253..6cb958e 100644
+--- a/tools/releasetools/test_common.py
++++ b/tools/releasetools/test_common.py
+@@ -1084,12 +1084,6 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
+                              recovery_image, boot_image, self._info)
+     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+                                                         self._info)
+-    # Validate 'recovery-from-boot' with bonus argument.
+-    self._out_tmp_sink("etc/recovery-resource.dat", b"bonus", "SYSTEM")
+-    common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
+-                             recovery_image, boot_image, self._info)
+-    validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+-                                                        self._info)
+
+
+ class MockScriptWriter(object):
+--
+2.29.2
