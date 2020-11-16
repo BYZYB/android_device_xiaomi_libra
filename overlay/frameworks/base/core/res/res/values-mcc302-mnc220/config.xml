@@ -5,10 +5,10 @@
     <string-array translatable="false" name="config_gpsParameters">
         <item>SUPL_HOST=supl.telusmobility.com</item>
         <item>SUPL_PORT=7275</item>
-        <item>SUPL_VER=0x10000</item>
-        <item>SUPL_MODE=1</item>
+        <item>SUPL_VER=0x30000</item>
+        <item>SUPL_MODE=2</item>
         <item>SUPL_ES=1</item>
-        <item>LPP_PROFILE=2</item>
+        <item>LPP_PROFILE=3</item>
         <item>USE_EMERGENCY_PDN_FOR_EMERGENCY_SUPL=1</item>
         <item>A_GLONASS_POS_PROTOCOL_SELECT=15</item>
         <item>GPS_LOCK=0</item>
