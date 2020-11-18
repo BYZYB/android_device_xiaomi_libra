@@ -19,18 +19,6 @@ cc_prebuilt_binary {
     srcs: ["bin/init.custom.post_boot.sh"],
 }
 
-cc_prebuilt_binary {
-    name: "init.qcom.post_boot.sh",
-    proprietary: true,
-    srcs: ["bin/init.qcom.post_boot.sh"],
-}
-
-cc_prebuilt_binary {
-    name: "init.qcom.sh",
-    proprietary: true,
-    srcs: ["bin/init.qcom.sh"],
-}
-
 prebuilt_etc {
     name: "fstab.qcom",
     proprietary: true,

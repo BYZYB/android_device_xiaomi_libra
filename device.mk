@@ -228,9 +228,7 @@ PRODUCT_PACKAGES += \
     fstab.qcom \
     init.custom.post_boot.sh \
     init.fpc.rc \
-    init.qcom.post_boot.sh \
     init.qcom.rc \
-    init.qcom.sh \
     init.qcom.usb.rc \
     init.target.rc \
     ueventd.qcom.rc
