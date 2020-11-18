@@ -11,6 +11,10 @@ on post-fs-data
 
 service fingerprintd /system/bin/fingerprintd
     class late_start
+    disabled
     user system
     group system drmrpc diag input
     writepid /dev/cpuset/system-background/tasks
+
+on property:ro.build.product=aqua
+    start fingerprintd
