@@ -1,0 +1,140 @@
+From 4f4885dba63167bcb98451abd8db45afc98ca1c8 Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Wed, 25 Nov 2020 17:04:05 +0800
+Subject: [PATCH] Add CPU overclock control to Settings
+
+Change-Id: I712ceb49e41b7c5392d311e4990d7796c0967c7f
+---
+ res/values-zh-rCN/strings.xml                   |  3 +++
+ res/values/strings.xml                          |  3 +++
+ res/xml/perf_profile_settings.xml               | 12 ++++++++++++
+ .../lineageparts/power/PerfProfileSettings.java | 17 +++++++++++++++++
+ 4 files changed, 35 insertions(+)
+
+diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
+index fa31646..958fadf 100644
+--- a/res/values-zh-rCN/strings.xml
++++ b/res/values-zh-rCN/strings.xml
+@@ -453,6 +453,9 @@
+     <string name="auto_power_save_summary_on">电量 %s 时自动启用省电</string>
+     <string name="auto_power_save_summary_off">不要自动启用省电</string>
+     <string name="auto_power_save_never">永不</string>
++    <string name="cpu_overclock_category_title">超频</string>
++    <string name="cpu_overclock_title">高性能模式</string>
++    <string name="cpu_overclock_summary">提升最大 CPU 功率以改善性能，但可能缩短续航时间</string>
+     <string name="long_screen_settings_title">全屏应用</string>
+     <string name="long_screen_settings_summary">强制旧式应用程序使用全屏长宽比</string>
+     <string name="long_screen_settings_no_apps">无应用</string>
+diff --git a/res/values/strings.xml b/res/values/strings.xml
+index 1133d32..cd682db 100644
+--- a/res/values/strings.xml
++++ b/res/values/strings.xml
+@@ -583,6 +583,9 @@
+     <string name="auto_power_save_summary_on">Automatically enable power save mode at %s battery</string>
+     <string name="auto_power_save_summary_off">Do not enable power save mode automatically</string>
+     <string name="auto_power_save_never">Never</string>
++    <string name="cpu_overclock_category_title">Overclock</string>
++    <string name="cpu_overclock_title">High performance mode</string>
++    <string name="cpu_overclock_summary">Increase maximum CPU power to improve performance, at the cost of battery life</string>
+
+     <!-- Applications: Long screen -->
+     <string name="long_screen_settings_title">Full screen apps</string>
+diff --git a/res/xml/perf_profile_settings.xml b/res/xml/perf_profile_settings.xml
+index 0b301a9..a373f5d 100644
+--- a/res/xml/perf_profile_settings.xml
++++ b/res/xml/perf_profile_settings.xml
+@@ -37,6 +37,18 @@
+
+     </PreferenceCategory>
+
++    <PreferenceCategory
++        android:key="cpu_overclock_category"
++        android:title="@string/cpu_overclock_category_title">
++
++        <SwitchPreference
++            android:key="cpu_overclock"
++            android:title="@string/cpu_overclock_title"
++            android:summary="@string/cpu_overclock_summary"
++            android:persistent="false" />
++
++    </PreferenceCategory>
++
+     <PreferenceCategory
+         android:key="perf_profile_category"
+         android:title="@string/perf_profile_category_title">
+diff --git a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
+index 949562f..de3868a 100644
+--- a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
++++ b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
+@@ -28,6 +28,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
+ import android.net.Uri;
+ import android.os.Bundle;
+ import android.os.PowerManager;
++import android.os.SystemProperties;
+ import android.provider.Settings.Global;
+ import android.util.ArraySet;
+ import android.util.TypedValue;
+@@ -65,10 +66,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+     private static final String KEY_AUTO_POWER_SAVE  = "auto_power_save";
+     private static final String KEY_POWER_SAVE       = "power_save";
+     private static final String KEY_PERF_SEEKBAR     = "perf_seekbar";
++    private static final String KEY_CPU_OVERCLOCK    = "cpu_overclock";
+
+     private ListPreference mAutoPowerSavePref;
+     private SwitchPreference   mPowerSavePref;
+
++    private SwitchPreference   mCPUOverclockPref;
++
+     private SeekBarPreference        mPerfSeekBar;
+     private StopMotionVectorDrawable mPerfDrawable;
+     private PerfIconAnimator         mAnimator;
+@@ -96,6 +100,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         mPerfSeekBar = findPreference(KEY_PERF_SEEKBAR);
+         mAutoPowerSavePref = findPreference(KEY_AUTO_POWER_SAVE);
+         mPowerSavePref = findPreference(KEY_POWER_SAVE);
++        mCPUOverclockPref = findPreference(KEY_CPU_OVERCLOCK);
+
+         mPowerManager = getActivity().getSystemService(PowerManager.class);
+         mPerf = PerformanceManager.getInstance(getActivity());
+@@ -126,6 +131,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         updateAutoPowerSaveValue();
+         mAutoPowerSavePref.setOnPreferenceChangeListener(this);
+         mPowerSavePref.setOnPreferenceChangeListener(this);
++        updateCPUOverclockValue();
++        mCPUOverclockPref.setOnPreferenceChangeListener(this);
+     }
+
+
+@@ -212,6 +219,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+             getActivity().registerReceiver(mPowerSaveReceiver,
+                     new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING));
+         }
++
++        if (mCPUOverclockPref != null) {
++            updateCPUOverclockValue();
++        }
+     }
+
+     @Override
+@@ -246,6 +257,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+             final int level = Integer.parseInt((String) newValue);
+             Global.putInt(getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, level);
+             updateAutoPowerSaveSummary(level);
++        } else if (preference == mCPUOverclockPref) {
++            SystemProperties.set("persist.sys.cpu_overclock", SystemProperties.getBoolean("persist.sys.cpu_overclock", true) ? "false" : "true");
+         }
+         return true;
+     }
+@@ -263,6 +276,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         PartsUpdater.notifyChanged(getActivity(), getPreferenceScreen().getKey());
+     }
+
++    private void updateCPUOverclockValue() {
++        mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", true));
++    }
++
+     private void updateAutoPowerSaveValue() {
+         final int level = Global.getInt(
+                 getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, 0);
+--
+2.29.2

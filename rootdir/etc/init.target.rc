@@ -170,6 +170,14 @@ on property:init.svc.servicemanager=restarting
 on property:init.svc.surfaceflinger=stopped
     stop ppd
 
+on property:persist.sys.cpu_overclock=false
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1440000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1824000
+
+on property:persist.sys.cpu_overclock=true
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1632000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1920000
+
 on property:ro.product.ramsize=2g
     # Mount zram image on devices with 2GB ram
     swapon_all /vendor/etc/fstab.qcom
