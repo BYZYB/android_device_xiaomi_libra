@@ -1,9 +1,9 @@
-From 6edfec2b062c42dddb863727697672f6ad187b38 Mon Sep 17 00:00:00 2001
+From 2b502a34f45415143abae13518eb116ccd515546 Mon Sep 17 00:00:00 2001
 From: WJXXBSH <zyb_1998@outlook.com>
-Date: Wed, 4 Nov 2020 23:07:46 +0800
+Date: Thu, 26 Nov 2020 22:48:36 +0800
 Subject: [PATCH] Forwardport addon-su from lineage-16.0
 
-Change-Id: Iabf7af5c639e5ce0c5e29485f0ac3e7aba3ce045
+Change-Id: I27a7be386225673d27d5787042fb8c842e186ba7
 ---
  su/Android.mk             |  32 +-
  su/MODULE_LICENSE_APACHE2 |   0
@@ -11,13 +11,13 @@ Change-Id: Iabf7af5c639e5ce0c5e29485f0ac3e7aba3ce045
  su/daemon.c               | 711 ++++++++++++++++++++++++++++++++++++++
  su/pts.c                  | 369 ++++++++++++++++++++
  su/pts.h                  | 116 +++++++
- su/su.c                   | 592 +++++++++++++++++++++++++++++++
+ su/su.c                   | 585 +++++++++++++++++++++++++++++++
  su/su.cpp                 | 144 --------
- su/su.h                   | 121 +++++++
- su/superuser.rc           |  13 +
+ su/su.h                   | 115 ++++++
+ su/superuser.rc           |  11 +
  su/utils.c                |  53 +++
  su/utils.h                |  23 ++
- 12 files changed, 2024 insertions(+), 340 deletions(-)
+ 12 files changed, 2009 insertions(+), 340 deletions(-)
  delete mode 100644 su/MODULE_LICENSE_APACHE2
  delete mode 100644 su/NOTICE
  create mode 100644 su/daemon.c
@@ -1488,10 +1488,10 @@ index 0000000..241f6e2
 +#endif
 diff --git a/su/su.c b/su/su.c
 new file mode 100644
-index 0000000..88d5d82
+index 0000000..b80ef18
 --- /dev/null
 +++ b/su/su.c
-@@ -0,0 +1,592 @@
+@@ -0,0 +1,585 @@
 +/*
 +** Copyright 2010, Adam Shanks (@ChainsDD)
 +** Copyright 2008, Zinx Verituse (@zinxv)
@@ -1850,13 +1850,12 @@ index 0000000..88d5d82
 +int access_disabled(const struct su_initiator *from)
 +{
 +    char build_type[PROPERTY_VALUE_MAX];
-+    int enabled;
++    bool enabled;
 +
 +    /* Enforce persist.sys.root_access on non-eng builds for apps */
-+    enabled = property_get_int32("persist.sys.root_access", 2);
++    enabled = property_get_bool("persist.sys.root_access", false);
 +    property_get("ro.build.type", build_type, "");
-+    if (strcmp("eng", build_type) != 0 && from->uid != AID_SHELL && from->uid != AID_ROOT &&
-+        (enabled & LINEAGE_ROOT_ACCESS_APPS_ONLY) != LINEAGE_ROOT_ACCESS_APPS_ONLY)
++    if (strcmp("eng", build_type) != 0 && from->uid != AID_SHELL && from->uid != AID_ROOT && !enabled)
 +    {
 +        ALOGE(
 +            "Apps root access is disabled by system setting");
@@ -1868,12 +1867,6 @@ index 0000000..88d5d82
 +
 +int main(int argc, char *argv[])
 +{
-+    if (getuid() != geteuid())
-+    {
-+        ALOGE("must not be a setuid binary");
-+        return 1;
-+    }
-+
 +    return su_main(argc, argv, 1);
 +}
 +
@@ -2236,10 +2229,10 @@ index 1a1ab6b..0000000
 -}
 diff --git a/su/su.h b/su/su.h
 new file mode 100644
-index 0000000..a977c82
+index 0000000..b498ea5
 --- /dev/null
 +++ b/su/su.h
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,115 @@
 +/*
 +** Copyright 2010, Adam Shanks (@ChainsDD)
 +** Copyright 2008, Zinx Verituse (@zinxv)
@@ -2265,12 +2258,6 @@ index 0000000..a977c82
 +#undef LOG_TAG
 +#endif
 +#define LOG_TAG "su"
-+
-+// Lineage-specific behavior
-+#define LINEAGE_ROOT_ACCESS_DISABLED 0
-+#define LINEAGE_ROOT_ACCESS_APPS_ONLY 1
-+#define LINEAGE_ROOT_ACCESS_ADB_ONLY 2
-+#define LINEAGE_ROOT_ACCESS_APPS_AND_ADB 3
 +
 +#define DAEMON_SOCKET_PATH "/dev/socket/su-daemon/"
 +
@@ -2363,22 +2350,20 @@ index 0000000..a977c82
 +#endif
 diff --git a/su/superuser.rc b/su/superuser.rc
 new file mode 100644
-index 0000000..3150d49
+index 0000000..7282f62
 --- /dev/null
 +++ b/su/superuser.rc
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,11 @@
 +# su daemon
 +service su_daemon /system/xbin/su --daemon
 +    user root
 +    group root
 +    disabled
 +
-+on property:persist.sys.root_access=0
-+    # exec /system/bin/setenforce 1
++on property:persist.sys.root_access=false
 +    stop su_daemon
 +
-+on property:persist.sys.root_access=1
-+    exec /system/bin/setenforce 0
++on property:persist.sys.root_access=true
 +    start su_daemon
 diff --git a/su/utils.c b/su/utils.c
 new file mode 100644
@@ -2469,4 +2454,4 @@ index 0000000..f6f5a22
 +
 +#endif
 --
-2.27.0
+2.29.2

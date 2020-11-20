@@ -1,128 +1,74 @@
-From e56629467f80e2f1b9feb85fcbb29e642146ec65 Mon Sep 17 00:00:00 2001
+From 43a00081c122c19d1a5b664a57abb58dec2e64ec Mon Sep 17 00:00:00 2001
 From: WJXXBSH <zyb_1998@outlook.com>
-Date: Wed, 4 Nov 2020 23:42:11 +0800
+Date: Thu, 26 Nov 2020 21:53:08 +0800
 Subject: [PATCH] Forwardport addon-su from lineage-16.0
 
-Change-Id: I7aedbdf2ec2a428a21db56ebfd696ae7cc84b50d
+Change-Id: Id7e6ba5e47da3719b88a728416ed2103c6a2c1a5
 ---
- res/values-zh-rCN/cm_strings.xml              |   3 +
- res/values/cm_strings.xml                     |   5 +
- res/values/lineage_arrays.xml                 |  29 +++++
- res/xml/development_settings.xml              |   5 +
- .../AdbRootPreferenceController.java          |   4 +-
- .../DevelopmentSettingsDashboardFragment.java |   1 +
- .../RootAccessPreferenceController.java       | 119 ++++++++++++++++++
- 7 files changed, 165 insertions(+), 1 deletion(-)
- create mode 100644 res/values/lineage_arrays.xml
+ res/values-zh-rCN/cm_strings.xml              |  2 +
+ res/values/cm_strings.xml                     |  4 +
+ res/xml/development_settings.xml              |  6 ++
+ .../AdbRootPreferenceController.java          |  2 +-
+ .../DevelopmentSettingsDashboardFragment.java |  1 +
+ .../RootAccessPreferenceController.java       | 74 +++++++++++++++++++
+ 6 files changed, 88 insertions(+), 1 deletion(-)
  create mode 100644 src/com/android/settings/development/RootAccessPreferenceController.java
 
 diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
-index a841914..d8de425 100644
+index a841914..4752664 100644
 --- a/res/values-zh-rCN/cm_strings.xml
 +++ b/res/values-zh-rCN/cm_strings.xml
-@@ -62,6 +62,9 @@
+@@ -62,6 +62,8 @@
      <string name="volume_link_notification_title">链接铃声和通知的音量</string>
      <string name="directly_show_lock">直接解锁</string>
      <string name="directly_show_lock_summary">跳过滑动解锁屏幕直接开始输入密码</string>
 +    <string name="root_access">Root 授权</string>
-+    <string name="root_access_none">已禁用</string>
-+    <string name="root_access_all">应用与 ADB</string>
++    <string name="root_access_summary">允许所有应用获取 Root 权限</string>
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="tablet">在您平板的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="device">在您设备的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
      <string name="security_settings_fingerprint_enroll_find_sensor_message_cm" product="default">在您手机的 <xliff:g id="sensor_location">%1$s</xliff:g> 找到指纹传感器。</string>
 diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
-index 959d8be..6070006 100644
+index 959d8be..bb0c71b 100644
 --- a/res/values/cm_strings.xml
 +++ b/res/values/cm_strings.xml
-@@ -144,6 +144,11 @@
+@@ -144,6 +144,10 @@
      <string name="proximity_wake_title">Prevent accidental wake-up</string>
      <string name="proximity_wake_summary">Check the proximity sensor prior to waking up screen</string>
 
 +    <!-- Setting checkbox title for root access -->
 +    <string name="root_access">Root access</string>
-+    <string name="root_access_none">Disabled</string>
-+    <string name="root_access_all">Apps and ADB</string>
++    <string name="root_access_summary">Allow all apps to get root access</string>
 +
      <!-- Wake on plug -->
      <string name="wake_when_plugged_or_unplugged_title">Wake on plug</string>
      <string name="wake_when_plugged_or_unplugged_summary">Turn the screen on when connecting or disconnecting a power source</string>
-diff --git a/res/values/lineage_arrays.xml b/res/values/lineage_arrays.xml
-new file mode 100644
-index 0000000..1442570
---- /dev/null
-+++ b/res/values/lineage_arrays.xml
-@@ -0,0 +1,29 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<!--
-+     Copyright (C) 2012-2016 The CyanogenMod Project
-+     Copyright (C) 2017-2020 The LineageOS Project
-+
-+     Licensed under the Apache License, Version 2.0 (the "License");
-+     you may not use this file except in compliance with the License.
-+     You may obtain a copy of the License at
-+
-+          http://www.apache.org/licenses/LICENSE-2.0
-+
-+     Unless required by applicable law or agreed to in writing, software
-+     distributed under the License is distributed on an "AS IS" BASIS,
-+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+     See the License for the specific language governing permissions and
-+     limitations under the License.
-+-->
-+<resources>
-+    <!-- Arrays for root access capability -->
-+    <string-array name="root_access_entries" translatable="false">
-+        <item>@string/root_access_none</item>
-+        <item>@string/root_access_all</item>
-+    </string-array>
-+
-+    <string-array name="root_access_values" translatable="false">
-+        <item>0</item>
-+        <item>1</item>
-+    </string-array>
-+</resources>
 diff --git a/res/xml/development_settings.xml b/res/xml/development_settings.xml
-index 0262556..79323fb 100644
+index 0262556..941c3f2 100644
 --- a/res/xml/development_settings.xml
 +++ b/res/xml/development_settings.xml
-@@ -126,6 +126,11 @@
+@@ -126,6 +126,12 @@
              android:fragment="com.android.settings.development.qstile.DevelopmentTileConfigFragment"
              settings:searchable="false" />
 
-+        <ListPreference
++        <SwitchPreference
 +            android:key="root_access"
 +            android:title="@string/root_access"
++            android:summary="@string/root_access_summary"
 +            android:persistent="false" />
 +
      <!-- Configure trust agent behavior -->
      <SwitchPreference
          android:key="security_setting_trust_agents_extend_unlock"
 diff --git a/src/com/android/settings/development/AdbRootPreferenceController.java b/src/com/android/settings/development/AdbRootPreferenceController.java
-index 5f7d65d..a72770d 100644
+index 5f7d65d..8cdc24f 100644
 --- a/src/com/android/settings/development/AdbRootPreferenceController.java
 +++ b/src/com/android/settings/development/AdbRootPreferenceController.java
-@@ -20,6 +20,7 @@ import android.adb.ADBRootService;
- import android.content.Context;
- import android.os.Build;
- import android.os.UserManager;
-+import android.os.SystemProperties;
-
- import androidx.preference.Preference;
- import androidx.preference.PreferenceScreen;
-@@ -36,6 +37,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
-
-     private static final String TAG = "AdbRootPreferenceController";
-     private static final String PREF_KEY = "enable_adb_root";
-+    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
-
-     private final ADBRootService mADBRootService;
-
-@@ -53,7 +55,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
+@@ -53,7 +53,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
 
      @Override
      public boolean isAvailable() {
 -        return Build.IS_DEBUGGABLE;
-+        return Integer.parseInt(SystemProperties.get(ROOT_ACCESS_PROPERTY, "0")) > 0 ? true : Build.IS_DEBUGGABLE;
++        return true;
      }
 
      @Override
@@ -140,10 +86,10 @@ index f18225e..ac5dd9b 100644
          controllers.add(new DefaultLaunchPreferenceController(context, "quick_settings_tiles"));
 diff --git a/src/com/android/settings/development/RootAccessPreferenceController.java b/src/com/android/settings/development/RootAccessPreferenceController.java
 new file mode 100644
-index 0000000..9df2f32
+index 0000000..9968ab8
 --- /dev/null
 +++ b/src/com/android/settings/development/RootAccessPreferenceController.java
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,74 @@
 +/*
 + * Copyright (C) 2020 The LineageOS Project
 + *
@@ -168,38 +114,25 @@ index 0000000..9df2f32
 +import android.os.SystemProperties;
 +import android.os.UserManager;
 +import android.provider.Settings;
-+import androidx.annotation.VisibleForTesting;
-+import androidx.preference.ListPreference;
 +import androidx.preference.Preference;
 +import androidx.preference.PreferenceScreen;
++import androidx.preference.SwitchPreference;
 +
 +import com.android.settings.R;
 +import com.android.settings.Utils;
 +import com.android.settings.core.PreferenceControllerMixin;
 +import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 +
-+import org.lineageos.internal.util.FileUtils;
-+
 +public class RootAccessPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
-+    private static final String TAG = "RootAccessPreferenceController";
 +    private static final String PREF_KEY = "root_access";
-+    private static final String ADB_ROOT_PROPERTY = "service.adb.root";
-+    private static final String RESTART_SERVICE_PROPERTY = "ctl.restart";
 +    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
 +
 +    private final DevelopmentSettingsDashboardFragment mFragment;
-+    private Object mPendingRootAccessValue;
 +
 +    public RootAccessPreferenceController(Context context, DevelopmentSettingsDashboardFragment fragment) {
 +        super(context);
 +
 +        mFragment = fragment;
-+    }
-+
-+    @Override
-+    public boolean isAvailable() {
-+        // Not only eng or userdebug builds, user builds could also get root now
-+        return true;
 +    }
 +
 +    @Override
@@ -210,9 +143,8 @@ index 0000000..9df2f32
 +    @Override
 +    public void displayPreference(PreferenceScreen screen) {
 +        super.displayPreference(screen);
-+        ((ListPreference) mPreference).setEntries(R.array.root_access_entries);
-+        ((ListPreference) mPreference).setEntryValues(R.array.root_access_values);
-+        updatePreference();
++
++        ((SwitchPreference) mPreference).setChecked(SystemProperties.getBoolean(ROOT_ACCESS_PROPERTY, false));
 +
 +        if (!((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser()) {
 +            mPreference.setEnabled(false);
@@ -221,7 +153,7 @@ index 0000000..9df2f32
 +
 +    @Override
 +    public boolean onPreferenceChange(Preference preference, Object newValue) {
-+        writeRootAccessOptions(newValue);
++        SystemProperties.set(ROOT_ACCESS_PROPERTY, (Boolean) newValue ? "true" : "false");
 +        return true;
 +    }
 +
@@ -231,37 +163,6 @@ index 0000000..9df2f32
 +            mPreference.setEnabled(true);
 +        }
 +    }
-+
-+    public void onRootAccessDialogConfirmed() {
-+        writeRootAccessOptions(mPendingRootAccessValue);
-+    }
-+
-+    public void onRootAccessDialogDismissed() {
-+        updatePreference();
-+    }
-+
-+    private void writeRootAccessOptions(Object newValue) {
-+        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
-+        SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
-+
-+        if (!oldValue.equals(newValue)) {
-+            if (Integer.valueOf(newValue.toString()) < 1) {
-+                SystemProperties.set(ADB_ROOT_PROPERTY, "0");
-+                SystemProperties.set(RESTART_SERVICE_PROPERTY, "adbd");
-+            } else {
-+                SystemProperties.set(ADB_ROOT_PROPERTY, "1");
-+                SystemProperties.set(RESTART_SERVICE_PROPERTY, "adbd");
-+            }
-+        }
-+
-+        updatePreference();
-+    }
-+
-+    private void updatePreference() {
-+        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
-+        ((ListPreference) mPreference).setValue(value);
-+        ((ListPreference) mPreference).setSummary(mContext.getResources().getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
-+    }
 +}
 --
-2.27.0
+2.29.2

@@ -242,14 +242,14 @@ index 2fe9cb0..97d1ade 100644
  # Dex preopt
  PRODUCT_DEXPREOPT_SPEED_APPS += \
 diff --git a/prebuilt/common/bin/backuptool.sh b/prebuilt/common/bin/backuptool.sh
-index 662b467..3bdf07e 100755
+index 662b467..9d5d4cb 100755
 --- a/prebuilt/common/bin/backuptool.sh
 +++ b/prebuilt/common/bin/backuptool.sh
 @@ -97,6 +97,7 @@ case "$1" in
        run_stage restore
        run_stage post-restore
        restore_addon_d
-+      chmod 755 $S/xbin/su
++      chmod +rx $S/xbin/su
        rm -rf $C
        sync
      fi

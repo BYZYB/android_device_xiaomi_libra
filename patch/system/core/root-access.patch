@@ -1,32 +1,32 @@
-From 66e518bc1b5f1ab0a60d98d77e9da26a90a769e0 Mon Sep 17 00:00:00 2001
+From 8655bacae0036a76736929dc0b11e029df2832f9 Mon Sep 17 00:00:00 2001
 From: WJXXBSH <zyb_1998@outlook.com>
-Date: Wed, 4 Nov 2020 23:44:34 +0800
-Subject: [PATCH] Forwardport addon-su from lineage-16.0
+Date: Fri, 20 Nov 2020 21:10:02 +0800
+Subject: [PATCH] Make adb_root available in user builds
 
-Change-Id: I9cf563ee2105f1d4a709b38d9f180713219b0d19
+Change-Id: I8948f7b763086c5be857033508b34571d86cc6a8
 ---
- adb/daemon/main.cpp          | 3 ++-
+ adb/daemon/main.cpp          | 3 +--
  adb/root/adbroot_service.cpp | 7 +++++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
-index 8521b5f..828a5cb 100644
+index 8521b5f..e03be6a 100644
 --- a/adb/daemon/main.cpp
 +++ b/adb/daemon/main.cpp
-@@ -69,6 +69,7 @@ static bool should_drop_privileges() {
-     //
+@@ -70,7 +70,6 @@ static bool should_drop_privileges() {
      // ro.secure:
      //   Drop privileges by default. Set to 1 on userdebug and user builds.
-+    bool persist_sys_root_access = android::base::GetBoolProperty("persist.sys.root_access", false);
      bool ro_secure = android::base::GetBoolProperty("ro.secure", true);
-     bool ro_debuggable = __android_log_is_debuggable();
+-    bool ro_debuggable = __android_log_is_debuggable();
 
-@@ -79,7 +80,7 @@ static bool should_drop_privileges() {
+     // Drop privileges if ro.secure is set...
+     bool drop = ro_secure;
+@@ -79,7 +78,7 @@ static bool should_drop_privileges() {
      std::string prop = android::base::GetProperty("service.adb.root", "");
      bool adb_root = (prop == "1");
      bool adb_unroot = (prop == "0");
 -    if (ro_debuggable && adb_root) {
-+    if (ro_debuggable || (adb_root && persist_sys_root_access)) {
++    if (adb_root) {
          drop = false;
      }
      // ... and "adb unroot" lets you explicitly drop privileges.
@@ -49,4 +49,4 @@ index b0c7ece..37a4987 100644
              base::SetProperty("ctl.restart", "adbd");
          }
 --
-2.27.0
+2.29.2
