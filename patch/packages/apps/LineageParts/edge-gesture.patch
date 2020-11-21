@@ -1,31 +1,31 @@
-From 0e268b7b00ef9cbc6170bbdae891c1f4b9d12d47 Mon Sep 17 00:00:00 2001
+From 529e1b037ed5da833a7ecee6852c42c66020c3f8 Mon Sep 17 00:00:00 2001
 From: WJXXBSH <zyb_1998@outlook.com>
-Date: Wed, 4 Nov 2020 23:01:09 +0800
-Subject: [PATCH] Add edge gesture support
+Date: Wed, 25 Nov 2020 17:12:15 +0800
+Subject: [PATCH] Add edge gesture control to Settings
 
-Change-Id: Ibbd126196c0c2ab100c3872a7a8b25d31848ffd1
+Change-Id: Icf0aa9f81a57bda1c8d12f4bd83b1d197df2a81d
 ---
- res/values-zh-rCN/strings.xml                 |  2 +
- res/values/strings.xml                        |  2 +
- res/xml/button_settings.xml                   |  4 ++
- .../lineageparts/input/ButtonSettings.java    | 41 +++++++++++++++++++
- 4 files changed, 49 insertions(+)
+ res/values-zh-rCN/strings.xml                  |  2 ++
+ res/values/strings.xml                         |  2 ++
+ res/xml/button_settings.xml                    |  6 ++++++
+ .../lineageparts/input/ButtonSettings.java     | 18 ++++++++++++++++++
+ 4 files changed, 27 insertions(+)
 
 diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
-index fa31646..7d6dc1d 100644
+index fa31646..de07fef 100644
 --- a/res/values-zh-rCN/strings.xml
 +++ b/res/values-zh-rCN/strings.xml
 @@ -179,6 +179,8 @@
      <string name="home_answer_call_summary">按 Home 键接听来电</string>
      <string name="extras_title">附加功能</string>
      <string name="additional_buttons_title">附加按钮</string>
-+    <string name="edge_gesture_title">边缘手势</string>
++    <string name="edge_gesture_title">边缘触控</string>
 +    <string name="edge_gesture_summary">双击手机侧边可触发返回操作</string>
      <string name="button_backlight_title">背光</string>
      <string name="button_backlight_enabled">点亮按键</string>
      <string name="button_backlight_only_when_pressed_title">仅在按下时照亮按钮</string>
 diff --git a/res/values/strings.xml b/res/values/strings.xml
-index c9d78b4..7502da8 100644
+index 1133d32..6249ece 100644
 --- a/res/values/strings.xml
 +++ b/res/values/strings.xml
 @@ -213,6 +213,8 @@
@@ -33,48 +33,48 @@ index c9d78b4..7502da8 100644
      <string name="extras_title">Extras</string>
      <string name="additional_buttons_title">Additional buttons</string>
 +    <string name="edge_gesture_title">Edge gesture</string>
-+    <string name="edge_gesture_summary">Double tap to phone\'s edge causes back</string>
++    <string name="edge_gesture_summary">Double tap the phone\'s edge causes back</string>
+     <string name="click_partial_screenshot_title">Click to partial screenshot</string>
+     <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
 
-     <!-- Key backlight -->
-     <string name="button_backlight_title">Backlight</string>
 diff --git a/res/xml/button_settings.xml b/res/xml/button_settings.xml
-index 37adfed..37c477b 100644
+index c57985c..eedfa7a 100644
 --- a/res/xml/button_settings.xml
 +++ b/res/xml/button_settings.xml
-@@ -314,6 +314,10 @@
+@@ -314,6 +314,12 @@
                  android:action="org.lineageos.settings.device.ADDITIONAL_BUTTONS_SETTINGS" />
          </lineageos.preference.RemotePreference>
 
 +        <SwitchPreference
 +            android:key="edge_gesture"
 +            android:title="@string/edge_gesture_title"
-+            android:summary="@string/edge_gesture_summary" />
-     </PreferenceCategory>
-
- </PreferenceScreen>
++            android:summary="@string/edge_gesture_summary"
++            android:persistent="false" />
++
+         <lineageos.preference.LineageSystemSettingSwitchPreference
+             android:key="click_partial_screenshot"
+             android:title="@string/click_partial_screenshot_title"
 diff --git a/src/org/lineageos/lineageparts/input/ButtonSettings.java b/src/org/lineageos/lineageparts/input/ButtonSettings.java
-index 4b7dc11..268da6c 100644
+index 423dc60..a34485f 100644
 --- a/src/org/lineageos/lineageparts/input/ButtonSettings.java
 +++ b/src/org/lineageos/lineageparts/input/ButtonSettings.java
-@@ -53,6 +53,9 @@ import org.lineageos.internal.util.ScreenType;
-
- import static org.lineageos.internal.util.DeviceKeysConstants.*;
-
-+import java.io.File;
-+import java.io.FileReader;
-+import java.io.FileWriter;
- import java.util.List;
- import java.util.Set;
-
-@@ -99,6 +102,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -28,6 +28,7 @@ import android.content.res.Resources;
+ import android.os.Bundle;
+ import android.os.Handler;
+ import android.os.RemoteException;
++import android.os.SystemProperties;
+ import android.os.UserHandle;
+ import android.provider.Settings;
+ import android.util.ArraySet;
+@@ -99,6 +100,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
              "torch_long_press_power_gesture";
      private static final String KEY_TORCH_LONG_PRESS_POWER_TIMEOUT =
              "torch_long_press_power_timeout";
 +    private static final String KEY_EDGE_GESTURE = "edge_gesture";
+     private static final String KEY_CLICK_PARTIAL_SCREENSHOT =
+             "click_partial_screenshot";
 
-     private static final String CATEGORY_POWER = "power_key";
-     private static final String CATEGORY_HOME = "home_key";
-@@ -137,6 +141,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -140,6 +142,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
      private SwitchPreference mHomeAnswerCall;
      private SwitchPreference mTorchLongPressPowerGesture;
      private ListPreference mTorchLongPressPowerTimeout;
@@ -82,55 +82,41 @@ index 4b7dc11..268da6c 100644
 
      private PreferenceCategory mNavigationPreferencesCat;
 
-@@ -420,6 +425,26 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -425,6 +428,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
              }
          }
 
 +        // Edge gesture controller
-+        int status = 0;
-+        File file = new File("/proc/touchscreen/edge_touch_mode");
-+        if (file.exists()) {
-+            try {
-+                FileReader filereader = new FileReader(file);
-+                status = filereader.read() - 48; // (ASCII) 0 = 48, 1 = 49
-+                filereader.close();
-+            } catch (Exception e) {
-+                Log.e(TAG, "Error getting edge gesture status");
-+            }
-+        } else {
-+            Log.w(TAG, "File not found: /proc/touchscreen/edge_touch_mode");
-+        }
 +        mEdgeGesture = prefScreen.findPreference(KEY_EDGE_GESTURE);
 +
 +        if (mEdgeGesture != null) {
-+            mEdgeGesture.setChecked(status > 0);
++            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
 +        }
 +
          // Override key actions on Go devices in order to hide any unsupported features
          if (ActivityManager.isLowRamDeviceStatic()) {
              String[] actionEntriesGo = res.getStringArray(R.array.hardware_keys_action_entries_go);
-@@ -735,6 +760,22 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -499,6 +509,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
+                 (incallHomeBehavior == LineageSettings.Secure.RING_HOME_BUTTON_BEHAVIOR_ANSWER);
+             mHomeAnswerCall.setChecked(homeButtonAnswersCall);
+         }
++
++        // Get edge gesture status.
++        if (mEdgeGesture != null) {
++            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++        }
+     }
+
+     private ListPreference initList(String key, Action value) {
+@@ -740,6 +755,9 @@ public class ButtonSettings extends SettingsPreferenceFragment
          } else if (preference == mHomeAnswerCall) {
              handleToggleHomeButtonAnswersCallPreferenceClick();
              return true;
 +        } else if (preference == mEdgeGesture) {
-+            int status = mEdgeGesture.isChecked() ? 1 : 0;
-+            File file = new File("/proc/touchscreen/edge_touch_mode");
-+            if (file.exists()) {
-+                try {
-+                    FileWriter filewriter = new FileWriter(file);
-+                    filewriter.write(String.valueOf(status));
-+                    filewriter.flush();
-+                    filewriter.close();
-+                } catch (Exception e) {
-+                    Log.e(TAG, String.format("Error setting edge gesture status to %d", status));
-+                }
-+            } else {
-+                Log.e(TAG, "File not found: /proc/touchscreen/edge_touch_mode");
-+            }
++            SystemProperties.set("persist.vendor.edge_touch_mode", mEdgeGesture.isChecked() ? "true" : "false");
 +            return true;
          }
 
          return super.onPreferenceTreeClick(preference);
 --
-2.27.0
+2.29.2
