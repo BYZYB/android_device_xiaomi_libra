@@ -1,4 +1,4 @@
-Copyright 2019 - The LineageOS Project
+Copyright 2020 - The LineageOS Project
 
 Here are all changes outside this repo, some of them maybe necessary:
 * [All patches](https://github.com/WJXXBSH/android_device_xiaomi_libra/tree/lineage-17.1/patch) (easy to apply)
