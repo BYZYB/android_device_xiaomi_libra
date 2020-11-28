@@ -12,7 +12,7 @@ vendor/lib/rfsa/adsp/libfastcvadsp_skel.so
 vendor/lib64/libadsprpc.so
 vendor/lib64/libmdsprpc.so
 
-# AptX
+# aptX
 vendor/lib64/libaptX_encoder.so
 vendor/lib64/libaptXHD_encoder.so
 
@@ -316,11 +316,6 @@ vendor/lib64/libcneqmiutils.so|41bf6f87336faaee239a3047b1fdac3f742ebde9
 vendor/lib64/libwqe.so|0ca87bc277c645fea7dbfd50504f7a6097c08d98
 vendor/lib64/libxml.so|b966ad575b2078dd09a0e5fdc2fb428a1ffe31fc
 
-# Dirac
-lib/libDiracAPI_SHARED.so:vendor/lib/libDiracAPI_SHARED.so
-lib/soundfx/libdirac.so:vendor/lib/soundfx/libdirac.so
-vendor/etc/diracmobile.config
-
 # Fingerprint
 vendor/lib64/libcom_fingerprints_service.so|84184194dc22c7f82892862f142977bc2c81d6eb
 vendor/lib64/hw/fingerprint.fpc.so|9cbb143331d590b7931ef379b55d6aff09dd879b
@@ -464,19 +459,21 @@ vendor/lib64/hw/keystore.msm8992.so
 
 # Media
 vendor/lib/libFileMux.so
+vendor/lib/libmm-color-convertor.so
+vendor/lib/libmmosal.so
 vendor/lib/libOmxAacDec.so
 vendor/lib/libOmxAmrwbplusDec.so
 vendor/lib/libOmxEvrcDec.so
 vendor/lib/libOmxMux.so
 vendor/lib/libOmxQcelp13Dec.so
 vendor/lib/libOmxWmaDec.so
-vendor/lib/libmmosal.so
 vendor/lib64/libFileMux.so
+vendor/lib64/libmm-color-convertor.so
+vendor/lib64/libmmosal.so
 vendor/lib64/libOmxAacDec.so
 vendor/lib64/libOmxAmrwbplusDec.so
 vendor/lib64/libOmxMux.so
 vendor/lib64/libOmxWmaDec.so
-vendor/lib64/libmmosal.so
 
 # Media firmware
 etc/firmware/venus.b00:vendor/firmware/venus.b00
@@ -487,10 +484,27 @@ etc/firmware/venus.b04:vendor/firmware/venus.b04
 etc/firmware/venus.mbn:vendor/firmware/venus.mbn
 etc/firmware/venus.mdt:vendor/firmware/venus.mdt
 
+# Network
+vendor/lib/libconnctrl.so
+vendor/lib64/libconnctrl.so
+
 # Peripheral manager
 bin/pm-proxy:vendor/bin/pm-proxy
 bin/pm-service:vendor/bin/pm-service
 vendor/lib64/libperipheral_client.so|5cf2eab39bacead0334deaf7a904d8e53c4f80bb
+
+# Postprocessing
+bin/mm-pp-daemon:vendor/bin/mm-pp-daemon
+vendor/lib/libdisp-aba.so
+vendor/lib/libmm-abl-oem.so
+vendor/lib/libmm-abl.so
+vendor/lib/libmm-als.so
+vendor/lib/libmm-qdcm.so|487ab788ed15d1e3d6012344a5c8a1b931fbecd9
+vendor/lib64/libdisp-aba.so
+vendor/lib64/libmm-abl-oem.so
+vendor/lib64/libmm-abl.so
+vendor/lib64/libmm-als.so
+vendor/lib64/libmm-qdcm.so|7e987bdc72d46b9f5e8f3a0ba7083494a3bf888f
 
 # Qseecomm
 bin/qseecomd:vendor/bin/qseecomd
@@ -610,27 +624,6 @@ vendor/lib64/libtime_genoff.so
 
 # Wi-Fi
 bin/cnss-daemon:vendor/bin/cnss-daemon
-
-# Postprocessing
-bin/mm-pp-daemon:vendor/bin/mm-pp-daemon
-vendor/lib/libdisp-aba.so
-vendor/lib/libmm-abl-oem.so
-vendor/lib/libmm-abl.so
-vendor/lib/libmm-als.so
-vendor/lib/libmm-qdcm.so|487ab788ed15d1e3d6012344a5c8a1b931fbecd9
-vendor/lib64/libdisp-aba.so
-vendor/lib64/libmm-abl-oem.so
-vendor/lib64/libmm-abl.so
-vendor/lib64/libmm-als.so
-vendor/lib64/libmm-qdcm.so|7e987bdc72d46b9f5e8f3a0ba7083494a3bf888f
-
-# Media
-vendor/lib/libmm-color-convertor.so
-vendor/lib64/libmm-color-convertor.so
-
-# Network
-vendor/lib64/libconnctrl.so
-vendor/lib/libconnctrl.so
 
 # Widevine
 vendor/lib/mediadrm/libwvdrmengine.so|66ba66d047044f92eb0eada1faf6a5799ded90ab
