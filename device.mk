@@ -221,14 +221,14 @@ PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.consumerir.xml
 PRODUCT_PACKAGES += android.hardware.power@1.1-service-qti
 
 # Ramdisk
-PRODUCT_PACKAGES += \
-    fstab.qcom \
-    init.custom.post_boot.sh \
-    init.fpc.rc \
-    init.qcom.rc \
-    init.qcom.usb.rc \
-    init.target.rc \
-    ueventd.rc
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/bin/init.custom.post_boot.sh:system/vendor/bin/init.custom.post_boot.sh \
+    $(LOCAL_PATH)/rootdir/etc/fstab.qcom:system/vendor/etc/fstab.qcom \
+    $(LOCAL_PATH)/rootdir/etc/init.fpc.rc:system/vendor/etc/init/hw/init.fpc.rc \
+    $(LOCAL_PATH)/rootdir/etc/init.qcom.rc:system/vendor/etc/init/hw/init.qcom.rc \
+    $(LOCAL_PATH)/rootdir/etc/init.qcom.usb.rc:system/vendor/etc/init/hw/init.qcom.usb.rc \
+    $(LOCAL_PATH)/rootdir/etc/init.target.rc:system/vendor/etc/init/hw/init.target.rc \
+    $(LOCAL_PATH)/rootdir/ueventd.rc:system/vendor/ueventd.rc
 
 # RenderScript HAL
 PRODUCT_PACKAGES += android.hardware.renderscript@1.0-impl
