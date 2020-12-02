@@ -87,7 +87,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += android.hardware.biometrics.fingerprint@2.1-service
 
-# Gatekeeper HAL
+# Gatekeeper
 PRODUCT_PACKAGES += android.hardware.gatekeeper@1.0-impl
 
 # GPS
@@ -230,7 +230,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/init.target.rc:system/vendor/etc/init/hw/init.target.rc \
     $(LOCAL_PATH)/rootdir/ueventd.rc:system/vendor/ueventd.rc
 
-# RenderScript HAL
+# RenderScript
 PRODUCT_PACKAGES += android.hardware.renderscript@1.0-impl
 
 # RIL
@@ -267,17 +267,15 @@ PRODUCT_PACKAGES += \
     telephony-ext
 
 # Thermal
-PRODUCT_PACKAGES += \
-    android.hardware.thermal@1.0-impl \
-    android.hardware.thermal@1.0-libra
+PRODUCT_PACKAGES += android.hardware.thermal@1.0-impl
 
 # Touch
 PRODUCT_PACKAGES += vendor.lineage.touch@1.0-service.libra
 
-# Trust HAL
+# Trust
 PRODUCT_PACKAGES += vendor.lineage.trust@1.0-service
 
-# USB HAL
+# USB
 PRODUCT_PACKAGES += android.hardware.usb@1.0-service.basic
 
 # Vibrator
