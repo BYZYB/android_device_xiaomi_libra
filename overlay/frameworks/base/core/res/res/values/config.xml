@@ -41,16 +41,6 @@
         <item>"bnep\\d"</item>
         <item>"bt-pan"</item>
     </string-array>
-    <!-- When true, the tethering upstream network follows the current default Internet network (except when the current default network is mobile, in which case a DUN network will be used if required). -->
-    <bool translatable="false" name="config_tether_upstream_automatic">true</bool>
-    <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
-    <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
-    <!-- Boolean indicating whether the wifi chipset has background scan support -->
-    <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
-    <!-- Wifi driver supports batched scan -->
-    <bool translatable="false" name="config_wifi_batched_scan_supported">true</bool>
-    <!-- True if the firmware supports Wi-Fi link probing -->
-    <bool name="config_wifi_link_probing_supported">true</bool>
     <!-- Flag indicating whether the we should enable the automatic brightness in Settings. Software implementation will be used if config_hardware_auto_brightness_available is not set -->
     <bool name="config_automatic_brightness_available">true</bool>
     <!-- Flag indicating whether we should enable smart battery. -->
