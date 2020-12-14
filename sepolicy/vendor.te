@@ -136,7 +136,6 @@ allow system_app netd:binder *;
 allow system_app nfc_nq_prop:{ file property_service} *;
 allow system_app opengles_prop:{ file property_service} *;
 allow system_app overlay_prop:{ file property_service} *;
-allow system_app perfprofd:binder *;
 allow system_app proc_pagetypeinfo:file *;
 allow system_app sysfs:{ dir file } *;
 allow system_app system_suspend_control_service:service_manager *;
