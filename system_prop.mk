@@ -53,10 +53,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-filter=speed \
     dalvik.vm.image-dex2oat-filter=speed \
+    pm.dexopt.ab-ota=speed \
     pm.dexopt.bg-dexopt=speed \
     pm.dexopt.boot=speed \
     pm.dexopt.first-boot=speed \
-    pm.dexopt.install=speed
+    pm.dexopt.inactive=speed \
+    pm.dexopt.install=speed \
+    pm.dexopt.shared=speed
 
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
