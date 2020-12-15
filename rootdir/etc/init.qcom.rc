@@ -225,9 +225,6 @@ on boot
     # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.wifi    524288,2097152,4194304,262144,524288,1048576
     setprop ro.telephony.call_ring.multiple false
-
-    # Define TCP buffer sizes for various networks
-    # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,524288,4096,16384,110208
     setprop net.tcp.buffersize.lte 2097152,4194304,8388608,262144,524288,1048576
     setprop net.tcp.buffersize.umts 4094,87380,110208,4096,16384,110208
@@ -279,14 +276,6 @@ on boot
 
     # VibratorHW
     chown system system /sys/devices/virtual/timed_output/vibrator/amp
-
-    # Torch
-    chown system system /sys/class/leds/led:torch_0/brightness
-    chmod 0666 /sys/class/leds/led:torch_0/brightness
-
-    # Dynamic FPS
-    chown system graphics /sys/class/graphics/fb0/dynamic_fps
-    chmod 0644 /sys/class/graphics/fb0/dynamic_fps
 
 service bdaddr /vendor/bin/bdaddr_xiaomi
     class core
