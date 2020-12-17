@@ -163,6 +163,11 @@ PRODUCT_COPY_FILES += \
 # Health
 PRODUCT_PACKAGES += android.hardware.health@2.0-service
 
+# HIDL libs for legacy blobs
+PRODUCT_PACKAGES += \
+    libhidltransport \
+    libhwbinder
+
 # IR
 PRODUCT_PACKAGES += android.hardware.ir@1.0-service.xiaomi
 
