@@ -49,6 +49,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.button_jack_profile=volume \
     persist.sys.button_jack_switch=0
 
+# Charger
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.charger.enable_suspend=true
+
 # Dexpreopt
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-filter=speed \

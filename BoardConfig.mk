@@ -76,9 +76,6 @@ TARGET_PROCESS_SDK_VERSION_OVERRIDE := /system/vendor/bin/mm-qcamera-daemon=22
 TARGET_USES_MEDIA_EXTENSIONS := true
 USE_DEVICE_SPECIFIC_CAMERA := true
 
-# Charger
-BOARD_CHARGER_ENABLE_SUSPEND := true
-
 # Dexpreopt
 # All apps are pre-compiled with "speed" filter in this rom, which conflicts with the build rules and needs a patch to work.
 # Patch: see "core/product.mk" and "target/product/runtime_libart.mk" of "repo/repo_17.diff" in "useful_android_scripts".
