@@ -78,10 +78,14 @@ USE_DEVICE_SPECIFIC_CAMERA := true
 
 # Dexpreopt
 # All apps are pre-compiled with "speed" filter in this rom, which conflicts with the build rules and needs a patch to work.
-# Patch: see "core/product.mk" and "target/product/runtime_libart.mk" of "repo/repo_17.diff" in "useful_android_scripts".
+# Please consider to apply "./patch/dex2oat-speed-filter.patch" to avoid build errors.
 # The "speed" filter provides bettter performance, but also make app installation longer than defualt values.
 # If you got trouble with "speed" filter, try using the following line instead:
-# WITH_DEXPREOPT ?= true
+# ifeq ($(HOST_OS),linux)
+#     ifneq ($(TARGET_BUILD_VARIANT),eng)
+#         WITH_DEXPREOPT ?= true
+#     endif
+# endif
 DEX_PREOPT_DEFAULT := true
 DONT_DEXPREOPT_PREBUILTS := false
 LOCAL_DEX_PREOPT := true
@@ -116,7 +120,7 @@ USE_DEVICE_SPECIFIC_LOC_API := true
 # Graphics
 BOARD_USES_ADRENO := true
 BOARD_USES_OPENSSL_SYMBOLS := true
-OVERRIDE_RS_DRIVER:= libRSDriver_adreno.so
+OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x2002000
 TARGET_DISABLE_POSTRENDER_CLEANUP := true
 TARGET_USES_C2D_COMPOSITION := true
