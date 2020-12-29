@@ -80,10 +80,14 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Dexpreopt
 # All apps are pre-compiled with "speed" filter in this rom, which conflicts with the build rules and needs a patch to work.
-# Patch: see "target/product/runtime_libart.mk" of "repo/repo_16.diff" in "useful_android_scripts".
+# Please consider to apply "./patch/dex2oat-speed-filter.patch" to avoid build errors.
 # The "speed" filter provides bettter performance, but also make app installation longer than defualt values.
 # If you got trouble with "speed" filter, try using the following line instead:
-# WITH_DEXPREOPT := true
+# ifeq ($(HOST_OS),linux)
+#     ifneq ($(TARGET_BUILD_VARIANT),eng)
+#         WITH_DEXPREOPT ?= true
+#     endif
+# endif
 BOARD_USES_SYSTEM_OTHER_ODEX := false
 DEX_PREOPT_DEFAULT := true
 DONT_DEXPREOPT_PREBUILTS := false
@@ -123,7 +127,7 @@ MAX_EGL_CACHE_KEY_SIZE := 12*1024
 MAX_EGL_CACHE_SIZE := 2048*1024
 MAX_VIRTUAL_DISPLAY_DIMENSION := 2048
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-OVERRIDE_RS_DRIVER:= libRSDriver_adreno.so
+OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x2002000
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 TARGET_USES_C2D_COMPOSITION := true
