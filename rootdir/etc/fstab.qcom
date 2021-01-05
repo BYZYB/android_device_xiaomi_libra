@@ -2,21 +2,26 @@
 # The filesystem that contains the filesystem e2fsck binary (typically /system) cannot
 # specify 'check', and must come before any filesystems that do specify 'check'
 
-# <src> <mnt_point> <type> <mnt_flags and options> <fs_mgr_flags>
 # NOTE: /system partition is now early-mounted and the fstab entry is specified in device tree: /proc/device-tree/firmware/android/fstab/system
+# <src> <mnt_point> <type> <mnt_flags and options> <fs_mgr_flags>
 
+# Internal partitions
 /dev/block/bootdevice/by-name/boot /boot emmc defaults defaults
 /dev/block/bootdevice/by-name/misc /misc emmc defaults defaults
 /dev/block/bootdevice/by-name/recovery /recovery emmc defaults defaults
-/dev/block/bootdevice/by-name/bluetooth /vendor/bt_firmware vfat ro,uid=1002,gid=3002,fmask=0337,dmask=0227,shortname=lower wait
-/dev/block/bootdevice/by-name/modem /vendor/modem_firmware vfat ro,uid=1000,gid=1000,fmask=0337,dmask=0227,shortname=lower wait
-/dev/block/bootdevice/by-name/system /system ext4 ro,noatime,discard,nodelalloc,nobarrier,noauto_da_alloc wait,recoveryonly
-/dev/block/bootdevice/by-name/cache /cache ext4 nosuid,nodev,noatime,discard,nodelalloc,nobarrier,noauto_da_alloc wait,check
+/dev/block/bootdevice/by-name/bluetooth /vendor/bt_firmware vfat ro,noatime,uid=1002,gid=3002,fmask=0337,dmask=0227,shortname=lower defaults
+/dev/block/bootdevice/by-name/modem /vendor/modem_firmware vfat ro,noatime,uid=1000,gid=1000,fmask=0337,dmask=0227,shortname=lower defaults
+/dev/block/bootdevice/by-name/cache /cache ext4 nosuid,nodev,noatime,discard,nobarrier,noauto_da_alloc wait,check
 /dev/block/bootdevice/by-name/cache /cache f2fs rw,nosuid,nodev,noatime,discard,inline_xattr,nobarrier wait,check
-/dev/block/bootdevice/by-name/cust /mnt/vendor/cust ext4 nosuid,nodev,noatime,discard,nodelalloc,nobarrier,noauto_da_alloc wait,check
-/dev/block/bootdevice/by-name/persist /mnt/vendor/persist ext4 nosuid,nodev,noatime,discard,nodelalloc,nobarrier,noauto_da_alloc wait,check
-/dev/block/bootdevice/by-name/userdata /data ext4 nosuid,nodev,noatime,discard,nodelalloc,nobarrier,noauto_da_alloc wait,check,encryptable=/dev/block/bootdevice/by-name/bk1
+/dev/block/bootdevice/by-name/cust /mnt/vendor/cust ext4 nosuid,nodev,noatime,discard,nobarrier,noauto_da_alloc wait,check
+/dev/block/bootdevice/by-name/persist /mnt/vendor/persist ext4 nosuid,nodev,noatime,discard,nobarrier,noauto_da_alloc wait,check
+/dev/block/bootdevice/by-name/system /system ext4 ro,noatime,discard,nobarrier,noauto_da_alloc wait,recoveryonly
+/dev/block/bootdevice/by-name/userdata /data ext4 nosuid,nodev,noatime,discard,nobarrier,noauto_da_alloc wait,check,encryptable=/dev/block/bootdevice/by-name/bk1
 /dev/block/bootdevice/by-name/userdata /data f2fs rw,nosuid,nodev,noatime,discard,inline_xattr,nobarrier wait,check,encryptable=/dev/block/bootdevice/by-name/bk1
-/dev/block/zram0 none swap defaults max_comp_streams=6,zramsize=1073741824
+
+# Removable devices
 /devices/soc.0/f9200000.ssusb/f9200000.dwc3/xhci-hcd.0.auto/usb* auto auto defaults voldmanaged=usb:auto
 /devices/soc.0/f98a4900.sdhci/mmc_host* auto auto defaults voldmanaged=sdcard1:auto,encryptable=userdata
+
+# SWAP and ZRAM
+/dev/block/zram0 none swap defaults max_comp_streams=6,zramsize=1073741824
