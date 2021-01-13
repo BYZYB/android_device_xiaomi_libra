@@ -184,9 +184,8 @@ on property:persist.vendor.edge_touch_mode=false
 on property:persist.vendor.edge_touch_mode=true
     write /proc/touchscreen/edge_touch_mode 1
 
-on property:ro.product.ramsize=2g
-    # Mount zram image on devices with 2GB ram
-    swapon_all /vendor/etc/fstab.qcom
+on property:ro.config.low_ram=true
+    write /sys/kernel/mm/ksm/run 1
 
 on property:sys.boot_completed=1
     # Enable CPU retention
