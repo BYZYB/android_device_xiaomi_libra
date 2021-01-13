@@ -22,6 +22,3 @@
 # Removable devices
 /devices/soc.0/f9200000.ssusb/f9200000.dwc3/xhci-hcd.0.auto/usb* auto auto defaults voldmanaged=usb:auto
 /devices/soc.0/f98a4900.sdhci/mmc_host* auto auto defaults voldmanaged=sdcard1:auto,encryptable=userdata
-
-# SWAP and ZRAM
-/dev/block/zram0 none swap defaults max_comp_streams=6,zramsize=1073741824

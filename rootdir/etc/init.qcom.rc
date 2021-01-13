@@ -28,11 +28,6 @@
 import /vendor/etc/init/hw/init.qcom.usb.rc
 import /vendor/etc/init/hw/init.target.rc
 
-on early-init
-    # Setup ZRAM
-    write /proc/sys/vm/page-cluster 0
-    write /sys/block/zram0/comp_algorithm zstd
-
 on init
     # Create cgroup mount point for memory
     mkdir /sys/fs/cgroup/memory/bg 0750 root system
@@ -223,7 +218,7 @@ on boot
 
     # Define TCP buffer sizes for various networks
     # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.wifi    524288,2097152,4194304,262144,524288,1048576
+    setprop net.tcp.buffersize.wifi 524288,2097152,4194304,262144,524288,1048576
     setprop ro.telephony.call_ring.multiple false
     setprop net.tcp.buffersize.default 4096,87380,524288,4096,16384,110208
     setprop net.tcp.buffersize.lte 2097152,4194304,8388608,262144,524288,1048576
@@ -239,8 +234,8 @@ on boot
 
     # Assign TCP buffer thresholds to be ceiling value of technology maximums
     # Increased technology maximums should be reflected here.
-    write /proc/sys/net/core/rmem_max  16777216
-    write /proc/sys/net/core/wmem_max  8388608
+    write /proc/sys/net/core/rmem_max 16777216
+    write /proc/sys/net/core/wmem_max 8388608
 
     # To allow interfaces to get v6 address when tethering is enabled
     write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
