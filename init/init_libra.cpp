@@ -90,7 +90,6 @@ void vendor_load_properties()
             property_override("dalvik.vm.heapminfree", "512k");
             property_override("dalvik.vm.heapsize", "768m");
             property_override("dalvik.vm.heapstartsize", "8m");
-            property_override("ro.product.ramsize", "3g");
         }
         else // Mi-4c with 2GB RAM
         {
@@ -98,7 +97,7 @@ void vendor_load_properties()
             property_override("dalvik.vm.heapminfree", "2m");
             property_override("dalvik.vm.heapsize", "512m");
             property_override("dalvik.vm.heapstartsize", "16m");
-            property_override("ro.product.ramsize", "2g");
+            property_override("ro.config.low_ram", "true");
         }
 
         break;
@@ -116,7 +115,6 @@ void vendor_load_properties()
         property_override("dalvik.vm.heapminfree", "512k");
         property_override("dalvik.vm.heapsize", "768m");
         property_override("dalvik.vm.heapstartsize", "8m");
-        property_override("ro.product.ramsize", "3g");
 
         // Set fingerprint parameters
         property_override("ro.frp.pst", "/dev/block/bootdevice/by-name/config");
