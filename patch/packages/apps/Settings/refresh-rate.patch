@@ -1,0 +1,316 @@
+From eb9169cff41769a14b1ce51ff1922fc23206381b Mon Sep 17 00:00:00 2001
+From: WJXXBSH <zyb_1998@outlook.com>
+Date: Sat, 16 Jan 2021 20:39:38 +0800
+Subject: [PATCH] Add refresh rate option
+
+Change-Id: Id932a5211d6bb648a23e1c0bdcc6bd28abfc66fb
+---
+ res/values-zh-rCN/cm_strings.xml              |   3 +
+ res/values/cm_arrays.xml                      |  23 ++++
+ res/values/cm_strings.xml                     |   9 ++
+ res/xml/display_settings.xml                  |   8 ++
+ src/com/android/settings/DisplaySettings.java |   3 +
+ .../display/RefreshRateListPreference.java    |  49 +++++++
+ .../RefreshRatePreferenceController.java      | 122 ++++++++++++++++++
+ 7 files changed, 217 insertions(+)
+ create mode 100644 src/com/android/settings/display/RefreshRateListPreference.java
+ create mode 100644 src/com/android/settings/display/RefreshRatePreferenceController.java
+
+diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
+index a2b6754..5a26514 100644
+--- a/res/values-zh-rCN/cm_strings.xml
++++ b/res/values-zh-rCN/cm_strings.xml
+@@ -71,6 +71,9 @@
+     <string name="security_settings_fingerprint_sensor_location_front">前置</string>
+     <string name="security_settings_fingerprint_sensor_location_left">左侧</string>
+     <string name="security_settings_fingerprint_sensor_location_right">右侧</string>
++    <string name="screen_refresh_rate">屏幕刷新率</string>
++    <string name="screen_refresh_rate_title">屏幕刷新率</string>
++    <string name="keywords_screen_refresh_rate">屏幕，刷新率，Hz</string>
+     <string name="status_bar_double_tap_to_sleep_title">点按以睡眠</string>
+     <string name="status_bar_double_tap_to_sleep_summary">双击状态栏或锁屏以关闭屏幕</string>
+     <string name="touchscreen_gesture_settings_title">触摸屏手势</string>
+diff --git a/res/values/cm_arrays.xml b/res/values/cm_arrays.xml
+index bc509ad..09acc25 100644
+--- a/res/values/cm_arrays.xml
++++ b/res/values/cm_arrays.xml
+@@ -45,4 +45,27 @@
+         <item>@string/security_settings_fingerprint_sensor_location_left</item>
+         <item>@string/security_settings_fingerprint_sensor_location_right</item>
+     </string-array>
++
++    <!-- Display settings.  The minimum refresh rate of screen. These are shown in a list dialog. -->
++    <string-array name="screen_refresh_rate_entries">
++        <item>30 Hz</item>
++        <item>48 Hz</item>
++        <item>50 Hz</item>
++        <item>60 Hz</item>
++        <item>75 Hz</item>
++    </string-array>
++
++    <!-- Do not translate. -->
++    <string-array name="screen_refresh_rate_values" translatable="false">
++        <!-- Do not translate. -->
++        <item>30</item>
++        <!-- Do not translate. -->
++        <item>48</item>
++        <!-- Do not translate. -->
++        <item>50</item>
++        <!-- Do not translate. -->
++        <item>60</item>
++        <!-- Do not translate. -->
++        <item>75</item>
++    </string-array>
+ </resources>
+diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
+index bb0c71b..1719947 100644
+--- a/res/values/cm_strings.xml
++++ b/res/values/cm_strings.xml
+@@ -122,6 +122,15 @@
+     <string name="security_settings_fingerprint_sensor_location_left">left side</string>
+     <string name="security_settings_fingerprint_sensor_location_right">right side</string>
+
++    <!-- Sound & display settings screen, setting option name to change screen refresh rate -->
++    <string name="screen_refresh_rate">Screen refresh rate</string>
++    <!-- Sound & display settings screen, setting option name to change screen refresh rate [CHAR LIMIT=30] -->
++    <string name="screen_refresh_rate_title">Screen refresh rate</string>
++    <!-- Sound & display settings screen, setting option summary to change screen refresh rate -->
++    <string name="screen_refresh_rate_summary"><xliff:g id="refresh_rate_description">%1$s</xliff:g></string>
++    <!-- List of synonyms for the screen refresh rate setting, used to match in settings search [CHAR LIMIT=NONE] -->
++    <string name="keywords_screen_refresh_rate">screen, refresh rate, Hz</string>
++
+     <!-- Double tap to sleep on status bar or lockscreen -->
+     <string name="status_bar_double_tap_to_sleep_title">Tap to sleep</string>
+     <string name="status_bar_double_tap_to_sleep_summary">Double-tap on the status bar or lockscreen to turn off the display</string>
+diff --git a/res/xml/display_settings.xml b/res/xml/display_settings.xml
+index 1f4048e..5f2e0c6 100644
+--- a/res/xml/display_settings.xml
++++ b/res/xml/display_settings.xml
+@@ -77,6 +77,14 @@
+         android:entryValues="@array/screen_timeout_values"
+         settings:keywords="@string/keywords_screen_timeout" />
+
++    <com.android.settings.display.RefreshRateListPreference
++        android:key="screen_refresh_rate"
++        android:title="@string/screen_refresh_rate"
++        android:summary="@string/summary_placeholder"
++        android:entries="@array/screen_refresh_rate_entries"
++        android:entryValues="@array/screen_refresh_rate_values"
++        settings:keywords="@string/keywords_screen_refresh_rate" />
++
+     <Preference
+         android:key="adaptive_sleep_entry"
+         android:title="@string/adaptive_sleep_title"
+diff --git a/src/com/android/settings/DisplaySettings.java b/src/com/android/settings/DisplaySettings.java
+index 054a5e7..dde853a 100644
+--- a/src/com/android/settings/DisplaySettings.java
++++ b/src/com/android/settings/DisplaySettings.java
+@@ -32,6 +32,7 @@ import com.android.settings.display.ShowOperatorNamePreferenceController;
+ import com.android.settings.display.TapToWakePreferenceController;
+ import com.android.settings.display.ThemePreferenceController;
+ import com.android.settings.display.TimeoutPreferenceController;
++import com.android.settings.display.RefreshRatePreferenceController;
+ import com.android.settings.display.VrDisplayPreferenceController;
+ import com.android.settings.search.BaseSearchIndexProvider;
+ import com.android.settings.search.Indexable;
+@@ -51,6 +52,7 @@ public class DisplaySettings extends DashboardFragment {
+     public static final String KEY_PROXIMITY_ON_WAKE = "proximity_on_wake";
+
+     private static final String KEY_SCREEN_TIMEOUT = "screen_timeout";
++    private static final String KEY_SCREEN_REFRESH_RATE = "screen_refresh_rate";
+     private static final String KEY_HIGH_TOUCH_SENSITIVITY = "high_touch_sensitivity_enable";
+
+     @Override
+@@ -93,6 +95,7 @@ public class DisplaySettings extends DashboardFragment {
+         controllers.add(new ScreenSaverPreferenceController(context));
+         controllers.add(new TapToWakePreferenceController(context));
+         controllers.add(new TimeoutPreferenceController(context, KEY_SCREEN_TIMEOUT));
++        controllers.add(new RefreshRatePreferenceController(context, KEY_SCREEN_REFRESH_RATE));
+         controllers.add(new VrDisplayPreferenceController(context));
+         controllers.add(new ShowOperatorNamePreferenceController(context));
+         controllers.add(new ThemePreferenceController(context));
+diff --git a/src/com/android/settings/display/RefreshRateListPreference.java b/src/com/android/settings/display/RefreshRateListPreference.java
+new file mode 100644
+index 0000000..0ec5f34
+--- /dev/null
++++ b/src/com/android/settings/display/RefreshRateListPreference.java
+@@ -0,0 +1,49 @@
++/*
++ * Copyright (C) 2021 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
++ * except in compliance with the License. You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the
++ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the specific language governing
++ * permissions and limitations under the License.
++ */
++
++package com.android.settings.display;
++
++import android.app.Dialog;
++import android.content.Context;
++import android.content.DialogInterface;
++import android.util.AttributeSet;
++import android.view.View;
++
++import androidx.appcompat.app.AlertDialog.Builder;
++
++import com.android.settings.RestrictedListPreference;
++
++
++public class RefreshRateListPreference extends RestrictedListPreference {
++    private final CharSequence[] mInitialEntries;
++    private final CharSequence[] mInitialValues;
++
++    public RefreshRateListPreference(Context context, AttributeSet attrs) {
++        super(context, attrs);
++        mInitialEntries = getEntries();
++        mInitialValues = getEntryValues();
++    }
++
++    @Override
++    protected void onPrepareDialogBuilder(Builder builder, DialogInterface.OnClickListener listener) {
++        super.onPrepareDialogBuilder(builder, listener);
++        builder.setView(null);
++    }
++
++    @Override
++    protected void onDialogCreated(Dialog dialog) {
++        super.onDialogCreated(dialog);
++        dialog.create();
++    }
++}
+diff --git a/src/com/android/settings/display/RefreshRatePreferenceController.java b/src/com/android/settings/display/RefreshRatePreferenceController.java
+new file mode 100644
+index 0000000..371b9fe
+--- /dev/null
++++ b/src/com/android/settings/display/RefreshRatePreferenceController.java
+@@ -0,0 +1,122 @@
++/*
++ * Copyright (C) 2021 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
++ * except in compliance with the License. You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the
++ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the specific language governing
++ * permissions and limitations under the License.
++ */
++
++package com.android.settings.display;
++
++import android.content.Context;
++import android.util.Log;
++
++import androidx.preference.Preference;
++
++import com.android.settings.R;
++import com.android.settings.core.PreferenceControllerMixin;
++import com.android.settingslib.core.AbstractPreferenceController;
++
++import java.io.File;
++import java.io.FileReader;
++import java.io.FileWriter;
++
++
++public class RefreshRatePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, Preference.OnPreferenceChangeListener {
++    private static final String TAG = "RefreshRatePrefContr";
++    private final String mScreenRefreshRateKey;
++
++    public RefreshRatePreferenceController(Context context, String key) {
++        super(context);
++        mScreenRefreshRateKey = key;
++    }
++
++    @Override
++    public boolean isAvailable() {
++        return true;
++    }
++
++    @Override
++    public String getPreferenceKey() {
++        return mScreenRefreshRateKey;
++    }
++
++    @Override
++    public void updateState(Preference preference) {
++        final RefreshRateListPreference refreshrateListPreference = (RefreshRateListPreference) preference;
++        final int currentRefreshRate = getRefreshRate();
++        refreshrateListPreference.setValue(String.valueOf(currentRefreshRate));
++        updateRefreshRatePreferenceDescription(refreshrateListPreference, Integer.parseInt(refreshrateListPreference.getValue()));
++    }
++
++    @Override
++    public boolean onPreferenceChange(Preference preference, Object newValue) {
++        final int value = Integer.parseInt((String) newValue);
++        setRefreshRate(value);
++        if (value != getRefreshRate()) { // TODO: properly handle screens without high refresh rate support
++            Log.w(TAG, "could not change screen refresh rate to unsupported value: " + String.valueOf(value));
++        }
++        updateRefreshRatePreferenceDescription((RefreshRateListPreference) preference, value);
++        return true;
++    }
++
++    public static CharSequence getRefreshRateDescription(int currentRefreshRate, CharSequence[] entries, CharSequence[] values) {
++        if (currentRefreshRate < 0 || entries == null || values == null || values.length != entries.length) {
++            return null;
++        }
++
++        for (int i = 0; i < values.length; i++) {
++            int refreshrate = Integer.parseInt(values[i].toString());
++            if (currentRefreshRate == refreshrate) {
++                return entries[i];
++            }
++        }
++        return null;
++    }
++
++    private void updateRefreshRatePreferenceDescription(RefreshRateListPreference preference, int currentRefreshRate) {
++        final CharSequence[] entries = preference.getEntries();
++        final CharSequence[] values = preference.getEntryValues();
++        final CharSequence refreshrateDescription = getRefreshRateDescription(currentRefreshRate, entries, values);
++        final String summary = refreshrateDescription == null ? "" : mContext.getString(R.string.screen_refresh_rate_summary, refreshrateDescription);
++        preference.setSummary(summary);
++    }
++
++    private int getRefreshRate() {
++        File file = new File("/sys/class/graphics/fb0/dynamic_fps");
++        if (file.exists()) {
++            try {
++                FileReader filereader = new FileReader(file);
++                int currentValue = (filereader.read() - 48) * 10 + (filereader.read() - 48); // ASCII: 0 = 48, 1 = 49...
++                filereader.close();
++                return currentValue;
++            } catch (Exception e) {
++                Log.e(TAG, "could not get screen refresh rate", e);
++            }
++        } else {
++            Log.e(TAG, "File not found: /sys/class/graphics/fb0/dynamic_fps");
++        }
++        return -1;
++    }
++
++    private void setRefreshRate(int newValue) {
++        File file = new File("/sys/class/graphics/fb0/dynamic_fps");
++        if (file.exists()) {
++            try {
++                FileWriter filewriter = new FileWriter(file);
++                filewriter.write(String.valueOf(newValue));
++                filewriter.close();
++            } catch (Exception e) {
++                Log.e(TAG, "could not set screen refresh rate", e);
++            }
++        } else {
++            Log.e(TAG, "File not found: /sys/class/graphics/fb0/dynamic_fps");
++        }
++    }
++}
+--
+2.30.0
