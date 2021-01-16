@@ -1,21 +1,21 @@
-From 43a00081c122c19d1a5b664a57abb58dec2e64ec Mon Sep 17 00:00:00 2001
+From dd6a53be3e5671d7c0e7a4bb00fd83107854b08d Mon Sep 17 00:00:00 2001
 From: WJXXBSH <zyb_1998@outlook.com>
-Date: Thu, 26 Nov 2020 21:53:08 +0800
+Date: Sat, 16 Jan 2021 20:37:29 +0800
 Subject: [PATCH] Forwardport addon-su from lineage-16.0
 
-Change-Id: Id7e6ba5e47da3719b88a728416ed2103c6a2c1a5
+Change-Id: Ib3e0991ecd6c56370c753f5de2d532964bfe3f0a
 ---
  res/values-zh-rCN/cm_strings.xml              |  2 +
- res/values/cm_strings.xml                     |  4 +
+ res/values/cm_strings.xml                     |  4 ++
  res/xml/development_settings.xml              |  6 ++
  .../AdbRootPreferenceController.java          |  2 +-
  .../DevelopmentSettingsDashboardFragment.java |  1 +
- .../RootAccessPreferenceController.java       | 74 +++++++++++++++++++
- 6 files changed, 88 insertions(+), 1 deletion(-)
+ .../RootAccessPreferenceController.java       | 61 +++++++++++++++++++
+ 6 files changed, 75 insertions(+), 1 deletion(-)
  create mode 100644 src/com/android/settings/development/RootAccessPreferenceController.java
 
 diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
-index a841914..4752664 100644
+index d84f2db..a2b6754 100644
 --- a/res/values-zh-rCN/cm_strings.xml
 +++ b/res/values-zh-rCN/cm_strings.xml
 @@ -62,6 +62,8 @@
@@ -73,23 +73,23 @@ index 5f7d65d..8cdc24f 100644
 
      @Override
 diff --git a/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java b/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
-index f18225e..ac5dd9b 100644
+index f18225e..d22e7d0 100644
 --- a/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
 +++ b/src/com/android/settings/development/DevelopmentSettingsDashboardFragment.java
 @@ -515,6 +515,7 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
          controllers.add(new ShortcutManagerThrottlingPreferenceController(context));
          controllers.add(new BubbleGlobalPreferenceController(context));
          controllers.add(new EnableGnssRawMeasFullTrackingPreferenceController(context));
-+        controllers.add(new RootAccessPreferenceController(context, fragment));
++        controllers.add(new RootAccessPreferenceController(context));
          controllers.add(new DefaultLaunchPreferenceController(context, "running_apps"));
          controllers.add(new DefaultLaunchPreferenceController(context, "demo_mode"));
          controllers.add(new DefaultLaunchPreferenceController(context, "quick_settings_tiles"));
 diff --git a/src/com/android/settings/development/RootAccessPreferenceController.java b/src/com/android/settings/development/RootAccessPreferenceController.java
 new file mode 100644
-index 0000000..9968ab8
+index 0000000..03bb3cd
 --- /dev/null
 +++ b/src/com/android/settings/development/RootAccessPreferenceController.java
-@@ -0,0 +1,74 @@
+@@ -0,0 +1,61 @@
 +/*
 + * Copyright (C) 2020 The LineageOS Project
 + *
@@ -109,46 +109,33 @@ index 0000000..9968ab8
 +package com.android.settings.development;
 +
 +import android.content.Context;
-+import android.os.Build;
-+import android.os.ServiceManager;
 +import android.os.SystemProperties;
-+import android.os.UserManager;
-+import android.provider.Settings;
++
 +import androidx.preference.Preference;
 +import androidx.preference.PreferenceScreen;
 +import androidx.preference.SwitchPreference;
 +
-+import com.android.settings.R;
-+import com.android.settings.Utils;
 +import com.android.settings.core.PreferenceControllerMixin;
 +import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 +
++
 +public class RootAccessPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
-+    private static final String PREF_KEY = "root_access";
++    private static final String ROOT_ACCESS_KEY = "root_access";
 +    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
 +
-+    private final DevelopmentSettingsDashboardFragment mFragment;
-+
-+    public RootAccessPreferenceController(Context context, DevelopmentSettingsDashboardFragment fragment) {
++    public RootAccessPreferenceController(Context context) {
 +        super(context);
-+
-+        mFragment = fragment;
 +    }
 +
 +    @Override
 +    public String getPreferenceKey() {
-+        return PREF_KEY;
++        return ROOT_ACCESS_KEY;
 +    }
 +
 +    @Override
 +    public void displayPreference(PreferenceScreen screen) {
 +        super.displayPreference(screen);
-+
 +        ((SwitchPreference) mPreference).setChecked(SystemProperties.getBoolean(ROOT_ACCESS_PROPERTY, false));
-+
-+        if (!((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser()) {
-+            mPreference.setEnabled(false);
-+        }
 +    }
 +
 +    @Override
@@ -158,11 +145,11 @@ index 0000000..9968ab8
 +    }
 +
 +    @Override
-+    protected void onDeveloperOptionsSwitchEnabled() {
-+        if (((UserManager) mContext.getSystemService(Context.USER_SERVICE)).isAdminUser()) {
-+            mPreference.setEnabled(true);
-+        }
++    protected void onDeveloperOptionsSwitchDisabled() {
++        super.onDeveloperOptionsSwitchDisabled();
++        SystemProperties.set(ROOT_ACCESS_PROPERTY, "false");
++        ((SwitchPreference) mPreference).setChecked(false);
 +    }
 +}
 --
-2.29.2
+2.30.0
