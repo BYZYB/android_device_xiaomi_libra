@@ -83,13 +83,8 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 # All apps are pre-compiled with "speed" filter in this rom, which conflicts with the build rules and needs a patch to work.
 # Please consider to apply "./patch/dex2oat-speed-filter.patch" to avoid build errors.
 # The "speed" filter provides bettter performance, but also make app installation longer than defualt values.
-# If you got trouble with "speed" filter, try using the following line instead:
-# ifeq ($(HOST_OS),linux)
-#     ifneq ($(TARGET_BUILD_VARIANT),eng)
-#         WITH_DEXPREOPT ?= true
-#     endif
-# endif
-DEX_PREOPT_DEFAULT := true
+# If you got trouble with "speed" filter, try using the following one line instead:
+# WITH_DEXPREOPT_DEBUG_INFO := false
 DONT_DEXPREOPT_PREBUILTS := false
 LOCAL_DEX_PREOPT := true
 PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
@@ -100,8 +95,6 @@ PRODUCT_OTHER_JAVA_DEBUG_INFO := false
 PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed
 PRODUCT_SYSTEM_SERVER_DEBUG_INFO := false
 USE_DEX2OAT_DEBUG := false
-WITH_DEXPREOPT := true
-WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false
 WITH_DEXPREOPT_DEBUG_INFO := false
 
 # Display
@@ -152,7 +145,6 @@ BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive ehci-hcd.park=3 msm_rtb.filter=0x37
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
-TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_CLANG_COMPILE := true
 TARGET_KERNEL_CLANG_PATH := /lib/llvm-11
 TARGET_KERNEL_CLANG_VERSION := 11.0
