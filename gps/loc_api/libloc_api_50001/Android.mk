@@ -45,20 +45,20 @@ LOCAL_C_INCLUDES:= \
     $(LOCAL_PATH) \
     $(TARGET_OUT_HEADERS)/libflp
 
-LOCAL_COPY_HEADERS_TO:= libloc_eng/
-LOCAL_COPY_HEADERS:= \
-   LocEngAdapter.h \
-   loc.h \
-   loc_eng.h \
-   loc_eng_xtra.h \
-   loc_eng_ni.h \
-   loc_eng_agps.h \
-   loc_eng_msg.h \
-   loc_eng_log.h
+LOCAL_HEADER_LIBRARIES := \
+    libgps.utils_headers \
+    libloc_core_headers
 
 LOCAL_PRELINK_MODULE := false
 
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libloc_eng_headers
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)
+
+include $(BUILD_HEADER_LIBRARY)
 
 include $(CLEAR_VARS)
 
@@ -106,6 +106,10 @@ LOCAL_C_INCLUDES:= \
 
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
+
+LOCAL_HEADER_LIBRARIES := \
+    libgps.utils_headers \
+    libloc_core_headers
 
 include $(BUILD_SHARED_LIBRARY)
 
