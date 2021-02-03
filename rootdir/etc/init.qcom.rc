@@ -440,9 +440,6 @@ on property:sys.qbcharger.enable=false
 on property:sys.qbcharger.enable=true
     start qbcharger
 
-on property:sys.sysctl.tcp_adv_win_scale=*
-    write /proc/sys/net/ipv4/tcp_adv_win_scale ${sys.sysctl.tcp_adv_win_scale}
-
 on property:vendor.wc_transport.start_hci=false
     stop start_hci_filter
 
