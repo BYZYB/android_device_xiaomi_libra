@@ -161,7 +161,9 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/vendor/etc/permissions/handheld_core_hardware.xml
 
 # Health
-PRODUCT_PACKAGES += android.hardware.health@2.0-service
+PRODUCT_PACKAGES += \
+    android.hardware.health@2.1-impl \
+    android.hardware.health@2.1-service
 
 # HIDL libs for legacy blobs
 PRODUCT_PACKAGES += \
