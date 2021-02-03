@@ -49,6 +49,15 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.button_jack_profile=volume \
     persist.sys.button_jack_switch=0
 
+# Dalvik heap
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapgrowthlimit=288m \
+    dalvik.vm.heapmaxfree=8m \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapsize=768m \
+    dalvik.vm.heapstartsize=8m \
+    dalvik.vm.heaptargetutilization=0.75
+
 # Dexpreopt
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-filter=speed \

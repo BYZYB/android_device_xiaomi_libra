@@ -121,7 +121,7 @@ index 949562f..de3868a 100644
              Global.putInt(getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, level);
              updateAutoPowerSaveSummary(level);
 +        } else if (preference == mCPUOverclockPref) {
-+            SystemProperties.set("persist.sys.cpu_overclock", SystemProperties.getBoolean("persist.sys.cpu_overclock", true) ? "false" : "true");
++            SystemProperties.set("persist.sys.cpu_overclock", mCPUOverclockPref.isChecked() ? "false" : "true");
          }
          return true;
      }
@@ -130,7 +130,7 @@ index 949562f..de3868a 100644
      }
 
 +    private void updateCPUOverclockValue() {
-+        mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", true));
++        mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", false));
 +    }
 +
      private void updateAutoPowerSaveValue() {
