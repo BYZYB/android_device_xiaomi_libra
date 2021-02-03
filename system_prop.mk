@@ -49,8 +49,17 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.button_jack_profile=volume \
     persist.sys.button_jack_switch=0
 
+# Dalvik heap
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapgrowthlimit=288m \
+    dalvik.vm.heapmaxfree=8m \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapsize=768m \
+    dalvik.vm.heapstartsize=8m \
+    dalvik.vm.heaptargetutilization=0.75
+
 # Dexpreopt
-PRODUCT_PROPERTY_OVERRIDES += \
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-filter=speed \
     dalvik.vm.image-dex2oat-filter=speed \
     pm.dexopt.ab-ota=speed \
@@ -102,6 +111,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
     DEVICE_PROVISIONED=1 \
     persist.android.strictmode=0 \
     persist.power.useautobrightadj=true
+
+# Persist properties
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.cpu_overclock=false \
+    persist.sys.root_access=false \
+    persist.vendor.edge_touch_mode=false
 
 # Qualcomm specifics
 PRODUCT_PROPERTY_OVERRIDES += \
