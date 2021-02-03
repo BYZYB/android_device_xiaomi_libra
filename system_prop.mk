@@ -53,8 +53,17 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.charger.enable_suspend=true
 
+# Dalvik heap
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapgrowthlimit=288m \
+    dalvik.vm.heapmaxfree=8m \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapsize=768m \
+    dalvik.vm.heapstartsize=8m \
+    dalvik.vm.heaptargetutilization=0.75
+
 # Dexpreopt
-PRODUCT_PROPERTY_OVERRIDES += \
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-filter=everything \
     dalvik.vm.image-dex2oat-filter=everything \
     pm.dexopt.ab-ota=everything \
@@ -144,6 +153,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ril.subscription.types=NV,RUIM \
     rild.libargs=-d[SPACE]/dev/smd0 \
     rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
+
+# Special persist properties
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.cpu_overclock=false \
+    persist.sys.root_access=false \
+    persist.vendor.edge_touch_mode=false
 
 # Telephony
 PRODUCT_PROPERTY_OVERRIDES += \
