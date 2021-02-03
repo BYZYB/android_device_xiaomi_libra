@@ -26,17 +26,30 @@
  */
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
+#define AQUA_BOARD_ID 30
+#define BOARD_ID_PATH "/proc/device-tree/qcom,board-id"
+#define LIBRA_BOARD_ID 12
+#define RAM_SIZE_2GB 2048ull * 1024 * 1024
 
-#include "property_service.h"
 #include <fstream>
 #include <sys/_system_properties.h>
 #include <sys/sysinfo.h>
 
-#define AQUA_BOARD_ID 30
-#define LIBRA_BOARD_ID 12
-#define BOARD_ID_PATH "/proc/device-tree/qcom,board-id"
+uint8_t get_board_id(const char *path)
+{
+    uint8_t board_id;
 
-using std::ifstream;
+    /*
+      qcom,board-id contains two 4-byte numbers,
+      For libra, 00 00 00 0c and 00 00 00 00.
+      For aqua, 00 00 00 1e and 00 00 00 00.
+     */
+    std::ifstream board_id_file(path, std::ifstream::binary);
+    board_id_file.seekg(3); // Shift past the first 3 bytes and only read the 4th one
+    board_id_file.read(reinterpret_cast<char *>(&board_id), 1);
+
+    return board_id;
+}
 
 void property_override(const char *prop, const char *value)
 {
@@ -52,46 +65,17 @@ void property_override(const char *prop, const char *value)
     }
 }
 
-inline void property_override(const char *system_prop, const char *vendor_prop, const char *value)
-{
-    property_override(system_prop, value);
-    property_override(vendor_prop, value);
-}
-
-uint8_t get_board_id()
-{
-    uint8_t board_id;
-
-    /*
-      qcom,board-id contains two 4-byte numbers,
-      For libra, 00 00 00 0c and 00 00 00 00.
-      For aqua, 00 00 00 1e and 00 00 00 00.
-     */
-    ifstream board_id_file(BOARD_ID_PATH, ifstream::binary);
-    board_id_file.seekg(3); // Shift past the first 3 bytes and only read the 4th one
-    board_id_file.read(reinterpret_cast<char *>(&board_id), 1);
-
-    return board_id;
-}
-
 void vendor_load_properties()
 {
-    switch (get_board_id())
+    switch (get_board_id(BOARD_ID_PATH))
     {
     case LIBRA_BOARD_ID:
     {
         struct sysinfo sys;
         sysinfo(&sys);
 
-        // Set memory parameters
-        if (sys.totalram > 2048ull * 1024 * 1024) // Mi-4c with 3GB RAM
-        {
-            property_override("dalvik.vm.heapgrowthlimit", "288m");
-            property_override("dalvik.vm.heapminfree", "512k");
-            property_override("dalvik.vm.heapsize", "768m");
-            property_override("dalvik.vm.heapstartsize", "8m");
-        }
-        else // Mi-4c with 2GB RAM
+        // Set memory properties for Mi-4c with 2GB RAM
+        if (sys.totalram <= RAM_SIZE_2GB)
         {
             property_override("dalvik.vm.heapgrowthlimit", "192m");
             property_override("dalvik.vm.heapminfree", "2m");
@@ -107,16 +91,12 @@ void vendor_load_properties()
     {
         // Set device info for Mi-4s
         property_override("ro.build.product", "aqua");
-        property_override("ro.product.device", "ro.vendor.product.device", "aqua");
-        property_override("ro.product.model", "ro.vendor.product.model", "Mi-4s");
+        property_override("ro.product.device", "aqua");
+        property_override("ro.product.model", "Mi-4s");
+        property_override("ro.vendor.product.device", "aqua");
+        property_override("ro.vendor.product.model", "Mi-4s");
 
-        // Set memory parameters
-        property_override("dalvik.vm.heapgrowthlimit", "288m");
-        property_override("dalvik.vm.heapminfree", "512k");
-        property_override("dalvik.vm.heapsize", "768m");
-        property_override("dalvik.vm.heapstartsize", "8m");
-
-        // Set fingerprint parameters
+        // Set fingerprint properties
         property_override("ro.frp.pst", "/dev/block/bootdevice/by-name/config");
         property_override("ro.hardware.fingerprint", "fpc");
         property_override("sys.fpc.tu.disabled", "0");
