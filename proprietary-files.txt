@@ -596,7 +596,7 @@ vendor/lib64/libril-qc-qmi-1.so
 vendor/lib64/libril-qc-radioconfig.so
 vendor/lib64/libril-qcril-hook-oem.so
 vendor/lib64/librilqmiservices.so
-vendor/lib64/libsettings.so|4609cacca0a56dae2596687c8f5f2f9423d4d0d9
+vendor/lib64/libsettings.so|b8c91a63c0e7b013ac48bb16bc4e8ce8ec6f3f07
 vendor/lib64/libsystem_health_mon.so
 vendor/qcril.db
 
@@ -626,4 +626,4 @@ vendor/lib64/libtime_genoff.so
 bin/cnss-daemon:vendor/bin/cnss-daemon
 
 # Widevine
-vendor/lib/mediadrm/libwvdrmengine.so|66ba66d047044f92eb0eada1faf6a5799ded90ab
+vendor/lib/mediadrm/libwvdrmengine.so|2f70d96729bc35389d98ab3a1e8f48f4f7b659c2

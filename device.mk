@@ -165,11 +165,6 @@ PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl \
     android.hardware.health@2.1-service
 
-# HIDL libs for legacy blobs
-PRODUCT_PACKAGES += \
-    libhidltransport \
-    libhwbinder
-
 # IR
 PRODUCT_PACKAGES += android.hardware.ir@1.0-service.xiaomi
 
@@ -191,6 +186,11 @@ PRODUCT_COPY_FILES += \
 
 # Keystore
 PRODUCT_PACKAGES += android.hardware.keymaster@3.0-impl
+
+# Legacy libs for compatibility
+PRODUCT_PACKAGES += \
+    libhidltransport \
+    libhwbinder
 
 # Lights
 PRODUCT_PACKAGES += android.hardware.light@2.0-service.xiaomi_msm8994
