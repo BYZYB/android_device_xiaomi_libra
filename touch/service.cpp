@@ -22,7 +22,6 @@
 
 using android::OK;
 using android::sp;
-using android::status_t;
 using android::hardware::configureRpcThreadpool;
 using android::hardware::joinRpcThreadpool;
 
@@ -31,10 +30,8 @@ using ::vendor::lineage::touch::V1_0::implementation::KeyDisabler;
 
 int main()
 {
-    sp<KeyDisabler> keyDisabler;
-    status_t status;
+    sp<KeyDisabler> keyDisabler = new KeyDisabler();
 
-    keyDisabler = new KeyDisabler();
     if (keyDisabler == nullptr)
     {
         LOG(ERROR) << "Can not create an instance of Touch HAL KeyDisabler Iface, exiting.";
@@ -43,11 +40,9 @@ int main()
 
     configureRpcThreadpool(1, true /*callerWillJoin*/);
 
-    status = keyDisabler->registerAsService();
-    if (status != OK)
+    if (keyDisabler->registerAsService() != OK)
     {
-        LOG(ERROR) << "Could not register service for Touch HAL KeyDisabler Iface ("
-                   << status << ")";
+        LOG(ERROR) << "Could not register service for Touch HAL KeyDisabler Iface.";
         goto shutdown;
     }
 

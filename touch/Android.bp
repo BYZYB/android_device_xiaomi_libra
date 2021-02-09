@@ -29,4 +29,5 @@ cc_binary {
         "KeyDisabler.cpp",
         "service.cpp",
     ],
+    vintf_fragments: ["vendor.lineage.touch@1.0-service.libra.xml"],
 }

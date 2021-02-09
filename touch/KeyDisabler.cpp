@@ -19,58 +19,64 @@
 #include <android-base/logging.h>
 #include <android-base/strings.h>
 
+using ::android::base::ReadFileToString;
+using ::android::base::Trim;
+using ::android::base::WriteStringToFile;
+
 namespace vendor
 {
-namespace lineage
-{
-namespace touch
-{
-namespace V1_0
-{
-namespace implementation
-{
-
-constexpr const char kControlPath[] =
-    "/proc/touchscreen/nav_button_enable";
-
-KeyDisabler::KeyDisabler()
-{
-    mHasKeyDisabler = !access(kControlPath, F_OK);
-}
-
-// Methods from ::vendor::lineage::touch::V1_0::IKeyDisabler follow.
-Return<bool> KeyDisabler::isEnabled()
-{
-    std::string buf;
-
-    if (!mHasKeyDisabler)
-        return false;
-
-    if (!android::base::ReadFileToString(kControlPath, &buf))
+    namespace lineage
     {
-        LOG(ERROR) << "Failed to read " << kControlPath;
-        return false;
-    }
+        namespace touch
+        {
+            namespace V1_0
+            {
+                namespace implementation
+                {
+                    constexpr const char kControlPath[] = "/proc/touchscreen/nav_button_enable";
 
-    return std::stoi(android::base::Trim(buf)) == 0;
-}
+                    KeyDisabler::KeyDisabler()
+                    {
+                        has_key_disabler = !access(kControlPath, F_OK);
+                    }
 
-Return<bool> KeyDisabler::setEnabled(bool enabled)
-{
-    if (!mHasKeyDisabler)
-        return false;
+                    // Methods from ::vendor::lineage::touch::V1_0::IKeyDisabler follow.
+                    Return<bool> KeyDisabler::isEnabled()
+                    {
+                        std::string buf;
 
-    if (!android::base::WriteStringToFile((enabled ? "0" : "1"), kControlPath))
-    {
-        LOG(ERROR) << "Failed to write " << kControlPath;
-        return false;
-    }
+                        if (!has_key_disabler)
+                        {
+                            return false;
+                        }
 
-    return true;
-}
+                        if (!ReadFileToString(kControlPath, &buf, true))
+                        {
+                            LOG(ERROR) << "Failed to read from " << kControlPath;
+                            return false;
+                        }
 
-} // namespace implementation
-} // namespace V1_0
-} // namespace touch
-} // namespace lineage
+                        return Trim(buf) == "0";
+                    }
+
+                    Return<bool> KeyDisabler::setEnabled(bool enabled)
+                    {
+                        if (!has_key_disabler)
+                        {
+                            return false;
+                        }
+
+                        if (!WriteStringToFile(enabled ? "0" : "1", kControlPath, true))
+                        {
+                            LOG(ERROR) << "Failed to write to " << kControlPath;
+                            return false;
+                        }
+
+                        return true;
+                    }
+
+                } // namespace implementation
+            }     // namespace V1_0
+        }         // namespace touch
+    }             // namespace lineage
 } // namespace vendor
