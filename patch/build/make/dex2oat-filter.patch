@@ -1,7 +1,7 @@
 From 1fd0495bd94c7a06ecf49e6962ce6764d199face Mon Sep 17 00:00:00 2001
 From: WJXXBSH <zyb_1998@outlook.com>
 Date: Thu, 5 Nov 2020 10:35:14 +0800
-Subject: [PATCH] Always use speed filter for dex2oat
+Subject: [PATCH] Always use everything filter for dex2oat
 
 Change-Id: I5d406d37617c870fcddcfe7e86fe1aa0c8cf6cb8
 ---
@@ -19,7 +19,7 @@ index a7eda93..a86e777 100644
  ifndef is_sdk_build
    # To speedup startup of non-preopted builds, don't verify or compile the boot image.
 -  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
-+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=speed
++  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=everything
  endif
  endif
 
@@ -57,14 +57,14 @@ index 125b42e..ed19be9 100644
      PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 -        pm.dexopt.first-boot=extract \
 -        pm.dexopt.boot=extract
-+        pm.dexopt.first-boot=speed \
-+        pm.dexopt.boot=speed
++        pm.dexopt.first-boot=everything \
++        pm.dexopt.boot=everything
  else
      PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 -        pm.dexopt.first-boot=quicken \
 -        pm.dexopt.boot=verify
-+        pm.dexopt.first-boot=speed \
-+        pm.dexopt.boot=speed
++        pm.dexopt.first-boot=everything \
++        pm.dexopt.boot=everything
  endif
 
  # The install filter is speed-profile in order to enable the use of
@@ -75,11 +75,11 @@ index 125b42e..ed19be9 100644
 -    pm.dexopt.bg-dexopt=speed-profile \
 -    pm.dexopt.ab-ota=speed-profile \
 -    pm.dexopt.inactive=verify \
-+    pm.dexopt.install=speed \
-+    pm.dexopt.bg-dexopt=speed \
-+    pm.dexopt.ab-ota=speed \
-+    pm.dexopt.inactive=speed \
-     pm.dexopt.shared=speed
++    pm.dexopt.install=everything \
++    pm.dexopt.bg-dexopt=everything \
++    pm.dexopt.ab-ota=everything \
++    pm.dexopt.inactive=everything \
+     pm.dexopt.shared=everything
 
  # Enable resolution of startup const strings.
 --

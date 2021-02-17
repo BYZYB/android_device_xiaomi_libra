@@ -55,15 +55,15 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 # Dexpreopt
 PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dex2oat-filter=speed \
-    dalvik.vm.image-dex2oat-filter=speed \
-    pm.dexopt.ab-ota=speed \
-    pm.dexopt.bg-dexopt=speed \
-    pm.dexopt.boot=speed \
-    pm.dexopt.first-boot=speed \
-    pm.dexopt.inactive=speed \
-    pm.dexopt.install=speed \
-    pm.dexopt.shared=speed
+    dalvik.vm.dex2oat-filter=everything \
+    dalvik.vm.image-dex2oat-filter=everything \
+    pm.dexopt.ab-ota=everything \
+    pm.dexopt.bg-dexopt=everything \
+    pm.dexopt.boot=everything \
+    pm.dexopt.first-boot=everything \
+    pm.dexopt.inactive=everything \
+    pm.dexopt.install=everything \
+    pm.dexopt.shared=everything
 
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
