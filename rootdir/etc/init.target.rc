@@ -122,12 +122,6 @@ service adsprpcd /vendor/bin/adsprpcd
     user media
     group media
 
-service energy-awareness /vendor/bin/energy-awareness
-    class main
-    user root
-    group system
-    oneshot
-
 service fidodaemon /system/vendor/bin/fidodaemon
     class late_start
     user system
