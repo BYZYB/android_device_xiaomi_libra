@@ -157,7 +157,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Special persist properties
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.cpu_overclock=false \
-    persist.sys.root_access=false \
     persist.vendor.edge_touch_mode=false
 
 # Telephony
