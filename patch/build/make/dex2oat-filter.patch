@@ -27,11 +27,8 @@ diff --git a/core/product.mk b/core/product.mk
 index da316cc..05ab2e4 100644
 --- a/core/product.mk
 +++ b/core/product.mk
-@@ -493,11 +493,17 @@ _readonly_late_variables := \
-
- # Modified internally in the build system
+@@ -495,9 +495,14 @@ _readonly_late_variables := \
  _readonly_late_variables += \
-+  PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD \
    PRODUCT_CFI_INCLUDE_PATHS \
    PRODUCT_COPY_FILES \
 -  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
