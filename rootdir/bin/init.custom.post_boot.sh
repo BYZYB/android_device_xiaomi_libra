@@ -6,7 +6,7 @@ if [ $(cat /data/adbroot/enabled) -gt 0 ]; then
 fi
 
 # Remove useless directories
-rm -rf /data/anr /data/lineageos_updates /data/local/traces /data/misc/boottrace /data/misc/gcov /data/misc/perfprofd /data/misc/profman /data/misc/trace /data/misc/update_engine /data/misc/update_engine_log /data/misc/wmtrace /data/nfc /data/ota /data/per_boot /data/rollback /data/rollback-observer /data/ss /data/ssh /data/system/dropbox /data/system/heapdump /data/system/perfd /data/thermal /data/tombstones /data/vendor/tombstones
+rm -rf /data/anr /data/lineageos_updates /data/local/traces /data/misc/boottrace /data/misc/gcov /data/misc/perfprofd /data/misc/profman /data/misc/trace /data/misc/update_engine /data/misc/update_engine_log /data/misc/wmtrace /data/nfc /data/ota /data/ota_package /data/per_boot /data/rollback /data/rollback-observer /data/ss /data/ssh /data/system/dropbox /data/system/heapdump /data/system/perfd /data/thermal /data/tombstones /data/vendor/tombstones
 
 # Remove useless files
 find /data/data/com.tencent.mm/MicroMsg/*/appbrand/* -mtime +3 -exec rm -rf {} \;
