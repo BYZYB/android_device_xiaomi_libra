@@ -30,4 +30,5 @@ cc_binary {
         "Light.cpp",
         "service.cpp",
     ],
+    vintf_fragments: ["android.hardware.light@2.0-service.xiaomi_msm8994.xml"],
 }

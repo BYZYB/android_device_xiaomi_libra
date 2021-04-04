@@ -54,6 +54,7 @@ on boot
     chmod 660 /sys/class/leds/rgb/rgb_blink
 
 service light-hal-2-0 /vendor/bin/hw/android.hardware.light@2.0-service.xiaomi_msm8994
+    interface android.hardware.light@2.0::ILight default
     class hal
     user system
     group system
