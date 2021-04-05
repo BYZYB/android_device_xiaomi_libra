@@ -80,7 +80,7 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Dexpreopt
 # All apps are pre-compiled with "everything" filter in this rom, which conflicts with the build rules and needs a patch to work.
-# Please refer to the part "diff --git a/core/product.mk b/core/product.mk" in "repo_17.diff" to resolve build errors.
+# Please refer to the part "diff --git a/core/product.mk b/core/product.mk" in "repo_17.diff" (branch: lineage-17.1) to resolve build errors.
 # The "everything" filter provides bettter performance, but also make app installation longer than defualt values.
 # If you got trouble with "everything" filter, try using the following one line instead:
 # ifeq ($(HOST_OS),linux)
@@ -149,22 +149,20 @@ TARGET_RECOVERY_DEVICE_MODULES := libinit_libra
 USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
 # Kernel
-# To build the kernel with gcc-10 (or newer), please install "gcc-10-aarch64-linux-gnu" on your build OS.
-# To build the kernel with clang-11 (or newer), please install "clang" on your build OS.
-# For Ubuntu 20.10 (or newer), exec "sudo apt install clang gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi" should finish these things properly.
-# If you'd like to build with other toolchains, please modify "TARGET_KERNEL_CROSS_COMPILE_PREFIX" to proper values.
-# It's not recommend to build the kernel with android-gcc-4.9, which may cause build errors.
+# To build the kernel with gcc-10 (or newer), please install "gcc-10-aarch64-linux-gnu" and "gcc-10-arm-linux-gnueabi".
+# To build the kernel with clang-11 (or newer), please install "clang" and "llvm-dev".
+# After installing necessary toolchains, please modify "vendor/lineage/config/BoardConfigKernel.mk" and set the toolchain paths to proper values.
+# Please refer to the part "diff --git a/config/BoardConfigKernel.mk b/config/BoardConfigKernel.mk" in "repo_17.diff" (branch: lineage-17.1) for more details.
+# NOTE: Custom kernel toolchains cannot be used in official LineageOS builds, which will break the build rules and result in errors without modifying the build system.
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive ehci-hcd.park=3 msm_rtb.filter=0x37
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_CLANG_COMPILE := true
-TARGET_KERNEL_CLANG_PATH := /lib/llvm-11
-TARGET_KERNEL_CLANG_VERSION := 11.0
+TARGET_KERNEL_CLANG_PATH := /usr/lib/llvm-12
+TARGET_KERNEL_CLANG_VERSION := 12.0
 TARGET_KERNEL_CONFIG := libra_defconfig
-TARGET_KERNEL_CROSS_COMPILE_PREFIX := /bin/aarch64-linux-gnu-
-TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/xiaomi/libra
 
 # Keymaster

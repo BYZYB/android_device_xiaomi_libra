@@ -1,7 +1,6 @@
 Copyright 2018 - The LineageOS Project
 
-Originally forked from:
-* [Xiaomi Classic Dev](https://github.com/xiaomi-classic-dev)
+Forked from: [android_device_xiaomi_libra](https://github.com/xiaomi-classic-dev/android_device_xiaomi_libra) + [android_device_xiaomi_msm8994-common](https://github.com/xiaomi-classic-dev/android_device_xiaomi_msm8994-common)
 
 Device configuration for Xiaomi Mi-4c/Mi-4s
 ===
