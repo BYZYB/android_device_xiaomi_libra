@@ -670,6 +670,38 @@ index 5ef45ed40..7d882ae72 100644
          windows: {
              enabled: true,
 
+project build/soong/
+diff --git a/cmd/path_interposer/main.go b/cmd/path_interposer/main.go
+index cd28b96..e601f2b 100644
+--- a/cmd/path_interposer/main.go
++++ b/cmd/path_interposer/main.go
+@@ -53,10 +53,7 @@ func main() {
+                os.Exit(1)
+        }
+
+-       disableError := false
+-       if e, ok := os.LookupEnv("TEMPORARY_DISABLE_PATH_RESTRICTIONS"); ok {
+-               disableError = e == "1" || e == "y" || e == "yes" || e == "on" || e == "true"
+-       }
++       disableError := true
+
+        exitCode, err := Main(os.Stdout, os.Stderr, interposer, os.Args, mainOpts{
+                disableError: disableError,
+
+diff --git a/ui/build/path.go b/ui/build/path.go
+index 0e1c02c..944aa95 100644
+--- a/ui/build/path.go
++++ b/ui/build/path.go
+@@ -131,7 +131,7 @@ func SetupPath(ctx Context, config Config) {
+                execs = append(execs, parsePathDir(pathEntry)...)
+        }
+
+-       allowAllSymlinks := config.Environment().IsEnvTrue("TEMPORARY_DISABLE_PATH_RESTRICTIONS")
++       allowAllSymlinks := true
+        for _, name := range execs {
+                if !paths.GetConfig(name).Symlink && !allowAllSymlinks {
+                        continue
+
 project external/bash/
 diff --git a/Android.mk b/Android.mk
 index 1a23613..f5aea6a 100644
@@ -2991,6 +3023,27 @@ index bdf264d..529ffb6 100644
 +alldefconfig: mkdir -p $(KERNEL_OUT)
         env KCONFIG_NOTIMESTAMP=true \
                  $(call make-kernel-target,alldefconfig)
+
+diff --git a/config/BoardConfigKernel.mk b/config/BoardConfigKernel.mk
+index 3e0ac66..652a63c 100644
+--- a/config/BoardConfigKernel.mk
++++ b/config/BoardConfigKernel.mk
+@@ -54,11 +54,11 @@ endif
+
+ GCC_PREBUILTS := $(BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86
+ # arm64 toolchain
+-KERNEL_TOOLCHAIN_arm64 := $(GCC_PREBUILTS)/aarch64/aarch64-linux-android-4.9/bin
+-KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-linux-android-
++KERNEL_TOOLCHAIN_arm64 := /usr/bin
++KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-linux-gnu-
+ # arm toolchain
+-KERNEL_TOOLCHAIN_arm := $(GCC_PREBUILTS)/arm/arm-linux-androideabi-4.9/bin
+-KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-androidkernel-
++KERNEL_TOOLCHAIN_arm := /usr/bin
++KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabi-
+ # x86 toolchain
+ KERNEL_TOOLCHAIN_x86 := $(GCC_PREBUILTS)/x86/x86_64-linux-android-4.9/bin
+ KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
 
 diff --git a/config/common.mk b/config/common.mk
 index 2fe9cb0..d0a260f 100644
