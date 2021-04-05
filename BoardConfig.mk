@@ -131,18 +131,16 @@ TARGET_RECOVERY_DEVICE_MODULES := libinit_libra
 USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
 # Kernel
-# To build the kernel with gcc-10 (or newer), please install "gcc-10-aarch64-linux-gnu" on your build OS.
-# To build the kernel with clang-11 (or newer), please install "clang" on your build OS.
-# For Ubuntu 20.10 (or newer), exec "sudo apt install clang gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi" should finish these things properly.
+# To build the kernel with gcc-10 (or newer), please install "gcc-10-aarch64-linux-gnu" and "gcc-10-arm-linux-gnueabi".
+# To build the kernel with clang-11 (or newer), please install "clang" and "llvm-dev".
 # If you'd like to build with other toolchains, please modify "TARGET_KERNEL_CROSS_COMPILE_PREFIX" to proper values.
-# It's not recommend to build the kernel with android-gcc-4.9, which may cause build errors.
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive ehci-hcd.park=3 msm_rtb.filter=0x37
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
 TARGET_KERNEL_CLANG_COMPILE := true
-TARGET_KERNEL_CLANG_PATH := /lib/llvm-11
-TARGET_KERNEL_CLANG_VERSION := 11.0
+TARGET_KERNEL_CLANG_PATH := /lib/llvm-12
+TARGET_KERNEL_CLANG_VERSION := 12.0
 TARGET_KERNEL_CONFIG := libra_defconfig
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := /bin/aarch64-linux-gnu-
 TARGET_KERNEL_HEADER_ARCH := arm64
