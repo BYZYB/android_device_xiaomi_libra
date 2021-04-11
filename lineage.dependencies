@@ -1,26 +1,20 @@
 [
   {
-    "remote":"github",
     "repository": "android_kernel_xiaomi_libra",
     "target_path": "kernel/xiaomi/libra",
     "revision":"master"
   },
   {
-    "remote":"github",
     "repository": "android_vendor_xiaomi_libra",
     "target_path": "vendor/xiaomi/libra",
     "revision":"lineage-16.0"
   },
   {
-    "remote":"github",
     "repository": "android_hardware_sony_timekeep",
     "target_path": "hardware/sony/timekeep",
-    "revision":"lineage-17.1"
   },
   {
-    "remote":"github",
     "repository": "android_hardware_xiaomi",
     "target_path": "hardware/xiaomi",
-    "revision":"lineage-17.1"
   }
 ]

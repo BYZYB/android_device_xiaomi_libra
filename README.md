@@ -1,8 +1,7 @@
 Copyright 2020 - The LineageOS Project
 
-Here are all changes outside this repo, some of them maybe necessary:
-* [All patches](https://github.com/WJXXBSH/android_device_xiaomi_libra/tree/lineage-17.1/patch) (easy to apply)
-* [Repo diff](https://github.com/WJXXBSH/useful_android_scripts/blob/master/repo/repo_17.diff) (more details)
+Here are all changes outside this repo, some of them should be necessary:
+* [Local changes](https://github.com/BYZYB/android_device_xiaomi_libra/blob/lineage-18.1/repo_18.diff)
 
 Device configuration for Xiaomi Mi-4c/Mi-4s
 ===
