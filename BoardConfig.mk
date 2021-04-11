@@ -78,7 +78,7 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Dexpreopt
 # All apps are pre-compiled with "everything" filter in this rom, which conflicts with the build rules and needs a patch to work.
-# Please consider to apply "./patch/dex2oat-filter.patch" to avoid build errors.
+# Please refer to the part "diff --git a/core/product.mk b/core/product.mk" in "repo_17.diff" to resolve build errors.
 # The "everything" filter provides bettter performance, but also make app installation longer than defualt values.
 # If you got trouble with "everything" filter, try using the following one line instead:
 # WITH_DEXPREOPT_DEBUG_INFO := false

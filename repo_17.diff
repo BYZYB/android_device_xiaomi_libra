@@ -1,0 +1,3130 @@
+project build/make/
+diff --git a/core/Makefile b/core/Makefile
+index a5eef489f..a075b92bb 100644
+--- a/core/Makefile
++++ b/core/Makefile
+@@ -302,9 +302,9 @@ endif
+ # Both of these tags will be removed and replaced with "release-keys"
+ # when the target-files is signed in a post-build step.
+ ifeq ($(DEFAULT_SYSTEM_DEV_CERTIFICATE),build/make/target/product/security/testkey)
+-BUILD_KEYS := test-keys
++BUILD_KEYS := release-keys
+ else
+-BUILD_KEYS := dev-keys
++BUILD_KEYS := release-keys
+ endif
+ BUILD_VERSION_TAGS += $(BUILD_KEYS)
+ BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
+@@ -1797,7 +1797,7 @@ ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS
+   $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO) \
+   $(TARGET_NOT_USE_GZIP_RECOVERY_RAMDISK)))
+ # Named '.dat' so we don't attempt to use imgdiff for patching it.
+-RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
++RECOVERY_RESOURCE_ZIP :=
+ else
+ RECOVERY_RESOURCE_ZIP :=
+ endif
+@@ -4280,15 +4280,11 @@ else
+     OTA_SCRIPT_OVERRIDE_DEVICE := $(TARGET_OTA_ASSERT_DEVICE)
+ endif
+
+-ifeq ($(TARGET_BUILD_VARIANT),user)
+-    $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
+-else
+ ifneq ($(LINEAGE_BUILD),)
+     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
+ else
+     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
+ endif
+-endif
+
+ $(INTERNAL_OTA_PACKAGE_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_OTA_METADATA)
+
+diff --git a/core/binary.mk b/core/binary.mk
+index d4f0476c8..b53cf0e23 100644
+--- a/core/binary.mk
++++ b/core/binary.mk
+@@ -1507,7 +1507,7 @@ ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
+       ifeq (,$(filter -Werror,$(my_all_cflags)))
+         # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
+         ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
+-          my_cflags := -Wall -Werror $(my_cflags)
++          my_cflags := -Wall $(my_cflags)
+         else
+           $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+           my_cflags := -Wall $(my_cflags)
+
+diff --git a/core/java.mk b/core/java.mk
+index 153396370..b0ce7e43e 100644
+--- a/core/java.mk
++++ b/core/java.mk
+@@ -225,7 +225,7 @@ $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE
+ # available via JDWP.
+ ifneq (,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO))
+ ifneq (,$(filter userdebug user,$(TARGET_BUILD_VARIANT)))
+-LOCAL_JAVACFLAGS+= -g:source,lines
++LOCAL_JAVACFLAGS+= -g:none
+ endif
+ endif
+
+diff --git a/core/main.mk b/core/main.mk
+index e8a1c4f8a..efa81cc79 100644
+--- a/core/main.mk
++++ b/core/main.mk
+@@ -292,8 +292,6 @@ ifneq (,$(user_variant))
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
+
+ else # !user_variant
+-  # Turn on checkjni for non-user builds.
+-  ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
+   # Set device insecure for non-user builds.
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+   # Allow mock locations by default for non user builds
+@@ -303,8 +301,6 @@ endif # !user_variant
+ ifeq (true,$(strip $(enable_target_debugging)))
+   # Target is more debuggable and adbd is on by default
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
+-  # Enable Dalvik lock contention logging.
+-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
+ else # !enable_target_debugging
+   # Target is less debuggable and adbd is off by default
+   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
+@@ -322,7 +318,7 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
+ endif
+ ifndef is_sdk_build
+   # To speedup startup of non-preopted builds, don't verify or compile the boot image.
+-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
++  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=everything
+ endif
+ endif
+
+diff --git a/core/product.mk b/core/product.mk
+index da316cc42..39a6574c8 100644
+--- a/core/product.mk
++++ b/core/product.mk
+@@ -495,9 +495,14 @@ _readonly_late_variables := \
+ _readonly_late_variables += \
+   PRODUCT_CFI_INCLUDE_PATHS \
+   PRODUCT_COPY_FILES \
+-  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
+   PRODUCT_DEX_PREOPT_BOOT_FLAGS \
+-  PRODUCT_SOONG_NAMESPACES
++  PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER \
++  PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
++  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
++  PRODUCT_OTHER_JAVA_DEBUG_INFO \
++  PRODUCT_SOONG_NAMESPACES \
++  PRODUCT_SYSTEM_SERVER_COMPILER_FILTER \
++  PRODUCT_SYSTEM_SERVER_DEBUG_INFO
+
+ _readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
+
+diff --git a/target/product/base_system.mk b/target/product/base_system.mk
+index 699b9c7a1..2362f15ba 100644
+--- a/target/product/base_system.mk
++++ b/target/product/base_system.mk
+@@ -34,9 +34,7 @@ PRODUCT_PACKAGES += \
+     app_process \
+     appwidget \
+     ashmemd \
+-    atrace \
+     audioserver \
+-    BackupRestoreConfirmation \
+     bcc \
+     blank_screen \
+     blkid \
+@@ -45,8 +43,6 @@ PRODUCT_PACKAGES += \
+     bootstat \
+     bpfloader \
+     bu \
+-    bugreport \
+-    bugreportz \
+     cgroups.json \
+     charger \
+     cmd \
+@@ -58,10 +54,6 @@ PRODUCT_PACKAGES += \
+     com.android.tzdata \
+     ContactsProvider \
+     content \
+-    crash_dump \
+-    CtsShimPrebuilt \
+-    CtsShimPrivPrebuilt \
+-    debuggerd\
+     device_config \
+     dmctl \
+     dnsmasq \
+@@ -69,7 +61,6 @@ PRODUCT_PACKAGES += \
+     dpm \
+     dumpstate \
+     dumpsys \
+-    DynamicSystemInstallationService \
+     e2fsck \
+     ExtServices \
+     ExtShared \
+@@ -82,8 +73,6 @@ PRODUCT_PACKAGES += \
+     fs_config_dirs_system \
+     gsid \
+     gsi_tool \
+-    heapprofd \
+-    heapprofd_client \
+     gatekeeperd \
+     gpuservice \
+     hid \
+@@ -189,7 +178,6 @@ PRODUCT_PACKAGES += \
+     libwilhelm \
+     linker \
+     lmkd \
+-    LocalTransport \
+     locksettings \
+     logcat \
+     logd \
+@@ -249,9 +237,6 @@ PRODUCT_PACKAGES += \
+     tc \
+     telecom \
+     telephony-common \
+-    tombstoned \
+-    traced \
+-    traced_probes \
+     tune2fs \
+     tzdatacheck \
+     uiautomator \
+@@ -261,7 +246,6 @@ PRODUCT_PACKAGES += \
+     viewcompiler \
+     voip-common \
+     vold \
+-    WallpaperBackup \
+     watchdogd \
+     wificond \
+     wifi-service \
+@@ -344,8 +328,6 @@ endif
+ PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
+ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
+
+-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
+-
+ # Packages included only for eng or userdebug builds, previously debug tagged
+ PRODUCT_PACKAGES_DEBUG := \
+     adb_keys \
+@@ -371,8 +353,7 @@ PRODUCT_PACKAGES_DEBUG := \
+
+ # The set of packages whose code can be loaded by the system server.
+ PRODUCT_SYSTEM_SERVER_APPS += \
+-    SettingsProvider \
+-    WallpaperBackup
++    SettingsProvider
+
+ # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
+ PRODUCT_PACKAGES_DEBUG_ASAN := \
+
+diff --git a/target/product/full_base.mk b/target/product/full_base.mk
+index f3fb8c306..832a1c7c9 100644
+--- a/target/product/full_base.mk
++++ b/target/product/full_base.mk
+@@ -24,8 +24,7 @@ PRODUCT_PACKAGES := \
+     WAPPushManager
+
+ PRODUCT_PACKAGES += \
+-    LiveWallpapersPicker \
+-    PhotoTable
++    LiveWallpapersPicker
+
+ # Bluetooth:
+ #   audio.a2dp.default is a system module. Generic system image includes
+
+diff --git a/target/product/handheld_product.mk b/target/product/handheld_product.mk
+index a4b44c485..094c122bc 100644
+--- a/target/product/handheld_product.mk
++++ b/target/product/handheld_product.mk
+@@ -36,14 +36,9 @@ PRODUCT_PACKAGES += \
+     Settings \
+     SettingsIntelligence \
+     StorageManager \
+-    SystemUI \
+-    WallpaperCropper \
+-    frameworks-base-overlays
++    SystemUI
+
+ ifeq ($(LINEAGE_BUILD),)
+ PRODUCT_PACKAGES += \
+     LatinIME
+ endif
+-
+-PRODUCT_PACKAGES_DEBUG += \
+-    frameworks-base-overlays-debug
+
+diff --git a/target/product/handheld_system.mk b/target/product/handheld_system.mk
+index e5771cc94..70a243676 100644
+--- a/target/product/handheld_system.mk
++++ b/target/product/handheld_system.mk
+@@ -32,12 +32,9 @@ $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
+ $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
+
+ PRODUCT_PACKAGES += \
+-    BasicDreams \
+     BlockedNumberProvider \
+     Bluetooth \
+     BluetoothMidiService \
+-    BookmarkProvider \
+-    BuiltInPrintService \
+     CalendarProvider \
+     cameraserver \
+     CaptivePortalLogin \
+@@ -46,7 +43,6 @@ PRODUCT_PACKAGES += \
+     clatd.conf \
+     DocumentsUI \
+     DownloadProviderUi \
+-    EasterEgg \
+     ExternalStorageProvider \
+     FusedLocation \
+     InputDevices \
+@@ -58,17 +54,13 @@ PRODUCT_PACKAGES += \
+     MusicFX \
+     OsuLogin \
+     PacProcessor \
+-    PrintRecommendationService \
+     PrintSpooler \
+     ProxyHandler \
+     screenrecord \
+     SecureElement \
+-    SharedStorageBackup \
+-    SimAppDialog \
+     Telecom \
+     TelephonyProvider \
+     TeleService \
+-    Traceur \
+     UserDictionaryProvider \
+     VpnDialogs \
+     vr \
+
+diff --git a/target/product/media_system.mk b/target/product/media_system.mk
+index 0489b28d9..d29350b96 100644
+--- a/target/product/media_system.mk
++++ b/target/product/media_system.mk
+@@ -68,16 +68,6 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+     frameworks/base/dirty-image-objects-phone:system/etc/dirty-image-objects)
+
+-# On userdebug builds, collect more tombstones by default.
+-ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-    tombstoned.max_tombstone_count=50
+-endif
+-
+-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+-    ro.logd.size.stats=64K \
+-    log.tag.stats_log=I
+-
+ # Enable CFI for security-sensitive components
+ $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+ $(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
+
+diff --git a/target/product/runtime_libart.mk b/target/product/runtime_libart.mk
+index a88ba3c8d..a198b8fc1 100644
+--- a/target/product/runtime_libart.mk
++++ b/target/product/runtime_libart.mk
+@@ -61,23 +61,23 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+ # On eng builds, make "boot" reasons only extract for faster turnaround.
+ ifeq (eng,$(TARGET_BUILD_VARIANT))
+     PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-        pm.dexopt.first-boot=extract \
+-        pm.dexopt.boot=extract
++        pm.dexopt.first-boot=everything \
++        pm.dexopt.boot=everything
+ else
+     PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-        pm.dexopt.first-boot=quicken \
+-        pm.dexopt.boot=verify
++        pm.dexopt.first-boot=everything \
++        pm.dexopt.boot=everything
+ endif
+
+ # The install filter is speed-profile in order to enable the use of
+ # profiles from the dex metadata files. Note that if a profile is not provided
+ # or if it is empty speed-profile is equivalent to (quicken + empty app image).
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-    pm.dexopt.install=speed-profile \
+-    pm.dexopt.bg-dexopt=speed-profile \
+-    pm.dexopt.ab-ota=speed-profile \
+-    pm.dexopt.inactive=verify \
+-    pm.dexopt.shared=speed
++    pm.dexopt.install=everything \
++    pm.dexopt.bg-dexopt=everything \
++    pm.dexopt.ab-ota=everything \
++    pm.dexopt.inactive=everything \
++    pm.dexopt.shared=everything
+
+ # Enable resolution of startup const strings.
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+@@ -87,11 +87,6 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     dalvik.vm.dex2oat-max-image-block-size=524288
+
+-# Enable minidebuginfo generation unless overridden.
+-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+-    dalvik.vm.minidebuginfo=true \
+-    dalvik.vm.dex2oat-minidebuginfo=true
+-
+ # Disable iorapd by default
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     ro.iorapd.enable=false
+
+diff --git a/target/product/telephony_product.mk b/target/product/telephony_product.mk
+index a4c7e31f5..e14cca738 100644
+--- a/target/product/telephony_product.mk
++++ b/target/product/telephony_product.mk
+@@ -20,5 +20,4 @@
+ # /product packages
+ PRODUCT_PACKAGES += \
+     CarrierConfig \
+-    Dialer \
+-    EmergencyInfo \
++    Dialer
+
+diff --git a/target/product/telephony_system.mk b/target/product/telephony_system.mk
+index 584cf1ee6..d910c6b7c 100644
+--- a/target/product/telephony_system.mk
++++ b/target/product/telephony_system.mk
+@@ -19,8 +19,6 @@
+
+ PRODUCT_PACKAGES := \
+     ONS \
+-    CarrierDefaultApp \
+-    CallLogBackup \
+-    CellBroadcastReceiver \
++    CarrierDefaultApp
+
+ PRODUCT_COPY_FILES := \
+
+diff --git a/target/product/updatable_apex.mk b/target/product/updatable_apex.mk
+index 3d5e8e2a2..bdaf54517 100644
+--- a/target/product/updatable_apex.mk
++++ b/target/product/updatable_apex.mk
+@@ -18,6 +18,5 @@
+
+ ifneq ($(OVERRIDE_TARGET_FLATTEN_APEX),true)
+   PRODUCT_PROPERTY_OVERRIDES := ro.apex.updatable=true
+-  PRODUCT_PACKAGES := com.android.apex.cts.shim.v1_prebuilt
+   TARGET_FLATTEN_APEX := false
+ endif
+
+diff --git a/tools/acp/Android.bp b/tools/acp/Android.bp
+index 64f5a1013..8b84418b3 100644
+--- a/tools/acp/Android.bp
++++ b/tools/acp/Android.bp
+@@ -5,7 +5,7 @@
+ cc_binary_host {
+
+     srcs: ["acp.c"],
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+
+     static_libs: ["libhost"],
+     name: "acp",
+
+diff --git a/tools/atree/Android.bp b/tools/atree/Android.bp
+index 5fbe042ea..fc8a8aada 100644
+--- a/tools/atree/Android.bp
++++ b/tools/atree/Android.bp
+@@ -9,6 +9,6 @@ cc_binary_host {
+         "files.cpp",
+         "fs.cpp",
+     ],
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+     static_libs: ["libhost"],
+ }
+
+diff --git a/tools/fs_config/Android.bp b/tools/fs_config/Android.bp
+index d9a48d704..60bfe673f 100644
+--- a/tools/fs_config/Android.bp
++++ b/tools/fs_config/Android.bp
+@@ -32,7 +32,6 @@ cc_binary_host {
+         "libcutils",
+         "libselinux",
+     ],
+-    cflags: ["-Werror"],
+ }
+
+ target_fs_config_gen_filegroup {
+
+diff --git a/tools/fs_get_stats/Android.bp b/tools/fs_get_stats/Android.bp
+index 67742b836..f710d506e 100644
+--- a/tools/fs_get_stats/Android.bp
++++ b/tools/fs_get_stats/Android.bp
+@@ -1,7 +1,7 @@
+ cc_binary_host {
+     name: "fs_get_stats",
+     srcs: ["fs_get_stats.c"],
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+     shared_libs: [
+         "libcutils",
+         "liblog",
+
+diff --git a/tools/libhost/Android.bp b/tools/libhost/Android.bp
+index 4c9100f15..7c35e00c4 100644
+--- a/tools/libhost/Android.bp
++++ b/tools/libhost/Android.bp
+@@ -2,10 +2,7 @@ cc_library_host_static {
+
+     srcs: ["CopyFile.c"],
+
+-    cflags: [
+-        "-Werror",
+-        "-Wall",
+-    ],
++    cflags: ["-Wall"],
+
+     name: "libhost",
+     target: {
+
+diff --git a/tools/makeparallel/Android.bp b/tools/makeparallel/Android.bp
+index 898db6861..14be89ac2 100644
+--- a/tools/makeparallel/Android.bp
++++ b/tools/makeparallel/Android.bp
+@@ -17,5 +17,5 @@ cc_binary_host {
+     srcs: [
+         "makeparallel.cpp",
+     ],
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+ }
+
+diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
+index 71679e8cb..0cc2f2dcf 100644
+--- a/tools/releasetools/common.py
++++ b/tools/releasetools/common.py
+@@ -2304,85 +2304,6 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
+   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+   use_bsdiff = info_dict.get("no_gzip_recovery_ramdisk") == "true"
+
+-  if full_recovery_image:
+-    output_sink("etc/recovery.img", recovery_img.data)
+-
+-  else:
+-    system_root_image = info_dict.get("system_root_image") == "true"
+-    path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+-    # With system-root-image, boot and recovery images will have mismatching
+-    # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
+-    # to handle such a case.
+-    if system_root_image or use_bsdiff:
+-      diff_program = ["bsdiff"]
+-      bonus_args = ""
+-      assert not os.path.exists(path)
+-    else:
+-      diff_program = ["imgdiff"]
+-      if os.path.exists(path):
+-        diff_program.append("-b")
+-        diff_program.append(path)
+-        bonus_args = "--bonus /system/etc/recovery-resource.dat"
+-      else:
+-        bonus_args = ""
+-
+-    d = Difference(recovery_img, boot_img, diff_program=diff_program)
+-    _, _, patch = d.ComputePatch()
+-    output_sink("recovery-from-boot.p", patch)
+-
+-  try:
+-    # The following GetTypeAndDevice()s need to use the path in the target
+-    # info_dict instead of source_info_dict.
+-    boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
+-    recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict)
+-  except KeyError:
+-    return
+-
+-  if full_recovery_image:
+-    sh = """#!/system/bin/sh
+-if ! applypatch --check %(type)s:%(device)s:%(size)d:%(sha1)s; then
+-  applypatch \\
+-          --flash /system/etc/recovery.img \\
+-          --target %(type)s:%(device)s:%(size)d:%(sha1)s && \\
+-      log -t recovery "Installing new recovery image: succeeded" || \\
+-      log -t recovery "Installing new recovery image: failed"
+-else
+-  log -t recovery "Recovery image already installed"
+-fi
+-""" % {'type': recovery_type,
+-       'device': recovery_device,
+-       'sha1': recovery_img.sha1,
+-       'size': recovery_img.size}
+-  else:
+-    sh = """#!/system/bin/sh
+-if ! applypatch --check %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
+-  applypatch %(bonus_args)s \\
+-          --patch /system/recovery-from-boot.p \\
+-          --source %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s \\
+-          --target %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s && \\
+-      log -t recovery "Installing new recovery image: succeeded" || \\
+-      log -t recovery "Installing new recovery image: failed"
+-else
+-  log -t recovery "Recovery image already installed"
+-fi
+-""" % {'boot_size': boot_img.size,
+-       'boot_sha1': boot_img.sha1,
+-       'recovery_size': recovery_img.size,
+-       'recovery_sha1': recovery_img.sha1,
+-       'boot_type': boot_type,
+-       'boot_device': boot_device,
+-       'recovery_type': recovery_type,
+-       'recovery_device': recovery_device,
+-       'bonus_args': bonus_args}
+-
+-  # The install script location moved from /system/etc to /system/bin
+-  # in the L release.
+-  sh_location = "bin/install-recovery.sh"
+-
+-  logger.info("putting script in %s", sh_location)
+-
+-  output_sink(sh_location, sh.encode())
+-
+
+ class DynamicPartitionUpdate(object):
+   def __init__(self, src_group=None, tgt_group=None, progress=None,
+
+diff --git a/tools/releasetools/ota_from_target_files.py b/tools/releasetools/ota_from_target_files.py
+index 0cff60f1a..489345ed5 100755
+--- a/tools/releasetools/ota_from_target_files.py
++++ b/tools/releasetools/ota_from_target_files.py
+@@ -716,12 +716,6 @@ def _WriteRecoveryImageToBoot(script, output_zip):
+     script.WriteRawImage("/boot", "recovery.img")
+
+
+-def HasRecoveryPatch(target_files_zip):
+-  namelist = [name for name in target_files_zip.namelist()]
+-  return ("SYSTEM/recovery-from-boot.p" in namelist or
+-          "SYSTEM/etc/recovery.img" in namelist)
+-
+-
+ def HasPartition(target_files_zip, partition):
+   try:
+     target_files_zip.getinfo(partition.upper() + "/")
+@@ -993,8 +987,6 @@ def WriteFullOTAPackage(input_zip, output_file):
+       metadata=metadata,
+       info_dict=OPTIONS.info_dict)
+
+-  assert HasRecoveryPatch(input_zip)
+-
+   # Assertions (e.g. downgrade check, device properties check).
+   #ts = target_info.GetBuildProp("ro.build.date.utc")
+   #ts_text = target_info.GetBuildProp("ro.build.date")
+
+diff --git a/tools/releasetools/target_files_diff.py b/tools/releasetools/target_files_diff.py
+index 4402c8d20..8a928852c 100755
+--- a/tools/releasetools/target_files_diff.py
++++ b/tools/releasetools/target_files_diff.py
+@@ -41,10 +41,6 @@ def ignore(name):
+   # We're looking at the files that make the images, so no need to search them
+   if name in ['IMAGES']:
+     return True
+-  # These are packages of the recovery partition, which we're already diffing
+-  if name in ['SYSTEM/etc/recovery-resource.dat',
+-              'SYSTEM/recovery-from-boot.p']:
+-    return True
+
+   # These files are just the BUILD_NUMBER, and will always be different
+   if name in ['BOOT/RAMDISK/selinux_version',
+
+diff --git a/tools/releasetools/test_common.py b/tools/releasetools/test_common.py
+index 3a73253d0..6cb958e7c 100644
+--- a/tools/releasetools/test_common.py
++++ b/tools/releasetools/test_common.py
+@@ -1084,12 +1084,6 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
+                              recovery_image, boot_image, self._info)
+     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+                                                         self._info)
+-    # Validate 'recovery-from-boot' with bonus argument.
+-    self._out_tmp_sink("etc/recovery-resource.dat", b"bonus", "SYSTEM")
+-    common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
+-                             recovery_image, boot_image, self._info)
+-    validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+-                                                        self._info)
+
+
+ class MockScriptWriter(object):
+
+diff --git a/tools/zipalign/Android.bp b/tools/zipalign/Android.bp
+index 8e6196d29..9e65a5cf9 100644
+--- a/tools/zipalign/Android.bp
++++ b/tools/zipalign/Android.bp
+@@ -13,7 +13,7 @@ cc_binary_host {
+         "ZipFile.cpp",
+     ],
+
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+
+     // NOTE: Do not add any shared_libs dependencies because they will break the
+     // static_sdk_tools target.
+
+diff --git a/tools/ziptime/Android.bp b/tools/ziptime/Android.bp
+index 5ef45ed40..7d882ae72 100644
+--- a/tools/ziptime/Android.bp
++++ b/tools/ziptime/Android.bp
+@@ -27,7 +27,7 @@ cc_binary_host {
+     ],
+
+     name: "ziptime",
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+     target: {
+         windows: {
+             enabled: true,
+
+project external/bash/
+diff --git a/Android.mk b/Android.mk
+index 1a23613..f5aea6a 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -61,22 +61,5 @@ LOCAL_MODULE_TAGS := optional
+
+ include $(BUILD_EXECUTABLE)
+
+-# ========================================================
+-# bash configs
+-# ========================================================
+-etc_files := $(wildcard $(LOCAL_PATH)/etc/*)
+-
+-BASH_ETC := $(TARGET_OUT)/etc/$(LOCAL_MODULE)
+-BASH_CONFIGS := $(addprefix $(BASH_ETC)/,$(notdir $(etc_files)))
+-$(BASH_CONFIGS): $(BASH_ETC)/%: $(LOCAL_PATH)/etc/% | $(LOCAL_BUILT_MODULE)
+-	@echo "Install: $@ -> $(BASH_ETC)"
+-	@mkdir -p $(dir $@)
+-	$(hide) cp $< $@
+-
+-ALL_DEFAULT_INSTALLED_MODULES += $(BASH_CONFIGS)
+-
+-ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
+-    $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(BASH_CONFIGS)
+-
+ # ========================================================
+ include $(call all-makefiles-under,$(LOCAL_PATH))
+
+project external/mksh/
+diff --git a/mkshrc b/mkshrc
+index 256f20e..7b27239 100644
+--- a/mkshrc
++++ b/mkshrc
+@@ -8,13 +8,9 @@
+
+ set +o nohup
+
+-if (( USER_ID )); then PS1='$'; else PS1='#'; fi
+-PS4='[$EPOCHREALTIME] '; PS1='${|
+-	local e=$?
+-
+-	(( e )) && REPLY+="$e|"
+-
+-	return $e
+-}$HOSTNAME:${PWD:-?} '"$PS1 "
+-
+-export TERM=xterm-256color
++: ${TERM:=xterm-256color} ${HOME:=/} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android} ${SHELL:=$MKSH} ${USER:=$(getprop ro.product.device)}
++if ((USER_ID)); then PS1='$'; else PS1='#'; fi
++if [ -d "/sbin/.magisk/busybox" ]; then BBDIR="/sbin/.magisk/busybox"; fi
++PATH=$PATH:/sbin:$BBDIR:.
++PS1='$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
++export TERM HOME MKSH HOSTNAME SHELL USER PATH
+
+project external/nano/
+diff --git a/Android.mk b/Android.mk
+index 4fcd436..78e27ff 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -44,30 +44,5 @@ LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
+ LOCAL_MODULE_TAGS := optional
+ include $(BUILD_EXECUTABLE)
+
+-# ========================================================
+-# nano configs
+-# ========================================================
+-NANO_ETC := $(TARGET_OUT_ETC)/$(LOCAL_MODULE)
+-
+-syntax_files := $(wildcard $(LOCAL_PATH)/syntax/*.nanorc)
+-NANO_SYNTAX := $(addprefix $(NANO_ETC)/,$(notdir $(syntax_files)))
+-$(NANO_SYNTAX): $(NANO_ETC)/%: $(LOCAL_PATH)/syntax/% | $(LOCAL_BUILT_MODULE)
+-	@echo "Install: $@ -> $(NANO_ETC)"
+-	@mkdir -p $(dir $@)
+-	cp $< $@
+-
+-nanorc_file := $(LOCAL_PATH)/etc/nanorc
+-NANO_NANORC := $(addprefix $(NANO_ETC)/,$(notdir $(nanorc_file)))
+-$(NANO_NANORC): $(nanorc_file)
+-	@echo "Install: $@ -> $(NANO_ETC)"
+-	@mkdir -p $(dir $@)
+-	$(hide) cp $< $@
+-
+-ALL_DEFAULT_INSTALLED_MODULES += $(NANO_SYNTAX) $(NANO_NANORC)
+-
+-ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
+-	$(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(NANO_SYNTAX) \
+-	$(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(NANO_NANORC)
+-
+ # ========================================================
+ include $(call all-makefiles-under,$(LOCAL_PATH))
+
+project external/noto-fonts/
+diff --git a/Android.mk b/Android.mk
+index 249c7ac..9bd749b 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -41,7 +41,7 @@ ifneq ($(MINIMAL_FONT_FOOTPRINT),true)
+ LOCAL_PATH := $(NOTO_DIR)/cjk
+
+ font_src_files := \
+-    NotoSansCJK-Regular.ttc
++    NotoSansCJK.ttc
+
+ $(foreach f, $(font_src_files), $(call build-one-font-module, $(f)))
+ font_src_files :=
+@@ -56,6 +56,7 @@ ifeq ($(filter true,$(EXCLUDE_SERIF_FONTS) $(SMALLER_FONT_FOOTPRINT)),)
+ LOCAL_PATH := $(NOTO_DIR)/cjk
+
+ font_src_files := \
++    NotoSerifCJK-Bold.ttc \
+     NotoSerifCJK-Regular.ttc
+
+ $(foreach f, $(font_src_files), $(call build-one-font-module, $(f)))
+@@ -343,7 +344,3 @@ endif # !SMALLER_FONT_FOOTPRINT
+ NOTO_DIR :=
+ build-one-font-module :=
+ font_src_files :=
+-
+-
+-
+-
+
+diff --git a/cjk/NotoSansCJK-Regular.ttc b/cjk/NotoSansCJK-Regular.ttc
+index 7fc3586..bc1dcf6 100644
+Binary files a/cjk/NotoSansCJK-Regular.ttc and b/cjk/NotoSansCJK-Regular.ttc differ
+
+diff --git a/cjk/NotoSerifCJK-Regular.ttc b/cjk/NotoSerifCJK-Regular.ttc
+index f4ee450..9df7017 100644
+Binary files a/cjk/NotoSerifCJK-Regular.ttc and b/cjk/NotoSerifCJK-Regular.ttc differ
+
+diff --git a/cjk/subset_noto_cjk.py b/cjk/subset_noto_cjk.py
+index 5a324bf..be4b8fa 100755
+--- a/cjk/subset_noto_cjk.py
++++ b/cjk/subset_noto_cjk.py
+@@ -100,4 +100,6 @@ def remove_codepoints_from_ttc(ttc_name):
+
+
+ remove_codepoints_from_ttc('NotoSansCJK-Regular.ttc')
++remove_codepoints_from_ttc('NotoSansCJK.ttc')
++remove_codepoints_from_ttc('NotoSerifCJK-Bold.ttc')
+ remove_codepoints_from_ttc('NotoSerifCJK-Regular.ttc')
+
+diff --git a/fonts.mk b/fonts.mk
+index fee43e2..86cdf12 100644
+--- a/fonts.mk
++++ b/fonts.mk
+@@ -49,7 +49,7 @@ PRODUCT_PACKAGES := \
+     NotoSansCham-Bold.ttf \
+     NotoSansCham-Regular.ttf \
+     NotoSansCherokee-Regular.ttf \
+-    NotoSansCJK-Regular.ttc \
++    NotoSansCJK.ttc \
+     NotoSansCoptic-Regular.ttf \
+     NotoSansCuneiform-Regular.ttf \
+     NotoSansCypriot-Regular.ttf \
+@@ -205,6 +205,7 @@ PRODUCT_PACKAGES := \
+     NotoSerifArmenian-Regular.otf \
+     NotoSerifBengali-Bold.ttf \
+     NotoSerifBengali-Regular.ttf \
++    NotoSerifCJK-Bold.ttc \
+     NotoSerifCJK-Regular.ttc \
+     NotoSerifDevanagari-Bold.ttf \
+     NotoSerifDevanagari-Regular.ttf \
+
+project external/vim/
+diff --git a/Android.mk b/Android.mk
+index 858a4e8..c1e7d51 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -1,20 +1,5 @@
+ vim_src := $(call my-dir)
+
+-# ========================================================
+-# etc/vimrc
+-# ========================================================
+-
+-LOCAL_PATH := $(vim_src)
+-include $(CLEAR_VARS)
+-
+-LOCAL_MODULE := vimrc
+-LOCAL_MODULE_TAGS := optional
+-LOCAL_MODULE_CLASS := ETC
+-
+-LOCAL_SRC_FILES := vimrc.android
+-
+-include $(BUILD_PREBUILT)
+-
+ # ========================================================
+ # vim
+ # ========================================================
+@@ -135,84 +120,3 @@ LOCAL_MODULE_TAGS := optional
+ LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
+ LOCAL_REQUIRED_MODULES := vimrc
+ include $(BUILD_EXECUTABLE)
+-
+-# ========================================================
+-# vim runtime files
+-# ========================================================
+-ifeq (vim,$(filter vim, $(ALL_MODULES)))
+-
+-vim_runtime_path := $(vim_src)/runtime
+-
+-vim_runtime_files := \
+-	scripts.vim \
+-	indent.vim \
+-	indoff.vim \
+-	filetype.vim \
+-	ftoff.vim
+-
+-vim_doc_files := \
+-	help.txt intro.txt tags \
+-	motion.txt editing.txt scroll.txt \
+-	options.txt term.txt
+-
+-vim_colors_files := \
+-	default.vim \
+-	desert.vim
+-
+-vim_syntax_files := \
+-	logcat.vim \
+-	awk.vim \
+-	config.vim \
+-	conf.vim \
+-	cpp.vim \
+-	c.vim \
+-	css.vim \
+-	diff.vim \
+-	doxygen.vim \
+-	html.vim vb.vim \
+-	xml.vim dtd.vim \
+-	context.vim \
+-	gitcommit.vim \
+-	help.vim \
+-	javascript.vim \
+-	java.vim \
+-	lua.vim \
+-	manual.vim \
+-	markdown.vim \
+-	pod.vim \
+-	sh.vim \
+-	syncolor.vim \
+-	synload.vim \
+-	syntax.vim \
+-	vim.vim
+-
+-vim_plugin_files := \
+-	matchparen.vim \
+-
+-vim_autoload_files := \
+-	dist/ft.vim \
+-	spacehi.vim
+-
+-VIM_SHARED := $(TARGET_OUT)/usr/share/vim
+-
+-vim_runtime_files := \
+-  $(vim_runtime_files) \
+-  $(addprefix doc/, $(vim_doc_files)) \
+-  $(addprefix colors/, $(vim_colors_files)) \
+-  $(addprefix syntax/, $(vim_syntax_files)) \
+-  $(addprefix plugin/, $(vim_plugin_files)) \
+-  $(addprefix autoload/, $(vim_autoload_files)) \
+-
+-vim_runtime_modules := $(addprefix $(VIM_SHARED)/, $(vim_runtime_files))
+-$(vim_runtime_modules): $(VIM_SHARED)/%: $(vim_runtime_path)/% | $(LOCAL_BUILT_MODULE)
+-	@echo "Install: $@"
+-	@mkdir -p $(dir $@)
+-	$(hide) cp $< $@
+-
+-ALL_DEFAULT_INSTALLED_MODULES += $(vim_runtime_modules)
+-
+-ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
+-  $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) \
+-  $(vim_runtime_modules)
+-
+-endif
+
+project frameworks/base/
+diff --git a/Android.bp b/Android.bp
+index 498f3ccb..b1a7c56c 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -784,11 +784,6 @@ java_defaults {
+         "devicepolicyprotosnano",
+     ],
+
+-    required: [
+-        // TODO: remove gps_debug when the build system propagates "required" properly.
+-        "gps_debug.conf",
+-    ],
+-
+     dxflags: [
+         "--core-library",
+         "--multi-dex",
+
+diff --git a/core/java/android/app/SystemServiceRegistry.java b/core/java/android/app/SystemServiceRegistry.java
+index d1090a34..66e976c2 100644
+--- a/core/java/android/app/SystemServiceRegistry.java
++++ b/core/java/android/app/SystemServiceRegistry.java
+@@ -131,7 +131,6 @@ import android.os.BatteryStats;
+ import android.os.BugreportManager;
+ import android.os.Build;
+ import android.os.DeviceIdleManager;
+-import android.os.DropBoxManager;
+ import android.os.HardwarePropertiesManager;
+ import android.os.IBatteryPropertiesRegistrar;
+ import android.os.IBinder;
+@@ -194,7 +193,6 @@ import com.android.internal.app.IBatteryStats;
+ import com.android.internal.app.ISoundTriggerService;
+ import com.android.internal.appwidget.IAppWidgetService;
+ import com.android.internal.net.INetworkWatchlistManager;
+-import com.android.internal.os.IDropBoxManagerService;
+ import com.android.internal.policy.PhoneLayoutInflater;
+
+ import java.util.Map;
+@@ -412,15 +410,6 @@ final class SystemServiceRegistry {
+                 return new NfcManager(ctx);
+             }});
+
+-        registerService(Context.DROPBOX_SERVICE, DropBoxManager.class,
+-                new CachedServiceFetcher<DropBoxManager>() {
+-            @Override
+-            public DropBoxManager createService(ContextImpl ctx) throws ServiceNotFoundException {
+-                IBinder b = ServiceManager.getServiceOrThrow(Context.DROPBOX_SERVICE);
+-                IDropBoxManagerService service = IDropBoxManagerService.Stub.asInterface(b);
+-                return new DropBoxManager(ctx, service);
+-            }});
+-
+         registerService(Context.INPUT_SERVICE, InputManager.class,
+                 new StaticServiceFetcher<InputManager>() {
+             @Override
+
+diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
+index 7bcd7a04..5f7fde41 100644
+--- a/core/res/AndroidManifest.xml
++++ b/core/res/AndroidManifest.xml
+@@ -2655,6 +2655,13 @@
+         android:description="@string/permdesc_getPackageSize"
+         android:protectionLevel="normal" />
+
++    <!-- @hide Allows an application to change the package signature as
++         seen by applications -->
++    <permission android:name="android.permission.FAKE_PACKAGE_SIGNATURE"
++        android:protectionLevel="dangerous"
++        android:label="@string/permlab_fakePackageSignature"
++        android:description="@string/permdesc_fakePackageSignature" />
++
+     <!-- @deprecated No longer useful, see
+          {@link android.content.pm.PackageManager#addPackageToPreferred}
+          for details. -->
+
+diff --git a/core/res/res/values-zh-rCN/strings.xml b/core/res/res/values-zh-rCN/strings.xml
+index aae5771e..2982e6cc 100644
+--- a/core/res/res/values-zh-rCN/strings.xml
++++ b/core/res/res/values-zh-rCN/strings.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!--
++<!--
+ /* //device/apps/common/assets/res/any/strings.xml
+ **
+ ** Copyright 2006, The Android Open Source Project
+@@ -2050,4 +2050,6 @@
+     </plurals>
+     <string name="chooser_no_direct_share_targets" msgid="492542066060841139">"无法使用直接分享功能"</string>
+     <string name="chooser_all_apps_button_label" msgid="3230427756238666328">"应用列表"</string>
++    <string name="permlab_fakePackageSignature">模拟软件包签名</string>
++    <string name="permdesc_fakePackageSignature">允许当前应用伪装成为其他应用</string>
+ </resources>
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index a84d23b6..89754ba1 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -1875,6 +1875,8 @@
+     <string-array name="config_locationProviderPackageNames" translatable="false">
+         <!-- The standard AOSP fused location provider -->
+         <item>com.android.location.fused</item>
++        <!-- The (faked) microg fused location provider (a free reimplementation) -->
++        <item>com.google.android.gms</item>
+     </string-array>
+
+     <!-- This string array can be overriden to enable test location providers initially. -->
+
+diff --git a/core/res/res/values/strings.xml b/core/res/res/values/strings.xml
+index 7e975f68..bf539407 100644
+--- a/core/res/res/values/strings.xml
++++ b/core/res/res/values/strings.xml
+@@ -830,6 +830,11 @@
+
+     <!--  Permissions -->
+
++    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permlab_fakePackageSignature">Spoof package signature</string>
++    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permdesc_fakePackageSignature">Allows the app to pretend to be a different app.</string>
++
+     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+     <string name="permlab_statusBar">disable or modify status bar</string>
+     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+
+diff --git a/data/fonts/fonts.xml b/data/fonts/fonts.xml
+index c6920977..49e356ac 100644
+--- a/data/fonts/fonts.xml
++++ b/data/fonts/fonts.xml
+@@ -546,20 +546,48 @@
+         <font weight="400" style="normal">NotoSansSymbols-Regular-Subsetted.ttf</font>
+     </family>
+     <family lang="zh-Hans">
+-        <font weight="400" style="normal" index="2">NotoSansCJK-Regular.ttc</font>
++        <font weight="100" style="normal" index="2">NotoSansCJK.ttc</font>
++        <font weight="300" style="normal" index="7">NotoSansCJK.ttc</font>
++        <font weight="350" style="normal" index="12">NotoSansCJK.ttc</font>
++        <font weight="400" style="normal" index="27">NotoSansCJK.ttc</font>
++        <font weight="500" style="normal" index="17">NotoSansCJK.ttc</font>
++        <font weight="700" style="normal" index="37">NotoSansCJK.ttc</font>
++        <font weight="900" style="normal" index="22">NotoSansCJK.ttc</font>
+         <font weight="400" style="normal" index="2" fallbackFor="serif">NotoSerifCJK-Regular.ttc</font>
++        <font weight="700" style="normal" index="2" fallbackFor="serif">NotoSerifCJK-Bold.ttc</font>
+     </family>
+     <family lang="zh-Hant,zh-Bopo">
+-        <font weight="400" style="normal" index="3">NotoSansCJK-Regular.ttc</font>
++        <font weight="100" style="normal" index="3">NotoSansCJK.ttc</font>
++        <font weight="300" style="normal" index="8">NotoSansCJK.ttc</font>
++        <font weight="350" style="normal" index="13">NotoSansCJK.ttc</font>
++        <font weight="400" style="normal" index="28">NotoSansCJK.ttc</font>
++        <font weight="500" style="normal" index="18">NotoSansCJK.ttc</font>
++        <font weight="700" style="normal" index="38">NotoSansCJK.ttc</font>
++        <font weight="900" style="normal" index="23">NotoSansCJK.ttc</font>
+         <font weight="400" style="normal" index="3" fallbackFor="serif">NotoSerifCJK-Regular.ttc</font>
++        <font weight="700" style="normal" index="3" fallbackFor="serif">NotoSerifCJK-Bold.ttc</font>
+     </family>
+     <family lang="ja">
+-        <font weight="400" style="normal" index="0">NotoSansCJK-Regular.ttc</font>
++        <font weight="100" style="normal" index="0">NotoSansCJK.ttc</font>
++        <font weight="300" style="normal" index="5">NotoSansCJK.ttc</font>
++        <font weight="350" style="normal" index="10">NotoSansCJK.ttc</font>
++        <font weight="400" style="normal" index="25">NotoSansCJK.ttc</font>
++        <font weight="500" style="normal" index="15">NotoSansCJK.ttc</font>
++        <font weight="700" style="normal" index="35">NotoSansCJK.ttc</font>
++        <font weight="900" style="normal" index="20">NotoSansCJK.ttc</font>
+         <font weight="400" style="normal" index="0" fallbackFor="serif">NotoSerifCJK-Regular.ttc</font>
++        <font weight="700" style="normal" index="0" fallbackFor="serif">NotoSerifCJK-Bold.ttc</font>
+     </family>
+     <family lang="ko">
+-        <font weight="400" style="normal" index="1">NotoSansCJK-Regular.ttc</font>
++        <font weight="100" style="normal" index="1">NotoSansCJK.ttc</font>
++        <font weight="300" style="normal" index="6">NotoSansCJK.ttc</font>
++        <font weight="350" style="normal" index="11">NotoSansCJK.ttc</font>
++        <font weight="400" style="normal" index="26">NotoSansCJK.ttc</font>
++        <font weight="500" style="normal" index="16">NotoSansCJK.ttc</font>
++        <font weight="700" style="normal" index="36">NotoSansCJK.ttc</font>
++        <font weight="900" style="normal" index="21">NotoSansCJK.ttc</font>
+         <font weight="400" style="normal" index="1" fallbackFor="serif">NotoSerifCJK-Regular.ttc</font>
++        <font weight="700" style="normal" index="1" fallbackFor="serif">NotoSerifCJK-Bold.ttc</font>
+     </family>
+     <family lang="und-Zsye">
+         <font weight="400" style="normal">NotoColorEmoji.ttf</font>
+
+diff --git a/services/core/Android.bp b/services/core/Android.bp
+index 6edd33c8..74a15839 100644
+--- a/services/core/Android.bp
++++ b/services/core/Android.bp
+@@ -32,10 +32,6 @@ java_library_static {
+         "org.lineageos.platform.internal",
+     ],
+
+-    required: [
+-        "gps_debug.conf",
+-    ],
+-
+     static_libs: [
+         "time_zone_distro",
+         "time_zone_distro_installer",
+@@ -76,9 +72,3 @@ java_library {
+     name: "services.core",
+     static_libs: ["services.core.priorityboosted"],
+ }
+-
+-
+-prebuilt_etc {
+-    name: "gps_debug.conf",
+-    src: "java/com/android/server/location/gps_debug.conf",
+-}
+
+diff --git a/services/core/java/com/android/server/BatteryService.java b/services/core/java/com/android/server/BatteryService.java
+index d041476a..acb98e9c 100644
+--- a/services/core/java/com/android/server/BatteryService.java
++++ b/services/core/java/com/android/server/BatteryService.java
+@@ -37,7 +37,6 @@ import android.os.BatteryProperty;
+ import android.os.BatteryStats;
+ import android.os.Binder;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.FileUtils;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+@@ -775,9 +774,6 @@ public final class BatteryService extends SystemService {
+         IBinder batteryInfoService = ServiceManager.getService(BatteryStats.SERVICE_NAME);
+         if (batteryInfoService == null) return;
+
+-        DropBoxManager db = (DropBoxManager) mContext.getSystemService(Context.DROPBOX_SERVICE);
+-        if (db == null || !db.isTagEnabled("BATTERY_DISCHARGE_INFO")) return;
+-
+         File dumpFile = null;
+         FileOutputStream dumpStream = null;
+         try {
+@@ -786,9 +782,6 @@ public final class BatteryService extends SystemService {
+             dumpStream = new FileOutputStream(dumpFile);
+             batteryInfoService.dump(dumpStream.getFD(), DUMPSYS_ARGS);
+             FileUtils.sync(dumpStream);
+-
+-            // add dump file to drop box
+-            db.addFile("BATTERY_DISCHARGE_INFO", dumpFile, DropBoxManager.IS_TEXT);
+         } catch (RemoteException e) {
+             Slog.e(TAG, "failed to dump battery service", e);
+         } catch (IOException e) {
+
+diff --git a/services/core/java/com/android/server/DropBoxManagerService.java b/services/core/java/com/android/server/DropBoxManagerService.java
+deleted file mode 100644
+index 33b846f7..00000000
+--- a/services/core/java/com/android/server/DropBoxManagerService.java
++++ /dev/null
+
+diff --git a/services/core/java/com/android/server/StorageManagerService.java b/services/core/java/com/android/server/StorageManagerService.java
+index 263efacb..9404aedf 100644
+--- a/services/core/java/com/android/server/StorageManagerService.java
++++ b/services/core/java/com/android/server/StorageManagerService.java
+@@ -70,7 +70,6 @@ import android.content.res.ObbInfo;
+ import android.database.ContentObserver;
+ import android.net.Uri;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.os.Environment;
+ import android.os.Environment.UserEnvironment;
+ import android.os.FileUtils;
+@@ -1874,10 +1873,6 @@ class StorageManagerService extends IStorageManager.Stub
+                     final long run = extras.getLong("run");
+                     final long destroy = extras.getLong("destroy");
+
+-                    final DropBoxManager dropBox = mContext.getSystemService(DropBoxManager.class);
+-                    dropBox.addText(TAG_STORAGE_BENCHMARK, scrubPath(path)
+-                            + " " + ident + " " + create + " " + run + " " + destroy);
+-
+                     synchronized (mLock) {
+                         final VolumeRecord rec = findRecordForPath(path);
+                         if (rec != null) {
+@@ -2037,9 +2032,6 @@ class StorageManagerService extends IStorageManager.Stub
+                         final long bytes = extras.getLong("bytes");
+                         final long time = extras.getLong("time");
+
+-                        final DropBoxManager dropBox = mContext.getSystemService(DropBoxManager.class);
+-                        dropBox.addText(TAG_STORAGE_TRIM, scrubPath(path) + " " + bytes + " " + time);
+-
+                         synchronized (mLock) {
+                             final VolumeRecord rec = findRecordForPath(path);
+                             if (rec != null) {
+
+diff --git a/services/core/java/com/android/server/Watchdog.java b/services/core/java/com/android/server/Watchdog.java
+index 5b9c78f6..289bdd31 100644
+--- a/services/core/java/com/android/server/Watchdog.java
++++ b/services/core/java/com/android/server/Watchdog.java
+@@ -613,26 +613,6 @@ public class Watchdog extends Thread {
+             doSysRq('w');
+             doSysRq('l');
+
+-            // Try to add the error to the dropbox, but assuming that the ActivityManager
+-            // itself may be deadlocked.  (which has happened, causing this statement to
+-            // deadlock and the watchdog as a whole to be ineffective)
+-            Thread dropboxThread = new Thread("watchdogWriteToDropbox") {
+-                    public void run() {
+-                        // If a watched thread hangs before init() is called, we don't have a
+-                        // valid mActivity. So we can't log the error to dropbox.
+-                        if (mActivity != null) {
+-                            mActivity.addErrorToDropBox(
+-                                    "watchdog", null, "system_server", null, null, null,
+-                                    subject, null, stack, null);
+-                        }
+-                        StatsLog.write(StatsLog.SYSTEM_SERVER_WATCHDOG_OCCURRED, subject);
+-                    }
+-                };
+-            dropboxThread.start();
+-            try {
+-                dropboxThread.join(2000);  // wait up to 2 seconds for it to return.
+-            } catch (InterruptedException ignored) {}
+-
+             IActivityController controller;
+             synchronized (this) {
+                 controller = mController;
+
+diff --git a/services/core/java/com/android/server/am/ActivityManagerService.java b/services/core/java/com/android/server/am/ActivityManagerService.java
+index 3f651196..007b0653 100644
+--- a/services/core/java/com/android/server/am/ActivityManagerService.java
++++ b/services/core/java/com/android/server/am/ActivityManagerService.java
+@@ -484,8 +484,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+
+     static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+-    // How many bytes to write into the dropbox log before truncating
+-    static final int DROPBOX_MAX_SIZE = 192 * 1024;
+     // Assumes logcat entries average around 100 bytes; that's not perfect stack traces count
+     // as one line, but close enough for now.
+     static final int RESERVED_BYTES_PER_LOGCAT_LINE = 100;
+@@ -9261,9 +9259,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+             crashInfo.crashTag = crashInfo.crashTag + " " + relaunchReasonString;
+         }
+
+-        addErrorToDropBox(
+-                eventType, r, processName, null, null, null, null, null, null, crashInfo);
+-
+         mAppErrors.crashApplication(r, crashInfo);
+     }
+
+@@ -9294,9 +9289,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+                     mAlreadyLoggedViolatedStacks.add(stackFingerprint);
+                 }
+             }
+-            if (logIt) {
+-                logStrictModeViolationToDropBox(r, info);
+-            }
+         }
+
+         if ((penaltyMask & StrictMode.PENALTY_DIALOG) != 0) {
+@@ -9320,68 +9312,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+     }
+
+-    // Depending on the policy in effect, there could be a bunch of
+-    // these in quick succession so we try to batch these together to
+-    // minimize disk writes, number of dropbox entries, and maximize
+-    // compression, by having more fewer, larger records.
+-    private void logStrictModeViolationToDropBox(
+-            ProcessRecord process,
+-            StrictMode.ViolationInfo info) {
+-        if (info == null) {
+-            return;
+-        }
+-        final boolean isSystemApp = process == null ||
+-                (process.info.flags & (ApplicationInfo.FLAG_SYSTEM |
+-                                       ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
+-        final String processName = process == null ? "unknown" : process.processName;
+-        final DropBoxManager dbox = (DropBoxManager)
+-                mContext.getSystemService(Context.DROPBOX_SERVICE);
+-
+-        // Exit early if the dropbox isn't configured to accept this report type.
+-        final String dropboxTag = processClass(process) + "_strictmode";
+-        if (dbox == null || !dbox.isTagEnabled(dropboxTag)) return;
+-
+-        final StringBuilder sb = new StringBuilder(1024);
+-        synchronized (sb) {
+-            appendDropBoxProcessHeaders(process, processName, sb);
+-            sb.append("Build: ").append(Build.FINGERPRINT).append("\n");
+-            sb.append("System-App: ").append(isSystemApp).append("\n");
+-            sb.append("Uptime-Millis: ").append(info.violationUptimeMillis).append("\n");
+-            if (info.violationNumThisLoop != 0) {
+-                sb.append("Loop-Violation-Number: ").append(info.violationNumThisLoop).append("\n");
+-            }
+-            if (info.numAnimationsRunning != 0) {
+-                sb.append("Animations-Running: ").append(info.numAnimationsRunning).append("\n");
+-            }
+-            if (info.broadcastIntentAction != null) {
+-                sb.append("Broadcast-Intent-Action: ").append(info.broadcastIntentAction).append("\n");
+-            }
+-            if (info.durationMillis != -1) {
+-                sb.append("Duration-Millis: ").append(info.durationMillis).append("\n");
+-            }
+-            if (info.numInstances != -1) {
+-                sb.append("Instance-Count: ").append(info.numInstances).append("\n");
+-            }
+-            if (info.tags != null) {
+-                for (String tag : info.tags) {
+-                    sb.append("Span-Tag: ").append(tag).append("\n");
+-                }
+-            }
+-            sb.append("\n");
+-            sb.append(info.getStackTrace());
+-            sb.append("\n");
+-            if (info.getViolationDetails() != null) {
+-                sb.append(info.getViolationDetails());
+-                sb.append("\n");
+-            }
+-        }
+-
+-        final String res = sb.toString();
+-        IoThread.getHandler().post(() -> {
+-            dbox.addText(dropboxTag, res);
+-        });
+-    }
+-
+     /**
+      * Used by {@link Log} via {@link com.android.internal.os.RuntimeInit} to report serious errors.
+      * @param app object of the crashing app, null for the system server
+@@ -9434,8 +9364,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         StatsLog.write(StatsLog.WTF_OCCURRED, callingUid, tag, processName,
+                 callingPid, (r != null) ? r.getProcessClassEnum() : 0);
+
+-        addErrorToDropBox("wtf", r, processName, null, null, null, tag, null, null, crashInfo);
+-
+         return r;
+     }
+
+@@ -9453,54 +9381,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+     }
+
+-    /**
+-     * Utility function for addErrorToDropBox and handleStrictModeViolation's logging
+-     * to append various headers to the dropbox log text.
+-     */
+-    private void appendDropBoxProcessHeaders(ProcessRecord process, String processName,
+-            StringBuilder sb) {
+-        // Watchdog thread ends up invoking this function (with
+-        // a null ProcessRecord) to add the stack file to dropbox.
+-        // Do not acquire a lock on this (am) in such cases, as it
+-        // could cause a potential deadlock, if and when watchdog
+-        // is invoked due to unavailability of lock on am and it
+-        // would prevent watchdog from killing system_server.
+-        if (process == null) {
+-            sb.append("Process: ").append(processName).append("\n");
+-            return;
+-        }
+-        // Note: ProcessRecord 'process' is guarded by the service
+-        // instance.  (notably process.pkgList, which could otherwise change
+-        // concurrently during execution of this method)
+-        synchronized (this) {
+-            sb.append("Process: ").append(processName).append("\n");
+-            sb.append("PID: ").append(process.pid).append("\n");
+-            sb.append("UID: ").append(process.uid).append("\n");
+-            int flags = process.info.flags;
+-            IPackageManager pm = AppGlobals.getPackageManager();
+-            sb.append("Flags: 0x").append(Integer.toHexString(flags)).append("\n");
+-            for (int ip=0; ip<process.pkgList.size(); ip++) {
+-                String pkg = process.pkgList.keyAt(ip);
+-                sb.append("Package: ").append(pkg);
+-                try {
+-                    PackageInfo pi = pm.getPackageInfo(pkg, 0, UserHandle.getCallingUserId());
+-                    if (pi != null) {
+-                        sb.append(" v").append(pi.getLongVersionCode());
+-                        if (pi.versionName != null) {
+-                            sb.append(" (").append(pi.versionName).append(")");
+-                        }
+-                    }
+-                } catch (RemoteException e) {
+-                    Slog.e(TAG, "Error getting package info: " + pkg, e);
+-                }
+-                sb.append("\n");
+-            }
+-            if (process.info.isInstantApp()) {
+-                sb.append("Instant-App: true\n");
+-            }
+-        }
+-    }
+-
+     private static String processClass(ProcessRecord process) {
+         if (process == null || process.pid == MY_PID) {
+             return "system_server";
+@@ -9514,144 +9394,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+     private volatile long mWtfClusterStart;
+     private volatile int mWtfClusterCount;
+
+-    /**
+-     * Write a description of an error (crash, WTF, ANR) to the drop box.
+-     * @param eventType to include in the drop box tag ("crash", "wtf", etc.)
+-     * @param process which caused the error, null means the system server
+-     * @param activityShortComponentName which triggered the error, null if unknown
+-     * @param parentShortComponentName activity related to the error, null if unknown
+-     * @param parentProcess parent process
+-     * @param subject line related to the error, null if absent
+-     * @param report in long form describing the error, null if absent
+-     * @param dataFile text file to include in the report, null if none
+-     * @param crashInfo giving an application stack trace, null if absent
+-     */
+-    public void addErrorToDropBox(String eventType,
+-            ProcessRecord process, String processName, String activityShortComponentName,
+-            String parentShortComponentName, ProcessRecord parentProcess,
+-            String subject, final String report, final File dataFile,
+-            final ApplicationErrorReport.CrashInfo crashInfo) {
+-        // NOTE -- this must never acquire the ActivityManagerService lock,
+-        // otherwise the watchdog may be prevented from resetting the system.
+-
+-        // Bail early if not published yet
+-        if (ServiceManager.getService(Context.DROPBOX_SERVICE) == null) return;
+-        final DropBoxManager dbox = mContext.getSystemService(DropBoxManager.class);
+-
+-        // Exit early if the dropbox isn't configured to accept this report type.
+-        final String dropboxTag = processClass(process) + "_" + eventType;
+-        if (dbox == null || !dbox.isTagEnabled(dropboxTag)) return;
+-
+-        // Rate-limit how often we're willing to do the heavy lifting below to
+-        // collect and record logs; currently 5 logs per 10 second period.
+-        final long now = SystemClock.elapsedRealtime();
+-        if (now - mWtfClusterStart > 10 * DateUtils.SECOND_IN_MILLIS) {
+-            mWtfClusterStart = now;
+-            mWtfClusterCount = 1;
+-        } else {
+-            if (mWtfClusterCount++ >= 5) return;
+-        }
+-
+-        final StringBuilder sb = new StringBuilder(1024);
+-        appendDropBoxProcessHeaders(process, processName, sb);
+-        if (process != null) {
+-            sb.append("Foreground: ")
+-                    .append(process.isInterestingToUserLocked() ? "Yes" : "No")
+-                    .append("\n");
+-        }
+-        if (activityShortComponentName != null) {
+-            sb.append("Activity: ").append(activityShortComponentName).append("\n");
+-        }
+-        if (parentShortComponentName != null) {
+-            if (parentProcess != null && parentProcess.pid != process.pid) {
+-                sb.append("Parent-Process: ").append(parentProcess.processName).append("\n");
+-            }
+-            if (!parentShortComponentName.equals(activityShortComponentName)) {
+-                sb.append("Parent-Activity: ").append(parentShortComponentName).append("\n");
+-            }
+-        }
+-        if (subject != null) {
+-            sb.append("Subject: ").append(subject).append("\n");
+-        }
+-        sb.append("Build: ").append(Build.FINGERPRINT).append("\n");
+-        if (Debug.isDebuggerConnected()) {
+-            sb.append("Debugger: Connected\n");
+-        }
+-        if (crashInfo != null && crashInfo.crashTag != null && !crashInfo.crashTag.isEmpty()) {
+-            sb.append("Crash-Tag: ").append(crashInfo.crashTag).append("\n");
+-        }
+-        sb.append("\n");
+-
+-        // Do the rest in a worker thread to avoid blocking the caller on I/O
+-        // (After this point, we shouldn't access AMS internal data structures.)
+-        Thread worker = new Thread("Error dump: " + dropboxTag) {
+-            @Override
+-            public void run() {
+-                if (report != null) {
+-                    sb.append(report);
+-                }
+-
+-                String setting = Settings.Global.ERROR_LOGCAT_PREFIX + dropboxTag;
+-                int lines = Settings.Global.getInt(mContext.getContentResolver(), setting, 0);
+-                int maxDataFileSize = DROPBOX_MAX_SIZE - sb.length()
+-                        - lines * RESERVED_BYTES_PER_LOGCAT_LINE;
+-
+-                if (dataFile != null && maxDataFileSize > 0) {
+-                    try {
+-                        sb.append(FileUtils.readTextFile(dataFile, maxDataFileSize,
+-                                    "\n\n[[TRUNCATED]]"));
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Error reading " + dataFile, e);
+-                    }
+-                }
+-                if (crashInfo != null && crashInfo.stackTrace != null) {
+-                    sb.append(crashInfo.stackTrace);
+-                }
+-
+-                if (lines > 0) {
+-                    sb.append("\n");
+-
+-                    // Merge several logcat streams, and take the last N lines
+-                    InputStreamReader input = null;
+-                    try {
+-                        java.lang.Process logcat = new ProcessBuilder(
+-                                "/system/bin/timeout", "-k", "15s", "10s",
+-                                "/system/bin/logcat", "-v", "threadtime", "-b", "events", "-b", "system",
+-                                "-b", "main", "-b", "crash", "-t", String.valueOf(lines))
+-                                        .redirectErrorStream(true).start();
+-
+-                        try { logcat.getOutputStream().close(); } catch (IOException e) {}
+-                        try { logcat.getErrorStream().close(); } catch (IOException e) {}
+-                        input = new InputStreamReader(logcat.getInputStream());
+-
+-                        int num;
+-                        char[] buf = new char[8192];
+-                        while ((num = input.read(buf)) > 0) sb.append(buf, 0, num);
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Error running logcat", e);
+-                    } finally {
+-                        if (input != null) try { input.close(); } catch (IOException e) {}
+-                    }
+-                }
+-
+-                dbox.addText(dropboxTag, sb.toString());
+-            }
+-        };
+-
+-        if (process == null) {
+-            // If process is null, we are being called from some internal code
+-            // and may be about to die -- run this synchronously.
+-            final int oldMask = StrictMode.allowThreadDiskWritesMask();
+-            try {
+-                worker.run();
+-            } finally {
+-                StrictMode.setThreadPolicyMask(oldMask);
+-            }
+-        } else {
+-            worker.start();
+-        }
+-    }
+-
+     @Override
+     public List<ActivityManager.ProcessErrorStateInfo> getProcessesInErrorState() {
+         enforceNotIsolatedCaller("getProcessesInErrorState");
+@@ -13564,8 +13306,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+         dropBuilder.append(catSw.toString());
+         StatsLog.write(StatsLog.LOW_MEM_REPORTED);
+-        addErrorToDropBox("lowmem", null, "system_server", null,
+-                null, null, tag.toString(), dropBuilder.toString(), null, null);
+         //Slog.i(TAG, "Sent to dropbox:");
+         //Slog.i(TAG, dropBuilder.toString());
+         synchronized (ActivityManagerService.this) {
+
+diff --git a/services/core/java/com/android/server/am/ProcessRecord.java b/services/core/java/com/android/server/am/ProcessRecord.java
+index ea308427..df24a871 100644
+--- a/services/core/java/com/android/server/am/ProcessRecord.java
++++ b/services/core/java/com/android/server/am/ProcessRecord.java
+@@ -1558,8 +1558,6 @@ class ProcessRecord implements WindowProcessListener {
+                 (this.info != null) ? this.info.packageName : "");
+         final ProcessRecord parentPr = parentProcess != null
+                 ? (ProcessRecord) parentProcess.mOwner : null;
+-        mService.addErrorToDropBox("anr", this, processName, activityShortComponentName,
+-                parentShortComponentName, parentPr, annotation, cpuInfo, tracesFile, null);
+
+         if (mWindowProcessController.appNotResponding(info.toString(), () -> kill("anr", true),
+                 () -> {
+
+diff --git a/services/core/java/com/android/server/location/GnssConfiguration.java b/services/core/java/com/android/server/location/GnssConfiguration.java
+index 18d9f69c..4ac61c9b 100644
+--- a/services/core/java/com/android/server/location/GnssConfiguration.java
++++ b/services/core/java/com/android/server/location/GnssConfiguration.java
+@@ -52,8 +52,6 @@ class GnssConfiguration {
+
+     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+
+-    private static final String DEBUG_PROPERTIES_FILE = "/etc/gps_debug.conf";
+-
+     // config.xml properties
+     private static final String CONFIG_SUPL_HOST = "SUPL_HOST";
+     private static final String CONFIG_SUPL_PORT = "SUPL_PORT";
+@@ -226,10 +224,6 @@ class GnssConfiguration {
+             // override default value of this if lpp_prof is not empty
+             mProperties.setProperty(CONFIG_LPP_PROFILE, lpp_prof);
+         }
+-        /*
+-         * Overlay carrier properties from a debug configuration file.
+-         */
+-        loadPropertiesFromGpsDebugConfig(mProperties);
+
+         mEsExtensionSec = getRangeCheckedConfigEsExtensionSec();
+
+@@ -336,21 +330,6 @@ class GnssConfiguration {
+         }
+     }
+
+-    private void loadPropertiesFromGpsDebugConfig(Properties properties) {
+-        try {
+-            File file = new File(DEBUG_PROPERTIES_FILE);
+-            FileInputStream stream = null;
+-            try {
+-                stream = new FileInputStream(file);
+-                properties.load(stream);
+-            } finally {
+-                IoUtils.closeQuietly(stream);
+-            }
+-        } catch (IOException e) {
+-            if (DEBUG) Log.d(TAG, "Could not open GPS configuration file " + DEBUG_PROPERTIES_FILE);
+-        }
+-    }
+-
+     private int getRangeCheckedConfigEsExtensionSec() {
+         int emergencyExtensionSeconds = getIntConfig(CONFIG_ES_EXTENSION_SEC, 0);
+         if (emergencyExtensionSeconds > MAX_EMERGENCY_MODE_EXTENSION_SECONDS) {
+
+diff --git a/services/core/java/com/android/server/location/gps_debug.conf b/services/core/java/com/android/server/location/gps_debug.conf
+deleted file mode 100644
+index 34ce96f3..00000000
+--- a/services/core/java/com/android/server/location/gps_debug.conf
++++ /dev/null
+
+diff --git a/services/core/java/com/android/server/net/NetworkStatsRecorder.java b/services/core/java/com/android/server/net/NetworkStatsRecorder.java
+index 06ec341d..9d2c0276 100644
+--- a/services/core/java/com/android/server/net/NetworkStatsRecorder.java
++++ b/services/core/java/com/android/server/net/NetworkStatsRecorder.java
+@@ -29,7 +29,6 @@ import android.net.NetworkStatsHistory;
+ import android.net.NetworkTemplate;
+ import android.net.TrafficStats;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.service.NetworkStatsRecorderProto;
+ import android.util.Log;
+ import android.util.MathUtils;
+@@ -74,8 +73,6 @@ public class NetworkStatsRecorder {
+     private static final boolean DUMP_BEFORE_DELETE = true;
+
+     private final FileRotator mRotator;
+-    private final NonMonotonicObserver<String> mObserver;
+-    private final DropBoxManager mDropBox;
+     private final String mCookie;
+
+     private final long mBucketDuration;
+@@ -96,8 +93,6 @@ public class NetworkStatsRecorder {
+      */
+     public NetworkStatsRecorder() {
+         mRotator = null;
+-        mObserver = null;
+-        mDropBox = null;
+         mCookie = null;
+
+         // set the bucket big enough to have all data in one bucket, but allow some
+@@ -114,11 +109,9 @@ public class NetworkStatsRecorder {
+     /**
+      * Persisted recorder.
+      */
+-    public NetworkStatsRecorder(FileRotator rotator, NonMonotonicObserver<String> observer,
+-            DropBoxManager dropBox, String cookie, long bucketDuration, boolean onlyTags) {
++    public NetworkStatsRecorder(FileRotator rotator,
++            String cookie, long bucketDuration, boolean onlyTags) {
+         mRotator = checkNotNull(rotator, "missing FileRotator");
+-        mObserver = checkNotNull(observer, "missing NonMonotonicObserver");
+-        mDropBox = checkNotNull(dropBox, "missing DropBoxManager");
+         mCookie = cookie;
+
+         mBucketDuration = bucketDuration;
+@@ -220,7 +213,7 @@ public class NetworkStatsRecorder {
+         final NetworkStatsCollection complete = mComplete != null ? mComplete.get() : null;
+
+         final NetworkStats delta = NetworkStats.subtract(
+-                snapshot, mLastSnapshot, mObserver, mCookie);
++                snapshot, mLastSnapshot, null, mCookie);
+         final long end = currentTimeMillis;
+         final long start = end - delta.getElapsedRealtime();
+
+@@ -231,9 +224,6 @@ public class NetworkStatsRecorder {
+             // As a last-ditch sanity check, report any negative values and
+             // clamp them so recording below doesn't croak.
+             if (entry.isNegative()) {
+-                if (mObserver != null) {
+-                    mObserver.foundNonMonotonic(delta, i, mCookie);
+-                }
+                 entry.rxBytes = Math.max(entry.rxBytes, 0);
+                 entry.rxPackets = Math.max(entry.rxPackets, 0);
+                 entry.txBytes = Math.max(entry.txBytes, 0);
+@@ -499,7 +489,6 @@ public class NetworkStatsRecorder {
+             } finally {
+                 IoUtils.closeQuietly(os);
+             }
+-            mDropBox.addData(TAG_NETSTATS_DUMP, os.toByteArray(), 0);
+         }
+
+         mRotator.deleteAll();
+
+diff --git a/services/core/java/com/android/server/net/NetworkStatsService.java b/services/core/java/com/android/server/net/NetworkStatsService.java
+index d1b5534e..79f1aa1a 100644
+--- a/services/core/java/com/android/server/net/NetworkStatsService.java
++++ b/services/core/java/com/android/server/net/NetworkStatsService.java
+@@ -99,7 +99,6 @@ import android.net.NetworkTemplate;
+ import android.net.TrafficStats;
+ import android.os.BestClock;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.os.Environment;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+@@ -266,9 +265,6 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+     @GuardedBy("mStatsLock")
+     private Network[] mDefaultNetworks = new Network[0];
+
+-    private final DropBoxNonMonotonicObserver mNonMonotonicObserver =
+-            new DropBoxNonMonotonicObserver();
+-
+     @GuardedBy("mStatsLock")
+     private NetworkStatsRecorder mDevRecorder;
+     @GuardedBy("mStatsLock")
+@@ -439,11 +435,9 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+
+     private NetworkStatsRecorder buildRecorder(
+             String prefix, NetworkStatsSettings.Config config, boolean includeTags) {
+-        final DropBoxManager dropBox = (DropBoxManager) mContext.getSystemService(
+-                Context.DROPBOX_SERVICE);
+         return new NetworkStatsRecorder(new FileRotator(
+                 mBaseDir, prefix, config.rotateAgeMillis, config.deleteAgeMillis),
+-                mNonMonotonicObserver, dropBox, prefix, config.bucketDuration, includeTags);
++                prefix, config.bucketDuration, includeTags);
+     }
+
+     @GuardedBy("mStatsLock")
+@@ -1772,37 +1766,6 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+         }
+     }
+
+-    private class DropBoxNonMonotonicObserver implements NonMonotonicObserver<String> {
+-        @Override
+-        public void foundNonMonotonic(NetworkStats left, int leftIndex, NetworkStats right,
+-                int rightIndex, String cookie) {
+-            Log.w(TAG, "Found non-monotonic values; saving to dropbox");
+-
+-            // record error for debugging
+-            final StringBuilder builder = new StringBuilder();
+-            builder.append("found non-monotonic " + cookie + " values at left[" + leftIndex
+-                    + "] - right[" + rightIndex + "]\n");
+-            builder.append("left=").append(left).append('\n');
+-            builder.append("right=").append(right).append('\n');
+-
+-            mContext.getSystemService(DropBoxManager.class).addText(TAG_NETSTATS_ERROR,
+-                    builder.toString());
+-        }
+-
+-        @Override
+-        public void foundNonMonotonic(
+-                NetworkStats stats, int statsIndex, String cookie) {
+-            Log.w(TAG, "Found non-monotonic values; saving to dropbox");
+-
+-            final StringBuilder builder = new StringBuilder();
+-            builder.append("Found non-monotonic " + cookie + " values at [" + statsIndex + "]\n");
+-            builder.append("stats=").append(stats).append('\n');
+-
+-            mContext.getSystemService(DropBoxManager.class).addText(TAG_NETSTATS_ERROR,
+-                    builder.toString());
+-        }
+-    }
+-
+     /**
+      * Default external settings that read from
+      * {@link android.provider.Settings.Global}.
+
+diff --git a/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java b/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
+index 3b3ee587..ddd3a0fb 100644
+--- a/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
++++ b/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
+@@ -24,7 +24,6 @@ import android.content.pm.PackageManager;
+ import android.content.pm.PackageManager.NameNotFoundException;
+ import android.content.pm.UserInfo;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.os.Message;
+@@ -66,10 +65,8 @@ class WatchlistLoggingHandler extends Handler {
+     static final int FORCE_REPORT_RECORDS_NOW_FOR_TEST_MSG = 3;
+
+     private static final long ONE_DAY_MS = TimeUnit.DAYS.toMillis(1);
+-    private static final String DROPBOX_TAG = "network_watchlist_report";
+
+     private final Context mContext;
+-    private final @Nullable DropBoxManager mDropBoxManager;
+     private final ContentResolver mResolver;
+     private final PackageManager mPm;
+     private final WatchlistReportDbHelper mDbHelper;
+@@ -97,7 +94,6 @@ class WatchlistLoggingHandler extends Handler {
+         mDbHelper = WatchlistReportDbHelper.getInstance(context);
+         mConfig = WatchlistConfig.getInstance();
+         mSettings = WatchlistSettings.getInstance();
+-        mDropBoxManager = mContext.getSystemService(DropBoxManager.class);
+         mPrimaryUserId = getPrimaryUserId();
+     }
+
+@@ -259,29 +255,6 @@ class WatchlistLoggingHandler extends Handler {
+                 Slog.i(TAG, "No need to aggregate record yet.");
+                 return;
+             }
+-            Slog.i(TAG, "Start aggregating watchlist records.");
+-            if (mDropBoxManager != null && mDropBoxManager.isTagEnabled(DROPBOX_TAG)) {
+-                Settings.Global.putLong(mResolver,
+-                        Settings.Global.NETWORK_WATCHLIST_LAST_REPORT_TIME,
+-                        lastRecordTime);
+-                final WatchlistReportDbHelper.AggregatedResult aggregatedResult =
+-                        mDbHelper.getAggregatedRecords(lastRecordTime);
+-                if (aggregatedResult == null) {
+-                    Slog.i(TAG, "Cannot get result from database");
+-                    return;
+-                }
+-                // Get all digests for watchlist report, it should include all installed
+-                // application digests and previously recorded app digests.
+-                final List<String> digestsForReport = getAllDigestsForReport(aggregatedResult);
+-                final byte[] secretKey = mSettings.getPrivacySecretKey();
+-                final byte[] encodedResult = ReportEncoder.encodeWatchlistReport(mConfig,
+-                        secretKey, digestsForReport, aggregatedResult);
+-                if (encodedResult != null) {
+-                    addEncodedReportToDropBox(encodedResult);
+-                }
+-            } else {
+-                Slog.w(TAG, "Network Watchlist dropbox tag is not enabled");
+-            }
+             mDbHelper.cleanup(lastRecordTime);
+         } finally {
+             long endTime = System.currentTimeMillis();
+@@ -317,10 +290,6 @@ class WatchlistLoggingHandler extends Handler {
+         return new ArrayList<>(result);
+     }
+
+-    private void addEncodedReportToDropBox(byte[] encodedReport) {
+-        mDropBoxManager.addData(DROPBOX_TAG, encodedReport, 0);
+-    }
+-
+     /**
+      * Get app digest from app uid.
+      * Return null if system cannot get digest from uid.
+
+diff --git a/services/core/java/com/android/server/pm/PackageManagerService.java b/services/core/java/com/android/server/pm/PackageManagerService.java
+index 2f2c1689..4f313682 100644
+--- a/services/core/java/com/android/server/pm/PackageManagerService.java
++++ b/services/core/java/com/android/server/pm/PackageManagerService.java
+@@ -4203,8 +4203,8 @@ public class PackageManagerService extends IPackageManager.Stub
+                 });
+             }
+
+-            PackageInfo packageInfo = PackageParser.generatePackageInfo(p, gids, flags,
+-                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId);
++            PackageInfo packageInfo = mayFakeSignature(p, PackageParser.generatePackageInfo(p, gids, flags,
++                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId), permissions);
+
+             if (packageInfo == null) {
+                 return null;
+@@ -4240,6 +4240,24 @@ public class PackageManagerService extends IPackageManager.Stub
+         }
+     }
+
++    private PackageInfo mayFakeSignature(PackageParser.Package p, PackageInfo pi,
++            Set<String> permissions) {
++        try {
++            if (permissions.contains("android.permission.FAKE_PACKAGE_SIGNATURE")
++                    && p.applicationInfo.targetSdkVersion > Build.VERSION_CODES.LOLLIPOP_MR1
++                    && p.mAppMetaData != null) {
++                String sig = p.mAppMetaData.getString("fake-signature");
++                if (sig != null) {
++                    pi.signatures = new Signature[] {new Signature(sig)};
++                }
++            }
++        } catch (Throwable t) {
++            // We should never die because of any failures, this is system code!
++            Log.w("PackageManagerService.FAKE_PACKAGE_SIGNATURE", t);
++            }
++        return pi;
++    }
++
+     @Override
+     public void checkPackageStartable(String packageName, int userId) {
+         final int callingUid = Binder.getCallingUid();
+
+diff --git a/services/java/com/android/server/SystemServer.java b/services/java/com/android/server/SystemServer.java
+index 844b7928..edfba58f 100644
+--- a/services/java/com/android/server/SystemServer.java
++++ b/services/java/com/android/server/SystemServer.java
+@@ -1004,13 +1004,6 @@ public final class SystemServer {
+             SQLiteCompatibilityWalFlags.reset();
+             traceEnd();
+
+-            // Records errors and logs, for example wtf()
+-            // Currently this service indirectly depends on SettingsProvider so do this after
+-            // InstallSystemProviders.
+-            traceBeginAndSlog("StartDropBoxManager");
+-            mSystemServiceManager.startService(DropBoxManagerService.class);
+-            traceEnd();
+-
+             traceBeginAndSlog("StartVibratorService");
+             vibrator = new VibratorService(context);
+             ServiceManager.addService("vibrator", vibrator);
+
+project packages/apps/LineageParts/
+diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
+index 4a42908..8a5ac97 100644
+--- a/res/values-zh-rCN/strings.xml
++++ b/res/values-zh-rCN/strings.xml
+@@ -179,6 +179,8 @@
+     <string name="home_answer_call_summary">按 Home 键接听来电</string>
+     <string name="extras_title">附加功能</string>
+     <string name="additional_buttons_title">附加按钮</string>
++    <string name="edge_gesture_title">边缘触控</string>
++    <string name="edge_gesture_summary">双击手机侧边可触发返回操作</string>
+     <string name="click_partial_screenshot_title">点击以进行局部截图</string>
+     <string name="click_partial_screenshot_summary">同时按音量下和电源键以截取局部截图</string>
+     <string name="button_backlight_title">背光</string>
+@@ -455,6 +457,9 @@
+     <string name="auto_power_save_summary_on">电量 %s 时自动启用省电</string>
+     <string name="auto_power_save_summary_off">不要自动启用省电</string>
+     <string name="auto_power_save_never">永不</string>
++    <string name="cpu_overclock_category_title">超频</string>
++    <string name="cpu_overclock_title">高性能模式</string>
++    <string name="cpu_overclock_summary">提升最大 CPU 功率以改善性能，但可能缩短续航时间</string>
+     <string name="long_screen_settings_title">全屏应用</string>
+     <string name="long_screen_settings_summary">强制旧式应用程序使用全屏长宽比</string>
+     <string name="long_screen_settings_no_apps">无应用</string>
+
+diff --git a/res/values/strings.xml b/res/values/strings.xml
+index 1133d32..0d9dfe7 100644
+--- a/res/values/strings.xml
++++ b/res/values/strings.xml
+@@ -213,6 +213,8 @@
+     <string name="home_answer_call_summary">Answer incoming calls by pressing the home button</string>
+     <string name="extras_title">Extras</string>
+     <string name="additional_buttons_title">Additional buttons</string>
++    <string name="edge_gesture_title">Edge gesture</string>
++    <string name="edge_gesture_summary">Double tap the phone\'s edge causes back</string>
+     <string name="click_partial_screenshot_title">Click to partial screenshot</string>
+     <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
+
+@@ -583,6 +585,9 @@
+     <string name="auto_power_save_summary_on">Automatically enable power save mode at %s battery</string>
+     <string name="auto_power_save_summary_off">Do not enable power save mode automatically</string>
+     <string name="auto_power_save_never">Never</string>
++    <string name="cpu_overclock_category_title">Overclock</string>
++    <string name="cpu_overclock_title">High performance mode</string>
++    <string name="cpu_overclock_summary">Increase maximum CPU power to improve performance, at the cost of battery life</string>
+
+     <!-- Applications: Long screen -->
+     <string name="long_screen_settings_title">Full screen apps</string>
+
+diff --git a/res/xml/button_settings.xml b/res/xml/button_settings.xml
+index c57985c..eedfa7a 100644
+--- a/res/xml/button_settings.xml
++++ b/res/xml/button_settings.xml
+@@ -314,6 +314,12 @@
+                 android:action="org.lineageos.settings.device.ADDITIONAL_BUTTONS_SETTINGS" />
+         </lineageos.preference.RemotePreference>
+
++        <SwitchPreference
++            android:key="edge_gesture"
++            android:title="@string/edge_gesture_title"
++            android:summary="@string/edge_gesture_summary"
++            android:persistent="false" />
++
+         <lineageos.preference.LineageSystemSettingSwitchPreference
+             android:key="click_partial_screenshot"
+             android:title="@string/click_partial_screenshot_title"
+
+diff --git a/res/xml/perf_profile_settings.xml b/res/xml/perf_profile_settings.xml
+index 0b301a9..a373f5d 100644
+--- a/res/xml/perf_profile_settings.xml
++++ b/res/xml/perf_profile_settings.xml
+@@ -37,6 +37,18 @@
+
+     </PreferenceCategory>
+
++    <PreferenceCategory
++        android:key="cpu_overclock_category"
++        android:title="@string/cpu_overclock_category_title">
++
++        <SwitchPreference
++            android:key="cpu_overclock"
++            android:title="@string/cpu_overclock_title"
++            android:summary="@string/cpu_overclock_summary"
++            android:persistent="false" />
++
++    </PreferenceCategory>
++
+     <PreferenceCategory
+         android:key="perf_profile_category"
+         android:title="@string/perf_profile_category_title">
+
+diff --git a/src/org/lineageos/lineageparts/input/ButtonSettings.java b/src/org/lineageos/lineageparts/input/ButtonSettings.java
+index 423dc60..a34485f 100644
+--- a/src/org/lineageos/lineageparts/input/ButtonSettings.java
++++ b/src/org/lineageos/lineageparts/input/ButtonSettings.java
+@@ -28,6 +28,7 @@ import android.content.res.Resources;
+ import android.os.Bundle;
+ import android.os.Handler;
+ import android.os.RemoteException;
++import android.os.SystemProperties;
+ import android.os.UserHandle;
+ import android.provider.Settings;
+ import android.util.ArraySet;
+@@ -99,6 +100,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+             "torch_long_press_power_gesture";
+     private static final String KEY_TORCH_LONG_PRESS_POWER_TIMEOUT =
+             "torch_long_press_power_timeout";
++    private static final String KEY_EDGE_GESTURE = "edge_gesture";
+     private static final String KEY_CLICK_PARTIAL_SCREENSHOT =
+             "click_partial_screenshot";
+
+@@ -140,6 +142,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+     private SwitchPreference mHomeAnswerCall;
+     private SwitchPreference mTorchLongPressPowerGesture;
+     private ListPreference mTorchLongPressPowerTimeout;
++    private SwitchPreference mEdgeGesture;
+
+     private PreferenceCategory mNavigationPreferencesCat;
+
+@@ -425,6 +428,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
+             }
+         }
+
++        // Edge gesture controller
++        mEdgeGesture = prefScreen.findPreference(KEY_EDGE_GESTURE);
++
++        if (mEdgeGesture != null) {
++            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++        }
++
+         // Override key actions on Go devices in order to hide any unsupported features
+         if (ActivityManager.isLowRamDeviceStatic()) {
+             String[] actionEntriesGo = res.getStringArray(R.array.hardware_keys_action_entries_go);
+@@ -499,6 +509,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
+                 (incallHomeBehavior == LineageSettings.Secure.RING_HOME_BUTTON_BEHAVIOR_ANSWER);
+             mHomeAnswerCall.setChecked(homeButtonAnswersCall);
+         }
++
++        // Get edge gesture status.
++        if (mEdgeGesture != null) {
++            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++        }
+     }
+
+     private ListPreference initList(String key, Action value) {
+@@ -740,6 +755,9 @@ public class ButtonSettings extends SettingsPreferenceFragment
+         } else if (preference == mHomeAnswerCall) {
+             handleToggleHomeButtonAnswersCallPreferenceClick();
+             return true;
++        } else if (preference == mEdgeGesture) {
++            SystemProperties.set("persist.vendor.edge_touch_mode", mEdgeGesture.isChecked() ? "true" : "false");
++            return true;
+         }
+
+         return super.onPreferenceTreeClick(preference);
+
+diff --git a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
+index 949562f..82a103f 100644
+--- a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
++++ b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
+@@ -28,6 +28,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
+ import android.net.Uri;
+ import android.os.Bundle;
+ import android.os.PowerManager;
++import android.os.SystemProperties;
+ import android.provider.Settings.Global;
+ import android.util.ArraySet;
+ import android.util.TypedValue;
+@@ -65,10 +66,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+     private static final String KEY_AUTO_POWER_SAVE  = "auto_power_save";
+     private static final String KEY_POWER_SAVE       = "power_save";
+     private static final String KEY_PERF_SEEKBAR     = "perf_seekbar";
++    private static final String KEY_CPU_OVERCLOCK    = "cpu_overclock";
+
+     private ListPreference mAutoPowerSavePref;
+     private SwitchPreference   mPowerSavePref;
+
++    private SwitchPreference   mCPUOverclockPref;
++
+     private SeekBarPreference        mPerfSeekBar;
+     private StopMotionVectorDrawable mPerfDrawable;
+     private PerfIconAnimator         mAnimator;
+@@ -96,6 +100,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         mPerfSeekBar = findPreference(KEY_PERF_SEEKBAR);
+         mAutoPowerSavePref = findPreference(KEY_AUTO_POWER_SAVE);
+         mPowerSavePref = findPreference(KEY_POWER_SAVE);
++        mCPUOverclockPref = findPreference(KEY_CPU_OVERCLOCK);
+
+         mPowerManager = getActivity().getSystemService(PowerManager.class);
+         mPerf = PerformanceManager.getInstance(getActivity());
+@@ -126,6 +131,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         updateAutoPowerSaveValue();
+         mAutoPowerSavePref.setOnPreferenceChangeListener(this);
+         mPowerSavePref.setOnPreferenceChangeListener(this);
++        updateCPUOverclockValue();
++        mCPUOverclockPref.setOnPreferenceChangeListener(this);
+     }
+
+
+@@ -212,6 +219,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+             getActivity().registerReceiver(mPowerSaveReceiver,
+                     new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING));
+         }
++
++        if (mCPUOverclockPref != null) {
++            updateCPUOverclockValue();
++        }
+     }
+
+     @Override
+@@ -246,6 +257,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+             final int level = Integer.parseInt((String) newValue);
+             Global.putInt(getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, level);
+             updateAutoPowerSaveSummary(level);
++        } else if (preference == mCPUOverclockPref) {
++            SystemProperties.set("persist.sys.cpu_overclock", mCPUOverclockPref.isChecked() ? "false" : "true");
+         }
+         return true;
+     }
+@@ -263,6 +276,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         PartsUpdater.notifyChanged(getActivity(), getPreferenceScreen().getKey());
+     }
+
++    private void updateCPUOverclockValue() {
++        mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", false));
++    }
++
+     private void updateAutoPowerSaveValue() {
+         final int level = Global.getInt(
+                 getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, 0);
+
+project packages/apps/Settings/
+diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
+index 4ddcfa6..3545616 100644
+--- a/res/values-zh-rCN/cm_strings.xml
++++ b/res/values-zh-rCN/cm_strings.xml
+@@ -69,6 +69,9 @@
+     <string name="security_settings_fingerprint_sensor_location_front">前置</string>
+     <string name="security_settings_fingerprint_sensor_location_left">左侧</string>
+     <string name="security_settings_fingerprint_sensor_location_right">右侧</string>
++    <string name="screen_refresh_rate">屏幕刷新率</string>
++    <string name="screen_refresh_rate_title">屏幕刷新率</string>
++    <string name="keywords_screen_refresh_rate">屏幕，刷新率，Hz</string>
+     <string name="status_bar_double_tap_to_sleep_title">点按以睡眠</string>
+     <string name="status_bar_double_tap_to_sleep_summary">双击状态栏或锁屏以关闭屏幕</string>
+     <string name="touchscreen_gesture_settings_title">触摸屏手势</string>
+
+diff --git a/res/values/cm_arrays.xml b/res/values/cm_arrays.xml
+index bc509ad..09acc25 100644
+--- a/res/values/cm_arrays.xml
++++ b/res/values/cm_arrays.xml
+@@ -45,4 +45,27 @@
+         <item>@string/security_settings_fingerprint_sensor_location_left</item>
+         <item>@string/security_settings_fingerprint_sensor_location_right</item>
+     </string-array>
++
++    <!-- Display settings.  The minimum refresh rate of screen. These are shown in a list dialog. -->
++    <string-array name="screen_refresh_rate_entries">
++        <item>30 Hz</item>
++        <item>48 Hz</item>
++        <item>50 Hz</item>
++        <item>60 Hz</item>
++        <item>75 Hz</item>
++    </string-array>
++
++    <!-- Do not translate. -->
++    <string-array name="screen_refresh_rate_values" translatable="false">
++        <!-- Do not translate. -->
++        <item>30</item>
++        <!-- Do not translate. -->
++        <item>48</item>
++        <!-- Do not translate. -->
++        <item>50</item>
++        <!-- Do not translate. -->
++        <item>60</item>
++        <!-- Do not translate. -->
++        <item>75</item>
++    </string-array>
+ </resources>
+
+diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
+index 12ad48e..0fb1eee 100644
+--- a/res/values/cm_strings.xml
++++ b/res/values/cm_strings.xml
+@@ -122,6 +122,15 @@
+     <string name="security_settings_fingerprint_sensor_location_left">left side</string>
+     <string name="security_settings_fingerprint_sensor_location_right">right side</string>
+
++    <!-- Sound & display settings screen, setting option name to change screen refresh rate -->
++    <string name="screen_refresh_rate">Screen refresh rate</string>
++    <!-- Sound & display settings screen, setting option name to change screen refresh rate [CHAR LIMIT=30] -->
++    <string name="screen_refresh_rate_title">Screen refresh rate</string>
++    <!-- Sound & display settings screen, setting option summary to change screen refresh rate -->
++    <string name="screen_refresh_rate_summary"><xliff:g id="refresh_rate_description">%1$s</xliff:g></string>
++    <!-- List of synonyms for the screen refresh rate setting, used to match in settings search [CHAR LIMIT=NONE] -->
++    <string name="keywords_screen_refresh_rate">screen, refresh rate, Hz</string>
++
+     <!-- Double tap to sleep on status bar or lockscreen -->
+     <string name="status_bar_double_tap_to_sleep_title">Tap to sleep</string>
+     <string name="status_bar_double_tap_to_sleep_summary">Double-tap on the status bar or lockscreen to turn off the display</string>
+
+diff --git a/res/xml/display_settings.xml b/res/xml/display_settings.xml
+index 1f4048e..5f2e0c6 100644
+--- a/res/xml/display_settings.xml
++++ b/res/xml/display_settings.xml
+@@ -77,6 +77,14 @@
+         android:entryValues="@array/screen_timeout_values"
+         settings:keywords="@string/keywords_screen_timeout" />
+
++    <com.android.settings.display.RefreshRateListPreference
++        android:key="screen_refresh_rate"
++        android:title="@string/screen_refresh_rate"
++        android:summary="@string/summary_placeholder"
++        android:entries="@array/screen_refresh_rate_entries"
++        android:entryValues="@array/screen_refresh_rate_values"
++        settings:keywords="@string/keywords_screen_refresh_rate" />
++
+     <Preference
+         android:key="adaptive_sleep_entry"
+         android:title="@string/adaptive_sleep_title"
+
+diff --git a/src/com/android/settings/DisplaySettings.java b/src/com/android/settings/DisplaySettings.java
+index 054a5e7..dde853a 100644
+--- a/src/com/android/settings/DisplaySettings.java
++++ b/src/com/android/settings/DisplaySettings.java
+@@ -32,6 +32,7 @@ import com.android.settings.display.ShowOperatorNamePreferenceController;
+ import com.android.settings.display.TapToWakePreferenceController;
+ import com.android.settings.display.ThemePreferenceController;
+ import com.android.settings.display.TimeoutPreferenceController;
++import com.android.settings.display.RefreshRatePreferenceController;
+ import com.android.settings.display.VrDisplayPreferenceController;
+ import com.android.settings.search.BaseSearchIndexProvider;
+ import com.android.settings.search.Indexable;
+@@ -51,6 +52,7 @@ public class DisplaySettings extends DashboardFragment {
+     public static final String KEY_PROXIMITY_ON_WAKE = "proximity_on_wake";
+
+     private static final String KEY_SCREEN_TIMEOUT = "screen_timeout";
++    private static final String KEY_SCREEN_REFRESH_RATE = "screen_refresh_rate";
+     private static final String KEY_HIGH_TOUCH_SENSITIVITY = "high_touch_sensitivity_enable";
+
+     @Override
+@@ -93,6 +95,7 @@ public class DisplaySettings extends DashboardFragment {
+         controllers.add(new ScreenSaverPreferenceController(context));
+         controllers.add(new TapToWakePreferenceController(context));
+         controllers.add(new TimeoutPreferenceController(context, KEY_SCREEN_TIMEOUT));
++        controllers.add(new RefreshRatePreferenceController(context, KEY_SCREEN_REFRESH_RATE));
+         controllers.add(new VrDisplayPreferenceController(context));
+         controllers.add(new ShowOperatorNamePreferenceController(context));
+         controllers.add(new ThemePreferenceController(context));
+
+diff --git a/src/com/android/settings/development/AdbRootPreferenceController.java b/src/com/android/settings/development/AdbRootPreferenceController.java
+index 5f7d65d..8cdc24f 100644
+--- a/src/com/android/settings/development/AdbRootPreferenceController.java
++++ b/src/com/android/settings/development/AdbRootPreferenceController.java
+@@ -53,7 +53,7 @@ public class AdbRootPreferenceController extends DeveloperOptionsPreferenceContr
+
+     @Override
+     public boolean isAvailable() {
+-        return Build.IS_DEBUGGABLE;
++        return true;
+     }
+
+     @Override
+
+diff --git a/src/com/android/settings/display/RefreshRateListPreference.java b/src/com/android/settings/display/RefreshRateListPreference.java
+new file mode 100644
+index 0000000..0ec5f34
+--- /dev/null
++++ b/src/com/android/settings/display/RefreshRateListPreference.java
+@@ -0,0 +1,49 @@
++/*
++ * Copyright (C) 2021 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
++ * except in compliance with the License. You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the
++ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the specific language governing
++ * permissions and limitations under the License.
++ */
++
++package com.android.settings.display;
++
++import android.app.Dialog;
++import android.content.Context;
++import android.content.DialogInterface;
++import android.util.AttributeSet;
++import android.view.View;
++
++import androidx.appcompat.app.AlertDialog.Builder;
++
++import com.android.settings.RestrictedListPreference;
++
++
++public class RefreshRateListPreference extends RestrictedListPreference {
++    private final CharSequence[] mInitialEntries;
++    private final CharSequence[] mInitialValues;
++
++    public RefreshRateListPreference(Context context, AttributeSet attrs) {
++        super(context, attrs);
++        mInitialEntries = getEntries();
++        mInitialValues = getEntryValues();
++    }
++
++    @Override
++    protected void onPrepareDialogBuilder(Builder builder, DialogInterface.OnClickListener listener) {
++        super.onPrepareDialogBuilder(builder, listener);
++        builder.setView(null);
++    }
++
++    @Override
++    protected void onDialogCreated(Dialog dialog) {
++        super.onDialogCreated(dialog);
++        dialog.create();
++    }
++}
+
+diff --git a/src/com/android/settings/display/RefreshRatePreferenceController.java b/src/com/android/settings/display/RefreshRatePreferenceController.java
+new file mode 100644
+index 0000000..371b9fe
+--- /dev/null
++++ b/src/com/android/settings/display/RefreshRatePreferenceController.java
+@@ -0,0 +1,122 @@
++/*
++ * Copyright (C) 2021 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
++ * except in compliance with the License. You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the
++ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the specific language governing
++ * permissions and limitations under the License.
++ */
++
++package com.android.settings.display;
++
++import android.content.Context;
++import android.util.Log;
++
++import androidx.preference.Preference;
++
++import com.android.settings.R;
++import com.android.settings.core.PreferenceControllerMixin;
++import com.android.settingslib.core.AbstractPreferenceController;
++
++import java.io.File;
++import java.io.FileReader;
++import java.io.FileWriter;
++
++
++public class RefreshRatePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, Preference.OnPreferenceChangeListener>
++    private static final String TAG = "RefreshRatePrefContr";
++    private final String mScreenRefreshRateKey;
++
++    public RefreshRatePreferenceController(Context context, String key) {
++        super(context);
++        mScreenRefreshRateKey = key;
++    }
++
++    @Override
++    public boolean isAvailable() {
++        return true;
++    }
++
++    @Override
++    public String getPreferenceKey() {
++        return mScreenRefreshRateKey;
++    }
++
++    @Override
++    public void updateState(Preference preference) {
++        final RefreshRateListPreference refreshrateListPreference = (RefreshRateListPreference) preference;
++        final int currentRefreshRate = getRefreshRate();
++        refreshrateListPreference.setValue(String.valueOf(currentRefreshRate));
++        updateRefreshRatePreferenceDescription(refreshrateListPreference, Integer.parseInt(refreshrateListPreference.getValue()));
++    }
++
++    @Override
++    public boolean onPreferenceChange(Preference preference, Object newValue) {
++        final int value = Integer.parseInt((String) newValue);
++        setRefreshRate(value);
++        if (value != getRefreshRate()) { // TODO: properly handle screens without high refresh rate support
++            Log.w(TAG, "could not change screen refresh rate to unsupported value: " + String.valueOf(value));
++        }
++        updateRefreshRatePreferenceDescription((RefreshRateListPreference) preference, value);
++        return true;
++    }
++
++    public static CharSequence getRefreshRateDescription(int currentRefreshRate, CharSequence[] entries, CharSequence[] values) {
++        if (currentRefreshRate < 0 || entries == null || values == null || values.length != entries.length) {
++            return null;
++        }
++
++        for (int i = 0; i < values.length; i++) {
++            int refreshrate = Integer.parseInt(values[i].toString());
++            if (currentRefreshRate == refreshrate) {
++                return entries[i];
++            }
++        }
++        return null;
++    }
++
++    private void updateRefreshRatePreferenceDescription(RefreshRateListPreference preference, int currentRefreshRate) {
++        final CharSequence[] entries = preference.getEntries();
++        final CharSequence[] values = preference.getEntryValues();
++        final CharSequence refreshrateDescription = getRefreshRateDescription(currentRefreshRate, entries, values);
++        final String summary = refreshrateDescription == null ? "" : mContext.getString(R.string.screen_refresh_rate_summary, refreshrateDescription);
++        preference.setSummary(summary);
++    }
++
++    private int getRefreshRate() {
++        File file = new File("/sys/class/graphics/fb0/dynamic_fps");
++        if (file.exists()) {
++            try {
++                FileReader filereader = new FileReader(file);
++                int currentValue = (filereader.read() - 48) * 10 + (filereader.read() - 48); // ASCII: 0 = 48, 1 = 49...
++                filereader.close();
++                return currentValue;
++            } catch (Exception e) {
++                Log.e(TAG, "could not get screen refresh rate", e);
++            }
++        } else {
++            Log.e(TAG, "File not found: /sys/class/graphics/fb0/dynamic_fps");
++        }
++        return -1;
++    }
++
++    private void setRefreshRate(int newValue) {
++        File file = new File("/sys/class/graphics/fb0/dynamic_fps");
++        if (file.exists()) {
++            try {
++                FileWriter filewriter = new FileWriter(file);
++                filewriter.write(String.valueOf(newValue));
++                filewriter.close();
++            } catch (Exception e) {
++                Log.e(TAG, "could not set screen refresh rate", e);
++            }
++        } else {
++            Log.e(TAG, "File not found: /sys/class/graphics/fb0/dynamic_fps");
++        }
++    }
++}
+
+project packages/modules/ModuleMetadata/
+diff --git a/Android.bp b/Android.bp
+index e8084b3..5cd8f5e 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -20,7 +20,7 @@ android_app {
+
+     product_specific: true,
+     optimize: {
+-        enabled: false,
++        enabled: true,
+     },
+
+     dex_preopt: {
+
+project system/core/
+diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
+index 8521b5f..e03be6a 100644
+--- a/adb/daemon/main.cpp
++++ b/adb/daemon/main.cpp
+@@ -70,7 +70,6 @@ static bool should_drop_privileges() {
+     // ro.secure:
+     //   Drop privileges by default. Set to 1 on userdebug and user builds.
+     bool ro_secure = android::base::GetBoolProperty("ro.secure", true);
+-    bool ro_debuggable = __android_log_is_debuggable();
+
+     // Drop privileges if ro.secure is set...
+     bool drop = ro_secure;
+@@ -79,7 +78,7 @@ static bool should_drop_privileges() {
+     std::string prop = android::base::GetProperty("service.adb.root", "");
+     bool adb_root = (prop == "1");
+     bool adb_unroot = (prop == "0");
+-    if (ro_debuggable && adb_root) {
++    if (adb_root) {
+         drop = false;
+     }
+     // ... and "adb unroot" lets you explicitly drop privileges.
+
+diff --git a/adb/root/adbroot_service.cpp b/adb/root/adbroot_service.cpp
+index b0c7ece..37a4987 100644
+--- a/adb/root/adbroot_service.cpp
++++ b/adb/root/adbroot_service.cpp
+@@ -66,8 +66,11 @@ binder::Status ADBRootService::setEnabled(bool enabled) {
+         enabled_ = enabled;
+         WriteStringToFile(std::to_string(enabled), kStoragePath + kEnabled);
+
+-        // Turning off adb root, restart adbd.
+-        if (!enabled) {
++        // Turning on/off adb root, restart adbd.
++        if (enabled) {
++            base::SetProperty("service.adb.root", "1");
++            base::SetProperty("ctl.restart", "adbd");
++        } else {
+             base::SetProperty("service.adb.root", "0");
+             base::SetProperty("ctl.restart", "adbd");
+         }
+
+diff --git a/healthd/Android.bp b/healthd/Android.bp
+index 2cf6be9..04790bb 100644
+--- a/healthd/Android.bp
++++ b/healthd/Android.bp
+@@ -10,7 +10,7 @@ cc_library_headers {
+ cc_library_static {
+     name: "libbatterymonitor",
+     srcs: ["BatteryMonitor.cpp"],
+-    cflags: ["-Wall", "-Werror"],
++    cflags: ["-Wall"],
+     vendor_available: true,
+     recovery_available: true,
+     export_include_dirs: ["include"],
+@@ -25,10 +25,7 @@ cc_library_static {
+ cc_defaults {
+     name: "android.hardware.health@2.0-service_defaults",
+
+-    cflags: [
+-        "-Wall",
+-        "-Werror",
+-    ],
++    cflags: ["-Wall"],
+
+     static_libs: [
+         "android.hardware.health@2.0-impl",
+@@ -92,10 +89,7 @@ cc_library_static {
+         "healthd_mode_charger_nops.cpp",
+     ],
+
+-    cflags: [
+-        "-Wall",
+-        "-Werror",
+-    ],
++    cflags: ["-Wall"],
+
+     header_libs: [
+         "libhealthd_headers",
+
+diff --git a/healthd/Android.mk b/healthd/Android.mk
+index 4eb98da..fb50aad 100644
+--- a/healthd/Android.mk
++++ b/healthd/Android.mk
+@@ -31,7 +31,6 @@ include $(BUILD_STATIC_LIBRARY)
+ ### libhealthd_charger ###
+ include $(CLEAR_VARS)
+
+-LOCAL_CFLAGS := -Werror
+ ifeq ($(strip $(BOARD_CHARGER_DISABLE_INIT_BLANK)),true)
+ LOCAL_CFLAGS += -DCHARGER_DISABLE_INIT_BLANK
+ endif
+@@ -82,7 +81,6 @@ LOCAL_SRC_FILES := \
+ LOCAL_MODULE := charger
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+
+-LOCAL_CFLAGS := -Werror
+ ifeq ($(strip $(LOCAL_CHARGER_NO_UI)),true)
+ LOCAL_CFLAGS += -DCHARGER_NO_UI
+ endif
+@@ -140,7 +138,7 @@ LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/system/bin
+ LOCAL_MODULE_STEM := charger
+
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+-LOCAL_CFLAGS := -Wall -Werror
++LOCAL_CFLAGS := -Wall
+ LOCAL_CFLAGS += -DCHARGER_NO_UI
+
+ # charger.recovery doesn't link against libhealthd_{charger,draw} or libminui, since it doesn't need
+@@ -174,7 +172,7 @@ include $(BUILD_EXECUTABLE)
+ include $(CLEAR_VARS)
+ LOCAL_MODULE := charger_test
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+-LOCAL_CFLAGS := -Wall -Werror -DCHARGER_NO_UI
++LOCAL_CFLAGS := -Wall -DCHARGER_NO_UI
+ LOCAL_STATIC_LIBRARIES := $(CHARGER_STATIC_LIBRARIES)
+ LOCAL_SHARED_LIBRARIES := $(CHARGER_SHARED_LIBRARIES)
+ LOCAL_SRC_FILES := \
+
+diff --git a/init/Android.bp b/init/Android.bp
+index 377a374..7ab7f3b 100644
+--- a/init/Android.bp
++++ b/init/Android.bp
+@@ -27,7 +27,7 @@ cc_defaults {
+         "-Wno-unused-parameter",
+         "-Werror",
+         "-DALLOW_LOCAL_PROP_OVERRIDE=0",
+-        "-DALLOW_PERMISSIVE_SELINUX=0",
++        "-DALLOW_PERMISSIVE_SELINUX=1",
+         "-DREBOOT_BOOTLOADER_ON_PANIC=0",
+         "-DWORLD_WRITABLE_KMSG=0",
+         "-DDUMP_ON_UMOUNT_FAILURE=0",
+
+diff --git a/init/Android.mk b/init/Android.mk
+index c4f7d34..8739e56 100644
+--- a/init/Android.mk
++++ b/init/Android.mk
+@@ -16,7 +16,7 @@ init_options += \
+ else
+ init_options += \
+     -DALLOW_LOCAL_PROP_OVERRIDE=0 \
+-    -DALLOW_PERMISSIVE_SELINUX=0 \
++    -DALLOW_PERMISSIVE_SELINUX=1 \
+     -DREBOOT_BOOTLOADER_ON_PANIC=0 \
+     -DWORLD_WRITABLE_KMSG=0 \
+     -DDUMP_ON_UMOUNT_FAILURE=0
+
+diff --git a/libcutils/trace-dev.cpp b/libcutils/trace-dev.cpp
+index 4da8215..07afa2f 100644
+--- a/libcutils/trace-dev.cpp
++++ b/libcutils/trace-dev.cpp
+@@ -24,22 +24,14 @@ static pthread_once_t atrace_once_control = PTHREAD_ONCE_INIT;
+ // the Zygote process from tracing.
+ void atrace_set_tracing_enabled(bool enabled)
+ {
++    enabled = false;
+     atomic_store_explicit(&atrace_is_enabled, enabled, memory_order_release);
+     atrace_update_tags();
+ }
+
+ static void atrace_init_once()
+ {
+-    atrace_marker_fd = open("/sys/kernel/debug/tracing/trace_marker", O_WRONLY | O_CLOEXEC);
+-    if (atrace_marker_fd == -1) {
+-        ALOGE("Error opening trace file: %s (%d)", strerror(errno), errno);
+-        atrace_enabled_tags = 0;
+-        goto done;
+-    }
+-
+-    atrace_enabled_tags = atrace_get_property();
+-
+-done:
++    atrace_enabled_tags = 0;
+     atomic_store_explicit(&atrace_is_ready, true, memory_order_release);
+ }
+
+diff --git a/libcutils/trace-dev.inc b/libcutils/trace-dev.inc
+index e3da77b..33ae155 100644
+--- a/libcutils/trace-dev.inc
++++ b/libcutils/trace-dev.inc
+@@ -45,7 +45,7 @@ atomic_bool             atrace_is_ready      = ATOMIC_VAR_INIT(false);
+ int                     atrace_marker_fd     = -1;
+ uint64_t                atrace_enabled_tags  = ATRACE_TAG_NOT_READY;
+ static bool             atrace_is_debuggable = false;
+-static atomic_bool      atrace_is_enabled    = ATOMIC_VAR_INIT(true);
++static atomic_bool      atrace_is_enabled    = ATOMIC_VAR_INIT(false);
+ static pthread_mutex_t  atrace_tags_mutex    = PTHREAD_MUTEX_INITIALIZER;
+
+ // Set whether this process is debuggable, which determines whether
+@@ -53,6 +53,7 @@ static pthread_mutex_t  atrace_tags_mutex    = PTHREAD_MUTEX_INITIALIZER;
+ // is not set to '1'.
+ void atrace_set_debuggable(bool debuggable)
+ {
++    debuggable = false;
+     atrace_is_debuggable = debuggable;
+     atrace_update_tags();
+ }
+
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index d5afabc..d77e7d2 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -439,11 +439,6 @@ on post-fs-data
+     # Make sure we have the device encryption key.
+     installkey /data
+
+-    # Start bootcharting as soon as possible after the data partition is
+-    # mounted to collect more data.
+-    mkdir /data/bootchart 0755 shell shell
+-    bootchart start
+-
+     # Load fsverity keys. This needs to happen before apexd, as post-install of
+     # APEXes may rely on keys.
+     exec -- /system/bin/fsverity_init
+@@ -504,7 +499,6 @@ on post-fs-data
+     mkdir /data/misc/ethernet 0770 system system
+     mkdir /data/misc/dhcp 0770 dhcp dhcp
+     mkdir /data/misc/user 0771 root root
+-    mkdir /data/misc/perfprofd 0775 root root
+     # give system access to wpa_supplicant.conf for backup and restore
+     chmod 0660 /data/misc/wifi/wpa_supplicant.conf
+     mkdir /data/local 0751 root root
+@@ -512,18 +506,10 @@ on post-fs-data
+     mkdir /data/misc/audioserver 0700 audioserver audioserver
+     mkdir /data/misc/cameraserver 0700 cameraserver cameraserver
+     mkdir /data/misc/vold 0700 root root
+-    mkdir /data/misc/boottrace 0771 system shell
+-    mkdir /data/misc/update_engine 0700 root root
+-    mkdir /data/misc/update_engine_log 02750 root log
+-    mkdir /data/misc/trace 0700 root root
+-    # create location to store surface and window trace files
+-    mkdir /data/misc/wmtrace 0700 system system
+     # profile file layout
+     mkdir /data/misc/profiles 0771 system system
+     mkdir /data/misc/profiles/cur 0771 system system
+     mkdir /data/misc/profiles/ref 0771 system system
+-    mkdir /data/misc/profman 0770 system shell
+-    mkdir /data/misc/gcov 0770 root root
+
+     mkdir /data/preloads 0775 system system
+
+@@ -535,7 +521,6 @@ on post-fs-data
+     # For security reasons, /data/local/tmp should always be empty.
+     # Do not place files or directories in /data/local/tmp
+     mkdir /data/local/tmp 0771 shell shell
+-    mkdir /data/local/traces 0777 shell shell
+     mkdir /data/data 0771 system system
+     mkdir /data/app-private 0771 system system
+     mkdir /data/app-ephemeral 0771 system system
+@@ -543,18 +528,9 @@ on post-fs-data
+     mkdir /data/app-lib 0771 system system
+     mkdir /data/app 0771 system system
+     mkdir /data/property 0700 root root
+-    mkdir /data/tombstones 0771 system system
+-    mkdir /data/vendor/tombstones 0771 root root
+-    mkdir /data/vendor/tombstones/wifi 0771 wifi wifi
+
+     # create dalvik-cache, so as to enforce our permissions
+     mkdir /data/dalvik-cache 0771 root root
+-    # create the A/B OTA directory, so as to enforce our permissions
+-    mkdir /data/ota 0771 root root
+-
+-    # create the OTA package directory. It will be accessed by GmsCore (cache
+-    # group), update_engine and update_verifier.
+-    mkdir /data/ota_package 0770 system cache
+
+     # create resource-cache and double-check the perms
+     mkdir /data/resource-cache 0771 system system
+@@ -572,20 +548,11 @@ on post-fs-data
+     # the following directory.
+     mkdir /data/mediadrm 0770 mediadrm mediadrm
+
+-    mkdir /data/anr 0775 system system
+-
+-    # NFC: create data/nfc for nv storage
+-    mkdir /data/nfc 0770 nfc nfc
+-    mkdir /data/nfc/param 0770 nfc nfc
+-
+     # Create all remaining /data root dirs so that they are made through init
+     # and get proper encryption policy installed
+     mkdir /data/backup 0700 system system
+-    mkdir /data/ss 0700 system system
+
+     mkdir /data/system 0775 system system
+-    mkdir /data/system/dropbox 0700 system system
+-    mkdir /data/system/heapdump 0700 system system
+     mkdir /data/system/users 0775 system system
+
+     mkdir /data/system_de 0770 system system
+@@ -809,9 +776,6 @@ on property:vold.decrypt=trigger_shutdown_framework
+
+ on property:sys.boot_completed=1
+     bootchart stop
+-    # Setup per_boot directory so other .rc could start to use it on boot_completed
+-    exec - system system -- /bin/rm -rf /data/per_boot
+-    mkdir /data/per_boot 0700 system system
+
+ # system server cannot write to /proc/sys files,
+ # and chown/chmod does not work for /proc/sys/ entries.
+@@ -854,18 +818,4 @@ service console /system/bin/sh
+     setenv HOSTNAME console
+
+ on property:ro.debuggable=1
+-    # Give writes to anyone for the trace folder on debug builds.
+-    # The folder is used to store method traces.
+-    chmod 0773 /data/misc/trace
+-    # Give reads to anyone for the window trace folder on debug builds.
+-    chmod 0775 /data/misc/wmtrace
+     start console
+-
+-service flash_recovery /system/bin/install-recovery.sh
+-    class main
+-    oneshot
+-    disabled
+-
+-# update recovery if enabled
+-on property:persist.sys.recovery_update=true
+-    start flash_recovery
+
+project system/sepolicy/
+diff --git a/Android.mk b/Android.mk
+index dadd7b0..1c92222 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -81,10 +81,12 @@ ifndef BOARD_SEPOLICY_VERS
+ BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
+ endif
+
+-NEVERALLOW_ARG :=
++# Hacks to keep SELinux permissive in user builds
++SELINUX_IGNORE_NEVERALLOWS := true
++
+ ifeq ($(SELINUX_IGNORE_NEVERALLOWS),true)
+ ifeq ($(TARGET_BUILD_VARIANT),user)
+-$(error SELINUX_IGNORE_NEVERALLOWS := true cannot be used in user builds)
++$(warning SELINUX_IGNORE_NEVERALLOWS := true cannot be used in user builds)
+ endif
+ $(warning Be careful when using the SELINUX_IGNORE_NEVERALLOWS flag. \
+           It does not work in user builds and using it will \
+@@ -980,10 +982,9 @@ $(built_sepolicy_neverallows)
+ 	$(hide) $(HOST_OUT_EXECUTABLES)/sepolicy-analyze $@.tmp permissive > $@.permissivedomains
+ 	$(hide) if [ "$(TARGET_BUILD_VARIANT)" = "user" -a -s $@.permissivedomains ]; then \
+ 		echo "==========" 1>&2; \
+-		echo "ERROR: permissive domains not allowed in user builds" 1>&2; \
++		echo "WARNING: permissive domains not allowed in user builds" 1>&2; \
+ 		echo "List of invalid domains:" 1>&2; \
+ 		cat $@.permissivedomains 1>&2; \
+-		exit 1; \
+ 		fi
+ 	$(hide) mv $@.tmp $@
+
+@@ -1034,10 +1035,9 @@ $(LOCAL_BUILT_MODULE): $(sepolicy.recovery.conf) $(HOST_OUT_EXECUTABLES)/checkpo
+ 	$(hide) $(HOST_OUT_EXECUTABLES)/sepolicy-analyze $@.tmp permissive > $@.permissivedomains
+ 	$(hide) if [ "$(TARGET_BUILD_VARIANT)" = "user" -a -s $@.permissivedomains ]; then \
+ 		echo "==========" 1>&2; \
+-		echo "ERROR: permissive domains not allowed in user builds" 1>&2; \
++		echo "WARNING: permissive domains not allowed in user builds" 1>&2; \
+ 		echo "List of invalid domains:" 1>&2; \
+ 		cat $@.permissivedomains 1>&2; \
+-		exit 1; \
+ 		fi
+ 	$(hide) mv $@.tmp $@
+
+project vendor/lineage/
+diff --git a/build/tasks/kernel.mk b/build/tasks/kernel.mk
+index bdf264d..529ffb6 100644
+--- a/build/tasks/kernel.mk
++++ b/build/tasks/kernel.mk
+@@ -89,10 +89,13 @@ KERNEL_DEFCONFIG_SRC := $(KERNEL_DEFCONFIG_DIR)/$(KERNEL_DEFCONFIG)
+
+ ifneq ($(TARGET_KERNEL_ADDITIONAL_CONFIG),)
+ KERNEL_ADDITIONAL_CONFIG := $(TARGET_KERNEL_ADDITIONAL_CONFIG)
++KERNEL_ADDITIONAL_CONFIG_DEPENDENCY :=
+ KERNEL_ADDITIONAL_CONFIG_SRC := $(KERNEL_DEFCONFIG_DIR)/$(KERNEL_ADDITIONAL_CONFIG)
+     ifeq ("$(wildcard $(KERNEL_ADDITIONAL_CONFIG_SRC))","")
+         $(warning TARGET_KERNEL_ADDITIONAL_CONFIG '$(TARGET_KERNEL_ADDITIONAL_CONFIG)' doesn't exist)
+         KERNEL_ADDITIONAL_CONFIG_SRC := /dev/null
++    else
++        KERNEL_ADDITIONAL_CONFIG_DEPENDENCY := $(KERNEL_ADDITIONAL_CONFIG_SRC)
+     endif
+ else
+     KERNEL_ADDITIONAL_CONFIG_SRC := /dev/null
+@@ -239,10 +242,8 @@ define make-dtb-target
+ $(call internal-make-kernel-target,$(DTB_OUT),$(1))
+ endef
+
+-$(KERNEL_OUT):
++$(KERNEL_ADDITIONAL_CONFIG_OUT): $(KERNEL_ADDITIONAL_CONFIG_DEPENDENCY)
+        mkdir -p $(KERNEL_OUT)
+-
+-$(KERNEL_ADDITIONAL_CONFIG_OUT): $(KERNEL_OUT)
+        $(hide) cmp -s $(KERNEL_ADDITIONAL_CONFIG_SRC) $@ || cp $(KERNEL_ADDITIONAL_CONFIG_SRC) $@;
+
+ $(KERNEL_CONFIG): $(KERNEL_DEFCONFIG_SRC) $(KERNEL_ADDITIONAL_CONFIG_OUT)
+@@ -288,13 +289,13 @@ kerneltags: $(KERNEL_CONFIG)
+
+ .PHONY: kernelsavedefconfig alldefconfig
+
+-kernelsavedefconfig: $(KERNEL_OUT)
++kernelsavedefconfig: mkdir -p $(KERNEL_OUT)
+        $(call make-kernel-target,$(KERNEL_DEFCONFIG))
+        env KCONFIG_NOTIMESTAMP=true \
+                 $(call make-kernel-target,savedefconfig)
+        cp $(KERNEL_OUT)/defconfig $(KERNEL_DEFCONFIG_SRC)
+
+-alldefconfig: $(KERNEL_OUT)
++alldefconfig: mkdir -p $(KERNEL_OUT)
+        env KCONFIG_NOTIMESTAMP=true \
+                 $(call make-kernel-target,alldefconfig)
+
+diff --git a/config/common.mk b/config/common.mk
+index 2fe9cb0..d0a260f 100644
+--- a/config/common.mk
++++ b/config/common.mk
+@@ -101,10 +101,6 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
+ # Disable vendor restrictions
+ PRODUCT_RESTRICT_VENDOR_FILES := false
+
+-# Bootanimation
+-PRODUCT_PACKAGES += \
+-    bootanimation.zip
+-
+ # AOSP packages
+ PRODUCT_PACKAGES += \
+     Terminal
+@@ -113,35 +109,12 @@ PRODUCT_PACKAGES += \
+ PRODUCT_PACKAGES += \
+     LineageParts \
+     LineageSettingsProvider \
+-    LineageSetupWizard \
+-    Updater
++    LineageSetupWizard
+
+ # Themes
+ PRODUCT_PACKAGES += \
+-    LineageThemesStub \
+     ThemePicker
+
+-# Extra tools in Lineage
+-PRODUCT_PACKAGES += \
+-    7z \
+-    awk \
+-    bash \
+-    bzip2 \
+-    curl \
+-    getcap \
+-    htop \
+-    lib7z \
+-    libsepol \
+-    nano \
+-    pigz \
+-    powertop \
+-    setcap \
+-    unrar \
+-    unzip \
+-    vim \
+-    wget \
+-    zip
+-
+ # Filesystems tools
+ PRODUCT_PACKAGES += \
+     fsck.exfat \
+@@ -151,20 +124,6 @@ PRODUCT_PACKAGES += \
+     mkfs.ntfs \
+     mount.ntfs
+
+-# Openssh
+-PRODUCT_PACKAGES += \
+-    scp \
+-    sftp \
+-    ssh \
+-    sshd \
+-    sshd_config \
+-    ssh-keygen \
+-    start-ssh
+-
+-# rsync
+-PRODUCT_PACKAGES += \
+-    rsync
+-
+ # Storage manager
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     ro.storage_manager.enabled=true
+
+diff --git a/config/common_full.mk b/config/common_full.mk
+index 91bf198..67bfa73 100644
+--- a/config/common_full.mk
++++ b/config/common_full.mk
+@@ -3,16 +3,6 @@ $(call inherit-product, vendor/lineage/config/common_mobile.mk)
+
+ PRODUCT_SIZE := full
+
+-# Include {Lato,Rubik} fonts
+-$(call inherit-product-if-exists, external/google-fonts/lato/fonts.mk)
+-$(call inherit-product-if-exists, external/google-fonts/rubik/fonts.mk)
+-
+-# Fonts
+-PRODUCT_PACKAGES += \
+-    fonts_customization.xml \
+-    LineageLatoFont \
+-    LineageRubikFont
+-
+ # Recorder
+ PRODUCT_PACKAGES += \
+     Recorder
+
+diff --git a/config/common_mobile.mk b/config/common_mobile.mk
+index e15120e..76611b2 100644
+--- a/config/common_mobile.mk
++++ b/config/common_mobile.mk
+@@ -13,42 +13,19 @@ endif
+
+ # Optional packages
+ PRODUCT_PACKAGES += \
+-    LiveWallpapersPicker \
+-    PhotoTable
++    LiveWallpapersPicker
+
+ # AOSP packages
+ PRODUCT_PACKAGES += \
+-    Email \
+-    ExactCalculator \
+-    Exchange2
++    ExactCalculator
+
+ # Lineage packages
+ PRODUCT_PACKAGES += \
+-    AudioFX \
+     Backgrounds \
+     Eleven \
+     Etar \
+     Jelly \
+-    LockClock \
+-    Profiles \
+-    Seedvault \
+-    TrebuchetQuickStep \
+-    WeatherProvider
+-
+-# Accents
+-PRODUCT_PACKAGES += \
+-    LineageBlackTheme \
+-    LineageDarkTheme \
+-    LineageBlackAccent \
+-    LineageBlueAccent \
+-    LineageBrownAccent \
+-    LineageCyanAccent \
+-    LineageGreenAccent \
+-    LineageOrangeAccent \
+-    LineagePinkAccent \
+-    LineagePurpleAccent \
+-    LineageRedAccent \
+-    LineageYellowAccent
++    TrebuchetQuickStep
+
+ # Charger
+ PRODUCT_PACKAGES += \
+@@ -62,10 +39,6 @@ PRODUCT_PACKAGES += \
+     libhealthd.lineage
+ endif
+
+-# Customizations
+-PRODUCT_PACKAGES += \
+-    LineageNavigationBarNoHint
+-
+ # Media
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     media.recorder.show_manufacturer_and_model=true
+
+diff --git a/config/data_only.mk b/config/data_only.mk
+index e45a2d5..ab70301 100644
+--- a/config/data_only.mk
++++ b/config/data_only.mk
+@@ -1,8 +1,3 @@
+ # World APN list
+ PRODUCT_PACKAGES += \
+     apns-conf.xml
+-
+-# Telephony packages
+-PRODUCT_PACKAGES += \
+-    Stk \
+-    CellBroadcastReceiver
+
+diff --git a/config/telephony.mk b/config/telephony.mk
+index 43bbaa9..3e488db 100644
+--- a/config/telephony.mk
++++ b/config/telephony.mk
+@@ -8,9 +8,7 @@ PRODUCT_PACKAGES += \
+
+ # Telephony packages
+ PRODUCT_PACKAGES += \
+-    messaging \
+-    Stk \
+-    CellBroadcastReceiver
++    messaging
+
+ # Default ringtone
+ PRODUCT_PRODUCT_PROPERTIES += \
+
+diff --git a/overlay/common/frameworks/base/core/res/res/values/colors.xml b/overlay/common/frameworks/base/core/res/res/values/colors.xml
+deleted file mode 100644
+index 27fd690..0000000
+--- a/overlay/common/frameworks/base/core/res/res/values/colors.xml
++++ /dev/null
+
+diff --git a/prebuilt/common/etc/fonts_customization.xml b/prebuilt/common/etc/fonts_customization.xml
+deleted file mode 100644
+index 0c9a7fb..0000000
+--- a/prebuilt/common/etc/fonts_customization.xml
++++ /dev/null
+
+diff --git a/prebuilt/common/etc/init/lineage-ssh.rc b/prebuilt/common/etc/init/lineage-ssh.rc
+deleted file mode 100644
+index edf3863..0000000
+--- a/prebuilt/common/etc/init/lineage-ssh.rc
++++ /dev/null
+
+diff --git a/prebuilt/common/etc/init/lineage-system.rc b/prebuilt/common/etc/init/lineage-system.rc
+index 29e795f..deb4c99 100644
+--- a/prebuilt/common/etc/init/lineage-system.rc
++++ b/prebuilt/common/etc/init/lineage-system.rc
+@@ -8,10 +8,3 @@ on post-fs-data
+     # Change permissions on fsck log so it can be added to the dropbox
+     chown root log /dev/fscklogs/log
+     chmod 0640 /dev/fscklogs/log
+-
+-# bugreport is triggered by holding down volume down, volume up and power
+-service bugreport /system/bin/dumpstate -d -p -B -z \
+-        -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
+-    oneshot
+-    disabled
+-    keycodes 114 115 116
+
+diff --git a/prebuilt/common/etc/init/lineage-updates.rc b/prebuilt/common/etc/init/lineage-updates.rc
+deleted file mode 100644
+index 3a9b481..0000000
+--- a/prebuilt/common/etc/init/lineage-updates.rc
++++ /dev/null

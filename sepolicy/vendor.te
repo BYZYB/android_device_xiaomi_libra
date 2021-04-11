@@ -6,6 +6,7 @@ allow bootstat bootstat:{ capability capability2 } *;
 
 # Cnd
 allow cnd cnd:capability *;
+allow cnd device:file *;
 allow cnd diag_device:chr_file *;
 allow cnd self:{ capability socket udp_socket } *;
 allowxperm cnd self:socket ioctl msm_sock_ipc_ioctls;
@@ -13,6 +14,10 @@ allowxperm cnd self:socket ioctl msm_sock_ipc_ioctls;
 # Consumerir
 type lirc_device, file_type;
 allow system_server lirc_device:chr_file *;
+
+# FSCK
+allow fsck block_device:blk_file *;
+allow fsck mnt_vendor_file:{ dir file } *;
 
 # HAL
 allow hal_fingerprint_default fingerprintd_data_file:{ dir file sock_file } *;
@@ -31,6 +36,9 @@ allow healthd sysfs:{ dir file } *;
 allow hwservicemanager runtime_event_log_tags_file:file *;
 allow hwservicemanager init:{ binder dir file process } *;
 
+# Installd
+allow installd device:file *;
+
 # Init
 allow init devpts:chr_file *;
 allow init diag_device:chr_file *;
@@ -42,10 +50,12 @@ allow init hwservicemanager:binder *;
 allow init init:{ socket capability } *;
 allow init lirc_device:chr_file *;
 allow init mm-pp-daemon:unix_stream_socket *;
+allow init mnt_vendor_file:{ dir file } *;
 allow init pps_socket:sock_file *;
 allow init qmuxd_socket:sock_file *;
 allow init qmuxd:unix_stream_socket *;
 allow init shell_exec:{ dir file } *;
+allow init socket_device:sock_file *;
 allow init sysfs_graphics:file *;
 allow init sysfs_ssr:lnk_file *;
 allow init sysfs:{ dir file } *;
@@ -67,16 +77,26 @@ qmux_socket(mmbn-daemon)
 diag_use(mmbn-daemon)
 allow mm-pp-daemon default_android_service:service_manager *;
 allow mm-pp-daemon diag_device:chr_file *;
+allow mm-pp-daemon mnt_vendor_file:{ dir file } *;
+allow mm-pp-daemon persist_file:{ dir file lnk_file } *;
 allow mm-pp-daemon surfaceflinger:binder *;
 allow mm-qcamerad camera_prop:file *;
 allow mm-qcamerad sysfs:{ dir file } *;
-allow mmbn-daemon firmware_file:{ dir file } *;
+allow mmbn-daemon firmware_file:{ dir file lnk_file } *;
 allow mmbn-daemon mmbn-daemon:capability *;
 allow mmbn-daemon self:socket *;
 allow mmbn-daemon vfat:{ dir file } *;
 allowxperm mmbn-daemon self:socket ioctl msm_sock_ipc_ioctls;
 
+# Netd
+allow netd device:file *;
+
+# Peripheral Mananager
+allow per_mgr per_mgr:capability *;
+allow per_mgr self:capability *;
+
 # QTI init
+allow qti_init_shell app_data_file:{ dir file } *;
 allow qti_init_shell file_contexts_file:file *;
 allow qti_init_shell fuse:{ dir file } *;
 allow qti_init_shell kernel:security *;
@@ -102,9 +122,12 @@ allow readmac wifi_data_file:{ dir file } *;
 allowxperm readmac self:socket ioctl msm_sock_ipc_ioctls;
 
 # Rfs access
+allow rfs_access mnt_vendor_file:{ dir file } *;
+allow rfs_access persist_file:{ dir file lnk_file } *;
 allow rfs_access rfs_access:capability *;
 
 # Rild
+allow rild device:file *;
 allow rild diag_device:chr_file *;
 allow rild rild:capability *;
 allow rild system_prop:property_service *;
@@ -115,6 +138,8 @@ allow servicemanager fidodaemon:{ binder dir file process } *;
 
 # Surfaceflinger
 allow surfaceflinger default_android_service:service_manager *;
+allow surfaceflinger mnt_vendor_file:{ dir file } *;
+allow surfaceflinger persist_file:{ dir file lnk_file } *;
 
 # System APP
 allow priv_app device:{ dir file } *;
@@ -148,10 +173,12 @@ allow adbd ctl_start_prop:property_service *;
 allow lmkd lmkd:capability2 *;
 allow netmgrd diag_device:chr_file *;
 allow system_server diag_device:chr_file *;
+allow system_server iio_device:chr_file *;
 allow system_server init:binder *;
 allow system_server kernel:system *;
 allow system_server mnt_vendor_file:{ dir file } *;
-allow system_server persist_file:{ dir file } *;
+allow system_server persist_file:{ dir file lnk_file } *;
+allow system_server proc:file *;
 allow system_server sysfs:{ dir file } *;
 allow wcnss_service diag_device:chr_file *;
 
@@ -166,12 +193,12 @@ allow tee firmware_file:{ dir file } *;
 allow tee graphics_device:{ chr_file dir } *;
 allow tee persist_data_file:{ dir file } *;
 allow tee persist_drm_file:{ dir file } *;
-allow tee persist_file:dir *;
+allow tee persist_file:{ dir file lnk_file } *;
 allow tee self:capability *;
 allow tee system_app:unix_dgram_socket *;
 allow tee system_data_file:dir *;
 allow tee tee_device:chr_file *;
-allow tee vfat:file *;
+allow tee vfat:{ dir file } *;
 
 # Time
 type timekeep_exec, exec_type, vendor_file_type, file_type;
@@ -185,6 +212,7 @@ set_prop(timekeep, vendor_timekeep_prop)
 allow timekeep self:capability sys_time;
 allow timekeep sysfs_rtc:{ file lnk_file } r_file_perms;
 allow timekeep sysfs_rtc:dir search;
+allow timekeep sysfs:file r_file_perms;
 allow timekeep time_data_file:dir rw_dir_perms;
 allow timekeep time_data_file:file create_file_perms;
 allow timekeep_app activity_service:service_manager find;
@@ -203,11 +231,14 @@ allow ueventd vfat:{ dir file } *;
 allow vendor_init bluetooth_data_file:{ dir file } *;
 allow vendor_init dhcp_data_file:{ dir file } *;
 allow vendor_init media_rw_data_file:{ dir file } *;
+allow vendor_init persist_file:{ dir file lnk_file } *;
 allow vendor_init proc:file *;
 allow vendor_init radio_data_file:{ dir file } *;
 allow vendor_init rootfs:{ dir file } *;
 allow vendor_init system_data_file:{ dir file } *;
 allow vendor_init unencrypted_data_file:{ dir file } *;
+allow vendor_init unlabeled:{ dir file } *;
+allow vendor_init vendor_file:{ dir file } *;
 allow vendor_init wifi_data_file:{ dir file } *;
 allow vendor_init wpa_socket:{ dir file } *;
 
@@ -218,4 +249,5 @@ allow vold metadata_block_device:blk_file *;
 # Zygote
 allow webview_zygote mnt_expand_file:{ dir file } *;
 allow webview_zygote zygote:unix_dgram_socket *;
+allow zygote device:file *;
 allow zygote proc_cmdline:file *;
