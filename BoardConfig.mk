@@ -79,10 +79,10 @@ USE_DEVICE_SPECIFIC_CAMERA := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Dexpreopt
-# All apps are pre-compiled with "speed" filter in this rom, which conflicts with the build rules and needs a patch to work.
-# Please consider to apply "./patch/dex2oat-speed-filter.patch" to avoid build errors.
-# The "speed" filter provides bettter performance, but also make app installation longer than defualt values.
-# If you got trouble with "speed" filter, try using the following line instead:
+# All apps are pre-compiled with "everything" filter in this rom, which conflicts with the build rules and needs a patch to work.
+# Please refer to the part "diff --git a/core/product.mk b/core/product.mk" in "repo_17.diff" to resolve build errors.
+# The "everything" filter provides bettter performance, but also make app installation longer than defualt values.
+# If you got trouble with "everything" filter, try using the following one line instead:
 # ifeq ($(HOST_OS),linux)
 #     ifneq ($(TARGET_BUILD_VARIANT),eng)
 #         WITH_DEXPREOPT ?= true
@@ -94,11 +94,11 @@ DONT_DEXPREOPT_PREBUILTS := false
 DONT_UNCOMPRESS_PRIV_APPS_DEXS := true
 LOCAL_DEX_PREOPT := true
 PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
-PRODUCT_DEX_PREOPT_BOOT_FLAGS := --compiler-filter=speed
-PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER := speed
-PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --compiler-filter=speed
+PRODUCT_DEX_PREOPT_BOOT_FLAGS := --compiler-filter=everything
+PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER := everything
+PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --compiler-filter=everything
 PRODUCT_OTHER_JAVA_DEBUG_INFO := false
-PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed
+PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := everything
 PRODUCT_SYSTEM_SERVER_DEBUG_INFO := false
 WITH_DEXPREOPT := true
 WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false

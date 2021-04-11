@@ -3,9 +3,6 @@ Copyright 2018 - The LineageOS Project
 Originally forked from:
 * [Xiaomi Classic Dev](https://github.com/xiaomi-classic-dev)
 
-Here are all changes outside this repo, some of them maybe necessary:
-* [Repo diff](https://github.com/WJXXBSH/useful_android_scripts/blob/master/repo/repo_16.diff)
-
 Device configuration for Xiaomi Mi-4c/Mi-4s
 ===
 
