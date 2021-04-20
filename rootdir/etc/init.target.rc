@@ -25,10 +25,7 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-import /vendor/etc/init/hw/init.fpc.rc
-
 on fs
-    wait /dev/block/platform/soc.0/f9824900.sdhci/mmcblk0
     symlink /dev/block/platform/soc.0/f9824900.sdhci /dev/block/bootdevice
     mount_all /vendor/etc/fstab.qcom
 
@@ -44,27 +41,21 @@ on post-fs
     restorecon_recursive /sys/devices/system/cpu
 
 on early-boot
-    write /sys/bus/i2c/devices/2-004a/update_fw 1
-    write /sys/bus/i2c/devices/2-004a/update_cfg 1
     write /sys/bus/i2c/devices/2-0020/input/input0/update_fw 1
+    write /sys/bus/i2c/devices/2-004a/update_cfg 1
+    write /sys/bus/i2c/devices/2-004a/update_fw 1
     write /sys/devices/soc0/select_image 10
 
 on boot
     # Access permission for secure touch
-    chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
     chmod 0440 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
-    chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
+    chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
     chmod 0440 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
-    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
+    chmod 0660 /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
     chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch
-    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
+    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0020/input/input0/secure_touch_enable
     chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch
-
-    # Configure default I/O scheduler
-    write /sys/block/mmcblk0/queue/scheduler cfq
-    write /sys/block/mmcblk0rpmb/queue/scheduler cfq
-    write /sys/block/mmcblk0/queue/read_ahead_kb 512
-    write /sys/block/mmcblk0rpmb/queue/read_ahead_kb 512
+    chown system drmrpc /sys/devices/soc.0/f9924000.i2c/i2c-2/2-004a/secure_touch_enable
 
     # Copy prebuilt qcril database
     copy /system/vendor/qcril.db /data/misc/radio/qcril.db
@@ -74,13 +65,13 @@ on boot
     chown radio radio /data/misc/radio/copy_complete
 
     # DT2W
-    chown root system /proc/touchscreen/double_tap_enable
     chmod 0664 /proc/touchscreen/double_tap_enable
+    chown root system /proc/touchscreen/double_tap_enable
     restorecon /proc/touchscreen/double_tap_enable
 
     # Edge gesture
-    chown root system /proc/touchscreen/edge_touch_mode
     chmod 0664 /proc/touchscreen/edge_touch_mode
+    chown root system /proc/touchscreen/edge_touch_mode
     restorecon /proc/touchscreen/edge_touch_mode
 
     # Enable RPS static configuration
@@ -89,21 +80,12 @@ on boot
     # Enable TCP Fast Open by default
     write /proc/sys/net/ipv4/tcp_fastopen 3
 
-    # Set LMK parameters
-    write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
-    write /sys/module/lowmemorykiller/parameters/debug_level 0
-
     # Update cpuset for foreground and background apps
-    write /dev/cpuset/foreground/cpus 0-5
     write /dev/cpuset/background/cpus 0
-    write /dev/cpuset/system-background/cpus 0-1
-    mkdir /dev/cpuset/top-app/boost
-    write /dev/cpuset/top-app/cpus 0-5
-    write /dev/cpuset/top-app/boost/cpus 4-5
+    write /dev/cpuset/foreground/cpus 0-5
     write /dev/cpuset/restricted/cpus 0-3
-    chown system system /dev/cpuset/top-app/boost
-    chown system system /dev/cpuset/top-app/boost/tasks
-    chmod 0664 /dev/cpuset/top-app/boost/tasks
+    write /dev/cpuset/system-background/cpus 0
+    write /dev/cpuset/top-app/cpus 0-5
 
 service adsprpcd /vendor/bin/adsprpcd
     class main
@@ -188,18 +170,6 @@ on property:sys.boot_completed=1
     # Disable KTM hotplug and bring CPU4 online
     write /sys/module/msm_thermal/core_control/enabled 0
     write /sys/devices/system/cpu/cpu4/online 1
-
-    # Enable CPU retention
-    write /sys/module/lpm_levels/system/a53/cpu0/retention/idle_enabled 1
-    write /sys/module/lpm_levels/system/a53/cpu1/retention/idle_enabled 1
-    write /sys/module/lpm_levels/system/a53/cpu2/retention/idle_enabled 1
-    write /sys/module/lpm_levels/system/a53/cpu3/retention/idle_enabled 1
-    write /sys/module/lpm_levels/system/a57/cpu4/retention/idle_enabled 1
-    write /sys/module/lpm_levels/system/a57/cpu5/retention/idle_enabled 1
-
-    # Enable CPU L2 retention
-    write /sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled 1
-    write /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled 1
 
     # Configure CPU scheduler
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor sched

@@ -4,9 +4,9 @@ on boot
 
 on post-fs-data
     mkdir /data/fpc 0700 system system
-    chown system system /sys/bus/spi/devices/spi12.0/irq
-    chown system system /sys/bus/spi/devices/spi12.0/hw_reset
     chown system system /sys/bus/spi/devices/spi12.0/clk_enable
+    chown system system /sys/bus/spi/devices/spi12.0/hw_reset
+    chown system system /sys/bus/spi/devices/spi12.0/irq
     chown system system /sys/bus/spi/devices/spi12.0/wakeup_enable
 
 service fingerprintd /system/bin/fingerprintd

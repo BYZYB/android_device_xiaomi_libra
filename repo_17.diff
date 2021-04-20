@@ -2690,7 +2690,7 @@ index e3da77b..33ae155 100644
  }
 
 diff --git a/rootdir/init.rc b/rootdir/init.rc
-index d5afabc..d77e7d2 100644
+index d5afabc..56c9a6f 100644
 --- a/rootdir/init.rc
 +++ b/rootdir/init.rc
 @@ -439,11 +439,6 @@ on post-fs-data
@@ -2713,7 +2713,7 @@ index d5afabc..d77e7d2 100644
      # give system access to wpa_supplicant.conf for backup and restore
      chmod 0660 /data/misc/wifi/wpa_supplicant.conf
      mkdir /data/local 0751 root root
-@@ -512,18 +506,10 @@ on post-fs-data
+@@ -512,20 +506,10 @@ on post-fs-data
      mkdir /data/misc/audioserver 0700 audioserver audioserver
      mkdir /data/misc/cameraserver 0700 cameraserver cameraserver
      mkdir /data/misc/vold 0700 root root
@@ -2729,10 +2729,12 @@ index d5afabc..d77e7d2 100644
      mkdir /data/misc/profiles/ref 0771 system system
 -    mkdir /data/misc/profman 0770 system shell
 -    mkdir /data/misc/gcov 0770 root root
+-
+-    mkdir /data/preloads 0775 system system
 
-     mkdir /data/preloads 0775 system system
-
-@@ -535,7 +521,6 @@ on post-fs-data
+     mkdir /data/vendor 0771 root root
+     mkdir /data/vendor_ce 0771 root root
+@@ -535,7 +519,6 @@ on post-fs-data
      # For security reasons, /data/local/tmp should always be empty.
      # Do not place files or directories in /data/local/tmp
      mkdir /data/local/tmp 0771 shell shell
@@ -2740,7 +2742,7 @@ index d5afabc..d77e7d2 100644
      mkdir /data/data 0771 system system
      mkdir /data/app-private 0771 system system
      mkdir /data/app-ephemeral 0771 system system
-@@ -543,18 +528,9 @@ on post-fs-data
+@@ -543,18 +526,9 @@ on post-fs-data
      mkdir /data/app-lib 0771 system system
      mkdir /data/app 0771 system system
      mkdir /data/property 0700 root root
@@ -2759,7 +2761,7 @@ index d5afabc..d77e7d2 100644
 
      # create resource-cache and double-check the perms
      mkdir /data/resource-cache 0771 system system
-@@ -572,20 +548,11 @@ on post-fs-data
+@@ -572,20 +546,11 @@ on post-fs-data
      # the following directory.
      mkdir /data/mediadrm 0770 mediadrm mediadrm
 
@@ -2780,7 +2782,7 @@ index d5afabc..d77e7d2 100644
      mkdir /data/system/users 0775 system system
 
      mkdir /data/system_de 0770 system system
-@@ -809,9 +776,6 @@ on property:vold.decrypt=trigger_shutdown_framework
+@@ -809,9 +774,6 @@ on property:vold.decrypt=trigger_shutdown_framework
 
  on property:sys.boot_completed=1
      bootchart stop
@@ -2790,7 +2792,7 @@ index d5afabc..d77e7d2 100644
 
  # system server cannot write to /proc/sys files,
  # and chown/chmod does not work for /proc/sys/ entries.
-@@ -854,18 +818,4 @@ service console /system/bin/sh
+@@ -854,18 +816,4 @@ service console /system/bin/sh
      setenv HOSTNAME console
 
  on property:ro.debuggable=1
