@@ -25,36 +25,22 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+import /vendor/etc/init/hw/init.fpc.rc
 import /vendor/etc/init/hw/init.qcom.usb.rc
 import /vendor/etc/init/hw/init.target.rc
 
-on init
-    # Create cgroup mount point for memory
-    mkdir /sys/fs/cgroup/memory/bg 0750 root system
-    write /sys/fs/cgroup/memory/bg/memory.swappiness 140
-    write /sys/fs/cgroup/memory/bg/memory.move_charge_at_immigrate 1
-    chown root system /sys/fs/cgroup/memory/bg/tasks
-    chmod 0660 /sys/fs/cgroup/memory/bg/tasks
-
 on post-fs-data
     # Create msm specific files on /data
-    mkdir /data/misc/dts 0770 media audio
-    mkdir /data/usf 0700 system system
     mkdir /persist/bluetooth 0770 bluetooth bluetooth
     mkdir /persist/data 0700 system system
     mkdir /persist/data/sfs 0700 system system
     mkdir /persist/data/tz 0700 system system
     mkdir /persist/wlan_bt 0700 system system
 
-    # Create directory for TZ Apps
-    mkdir /data/misc/qsee 0770 system system
-
     # Create folder for mm-qcamera-daemon
-    mkdir /data/misc/camera 0770 camera camera
-    mkdir /data/media 0770 media_rw media_rw
-    chown media_rw media_rw /data/media
-    mkdir /data/misc/ipa 0700 net_admin net_admin
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    mkdir /data/misc/camera 0770 camera camera
+    mkdir /data/misc/ipa 0700 net_admin net_admin
 
     # Create the directories used by the Wireless subsystem
     mkdir /data/vendor/wifi 0770 wifi wifi
@@ -63,7 +49,6 @@ on post-fs-data
 
     # Create the directories used by CnE subsystem
     mkdir /data/connectivity 0771 system system
-    chown system system /data/connectivity
 
     # Create directory used by audio subsystem
     mkdir /data/misc/audio 0770 audio audio
@@ -72,23 +57,8 @@ on post-fs-data
     mkdir /data/misc/audio/acdbdata 0770 media audio
     mkdir /data/misc/audio/acdbdata/delta 0770 media audio
 
-    # Create directory used by the DASH client
-    mkdir /data/misc/dash 0770 media audio
-
     # Create directory used by display clients
-    mkdir /data/misc/display 0770 system graphics
     mkdir /persist/display 0770 system graphics
-
-    chmod 0664 /sys/devices/platform/msm_sdcc.1/polling
-    chmod 0664 /sys/devices/platform/msm_sdcc.2/polling
-    chmod 0664 /sys/devices/platform/msm_sdcc.3/polling
-    chmod 0664 /sys/devices/platform/msm_sdcc.4/polling
-
-    # Chown polling nodes as needed from UI running on system server
-    chown system system /sys/devices/platform/msm_sdcc.1/polling
-    chown system system /sys/devices/platform/msm_sdcc.2/polling
-    chown system system /sys/devices/platform/msm_sdcc.3/polling
-    chown system system /sys/devices/platform/msm_sdcc.4/polling
 
     # Create directories for Location services
     mkdir /data/misc/location 0770 gps gps
@@ -98,60 +68,41 @@ on post-fs-data
     mkdir /data/misc/location/quipc 0770 gps system
     mkdir /data/misc/location/gsiff 0770 gps gps
 
-    # Create a folder for audio delta files
-    mkdir /data/audio/ 0770 media audio
-    mkdir /data/audio/acdbdata 0770 media audio
-    mkdir /data/audio/acdbdata/delta 0770 media audio
-    setprop vold.post_fs_data_done 1
-
-    # Create a folder for SRS to be able to create a usercfg file
-    mkdir /data/data/media 0770 media media
-
-    # RIDL data
-    mkdir /data/misc/SelfHost/ 0710 system shell
-    mkdir /data/misc/SelfHost/QCLogs/ 2750 system shell
-    mkdir /data/misc/SelfHost/QCLogs/temp/ 0700 system shell
-    mkdir /data/misc/SelfHost/storage/ 0700 system shell
-    mkdir /data/misc/SelfHost/Running/ 2750 system shell
-    mkdir /data/misc/SelfHost/socket/ 2770 system system
-    chown system system /sys/devices/virtual/graphics/fb0/rgb
+    # Graphics
     chmod 0660 /sys/devices/virtual/graphics/fb0/rgb
-    chown system system /sys/class/rtc/rtc0/wakealarm
-    chmod 0666 /sys/class/rtc/rtc0/wakealarm
+    chown system system /sys/devices/virtual/graphics/fb0/rgb
 
     # Vibrator
-    chown system system /sys/class/timed_output/vibrator/vtg_default
-    chown system system /sys/class/timed_output/vibrator/vtg_level
-    chown system system /sys/class/timed_output/vibrator/vtg_max
-    chown system system /sys/class/timed_output/vibrator/vtg_min
     chmod 0644 /sys/class/timed_output/vibrator/vtg_default
     chmod 0644 /sys/class/timed_output/vibrator/vtg_level
     chmod 0644 /sys/class/timed_output/vibrator/vtg_max
     chmod 0644 /sys/class/timed_output/vibrator/vtg_min
+    chown system system /sys/class/timed_output/vibrator/vtg_default
+    chown system system /sys/class/timed_output/vibrator/vtg_level
+    chown system system /sys/class/timed_output/vibrator/vtg_max
+    chown system system /sys/class/timed_output/vibrator/vtg_min
     restorecon /sys/class/timed_output/vibrator/vtg_default
     restorecon /sys/class/timed_output/vibrator/vtg_level
     restorecon /sys/class/timed_output/vibrator/vtg_max
     restorecon /sys/class/timed_output/vibrator/vtg_min
 
     # Torch
-    chown system system /sys/class/leds/led:torch_0/brightness
     chmod 0666 /sys/class/leds/led:torch_0/brightness
+    chown system system /sys/class/leds/led:torch_0/brightness
 
     # Dynamic FPS
-    chown system graphics /sys/class/graphics/fb0/dynamic_fps
+    chmod 0664 /sys/class/graphics/fb0/ad
     chmod 0664 /sys/class/graphics/fb0/dynamic_fps
-    chown system graphics /sys/class/graphics/fb1/dynamic_fps
+    chmod 0664 /sys/class/graphics/fb1/ad
     chmod 0664 /sys/class/graphics/fb1/dynamic_fps
     chown system graphics /sys/class/graphics/fb0/ad
-    chmod 0664 /sys/class/graphics/fb0/ad
+    chown system graphics /sys/class/graphics/fb0/dynamic_fps
     chown system graphics /sys/class/graphics/fb1/ad
-    chmod 0664 /sys/class/graphics/fb1/ad
+    chown system graphics /sys/class/graphics/fb1/dynamic_fps
+    setprop vold.post_fs_data_done 1
 
 on early-boot
-    # Set RLIMIT_MEMLOCK to 64MB
-    setrlimit 8 67108864 67108864
-
-    # Allow subsystem (modem etc) debugging
+    # Start adsp subsystem
     write /sys/kernel/boot_adsp/boot 1
     chown root audio /sys/kernel/boot_adsp/boot
 
@@ -162,49 +113,19 @@ on early-boot
     write /sys/bus/msm_subsys/devices/subsys3/restart_level related
 
 on boot
-    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
-    chown bluetooth net_bt /sys/class/rfkill/rfkill0/type
-    chown bluetooth net_bt /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
-    chown bluetooth bluetooth /sys/module/hci_uart/parameters/ath_lpm
-    chown bluetooth bluetooth /sys/module/hci_uart/parameters/ath_btwrite
-    chown system system /sys/module/sco/parameters/disable_esco
-    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
-    chown system system /sys/bus/spi/devices/spi12.0/irq
-    chown system system /sys/bus/spi/devices/spi12.0/hw_reset
-    chown system system /sys/bus/spi/devices/spi12.0/clk_enable
-    chown system system /sys/bus/spi/devices/spi12.0/wakeup_enable
-    chmod 0660 /sys/module/bluetooth_power/parameters/power
-    chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
-    chmod 0660 /sys/class/rfkill/rfkill0/state
-    chmod 0660 /proc/bluetooth/sleep/proto
-    chown bluetooth net_bt /dev/ttyHS0
-    chmod 0660 /sys/module/hci_uart/parameters/ath_lpm
-    chmod 0660 /sys/module/hci_uart/parameters/ath_btwrite
     chmod 0660 /dev/ttyHS0
-    chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
-    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
-    chmod 0660 /sys/bus/spi/devices/spi12.0/irq
-    chmod 0660 /sys/bus/spi/devices/spi12.0/hw_reset
-    chmod 0660 /sys/bus/spi/devices/spi12.0/clk_enable
-    chmod 0660 /sys/bus/spi/devices/spi12.0/wakeup_enable
-    chmod 0660 /dev/ttyHS2
-    chown bluetooth bluetooth /dev/ttyHS2
-    chown bluetooth net_bt /sys/class/rfkill/rfkill0/device/extldo
     chmod 0660 /sys/class/rfkill/rfkill0/device/extldo
-
-    # Prevents permission denied error for telephony
-    chmod 0644 /proc/cmdline
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt /dev/ttyHS0
+    chown bluetooth net_bt /sys/class/rfkill/rfkill0/device/extldo
+    chown bluetooth net_bt /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt /sys/class/rfkill/rfkill0/type
 
     # Create QMUX deamon socket area
-    mkdir /dev/socket/qmux_radio 0770 radio radio
-    chmod 2770 /dev/socket/qmux_radio
-    mkdir /dev/socket/qmux_audio 0770 media audio
-    chmod 2770 /dev/socket/qmux_audio
-    mkdir /dev/socket/qmux_bluetooth 0770 bluetooth bluetooth
-    chmod 2770 /dev/socket/qmux_bluetooth
-    mkdir /dev/socket/qmux_gps 0770 gps gps
-    chmod 2770 /dev/socket/qmux_gps
+    mkdir /dev/socket/qmux_audio 2770 media audio
+    mkdir /dev/socket/qmux_bluetooth 2770 bluetooth bluetooth
+    mkdir /dev/socket/qmux_gps 2770 gps gps
+    mkdir /dev/socket/qmux_radio 2770 radio radio
     chmod 0666 /sys/class/leds/flashlight/brightness
 
     # Create NETMGR daemon socket area
@@ -213,59 +134,27 @@ on boot
 
     # Define TCP buffer sizes for various networks
     # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.wifi 524288,2097152,4194304,262144,524288,1048576
-    setprop ro.telephony.call_ring.multiple false
+    setprop net.tcp.2g_init_rwnd 10
     setprop net.tcp.buffersize.default 4096,87380,524288,4096,16384,110208
+    setprop net.tcp.buffersize.edge 4093,26280,35040,4096,16384,35040
+    setprop net.tcp.buffersize.evdo 4094,87380,524288,4096,16384,262144
+    setprop net.tcp.buffersize.gprs 4092,8760,11680,4096,8760,11680
+    setprop net.tcp.buffersize.hsdpa 4094,87380,1220608,4096,16384,1220608
+    setprop net.tcp.buffersize.hspa 4094,87380,1220608,4096,16384,1220608
+    setprop net.tcp.buffersize.hspap 4094,87380,1220608,4096,16384,1220608
+    setprop net.tcp.buffersize.hsupa 4094,87380,1220608,4096,16384,1220608
     setprop net.tcp.buffersize.lte 2097152,4194304,8388608,262144,524288,1048576
     setprop net.tcp.buffersize.umts 4094,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.hspa 4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.hsupa 4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.hsdpa 4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.hspap 4094,87380,1220608,4096,16384,1220608
-    setprop net.tcp.buffersize.edge 4093,26280,35040,4096,16384,35040
-    setprop net.tcp.buffersize.gprs 4092,8760,11680,4096,8760,11680
-    setprop net.tcp.buffersize.evdo 4094,87380,524288,4096,16384,262144
-    setprop net.tcp.2g_init_rwnd 10
+    setprop net.tcp.buffersize.wifi 524288,2097152,4194304,262144,524288,1048576
+    setprop ro.telephony.call_ring.multiple false
 
     # Assign TCP buffer thresholds to be ceiling value of technology maximums
     # Increased technology maximums should be reflected here.
     write /proc/sys/net/core/rmem_max 16777216
     write /proc/sys/net/core/wmem_max 8388608
 
-    # To allow interfaces to get v6 address when tethering is enabled
-    write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet3/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet4/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet5/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet6/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet7/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio0/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio1/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio2/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio3/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio4/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio5/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio6/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb0/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb1/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb2/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb3/accept_ra 2
-
-    # To prevent out of order acknowledgements from making connection tracking to treat them as not belonging to the connection they belong to.
-    # Otherwise, a weird issue happens in which some long connections on high-throughput links get dropped when an ack packet comes out of order.
-    write /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal 1
-
-    # Allow access for CCID command/response timeout configuration
-    chown system system /sys/module/ccid_bridge/parameters/bulk_msg_timeout
-
     # Wifi firmware reload path
     chown wifi wifi /sys/module/wlan/parameters/fwpath
-
-    # VibratorHW
-    chown system system /sys/devices/virtual/timed_output/vibrator/amp
 
 service bdaddr /vendor/bin/bdaddr_xiaomi
     class core
