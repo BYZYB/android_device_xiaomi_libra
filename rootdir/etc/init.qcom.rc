@@ -161,6 +161,7 @@ service bdaddr /vendor/bin/bdaddr_xiaomi
     user root
     group system
     oneshot
+    writepid /dev/cpuset/system-background/tasks
 
 service charger /system/bin/charger
     class charger
@@ -179,6 +180,7 @@ service cnss-daemon /vendor/bin/cnss-daemon -n -l
     class late_start
     user system
     group system inet net_admin wifi
+    writepid /dev/cpuset/system-background/tasks
 
 service custom-post-boot /system/vendor/bin/init.custom.post_boot.sh
     class late_start
@@ -186,12 +188,7 @@ service custom-post-boot /system/vendor/bin/init.custom.post_boot.sh
     seclabel u:r:qti_init_shell:s0
     disabled
     oneshot
-
-service hci_filter_root /vendor/bin/wcnss_filter
-    class late_start
-    user bluetooth
-    group bluetooth oem_2950 system
-    disabled
+    writepid /dev/cpuset/system-background/tasks
 
 service ipacm /vendor/bin/ipacm
     class main
@@ -203,9 +200,9 @@ service irsc_util /vendor/bin/irsc_util "/vendor/etc/sec_config"
     class main
     user root
     oneshot
+    writepid /dev/cpuset/system-background/tasks
 
 service loc_launcher /vendor/bin/loc_launcher
-    # loc_launcher will start as root and set its uid to gps
     class late_start
     group gps inet net_raw diag net_admin wifi
     writepid /dev/cpuset/system-background/tasks
@@ -214,6 +211,7 @@ service mmbn-daemon /vendor/bin/mmbn-daemon
     class main
     seclabel u:r:mmbn-daemon:s0
     oneshot
+    writepid /dev/cpuset/system-background/tasks
 
 service msm_irqbalance /vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
     socket msm_irqbalance seqpacket 660 root system
@@ -226,15 +224,10 @@ service netmgrd /vendor/bin/netmgrd
     class main
     writepid /dev/cpuset/system-background/tasks
 
-service port-bridge /vendor/bin/port-bridge /dev/mhi_pipe_32 /dev/ttyGS0
-    class main
-    user radio
-    group radio system inet
-    disabled
-
 service qbcharger /charger -m 1
     disabled
     oneshot
+    writepid /dev/cpuset/system-background/tasks
 
 service qmuxd /vendor/bin/qmuxd
     class main
@@ -260,6 +253,7 @@ service ril-daemon2 /system/vendor/bin/hw/rild -c 2
     socket rild-debug2 stream 660 radio system
     user root
     group radio cache inet misc audio sdcard_r sdcard_rw diag log net_raw
+    writepid /dev/cpuset/system-background/tasks
 
 service rmt_storage /vendor/bin/rmt_storage
     class core
@@ -268,11 +262,12 @@ service rmt_storage /vendor/bin/rmt_storage
     ioprio rt 0
     writepid /dev/cpuset/system-background/tasks
 
-service start_hci_filter /vendor/bin/wcnss_filter
+service hci_filter /vendor/bin/wcnss_filter
     class late_start
     user bluetooth
     group bluetooth oem_2950
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
 on property:apexd.status=ready
     mount none /system/etc/swcodec/ld.config.txt /apex/com.android.media.swcodec/etc/ld.config.txt bind
@@ -300,7 +295,6 @@ on property:ro.data.large_tcp_window_size=true
 
 on property:sys.boot_completed=1
     start custom-post-boot
-    restart cameraserver
     setprop vendor.post_boot.parsed 1
 
 on property:sys.qbcharger.enable=false
@@ -310,13 +304,7 @@ on property:sys.qbcharger.enable=true
     start qbcharger
 
 on property:vendor.wc_transport.start_hci=false
-    stop start_hci_filter
+    stop hci_filter
 
 on property:vendor.wc_transport.start_hci=true
-    start start_hci_filter
-
-on property:wc_transport.start_root=false
-    stop hci_filter_root
-
-on property:wc_transport.start_root=true
-    start hci_filter_root
+    start hci_filter

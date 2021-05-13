@@ -91,11 +91,13 @@ service adsprpcd /vendor/bin/adsprpcd
     class main
     user media
     group media
+    writepid /dev/cpuset/system-background/tasks
 
 service fidodaemon /system/vendor/bin/fidodaemon
     class late_start
     user system
     group system
+    writepid /dev/cpuset/system-background/tasks
 
 service per_mgr /vendor/bin/pm-service
     class core
@@ -115,6 +117,7 @@ service ppd /vendor/bin/mm-pp-daemon
     user system
     socket pps stream 0660 system system
     group system graphics
+    writepid /dev/cpuset/system-background/tasks
 
 service qcamerasvr /vendor/bin/mm-qcamera-daemon
     class main
@@ -133,6 +136,7 @@ service readmac /vendor/bin/readmac
     user root
     group root oem_2950
     oneshot
+    writepid /dev/cpuset/system-background/tasks
 
 on property:init.svc.media=restarting
     restart qcamerasvr
