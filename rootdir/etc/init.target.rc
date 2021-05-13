@@ -31,6 +31,22 @@ on init
     mkdir /firmware 0771 system system
     mkdir /persist 0771 system system
 
+on charger
+    # Disable all KTM features
+    write /sys/module/msm_thermal/core_control/enabled 0
+    write /sys/module/msm_thermal/parameters/enabled N
+
+    # Configure CPU scheduler
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor powersave
+
+    # Keep only one CPU core online in charger mode
+    write /sys/devices/system/cpu/cpu1/online 0
+    write /sys/devices/system/cpu/cpu2/online 0
+    write /sys/devices/system/cpu/cpu3/online 0
+    write /sys/devices/system/cpu/cpu4/online 0
+    write /sys/devices/system/cpu/cpu5/online 0
+
 on fs
     symlink /dev/block/platform/soc.0/f9824900.sdhci /dev/block/bootdevice
     mount_all /vendor/etc/fstab.qcom
