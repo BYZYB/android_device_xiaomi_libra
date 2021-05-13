@@ -1040,6 +1040,44 @@ index aae5771e..2982e6cc 100644
 +    <string name="permdesc_fakePackageSignature">允许当前应用伪装成为其他应用</string>
  </resources>
 
+diff --git a/core/res/res/values-zh-rHK/strings.xml b/core/res/res/values-zh-rHK/strings.xml
+index 56bff4bf..302a535f 100644
+--- a/core/res/res/values-zh-rHK/strings.xml
++++ b/core/res/res/values-zh-rHK/strings.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!--
++<!--
+ /* //device/apps/common/assets/res/any/strings.xml
+ **
+ ** Copyright 2006, The Android Open Source Project
+@@ -2050,4 +2050,6 @@
+     </plurals>
+     <string name="chooser_no_direct_share_targets" msgid="492542066060841139">"無法直接分享"</string>
+     <string name="chooser_all_apps_button_label" msgid="3230427756238666328">"應用程式清單"</string>
++    <string name="permlab_fakePackageSignature">僞造應用程式封裝簽章</string>
++    <string name="permdesc_fakePackageSignature">允許當前應用程式偽裝成為其他應用程式</string>
+ </resources>
+
+diff --git a/core/res/res/values-zh-rTW/strings.xml b/core/res/res/values-zh-rTW/strings.xml
+index 1b483488..e02a5282 100644
+--- a/core/res/res/values-zh-rTW/strings.xml
++++ b/core/res/res/values-zh-rTW/strings.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!--
++<!--
+ /* //device/apps/common/assets/res/any/strings.xml
+ **
+ ** Copyright 2006, The Android Open Source Project
+@@ -2050,4 +2050,6 @@
+     </plurals>
+     <string name="chooser_no_direct_share_targets" msgid="492542066060841139">"無法使用直接分享功能"</string>
+     <string name="chooser_all_apps_button_label" msgid="3230427756238666328">"應用程式清單"</string>
++    <string name="permlab_fakePackageSignature">僞造應用程式封裝簽章</string>
++    <string name="permdesc_fakePackageSignature">允許當前應用程式偽裝成為其他應用程式</string>
+ </resources>
+
 diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
 index a84d23b6..89754ba1 100644
 --- a/core/res/res/values/config.xml
@@ -1929,7 +1967,7 @@ index 844b7928..edfba58f 100644
 
 project packages/apps/LineageParts/
 diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
-index 4a42908..8a5ac97 100644
+index 4a42908..b45047d 100644
 --- a/res/values-zh-rCN/strings.xml
 +++ b/res/values-zh-rCN/strings.xml
 @@ -179,6 +179,8 @@
@@ -1941,19 +1979,41 @@ index 4a42908..8a5ac97 100644
      <string name="click_partial_screenshot_title">点击以进行局部截图</string>
      <string name="click_partial_screenshot_summary">同时按音量下和电源键以截取局部截图</string>
      <string name="button_backlight_title">背光</string>
-@@ -455,6 +457,9 @@
+@@ -455,6 +457,8 @@
      <string name="auto_power_save_summary_on">电量 %s 时自动启用省电</string>
      <string name="auto_power_save_summary_off">不要自动启用省电</string>
      <string name="auto_power_save_never">永不</string>
-+    <string name="cpu_overclock_category_title">超频</string>
 +    <string name="cpu_overclock_title">高性能模式</string>
-+    <string name="cpu_overclock_summary">提升最大 CPU 功率以改善性能，但可能缩短续航时间</string>
++    <string name="cpu_overclock_summary">提升处理器最大功率以改善性能，但可能缩短续航时间</string>
      <string name="long_screen_settings_title">全屏应用</string>
      <string name="long_screen_settings_summary">强制旧式应用程序使用全屏长宽比</string>
      <string name="long_screen_settings_no_apps">无应用</string>
 
+diff --git a/res/values-zh-rTW/strings.xml b/res/values-zh-rTW/strings.xml
+index f5e4ef2..439c4e6 100644
+--- a/res/values-zh-rTW/strings.xml
++++ b/res/values-zh-rTW/strings.xml
+@@ -179,6 +179,8 @@
+     <string name="home_answer_call_summary">按主畫面鍵接聽來電</string>
+     <string name="extras_title">附加功能</string>
+     <string name="additional_buttons_title">附加按鍵</string>
++    <string name="edge_gesture_title">邊緣觸控</string>
++    <string name="edge_gesture_summary">雙擊手機側面以返回</string>
+     <string name="button_backlight_title">背光</string>
+     <string name="button_backlight_enabled">開啟按鍵背光</string>
+     <string name="button_backlight_only_when_pressed_title">僅在按下按鈕才點亮指示燈</string>
+@@ -448,6 +450,8 @@
+     <string name="auto_power_save_summary_on">在 %s 電量時自動啟用省電模式</string>
+     <string name="auto_power_save_summary_off">不要自動啟用省電模式</string>
+     <string name="auto_power_save_never">永不</string>
++    <string name="cpu_overclock_title">高效能模式</string>
++    <string name="cpu_overclock_summary">提高處理器功耗上限以增進性能，但可能縮短續航時間</string>
+     <string name="long_screen_settings_title">全螢幕應用程式</string>
+     <string name="long_screen_settings_summary">強制舊型應用程式使用全螢幕的比例</string>
+     <string name="charging_sounds_settings_title">充電音效</string>
+
 diff --git a/res/values/strings.xml b/res/values/strings.xml
-index 1133d32..0d9dfe7 100644
+index 1133d32..5000f71 100644
 --- a/res/values/strings.xml
 +++ b/res/values/strings.xml
 @@ -213,6 +213,8 @@
@@ -1965,11 +2025,10 @@ index 1133d32..0d9dfe7 100644
      <string name="click_partial_screenshot_title">Click to partial screenshot</string>
      <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
 
-@@ -583,6 +585,9 @@
+@@ -583,6 +585,8 @@
      <string name="auto_power_save_summary_on">Automatically enable power save mode at %s battery</string>
      <string name="auto_power_save_summary_off">Do not enable power save mode automatically</string>
      <string name="auto_power_save_never">Never</string>
-+    <string name="cpu_overclock_category_title">Overclock</string>
 +    <string name="cpu_overclock_title">High performance mode</string>
 +    <string name="cpu_overclock_summary">Increase maximum CPU power to improve performance, at the cost of battery life</string>
 
@@ -1995,7 +2054,7 @@ index c57985c..eedfa7a 100644
              android:title="@string/click_partial_screenshot_title"
 
 diff --git a/res/xml/perf_profile_settings.xml b/res/xml/perf_profile_settings.xml
-index 0b301a9..a373f5d 100644
+index 0b301a9..7a129d5 100644
 --- a/res/xml/perf_profile_settings.xml
 +++ b/res/xml/perf_profile_settings.xml
 @@ -37,6 +37,18 @@
@@ -2004,7 +2063,7 @@ index 0b301a9..a373f5d 100644
 
 +    <PreferenceCategory
 +        android:key="cpu_overclock_category"
-+        android:title="@string/cpu_overclock_category_title">
++        android:title="@string/advanced">
 +
 +        <SwitchPreference
 +            android:key="cpu_overclock"
@@ -2160,7 +2219,7 @@ index 949562f..82a103f 100644
 
 project packages/apps/Settings/
 diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
-index 4ddcfa6..3545616 100644
+index 4ddcfa6..5ad57b1 100644
 --- a/res/values-zh-rCN/cm_strings.xml
 +++ b/res/values-zh-rCN/cm_strings.xml
 @@ -69,6 +69,9 @@
@@ -2169,10 +2228,40 @@ index 4ddcfa6..3545616 100644
      <string name="security_settings_fingerprint_sensor_location_right">右侧</string>
 +    <string name="screen_refresh_rate">屏幕刷新率</string>
 +    <string name="screen_refresh_rate_title">屏幕刷新率</string>
-+    <string name="keywords_screen_refresh_rate">屏幕，刷新率，Hz</string>
++    <string name="keywords_screen_refresh_rate">屏幕，刷新率</string>
      <string name="status_bar_double_tap_to_sleep_title">点按以睡眠</string>
      <string name="status_bar_double_tap_to_sleep_summary">双击状态栏或锁屏以关闭屏幕</string>
      <string name="touchscreen_gesture_settings_title">触摸屏手势</string>
+
+diff --git a/res/values-zh-rHK/cm_strings.xml b/res/values-zh-rHK/cm_strings.xml
+index 7dc93d3..c65e657 100644
+--- a/res/values-zh-rHK/cm_strings.xml
++++ b/res/values-zh-rHK/cm_strings.xml
+@@ -29,6 +29,9 @@
+     <string name="lockpattern_settings_enable_dots_title">顯示圖樣圓點</string>
+     <string name="unlock_scramble_pin_layout_title">無序佈局</string>
+     <string name="unlock_scramble_pin_layout_summary">解鎖裝置時使用無序 PIN 佈局</string>
++    <string name="screen_refresh_rate">螢幕更新率</string>
++    <string name="screen_refresh_rate_title">螢幕更新率</string>
++    <string name="keywords_screen_refresh_rate">螢幕，更新率</string>
+     <string name="proximity_wake_title">防止意外喚醒</string>
+     <string name="wake_when_plugged_or_unplugged_title">當接上喚醒</string>
+     <string name="wake_when_plugged_or_unplugged_summary">當連接或拔除電源時開啓螢幕</string>
+
+diff --git a/res/values-zh-rTW/cm_strings.xml b/res/values-zh-rTW/cm_strings.xml
+index 859dd10..eca2f1a 100644
+--- a/res/values-zh-rTW/cm_strings.xml
++++ b/res/values-zh-rTW/cm_strings.xml
+@@ -65,6 +65,9 @@
+     <string name="security_settings_fingerprint_sensor_location_front">前置</string>
+     <string name="security_settings_fingerprint_sensor_location_left">左側</string>
+     <string name="security_settings_fingerprint_sensor_location_right">右側</string>
++    <string name="screen_refresh_rate">螢幕更新率</string>
++    <string name="screen_refresh_rate_title">螢幕更新率</string>
++    <string name="keywords_screen_refresh_rate">螢幕，更新率</string>
+     <string name="status_bar_double_tap_to_sleep_title">輕觸即可休眠</string>
+     <string name="status_bar_double_tap_to_sleep_summary">輕觸兩下狀態列或鎖定來關閉螢幕</string>
+     <string name="touchscreen_gesture_settings_title">觸控螢幕手勢</string>
 
 diff --git a/res/values/cm_arrays.xml b/res/values/cm_arrays.xml
 index bc509ad..09acc25 100644
@@ -2208,7 +2297,7 @@ index bc509ad..09acc25 100644
  </resources>
 
 diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
-index 12ad48e..0fb1eee 100644
+index 12ad48e..ad03987 100644
 --- a/res/values/cm_strings.xml
 +++ b/res/values/cm_strings.xml
 @@ -122,6 +122,15 @@
@@ -2222,7 +2311,7 @@ index 12ad48e..0fb1eee 100644
 +    <!-- Sound & display settings screen, setting option summary to change screen refresh rate -->
 +    <string name="screen_refresh_rate_summary"><xliff:g id="refresh_rate_description">%1$s</xliff:g></string>
 +    <!-- List of synonyms for the screen refresh rate setting, used to match in settings search [CHAR LIMIT=NONE] -->
-+    <string name="keywords_screen_refresh_rate">screen, refresh rate, Hz</string>
++    <string name="keywords_screen_refresh_rate">screen, refresh rate</string>
 +
      <!-- Double tap to sleep on status bar or lockscreen -->
      <string name="status_bar_double_tap_to_sleep_title">Tap to sleep</string>
