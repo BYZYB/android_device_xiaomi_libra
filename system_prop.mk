@@ -78,6 +78,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.opengles.version=196610
 
+# I/O scheduler
+PRODUCT_PROPERTY_OVERRIDES += \
+    sys.io.scheduler=bfq
+
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     av.debug.disable.pers.cache=true \
