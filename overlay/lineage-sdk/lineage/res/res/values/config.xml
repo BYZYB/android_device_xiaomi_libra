@@ -17,4 +17,6 @@
     <bool name="config_waitForMpctlOnBoot">true</bool>
     <!-- Button backlight control. Possible values are: 0 - Not supported 1 - Supported, but only on/off mode 2 - Supported with variable brightness control -->
     <integer name="config_deviceSupportsButtonBrightnessControl">2</integer>
+    <!-- Whether to cleanup fingerprints upon connection to the daemon and when user switches -->
+    <bool name="config_cleanupUnusedFingerprints">false</bool>
 </resources>
