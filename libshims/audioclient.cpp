@@ -16,12 +16,9 @@
 
 #include <media/AudioSystem.h>
 
-namespace android
-{
-    extern "C" uintptr_t _ZN7android11AudioSystem16addErrorCallbackEPFviE(audio_error_callback cb);
+extern "C" uintptr_t _ZN7android11AudioSystem16addErrorCallbackEPFviE(android::audio_error_callback cb);
 
-    extern "C" void _ZN7android11AudioSystem16setErrorCallbackEPFviE(audio_error_callback cb)
-    {
-        _ZN7android11AudioSystem16addErrorCallbackEPFviE(cb);
-    }
-} // namespace android
+extern "C" void _ZN7android11AudioSystem16setErrorCallbackEPFviE(android::audio_error_callback cb)
+{
+    _ZN7android11AudioSystem16addErrorCallbackEPFviE(cb);
+}
