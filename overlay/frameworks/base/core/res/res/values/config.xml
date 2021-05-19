@@ -49,8 +49,6 @@
     <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
     <!-- Wifi driver supports batched scan -->
     <bool translatable="false" name="config_wifi_batched_scan_supported">true</bool>
-    <!-- True if the firmware supports Wi-Fi link probing -->
-    <bool name="config_wifi_link_probing_supported">true</bool>
     <!-- Flag indicating whether the we should enable the automatic brightness in Settings. Software implementation will be used if config_hardware_auto_brightness_available is not set -->
     <bool name="config_automatic_brightness_available">true</bool>
     <!-- Flag indicating whether we should enable smart battery. -->
