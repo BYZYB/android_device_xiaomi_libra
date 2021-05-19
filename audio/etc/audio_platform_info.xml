@@ -12,20 +12,4 @@
     <bit_width_configs>
         <device name="SND_DEVICE_OUT_SPEAKER" bit_width="24" />
     </bit_width_configs>
-    <pcm_ids>
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD2" type="out" id="24" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD3" type="out" id="27" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD4" type="out" id="28" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD5" type="out" id="29" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD6" type="out" id="30" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD7" type="out" id="31" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD8" type="out" id="32" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_OFFLOAD9" type="out" id="33" />
-        <usecase name="USECASE_VOICEMMODE1_CALL" type="in" id="34" />
-        <usecase name="USECASE_VOICEMMODE1_CALL" type="out" id="34" />
-        <usecase name="USECASE_VOICEMMODE2_CALL" type="in" id="35" />
-        <usecase name="USECASE_VOICEMMODE2_CALL" type="out" id="35" />
-        <usecase name="USECASE_AUDIO_PLAYBACK_VOIP" type="out" id="27" />
-        <usecase name="USECASE_AUDIO_RECORD_VOIP" type="in" id="27" />
-    </pcm_ids>
 </audio_platform_info>
