@@ -47,5 +47,8 @@ static inline const char *BtmGetDefaultName()
 #define MAX_ACL_CONNECTIONS 16
 #define MAX_L2CAP_CHANNELS 16
 
+// Increasing SEPs to 12 from 6 to support SHO/MCast i.e. two streams per codec
+#define AVDT_NUM_SEPS 12
+
 #pragma pop_macro("PROPERTY_VALUE_MAX")
 #endif
