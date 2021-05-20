@@ -128,13 +128,6 @@ service per_proxy /vendor/bin/pm-proxy
     disabled
     writepid /dev/cpuset/system-background/tasks
 
-service ppd /vendor/bin/mm-pp-daemon
-    class late_start
-    user system
-    socket pps stream 0660 system system
-    group system graphics
-    writepid /dev/cpuset/system-background/tasks
-
 service qcamerasvr /vendor/bin/mm-qcamera-daemon
     class main
     user camera
@@ -165,9 +158,6 @@ on property:init.svc.per_mgr=stopped
 
 on property:init.svc.servicemanager=restarting
     restart qcamerasvr
-
-on property:init.svc.surfaceflinger=stopped
-    stop ppd
 
 on property:persist.sys.cpu_overclock=false
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1440000

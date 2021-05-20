@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Camera app resources that may need to be customized for different hardware or product builds. -->
 <resources>
     <!-- Enable support for camera api v2 -->
     <bool name="support_camera_api_v2">true</bool>

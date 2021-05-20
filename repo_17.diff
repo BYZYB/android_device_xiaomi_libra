@@ -40,20 +40,6 @@ index a5eef489f..a075b92bb 100644
 
  $(INTERNAL_OTA_PACKAGE_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_OTA_METADATA)
 
-diff --git a/core/binary.mk b/core/binary.mk
-index d4f0476c8..b53cf0e23 100644
---- a/core/binary.mk
-+++ b/core/binary.mk
-@@ -1507,7 +1507,7 @@ ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
-       ifeq (,$(filter -Werror,$(my_all_cflags)))
-         # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
-         ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
--          my_cflags := -Wall -Werror $(my_cflags)
-+          my_cflags := -Wall $(my_cflags)
-         else
-           $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
-           my_cflags := -Wall $(my_cflags)
-
 diff --git a/core/java.mk b/core/java.mk
 index 153396370..b0ce7e43e 100644
 --- a/core/java.mk
@@ -369,126 +355,27 @@ index a88ba3c8d..a198b8fc1 100644
      ro.iorapd.enable=false
 
 diff --git a/target/product/telephony_product.mk b/target/product/telephony_product.mk
-index a4c7e31f5..e14cca738 100644
+index a4c7e31f5..70d4828ea 100644
 --- a/target/product/telephony_product.mk
 +++ b/target/product/telephony_product.mk
-@@ -20,5 +20,4 @@
- # /product packages
+@@ -21,4 +21,3 @@
  PRODUCT_PACKAGES += \
      CarrierConfig \
--    Dialer \
+     Dialer \
 -    EmergencyInfo \
-+    Dialer
 
 diff --git a/target/product/telephony_system.mk b/target/product/telephony_system.mk
-index 584cf1ee6..d910c6b7c 100644
+index 584cf1ee6..4b76ad5d7 100644
 --- a/target/product/telephony_system.mk
 +++ b/target/product/telephony_system.mk
-@@ -19,8 +19,6 @@
-
+@@ -20,7 +20,5 @@
  PRODUCT_PACKAGES := \
      ONS \
--    CarrierDefaultApp \
+     CarrierDefaultApp \
 -    CallLogBackup \
 -    CellBroadcastReceiver \
-+    CarrierDefaultApp
 
  PRODUCT_COPY_FILES := \
-
-diff --git a/target/product/updatable_apex.mk b/target/product/updatable_apex.mk
-index 3d5e8e2a2..bdaf54517 100644
---- a/target/product/updatable_apex.mk
-+++ b/target/product/updatable_apex.mk
-@@ -18,6 +18,5 @@
-
- ifneq ($(OVERRIDE_TARGET_FLATTEN_APEX),true)
-   PRODUCT_PROPERTY_OVERRIDES := ro.apex.updatable=true
--  PRODUCT_PACKAGES := com.android.apex.cts.shim.v1_prebuilt
-   TARGET_FLATTEN_APEX := false
- endif
-
-diff --git a/tools/acp/Android.bp b/tools/acp/Android.bp
-index 64f5a1013..8b84418b3 100644
---- a/tools/acp/Android.bp
-+++ b/tools/acp/Android.bp
-@@ -5,7 +5,7 @@
- cc_binary_host {
-
-     srcs: ["acp.c"],
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
-
-     static_libs: ["libhost"],
-     name: "acp",
-
-diff --git a/tools/atree/Android.bp b/tools/atree/Android.bp
-index 5fbe042ea..fc8a8aada 100644
---- a/tools/atree/Android.bp
-+++ b/tools/atree/Android.bp
-@@ -9,6 +9,6 @@ cc_binary_host {
-         "files.cpp",
-         "fs.cpp",
-     ],
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
-     static_libs: ["libhost"],
- }
-
-diff --git a/tools/fs_config/Android.bp b/tools/fs_config/Android.bp
-index d9a48d704..60bfe673f 100644
---- a/tools/fs_config/Android.bp
-+++ b/tools/fs_config/Android.bp
-@@ -32,7 +32,6 @@ cc_binary_host {
-         "libcutils",
-         "libselinux",
-     ],
--    cflags: ["-Werror"],
- }
-
- target_fs_config_gen_filegroup {
-
-diff --git a/tools/fs_get_stats/Android.bp b/tools/fs_get_stats/Android.bp
-index 67742b836..f710d506e 100644
---- a/tools/fs_get_stats/Android.bp
-+++ b/tools/fs_get_stats/Android.bp
-@@ -1,7 +1,7 @@
- cc_binary_host {
-     name: "fs_get_stats",
-     srcs: ["fs_get_stats.c"],
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
-     shared_libs: [
-         "libcutils",
-         "liblog",
-
-diff --git a/tools/libhost/Android.bp b/tools/libhost/Android.bp
-index 4c9100f15..7c35e00c4 100644
---- a/tools/libhost/Android.bp
-+++ b/tools/libhost/Android.bp
-@@ -2,10 +2,7 @@ cc_library_host_static {
-
-     srcs: ["CopyFile.c"],
-
--    cflags: [
--        "-Werror",
--        "-Wall",
--    ],
-+    cflags: ["-Wall"],
-
-     name: "libhost",
-     target: {
-
-diff --git a/tools/makeparallel/Android.bp b/tools/makeparallel/Android.bp
-index 898db6861..14be89ac2 100644
---- a/tools/makeparallel/Android.bp
-+++ b/tools/makeparallel/Android.bp
-@@ -17,5 +17,5 @@ cc_binary_host {
-     srcs: [
-         "makeparallel.cpp",
-     ],
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
- }
 
 diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
 index 71679e8cb..0cc2f2dcf 100644
@@ -623,7 +510,6 @@ index 4402c8d20..8a928852c 100755
 
    # These files are just the BUILD_NUMBER, and will always be different
    if name in ['BOOT/RAMDISK/selinux_version',
-
 diff --git a/tools/releasetools/test_common.py b/tools/releasetools/test_common.py
 index 3a73253d0..6cb958e7c 100644
 --- a/tools/releasetools/test_common.py
@@ -642,65 +528,37 @@ index 3a73253d0..6cb958e7c 100644
 
  class MockScriptWriter(object):
 
-diff --git a/tools/zipalign/Android.bp b/tools/zipalign/Android.bp
-index 8e6196d29..9e65a5cf9 100644
---- a/tools/zipalign/Android.bp
-+++ b/tools/zipalign/Android.bp
-@@ -13,7 +13,7 @@ cc_binary_host {
-         "ZipFile.cpp",
-     ],
-
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
-
-     // NOTE: Do not add any shared_libs dependencies because they will break the
-     // static_sdk_tools target.
-
-diff --git a/tools/ziptime/Android.bp b/tools/ziptime/Android.bp
-index 5ef45ed40..7d882ae72 100644
---- a/tools/ziptime/Android.bp
-+++ b/tools/ziptime/Android.bp
-@@ -27,7 +27,7 @@ cc_binary_host {
-     ],
-
-     name: "ziptime",
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
-     target: {
-         windows: {
-             enabled: true,
-
 project build/soong/
 diff --git a/cmd/path_interposer/main.go b/cmd/path_interposer/main.go
 index cd28b96..e601f2b 100644
 --- a/cmd/path_interposer/main.go
 +++ b/cmd/path_interposer/main.go
 @@ -53,10 +53,7 @@ func main() {
-                os.Exit(1)
-        }
+ 		os.Exit(1)
+ 	}
 
--       disableError := false
--       if e, ok := os.LookupEnv("TEMPORARY_DISABLE_PATH_RESTRICTIONS"); ok {
--               disableError = e == "1" || e == "y" || e == "yes" || e == "on" || e == "true"
--       }
-+       disableError := true
+-	disableError := false
+-	if e, ok := os.LookupEnv("TEMPORARY_DISABLE_PATH_RESTRICTIONS"); ok {
+-		disableError = e == "1" || e == "y" || e == "yes" || e == "on" || e == "true"
+-	}
++	disableError := true
 
-        exitCode, err := Main(os.Stdout, os.Stderr, interposer, os.Args, mainOpts{
-                disableError: disableError,
+ 	exitCode, err := Main(os.Stdout, os.Stderr, interposer, os.Args, mainOpts{
+ 		disableError: disableError,
 
 diff --git a/ui/build/path.go b/ui/build/path.go
 index 0e1c02c..944aa95 100644
 --- a/ui/build/path.go
 +++ b/ui/build/path.go
 @@ -131,7 +131,7 @@ func SetupPath(ctx Context, config Config) {
-                execs = append(execs, parsePathDir(pathEntry)...)
-        }
+ 		execs = append(execs, parsePathDir(pathEntry)...)
+ 	}
 
--       allowAllSymlinks := config.Environment().IsEnvTrue("TEMPORARY_DISABLE_PATH_RESTRICTIONS")
-+       allowAllSymlinks := true
-        for _, name := range execs {
-                if !paths.GetConfig(name).Symlink && !allowAllSymlinks {
-                        continue
+-	allowAllSymlinks := config.Environment().IsEnvTrue("TEMPORARY_DISABLE_PATH_RESTRICTIONS")
++	allowAllSymlinks := true
+ 	for _, name := range execs {
+ 		if !paths.GetConfig(name).Symlink && !allowAllSymlinks {
+ 			continue
 
 project external/bash/
 diff --git a/Android.mk b/Android.mk
@@ -730,32 +588,6 @@ index 1a23613..f5aea6a 100644
 -
  # ========================================================
  include $(call all-makefiles-under,$(LOCAL_PATH))
-
-project external/mksh/
-diff --git a/mkshrc b/mkshrc
-index 256f20e..7b27239 100644
---- a/mkshrc
-+++ b/mkshrc
-@@ -8,13 +8,9 @@
-
- set +o nohup
-
--if (( USER_ID )); then PS1='$'; else PS1='#'; fi
--PS4='[$EPOCHREALTIME] '; PS1='${|
--	local e=$?
--
--	(( e )) && REPLY+="$e|"
--
--	return $e
--}$HOSTNAME:${PWD:-?} '"$PS1 "
--
--export TERM=xterm-256color
-+: ${TERM:=xterm-256color} ${HOME:=/} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android} ${SHELL:=$MKSH} ${USER:=$(getprop ro.product.device)}
-+if ((USER_ID)); then PS1='$'; else PS1='#'; fi
-+if [ -d "/sbin/.magisk/busybox" ]; then BBDIR="/sbin/.magisk/busybox"; fi
-+PATH=$PATH:/sbin:$BBDIR:.
-+PS1='$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
-+export TERM HOME MKSH HOSTNAME SHELL USER PATH
 
 project external/nano/
 diff --git a/Android.mk b/Android.mk
@@ -2597,21 +2429,6 @@ index 0000000..371b9fe
 +    }
 +}
 
-project packages/modules/ModuleMetadata/
-diff --git a/Android.bp b/Android.bp
-index e8084b3..5cd8f5e 100644
---- a/Android.bp
-+++ b/Android.bp
-@@ -20,7 +20,7 @@ android_app {
-
-     product_specific: true,
-     optimize: {
--        enabled: false,
-+        enabled: true,
-     },
-
-     dex_preopt: {
-
 project system/core/
 diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
 index 8521b5f..e03be6a 100644
@@ -2653,83 +2470,6 @@ index b0c7ece..37a4987 100644
              base::SetProperty("service.adb.root", "0");
              base::SetProperty("ctl.restart", "adbd");
          }
-
-diff --git a/healthd/Android.bp b/healthd/Android.bp
-index 2cf6be9..04790bb 100644
---- a/healthd/Android.bp
-+++ b/healthd/Android.bp
-@@ -10,7 +10,7 @@ cc_library_headers {
- cc_library_static {
-     name: "libbatterymonitor",
-     srcs: ["BatteryMonitor.cpp"],
--    cflags: ["-Wall", "-Werror"],
-+    cflags: ["-Wall"],
-     vendor_available: true,
-     recovery_available: true,
-     export_include_dirs: ["include"],
-@@ -25,10 +25,7 @@ cc_library_static {
- cc_defaults {
-     name: "android.hardware.health@2.0-service_defaults",
-
--    cflags: [
--        "-Wall",
--        "-Werror",
--    ],
-+    cflags: ["-Wall"],
-
-     static_libs: [
-         "android.hardware.health@2.0-impl",
-@@ -92,10 +89,7 @@ cc_library_static {
-         "healthd_mode_charger_nops.cpp",
-     ],
-
--    cflags: [
--        "-Wall",
--        "-Werror",
--    ],
-+    cflags: ["-Wall"],
-
-     header_libs: [
-         "libhealthd_headers",
-
-diff --git a/healthd/Android.mk b/healthd/Android.mk
-index 4eb98da..fb50aad 100644
---- a/healthd/Android.mk
-+++ b/healthd/Android.mk
-@@ -31,7 +31,6 @@ include $(BUILD_STATIC_LIBRARY)
- ### libhealthd_charger ###
- include $(CLEAR_VARS)
-
--LOCAL_CFLAGS := -Werror
- ifeq ($(strip $(BOARD_CHARGER_DISABLE_INIT_BLANK)),true)
- LOCAL_CFLAGS += -DCHARGER_DISABLE_INIT_BLANK
- endif
-@@ -82,7 +81,6 @@ LOCAL_SRC_FILES := \
- LOCAL_MODULE := charger
- LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
-
--LOCAL_CFLAGS := -Werror
- ifeq ($(strip $(LOCAL_CHARGER_NO_UI)),true)
- LOCAL_CFLAGS += -DCHARGER_NO_UI
- endif
-@@ -140,7 +138,7 @@ LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/system/bin
- LOCAL_MODULE_STEM := charger
-
- LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
--LOCAL_CFLAGS := -Wall -Werror
-+LOCAL_CFLAGS := -Wall
- LOCAL_CFLAGS += -DCHARGER_NO_UI
-
- # charger.recovery doesn't link against libhealthd_{charger,draw} or libminui, since it doesn't need
-@@ -174,7 +172,7 @@ include $(BUILD_EXECUTABLE)
- include $(CLEAR_VARS)
- LOCAL_MODULE := charger_test
- LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
--LOCAL_CFLAGS := -Wall -Werror -DCHARGER_NO_UI
-+LOCAL_CFLAGS := -Wall -DCHARGER_NO_UI
- LOCAL_STATIC_LIBRARIES := $(CHARGER_STATIC_LIBRARIES)
- LOCAL_SHARED_LIBRARIES := $(CHARGER_SHARED_LIBRARIES)
- LOCAL_SRC_FILES := \
 
 diff --git a/init/Android.bp b/init/Android.bp
 index 377a374..7ab7f3b 100644
