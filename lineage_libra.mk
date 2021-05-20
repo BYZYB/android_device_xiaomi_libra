@@ -13,13 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Release name
-PRODUCT_RELEASE_NAME := libra
-
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_l_mr1.mk)
+$(call inherit-product, vendor/xiaomi/libra/libra-vendor.mk)
 
 # Inherit some common Lineage stuff.
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
@@ -28,8 +27,8 @@ $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 $(call inherit-product, device/xiaomi/libra/device.mk)
 
 # Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := libra
-PRODUCT_NAME := lineage_libra
 PRODUCT_BRAND := Xiaomi
-PRODUCT_MODEL := Mi-4c
+PRODUCT_DEVICE := libra
 PRODUCT_MANUFACTURER := Xiaomi
+PRODUCT_MODEL := Mi-4c
+PRODUCT_NAME := lineage_libra

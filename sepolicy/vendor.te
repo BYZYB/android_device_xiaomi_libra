@@ -35,7 +35,6 @@ allow init hidl_base_hwservice:hwservice_manager *;
 allow init hwservicemanager:binder *;
 allow init init:socket *;
 allow init lirc_device:chr_file *;
-allow init mm-pp-daemon:unix_stream_socket *;
 allow init pps_socket:sock_file *;
 allow init qmuxd_socket:sock_file *;
 allow init qmuxd:unix_stream_socket *;
@@ -59,9 +58,6 @@ type mmbn-daemon_exec, exec_type, file_type;
 init_daemon_domain(mmbn-daemon)
 qmux_socket(mmbn-daemon)
 diag_use(mmbn-daemon)
-allow mm-pp-daemon default_android_service:service_manager *;
-allow mm-pp-daemon diag_device:chr_file *;
-allow mm-pp-daemon surfaceflinger:binder *;
 allow mm-qcamerad camera_prop:file *;
 allow mm-qcamerad sysfs:{ dir file } *;
 allow mmbn-daemon firmware_file:{ dir file } *;
