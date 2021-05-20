@@ -294,6 +294,7 @@ on property:ro.data.large_tcp_window_size=true
     write /proc/sys/net/ipv4/tcp_adv_win_scale 2
 
 on property:sys.boot_completed=1
+    restart cameraserver
     start custom-post-boot
     setprop vendor.post_boot.parsed 1
 
