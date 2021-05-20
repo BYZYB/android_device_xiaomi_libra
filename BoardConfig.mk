@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BOARD_VENDOR := xiaomi
 DEVICE_PATH := device/xiaomi/libra
 
 # Arch
@@ -26,9 +25,7 @@ TARGET_2ND_CPU_VARIANT := cortex-a53
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := cortex-a53
-TARGET_USES_64_BIT_BINDER := true
 
 # Assertions
 TARGET_BOARD_INFO_FILE ?= $(DEVICE_PATH)/board-info.txt
