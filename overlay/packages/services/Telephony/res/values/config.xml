@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Phone app resources that may need to be customized for different hardware or product builds. -->
 <resources>
     <!-- Determine whether we should show the "listen for instructions" screen after successfully placing the OTA call -->
     <integer name="OtaShowListeningScreen">1</integer>
