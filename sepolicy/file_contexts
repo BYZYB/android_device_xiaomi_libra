@@ -11,6 +11,9 @@
 /system/vendor/bin/mmbn-daemon u:object_r:mmbn-daemon_exec:s0
 /system/vendor/bin/readmac u:object_r:readmac_exec:s0
 
+# Power stats HAL
+/system/vendor/bin/hw/android\.hardware\.power\.stats@1\.0-service\.mock u:object_r:hal_power_stats_default_exec:s0
+
 # Root directories
 /bt_firmware(/.*)? u:object_r:bt_firmware_file:s0
 /cust(/.*)? u:object_r:vendor_file:s0
