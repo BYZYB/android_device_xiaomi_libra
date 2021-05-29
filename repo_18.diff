@@ -100,7 +100,7 @@ index 13a182a..8dac5c3 100644
  _readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
 
 diff --git a/target/product/base_system.mk b/target/product/base_system.mk
-index 5b118ee..45ea4ec 100644
+index 5b118ee..1a82b5e 100644
 --- a/target/product/base_system.mk
 +++ b/target/product/base_system.mk
 @@ -31,9 +31,7 @@ PRODUCT_PACKAGES += \
@@ -150,7 +150,15 @@ index 5b118ee..45ea4ec 100644
      gatekeeperd \
      gpuservice \
      hid \
-@@ -256,9 +245,6 @@ PRODUCT_PACKAGES += \
+@@ -149,6 +138,7 @@ PRODUCT_PACKAGES += \
+     libgui \
+     libhardware \
+     libhardware_legacy \
++    libincident \
+     libinput \
+     libinputflinger \
+     libiprouteutil \
+@@ -256,9 +246,6 @@ PRODUCT_PACKAGES += \
      tc \
      telecom \
      telephony-common \
@@ -160,7 +168,7 @@ index 5b118ee..45ea4ec 100644
      tune2fs \
      tzdatacheck \
      uiautomator \
-@@ -268,7 +254,6 @@ PRODUCT_PACKAGES += \
+@@ -268,7 +255,6 @@ PRODUCT_PACKAGES += \
      viewcompiler \
      voip-common \
      vold \
@@ -168,7 +176,7 @@ index 5b118ee..45ea4ec 100644
      watchdogd \
      wificond \
      wifi.rc \
-@@ -356,9 +341,6 @@ endif
+@@ -356,9 +342,6 @@ endif
  PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
  PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 
@@ -178,7 +186,7 @@ index 5b118ee..45ea4ec 100644
  # Packages included only for eng or userdebug builds, previously debug tagged
  PRODUCT_PACKAGES_DEBUG := \
      adb_keys \
-@@ -393,8 +375,7 @@ endif
+@@ -393,8 +376,7 @@ endif
 
  # The set of packages whose code can be loaded by the system server.
  PRODUCT_SYSTEM_SERVER_APPS += \
@@ -605,32 +613,6 @@ index 69b2a11..85f84c2 100644
 -
  # ========================================================
  include $(call all-makefiles-under,$(LOCAL_PATH))
-
-project external/mksh/
-diff --git a/mkshrc b/mkshrc
-index 256f20e..7b27239 100644
---- a/mkshrc
-+++ b/mkshrc
-@@ -8,13 +8,9 @@
-
- set +o nohup
-
--if (( USER_ID )); then PS1='$'; else PS1='#'; fi
--PS4='[$EPOCHREALTIME] '; PS1='${|
--	local e=$?
--
--	(( e )) && REPLY+="$e|"
--
--	return $e
--}$HOSTNAME:${PWD:-?} '"$PS1 "
--
--export TERM=xterm-256color
-+: ${TERM:=xterm-256color} ${HOME:=/} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android} ${SHELL:=$MKSH} ${USER:=$(getprop ro.product.device)}
-+if ((USER_ID)); then PS1='$'; else PS1='#'; fi
-+if [ -d "/sbin/.magisk/busybox" ]; then BBDIR="/sbin/.magisk/busybox"; fi
-+PATH=$PATH:/sbin:$BBDIR:.
-+PS1='$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
-+export TERM HOME MKSH HOSTNAME SHELL USER PATH
 
 project external/nano/
 diff --git a/Android.mk b/Android.mk
@@ -1409,7 +1391,7 @@ index 8479369..5a2cb0b 100644
  KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
 
 diff --git a/config/common.mk b/config/common.mk
-index 9de9de4..ada0334 100644
+index 9de9de4..8837de3 100644
 --- a/config/common.mk
 +++ b/config/common.mk
 @@ -100,8 +100,6 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
@@ -1421,7 +1403,7 @@ index 9de9de4..ada0334 100644
 
  # AOSP packages
  PRODUCT_PACKAGES += \
-@@ -111,37 +109,16 @@ PRODUCT_PACKAGES += \
+@@ -111,37 +109,12 @@ PRODUCT_PACKAGES += \
  PRODUCT_PACKAGES += \
      LineageParts \
      LineageSettingsProvider \
@@ -1434,10 +1416,10 @@ index 9de9de4..ada0334 100644
 -    LineageThemesStub \
      ThemePicker
 
- # Config
- PRODUCT_PACKAGES += \
-     SimpleDeviceConfig
-
+-# Config
+-PRODUCT_PACKAGES += \
+-    SimpleDeviceConfig
+-
 -# Extra tools in Lineage
 -PRODUCT_PACKAGES += \
 -    7z \
@@ -1460,7 +1442,7 @@ index 9de9de4..ada0334 100644
  # Filesystems tools
  PRODUCT_PACKAGES += \
      fsck.exfat \
-@@ -151,20 +128,6 @@ PRODUCT_PACKAGES += \
+@@ -151,20 +124,6 @@ PRODUCT_PACKAGES += \
      mkfs.ntfs \
      mount.ntfs
 
