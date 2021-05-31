@@ -49,26 +49,17 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.button_jack_profile=volume \
     persist.sys.button_jack_switch=0
 
-# Dalvik heap
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    dalvik.vm.heapgrowthlimit=288m \
-    dalvik.vm.heapmaxfree=8m \
-    dalvik.vm.heapminfree=512k \
-    dalvik.vm.heapsize=768m \
-    dalvik.vm.heapstartsize=8m \
-    dalvik.vm.heaptargetutilization=0.75
-
 # Dexpreopt
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dex2oat-filter=speed \
-    dalvik.vm.image-dex2oat-filter=speed \
-    pm.dexopt.ab-ota=speed \
-    pm.dexopt.bg-dexopt=speed \
-    pm.dexopt.boot=speed \
-    pm.dexopt.first-boot=speed \
-    pm.dexopt.inactive=speed \
-    pm.dexopt.install=speed \
-    pm.dexopt.shared=speed
+    dalvik.vm.dex2oat-filter=everything \
+    dalvik.vm.image-dex2oat-filter=everything \
+    pm.dexopt.ab-ota=everything \
+    pm.dexopt.bg-dexopt=everything \
+    pm.dexopt.boot=everything \
+    pm.dexopt.first-boot=everything \
+    pm.dexopt.inactive=everything \
+    pm.dexopt.install=everything \
+    pm.dexopt.shared=everything
 
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \

@@ -74,13 +74,15 @@ void vendor_load_properties()
         struct sysinfo sys;
         sysinfo(&sys);
 
-        // Set memory properties for Mi-4c with 2GB RAM
+        // Set memory properties for Mi-4c with 2GB RAM (values from phone-xhdpi-2048-dalvik-heap.mk)
         if (sys.totalram <= RAM_SIZE_2GB)
         {
             property_override("dalvik.vm.heapgrowthlimit", "192m");
-            property_override("dalvik.vm.heapminfree", "2m");
+            property_override("dalvik.vm.heapmaxfree", "8m");
+            property_override("dalvik.vm.heapminfree", "512k");
             property_override("dalvik.vm.heapsize", "512m");
-            property_override("dalvik.vm.heapstartsize", "16m");
+            property_override("dalvik.vm.heapstartsize", "8m");
+            property_override("dalvik.vm.heaptargetutilization", "0.75");
             property_override("ro.config.low_ram", "true");
         }
 

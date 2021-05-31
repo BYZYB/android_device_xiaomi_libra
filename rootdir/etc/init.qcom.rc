@@ -172,7 +172,6 @@ service charger /charger
     class charger
     group system graphics
     seclabel u:r:charger:s0
-    writepid /dev/cpuset/system-background/tasks
 
 service cnd /system/vendor/bin/cnd
     class main
@@ -230,7 +229,6 @@ service netmgrd /vendor/bin/netmgrd
 service qbcharger /charger -m 1
     disabled
     oneshot
-    writepid /dev/cpuset/system-background/tasks
 
 service qmuxd /vendor/bin/qmuxd
     class main
