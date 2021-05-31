@@ -510,6 +510,7 @@ index 4402c8d20..8a928852c 100755
 
    # These files are just the BUILD_NUMBER, and will always be different
    if name in ['BOOT/RAMDISK/selinux_version',
+
 diff --git a/tools/releasetools/test_common.py b/tools/releasetools/test_common.py
 index 3a73253d0..6cb958e7c 100644
 --- a/tools/releasetools/test_common.py
@@ -813,10 +814,10 @@ index 858a4e8..c1e7d51 100644
 
 project frameworks/base/
 diff --git a/Android.bp b/Android.bp
-index 498f3ccb..b1a7c56c 100644
+index 0c4779f4..7473e052 100644
 --- a/Android.bp
 +++ b/Android.bp
-@@ -784,11 +784,6 @@ java_defaults {
+@@ -786,11 +786,6 @@ java_defaults {
          "devicepolicyprotosnano",
      ],
 
@@ -1163,10 +1164,18 @@ index 5b9c78f6..289bdd31 100644
                  controller = mController;
 
 diff --git a/services/core/java/com/android/server/am/ActivityManagerService.java b/services/core/java/com/android/server/am/ActivityManagerService.java
-index 3f651196..007b0653 100644
+index 3f651196..4b577e9b 100644
 --- a/services/core/java/com/android/server/am/ActivityManagerService.java
 +++ b/services/core/java/com/android/server/am/ActivityManagerService.java
-@@ -484,8 +484,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -241,7 +241,6 @@ import android.os.BinderProxy;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.os.Debug;
+-import android.os.DropBoxManager;
+ import android.os.FactoryTest;
+ import android.os.FileUtils;
+ import android.os.Handler;
+@@ -484,8 +483,6 @@ public class ActivityManagerService extends IActivityManager.Stub
 
      static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -1175,7 +1184,7 @@ index 3f651196..007b0653 100644
      // Assumes logcat entries average around 100 bytes; that's not perfect stack traces count
      // as one line, but close enough for now.
      static final int RESERVED_BYTES_PER_LOGCAT_LINE = 100;
-@@ -9261,9 +9259,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -9261,9 +9258,6 @@ public class ActivityManagerService extends IActivityManager.Stub
              crashInfo.crashTag = crashInfo.crashTag + " " + relaunchReasonString;
          }
 
@@ -1185,7 +1194,7 @@ index 3f651196..007b0653 100644
          mAppErrors.crashApplication(r, crashInfo);
      }
 
-@@ -9294,9 +9289,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -9294,9 +9288,6 @@ public class ActivityManagerService extends IActivityManager.Stub
                      mAlreadyLoggedViolatedStacks.add(stackFingerprint);
                  }
              }
@@ -1195,7 +1204,7 @@ index 3f651196..007b0653 100644
          }
 
          if ((penaltyMask & StrictMode.PENALTY_DIALOG) != 0) {
-@@ -9320,68 +9312,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -9320,68 +9311,6 @@ public class ActivityManagerService extends IActivityManager.Stub
          }
      }
 
@@ -1264,7 +1273,7 @@ index 3f651196..007b0653 100644
      /**
       * Used by {@link Log} via {@link com.android.internal.os.RuntimeInit} to report serious errors.
       * @param app object of the crashing app, null for the system server
-@@ -9434,8 +9364,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -9434,8 +9363,6 @@ public class ActivityManagerService extends IActivityManager.Stub
          StatsLog.write(StatsLog.WTF_OCCURRED, callingUid, tag, processName,
                  callingPid, (r != null) ? r.getProcessClassEnum() : 0);
 
@@ -1273,7 +1282,7 @@ index 3f651196..007b0653 100644
          return r;
      }
 
-@@ -9453,54 +9381,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -9453,54 +9380,6 @@ public class ActivityManagerService extends IActivityManager.Stub
          }
      }
 
@@ -1328,7 +1337,7 @@ index 3f651196..007b0653 100644
      private static String processClass(ProcessRecord process) {
          if (process == null || process.pid == MY_PID) {
              return "system_server";
-@@ -9514,144 +9394,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -9514,144 +9393,6 @@ public class ActivityManagerService extends IActivityManager.Stub
      private volatile long mWtfClusterStart;
      private volatile int mWtfClusterCount;
 
@@ -1473,15 +1482,17 @@ index 3f651196..007b0653 100644
      @Override
      public List<ActivityManager.ProcessErrorStateInfo> getProcessesInErrorState() {
          enforceNotIsolatedCaller("getProcessesInErrorState");
-@@ -13564,8 +13306,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+@@ -13564,10 +13305,6 @@ public class ActivityManagerService extends IActivityManager.Stub
          }
          dropBuilder.append(catSw.toString());
          StatsLog.write(StatsLog.LOW_MEM_REPORTED);
 -        addErrorToDropBox("lowmem", null, "system_server", null,
 -                null, null, tag.toString(), dropBuilder.toString(), null, null);
-         //Slog.i(TAG, "Sent to dropbox:");
-         //Slog.i(TAG, dropBuilder.toString());
+-        //Slog.i(TAG, "Sent to dropbox:");
+-        //Slog.i(TAG, dropBuilder.toString());
          synchronized (ActivityManagerService.this) {
+             long now = SystemClock.uptimeMillis();
+             if (mLastMemUsageReportTime < now) {
 
 diff --git a/services/core/java/com/android/server/am/ProcessRecord.java b/services/core/java/com/android/server/am/ProcessRecord.java
 index ea308427..df24a871 100644
@@ -1770,7 +1781,7 @@ index 3b3ee587..ddd3a0fb 100644
       * Return null if system cannot get digest from uid.
 
 diff --git a/services/core/java/com/android/server/pm/PackageManagerService.java b/services/core/java/com/android/server/pm/PackageManagerService.java
-index 2f2c1689..4f313682 100644
+index 59d82d10..95f65306 100644
 --- a/services/core/java/com/android/server/pm/PackageManagerService.java
 +++ b/services/core/java/com/android/server/pm/PackageManagerService.java
 @@ -4203,8 +4203,8 @@ public class PackageManagerService extends IPackageManager.Stub
@@ -1780,7 +1791,7 @@ index 2f2c1689..4f313682 100644
 -            PackageInfo packageInfo = PackageParser.generatePackageInfo(p, gids, flags,
 -                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId);
 +            PackageInfo packageInfo = mayFakeSignature(p, PackageParser.generatePackageInfo(p, gids, flags,
-+                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId), permissions);
++                ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId), permissions);
 
              if (packageInfo == null) {
                  return null;
@@ -1802,7 +1813,7 @@ index 2f2c1689..4f313682 100644
 +        } catch (Throwable t) {
 +            // We should never die because of any failures, this is system code!
 +            Log.w("PackageManagerService.FAKE_PACKAGE_SIGNATURE", t);
-+            }
++    }
 +        return pi;
 +    }
 +
@@ -2336,7 +2347,7 @@ index 0000000..371b9fe
 +import java.io.FileWriter;
 +
 +
-+public class RefreshRatePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, Preference.OnPreferenceChangeListener>
++public class RefreshRatePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, Preference.OnPreferenceChangeListener {
 +    private static final String TAG = "RefreshRatePrefContr";
 +    private final String mScreenRefreshRateKey;
 +
@@ -2742,10 +2753,10 @@ index bdf264d..529ffb6 100644
 
 -$(KERNEL_OUT):
 +$(KERNEL_ADDITIONAL_CONFIG_OUT): $(KERNEL_ADDITIONAL_CONFIG_DEPENDENCY)
-        mkdir -p $(KERNEL_OUT)
+ 	mkdir -p $(KERNEL_OUT)
 -
 -$(KERNEL_ADDITIONAL_CONFIG_OUT): $(KERNEL_OUT)
-        $(hide) cmp -s $(KERNEL_ADDITIONAL_CONFIG_SRC) $@ || cp $(KERNEL_ADDITIONAL_CONFIG_SRC) $@;
+ 	$(hide) cmp -s $(KERNEL_ADDITIONAL_CONFIG_SRC) $@ || cp $(KERNEL_ADDITIONAL_CONFIG_SRC) $@;
 
  $(KERNEL_CONFIG): $(KERNEL_DEFCONFIG_SRC) $(KERNEL_ADDITIONAL_CONFIG_OUT)
 @@ -288,13 +289,13 @@ kerneltags: $(KERNEL_CONFIG)
@@ -2754,18 +2765,18 @@ index bdf264d..529ffb6 100644
 
 -kernelsavedefconfig: $(KERNEL_OUT)
 +kernelsavedefconfig: mkdir -p $(KERNEL_OUT)
-        $(call make-kernel-target,$(KERNEL_DEFCONFIG))
-        env KCONFIG_NOTIMESTAMP=true \
-                 $(call make-kernel-target,savedefconfig)
-        cp $(KERNEL_OUT)/defconfig $(KERNEL_DEFCONFIG_SRC)
+ 	$(call make-kernel-target,$(KERNEL_DEFCONFIG))
+ 	env KCONFIG_NOTIMESTAMP=true \
+ 		 $(call make-kernel-target,savedefconfig)
+ 	cp $(KERNEL_OUT)/defconfig $(KERNEL_DEFCONFIG_SRC)
 
 -alldefconfig: $(KERNEL_OUT)
 +alldefconfig: mkdir -p $(KERNEL_OUT)
-        env KCONFIG_NOTIMESTAMP=true \
-                 $(call make-kernel-target,alldefconfig)
+ 	env KCONFIG_NOTIMESTAMP=true \
+ 		 $(call make-kernel-target,alldefconfig)
 
 diff --git a/config/BoardConfigKernel.mk b/config/BoardConfigKernel.mk
-index 3e0ac66..652a63c 100644
+index 3e0ac66..6fae8b1 100644
 --- a/config/BoardConfigKernel.mk
 +++ b/config/BoardConfigKernel.mk
 @@ -54,11 +54,11 @@ endif
@@ -2780,7 +2791,7 @@ index 3e0ac66..652a63c 100644
 -KERNEL_TOOLCHAIN_arm := $(GCC_PREBUILTS)/arm/arm-linux-androideabi-4.9/bin
 -KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-androidkernel-
 +KERNEL_TOOLCHAIN_arm := /usr/bin
-+KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabi-
++KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabihf-
  # x86 toolchain
  KERNEL_TOOLCHAIN_x86 := $(GCC_PREBUILTS)/x86/x86_64-linux-android-4.9/bin
  KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-

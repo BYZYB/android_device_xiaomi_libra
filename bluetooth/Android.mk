@@ -13,12 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH:= $(call my-dir)
+LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := bdaddr_xiaomi
-LOCAL_MODULE_TAGS := optional
 LOCAL_PROPRIETARY_MODULE := true
-LOCAL_SHARED_LIBRARIES := libc libcutils liblog libutils libqminvapi
+LOCAL_SHARED_LIBRARIES := \
+	libc \
+	libcutils \
+	liblog \
+	libqminvapi \
+	libutils
 LOCAL_SRC_FILES := bdaddr_xiaomi.c
 include $(BUILD_EXECUTABLE)
