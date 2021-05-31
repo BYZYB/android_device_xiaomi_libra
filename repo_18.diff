@@ -846,6 +846,204 @@ index fc64efd9..57c380c8 100644
 
  filegroup {
 
+diff --git a/api/current.txt b/api/current.txt
+index 952ccdad..1c199adb 100644
+--- a/api/current.txt
++++ b/api/current.txt
+@@ -77,6 +77,7 @@ package android {
+     field public static final String DIAGNOSTIC = "android.permission.DIAGNOSTIC";
+     field public static final String DISABLE_KEYGUARD = "android.permission.DISABLE_KEYGUARD";
+     field public static final String DUMP = "android.permission.DUMP";
++    field public static final String FAKE_PACKAGE_SIGNATURE = "android.permission.FAKE_PACKAGE_SIGNATURE";
+     field public static final String EXPAND_STATUS_BAR = "android.permission.EXPAND_STATUS_BAR";
+     field public static final String FACTORY_TEST = "android.permission.FACTORY_TEST";
+     field public static final String FOREGROUND_SERVICE = "android.permission.FOREGROUND_SERVICE";
+@@ -182,6 +183,7 @@ package android {
+     field public static final String CALL_LOG = "android.permission-group.CALL_LOG";
+     field public static final String CAMERA = "android.permission-group.CAMERA";
+     field public static final String CONTACTS = "android.permission-group.CONTACTS";
++    field public static final String FAKE_PACKAGE = "android.permission-group.FAKE_PACKAGE";
+     field public static final String LOCATION = "android.permission-group.LOCATION";
+     field public static final String MICROPHONE = "android.permission-group.MICROPHONE";
+     field public static final String PHONE = "android.permission-group.PHONE";
+@@ -82224,4 +82226,3 @@ package org.xmlpull.v1.sax2 {
+   }
+
+ }
+-
+
+diff --git a/core/java/android/app/SystemServiceRegistry.java b/core/java/android/app/SystemServiceRegistry.java
+index e599a5ce..3d75c1b7 100644
+--- a/core/java/android/app/SystemServiceRegistry.java
++++ b/core/java/android/app/SystemServiceRegistry.java
+@@ -139,7 +139,6 @@ import android.os.BatteryStats;
+ import android.os.BatteryStatsManager;
+ import android.os.BugreportManager;
+ import android.os.Build;
+-import android.os.DropBoxManager;
+ import android.os.HardwarePropertiesManager;
+ import android.os.IBatteryPropertiesRegistrar;
+ import android.os.IBinder;
+@@ -206,7 +205,6 @@ import com.android.internal.app.IBatteryStats;
+ import com.android.internal.app.ISoundTriggerService;
+ import com.android.internal.appwidget.IAppWidgetService;
+ import com.android.internal.net.INetworkWatchlistManager;
+-import com.android.internal.os.IDropBoxManagerService;
+ import com.android.internal.policy.PhoneLayoutInflater;
+ import com.android.internal.util.Preconditions;
+
+@@ -466,15 +464,6 @@ public final class SystemServiceRegistry {
+                 return new NfcManager(ctx);
+             }});
+
+-        registerService(Context.DROPBOX_SERVICE, DropBoxManager.class,
+-                new CachedServiceFetcher<DropBoxManager>() {
+-            @Override
+-            public DropBoxManager createService(ContextImpl ctx) throws ServiceNotFoundException {
+-                IBinder b = ServiceManager.getServiceOrThrow(Context.DROPBOX_SERVICE);
+-                IDropBoxManagerService service = IDropBoxManagerService.Stub.asInterface(b);
+-                return new DropBoxManager(ctx, service);
+-            }});
+-
+         registerService(Context.INPUT_SERVICE, InputManager.class,
+                 new StaticServiceFetcher<InputManager>() {
+             @Override
+
+diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
+index 962d6ce7..4bea0b2b 100644
+--- a/core/res/AndroidManifest.xml
++++ b/core/res/AndroidManifest.xml
+@@ -2842,6 +2842,20 @@
+         android:description="@string/permdesc_getPackageSize"
+         android:protectionLevel="normal" />
+
++    <!-- Dummy user-facing group for faking package signature -->
++    <permission-group android:name="android.permission-group.FAKE_PACKAGE"
++        android:label="@string/permgrouplab_fake_package_signature"
++        android:description="@string/permgroupdesc_fake_package_signature"
++        android:request="@string/permgrouprequest_fake_package_signature"
++        android:priority="100" />
++
++    <!-- Allows an application to change the package signature as seen by applications -->
++    <permission android:name="android.permission.FAKE_PACKAGE_SIGNATURE"
++        android:permissionGroup="android.permission-group.UNDEFINED"
++        android:protectionLevel="dangerous"
++        android:label="@string/permlab_fakePackageSignature"
++        android:description="@string/permdesc_fakePackageSignature" />
++
+     <!-- @deprecated No longer useful, see
+          {@link android.content.pm.PackageManager#addPackageToPreferred}
+          for details. -->
+
+diff --git a/core/res/res/values-zh-rCN/strings.xml b/core/res/res/values-zh-rCN/strings.xml
+index a645cd7d..2129a35c 100644
+--- a/core/res/res/values-zh-rCN/strings.xml
++++ b/core/res/res/values-zh-rCN/strings.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!--
++<!--
+ /* //device/apps/common/assets/res/any/strings.xml
+ **
+ ** Copyright 2006, The Android Open Source Project
+@@ -2176,6 +2176,11 @@
+     <string name="PERSOSUBSTATE_SIM_ICCID_SUCCESS" msgid="8058678548991999545">"ICCID 解锁成功。"</string>
+     <string name="PERSOSUBSTATE_SIM_IMPI_SUCCESS" msgid="2545608067978550571">"IMPI 解锁成功。"</string>
+     <string name="PERSOSUBSTATE_SIM_NS_SP_SUCCESS" msgid="4352382949744625007">"网络子集服务提供商解锁成功。"</string>
++    <string name="permlab_fakePackageSignature">模拟软件包签名</string>
++    <string name="permdesc_fakePackageSignature">允许当前应用伪装成为其他应用</string>
++    <string name="permgrouplab_fake_package_signature">模拟软件包签名</string>
++    <string name="permgroupdesc_fake_package_signature">模拟软件包签名</string>
++    <string name="permgrouprequest_fake_package_signature">允许 &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> 模拟软件包签名？</string>
+     <string name="config_pdp_reject_dialog_title" msgid="4072057179246785727"></string>
+     <string name="config_pdp_reject_user_authentication_failed" msgid="4531693033885744689"></string>
+     <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
+
+diff --git a/core/res/res/values-zh-rHK/strings.xml b/core/res/res/values-zh-rHK/strings.xml
+index cb61121b..5f8a2a30 100644
+--- a/core/res/res/values-zh-rHK/strings.xml
++++ b/core/res/res/values-zh-rHK/strings.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!--
++<!--
+ /* //device/apps/common/assets/res/any/strings.xml
+ **
+ ** Copyright 2006, The Android Open Source Project
+@@ -2176,6 +2176,11 @@
+     <string name="PERSOSUBSTATE_SIM_ICCID_SUCCESS" msgid="8058678548991999545">"ICCID 解鎖成功。"</string>
+     <string name="PERSOSUBSTATE_SIM_IMPI_SUCCESS" msgid="2545608067978550571">"IMPI 解鎖成功。"</string>
+     <string name="PERSOSUBSTATE_SIM_NS_SP_SUCCESS" msgid="4352382949744625007">"網絡子集服務供應商解鎖成功。"</string>
++    <string name="permlab_fakePackageSignature">僞造應用程式封裝簽章</string>
++    <string name="permdesc_fakePackageSignature">允許當前應用程式偽裝成為其他應用程式</string>
++    <string name="permgrouplab_fake_package_signature">僞造應用程式封裝簽章</string>
++    <string name="permgroupdesc_fake_package_signature">僞造應用程式封裝簽章</string>
++    <string name="permgrouprequest_fake_package_signature">允許 &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> 僞造應用程式封裝簽章？</string>
+     <string name="config_pdp_reject_dialog_title" msgid="4072057179246785727"></string>
+     <string name="config_pdp_reject_user_authentication_failed" msgid="4531693033885744689"></string>
+     <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
+
+diff --git a/core/res/res/values-zh-rTW/strings.xml b/core/res/res/values-zh-rTW/strings.xml
+index 4d2d86ad..90f5f24d 100644
+--- a/core/res/res/values-zh-rTW/strings.xml
++++ b/core/res/res/values-zh-rTW/strings.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!--
++<!--
+ /* //device/apps/common/assets/res/any/strings.xml
+ **
+ ** Copyright 2006, The Android Open Source Project
+@@ -2176,6 +2176,11 @@
+     <string name="PERSOSUBSTATE_SIM_ICCID_SUCCESS" msgid="8058678548991999545">"ICCID 解鎖成功。"</string>
+     <string name="PERSOSUBSTATE_SIM_IMPI_SUCCESS" msgid="2545608067978550571">"IMPI 解鎖成功。"</string>
+     <string name="PERSOSUBSTATE_SIM_NS_SP_SUCCESS" msgid="4352382949744625007">"網路子集服務供應商解鎖成功。"</string>
++    <string name="permlab_fakePackageSignature">僞造應用程式封裝簽章</string>
++    <string name="permdesc_fakePackageSignature">允許當前應用程式偽裝成為其他應用程式</string>
++    <string name="permgrouplab_fake_package_signature">僞造應用程式封裝簽章</string>
++    <string name="permgroupdesc_fake_package_signature">僞造應用程式封裝簽章</string>
++    <string name="permgrouprequest_fake_package_signature">允許 &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> 僞造應用程式封裝簽章？</string>
+     <string name="config_pdp_reject_dialog_title" msgid="4072057179246785727"></string>
+     <string name="config_pdp_reject_user_authentication_failed" msgid="4531693033885744689"></string>
+     <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index b61b26a0..0b6206de 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -1654,6 +1654,8 @@
+     <string-array name="config_locationProviderPackageNames" translatable="false">
+         <!-- The standard AOSP fused location provider -->
+         <item>com.android.location.fused</item>
++        <!-- Google Play Services or microG (free reimplementation) location provider -->
++        <item>com.google.android.gms</item>
+     </string-array>
+
+     <!-- This string array can be overriden to enable test location providers initially. -->
+
+diff --git a/core/res/res/values/strings.xml b/core/res/res/values/strings.xml
+index d6ee28b9..b09ecc51 100644
+--- a/core/res/res/values/strings.xml
++++ b/core/res/res/values/strings.xml
+@@ -847,6 +847,17 @@
+
+     <!--  Permissions -->
+
++    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permlab_fakePackageSignature">Spoof package signature</string>
++    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permdesc_fakePackageSignature">Allows the app to pretend to be a different app.</string>
++    <!-- Title of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permgrouplab_fake_package_signature">Spoof package signature</string>
++    <!-- Description of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permgroupdesc_fake_package_signature">allow to spoof package signature</string>
++    <!-- Message shown to the user when the apps requests permission from this group. If ever possible this should stay below 80 characters (assuming the parameters takes 20 characters). Don't abbreviate until the message reaches 120 characters though. [CHAR LIMIT=120] -->
++    <string name="permgrouprequest_fake_package_signature">Allow &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> to spoof package signature?</string>
++
+     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+     <string name="permlab_statusBar">disable or modify status bar</string>
+     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+
 diff --git a/data/fonts/fonts.xml b/data/fonts/fonts.xml
 index 4c214b52..e2a9d8ca 100644
 --- a/data/fonts/fonts.xml
@@ -904,6 +1102,32 @@ index 4c214b52..e2a9d8ca 100644
      <family lang="und-Zsye">
          <font weight="400" style="normal">NotoColorEmoji.ttf</font>
 
+diff --git a/non-updatable-api/current.txt b/non-updatable-api/current.txt
+index 5f15216e..6851cf14 100644
+--- a/non-updatable-api/current.txt
++++ b/non-updatable-api/current.txt
+@@ -79,6 +79,7 @@ package android {
+     field public static final String DUMP = "android.permission.DUMP";
+     field public static final String EXPAND_STATUS_BAR = "android.permission.EXPAND_STATUS_BAR";
+     field public static final String FACTORY_TEST = "android.permission.FACTORY_TEST";
++    field public static final String FAKE_PACKAGE_SIGNATURE = "android.permission.FAKE_PACKAGE_SIGNATURE";
+     field public static final String FOREGROUND_SERVICE = "android.permission.FOREGROUND_SERVICE";
+     field public static final String GET_ACCOUNTS = "android.permission.GET_ACCOUNTS";
+     field public static final String GET_ACCOUNTS_PRIVILEGED = "android.permission.GET_ACCOUNTS_PRIVILEGED";
+@@ -182,6 +183,7 @@ package android {
+     field public static final String CALL_LOG = "android.permission-group.CALL_LOG";
+     field public static final String CAMERA = "android.permission-group.CAMERA";
+     field public static final String CONTACTS = "android.permission-group.CONTACTS";
++    field public static final String FAKE_PACKAGE = "android.permission-group.FAKE_PACKAGE";
+     field public static final String LOCATION = "android.permission-group.LOCATION";
+     field public static final String MICROPHONE = "android.permission-group.MICROPHONE";
+     field public static final String PHONE = "android.permission-group.PHONE";
+@@ -80385,4 +80387,3 @@ package org.xmlpull.v1.sax2 {
+   }
+
+ }
+-
+
 diff --git a/services/core/Android.bp b/services/core/Android.bp
 index 8416ba32..45bf55dd 100644
 --- a/services/core/Android.bp
@@ -941,6 +1165,584 @@ index 8416ba32..45bf55dd 100644
 -    name: "protolog.conf.json.gz",
 -    src: ":services.core.json.gz",
 -}
+
+diff --git a/services/core/java/com/android/server/BatteryService.java b/services/core/java/com/android/server/BatteryService.java
+index 9c253a6b..c1aaa08a 100644
+--- a/services/core/java/com/android/server/BatteryService.java
++++ b/services/core/java/com/android/server/BatteryService.java
+@@ -40,7 +40,6 @@ import android.os.BatteryProperty;
+ import android.os.BatteryStats;
+ import android.os.Binder;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.FileUtils;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+@@ -846,9 +845,6 @@ public final class BatteryService extends SystemService {
+         IBinder batteryInfoService = ServiceManager.getService(BatteryStats.SERVICE_NAME);
+         if (batteryInfoService == null) return;
+
+-        DropBoxManager db = (DropBoxManager) mContext.getSystemService(Context.DROPBOX_SERVICE);
+-        if (db == null || !db.isTagEnabled("BATTERY_DISCHARGE_INFO")) return;
+-
+         File dumpFile = null;
+         FileOutputStream dumpStream = null;
+         try {
+@@ -857,9 +853,6 @@ public final class BatteryService extends SystemService {
+             dumpStream = new FileOutputStream(dumpFile);
+             batteryInfoService.dump(dumpStream.getFD(), DUMPSYS_ARGS);
+             FileUtils.sync(dumpStream);
+-
+-            // add dump file to drop box
+-            db.addFile("BATTERY_DISCHARGE_INFO", dumpFile, DropBoxManager.IS_TEXT);
+         } catch (RemoteException e) {
+             Slog.e(TAG, "failed to dump battery service", e);
+         } catch (IOException e) {
+
+diff --git a/services/core/java/com/android/server/DropBoxManagerService.java b/services/core/java/com/android/server/DropBoxManagerService.java
+deleted file mode 100644
+index 6560824f..00000000
+--- a/services/core/java/com/android/server/DropBoxManagerService.java
++++ /dev/null
+
+diff --git a/services/core/java/com/android/server/StorageManagerService.java b/services/core/java/com/android/server/StorageManagerService.java
+index 32ceea7c..07440af1 100644
+--- a/services/core/java/com/android/server/StorageManagerService.java
++++ b/services/core/java/com/android/server/StorageManagerService.java
+@@ -82,7 +82,6 @@ import android.content.res.ObbInfo;
+ import android.database.ContentObserver;
+ import android.net.Uri;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.os.Environment;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+@@ -2341,10 +2340,6 @@ class StorageManagerService extends IStorageManager.Stub
+                     final long run = extras.getLong("run");
+                     final long destroy = extras.getLong("destroy");
+
+-                    final DropBoxManager dropBox = mContext.getSystemService(DropBoxManager.class);
+-                    dropBox.addText(TAG_STORAGE_BENCHMARK, scrubPath(path)
+-                            + " " + ident + " " + create + " " + run + " " + destroy);
+-
+                     synchronized (mLock) {
+                         final VolumeRecord rec = findRecordForPath(path);
+                         if (rec != null) {
+@@ -2504,9 +2499,6 @@ class StorageManagerService extends IStorageManager.Stub
+                         final long bytes = extras.getLong("bytes");
+                         final long time = extras.getLong("time");
+
+-                        final DropBoxManager dropBox = mContext.getSystemService(DropBoxManager.class);
+-                        dropBox.addText(TAG_STORAGE_TRIM, scrubPath(path) + " " + bytes + " " + time);
+-
+                         synchronized (mLock) {
+                             final VolumeRecord rec = findRecordForPath(path);
+                             if (rec != null) {
+
+diff --git a/services/core/java/com/android/server/Watchdog.java b/services/core/java/com/android/server/Watchdog.java
+index 425a0452..9b0f8c6b 100644
+--- a/services/core/java/com/android/server/Watchdog.java
++++ b/services/core/java/com/android/server/Watchdog.java
+@@ -657,27 +657,6 @@ public class Watchdog extends Thread {
+             doSysRq('w');
+             doSysRq('l');
+
+-            // Try to add the error to the dropbox, but assuming that the ActivityManager
+-            // itself may be deadlocked.  (which has happened, causing this statement to
+-            // deadlock and the watchdog as a whole to be ineffective)
+-            Thread dropboxThread = new Thread("watchdogWriteToDropbox") {
+-                    public void run() {
+-                        // If a watched thread hangs before init() is called, we don't have a
+-                        // valid mActivity. So we can't log the error to dropbox.
+-                        if (mActivity != null) {
+-                            mActivity.addErrorToDropBox(
+-                                    "watchdog", null, "system_server", null, null, null,
+-                                    subject, report.toString(), stack, null);
+-                        }
+-                        FrameworkStatsLog.write(FrameworkStatsLog.SYSTEM_SERVER_WATCHDOG_OCCURRED,
+-                                subject);
+-                    }
+-                };
+-            dropboxThread.start();
+-            try {
+-                dropboxThread.join(2000);  // wait up to 2 seconds for it to return.
+-            } catch (InterruptedException ignored) {}
+-
+             IActivityController controller;
+             synchronized (this) {
+                 controller = mController;
+
+diff --git a/services/core/java/com/android/server/am/ActivityManagerService.java b/services/core/java/com/android/server/am/ActivityManagerService.java
+index 3f4878e3..9336c20d 100644
+--- a/services/core/java/com/android/server/am/ActivityManagerService.java
++++ b/services/core/java/com/android/server/am/ActivityManagerService.java
+@@ -244,7 +244,6 @@ import android.os.BugreportParams;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.os.Debug;
+-import android.os.DropBoxManager;
+ import android.os.FactoryTest;
+ import android.os.FileUtils;
+ import android.os.Handler;
+@@ -493,8 +492,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+
+     static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+-    // How many bytes to write into the dropbox log before truncating
+-    static final int DROPBOX_DEFAULT_MAX_SIZE = 192 * 1024;
+     // Assumes logcat entries average around 100 bytes; that's not perfect stack traces count
+     // as one line, but close enough for now.
+     static final int RESERVED_BYTES_PER_LOGCAT_LINE = 100;
+@@ -9872,9 +9869,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+             crashInfo.crashTag = crashInfo.crashTag + " " + relaunchReasonString;
+         }
+
+-        addErrorToDropBox(
+-                eventType, r, processName, null, null, null, null, null, null, crashInfo);
+-
+         mAppErrors.crashApplication(r, crashInfo);
+     }
+
+@@ -9905,9 +9899,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+                     mAlreadyLoggedViolatedStacks.add(stackFingerprint);
+                 }
+             }
+-            if (logIt) {
+-                logStrictModeViolationToDropBox(r, info);
+-            }
+         }
+
+         if ((penaltyMask & StrictMode.PENALTY_DIALOG) != 0) {
+@@ -9931,68 +9922,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+     }
+
+-    // Depending on the policy in effect, there could be a bunch of
+-    // these in quick succession so we try to batch these together to
+-    // minimize disk writes, number of dropbox entries, and maximize
+-    // compression, by having more fewer, larger records.
+-    private void logStrictModeViolationToDropBox(
+-            ProcessRecord process,
+-            StrictMode.ViolationInfo info) {
+-        if (info == null) {
+-            return;
+-        }
+-        final boolean isSystemApp = process == null ||
+-                (process.info.flags & (ApplicationInfo.FLAG_SYSTEM |
+-                                       ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
+-        final String processName = process == null ? "unknown" : process.processName;
+-        final DropBoxManager dbox = (DropBoxManager)
+-                mContext.getSystemService(Context.DROPBOX_SERVICE);
+-
+-        // Exit early if the dropbox isn't configured to accept this report type.
+-        final String dropboxTag = processClass(process) + "_strictmode";
+-        if (dbox == null || !dbox.isTagEnabled(dropboxTag)) return;
+-
+-        final StringBuilder sb = new StringBuilder(1024);
+-        synchronized (sb) {
+-            appendDropBoxProcessHeaders(process, processName, sb);
+-            sb.append("Build: ").append(Build.FINGERPRINT).append("\n");
+-            sb.append("System-App: ").append(isSystemApp).append("\n");
+-            sb.append("Uptime-Millis: ").append(info.violationUptimeMillis).append("\n");
+-            if (info.violationNumThisLoop != 0) {
+-                sb.append("Loop-Violation-Number: ").append(info.violationNumThisLoop).append("\n");
+-            }
+-            if (info.numAnimationsRunning != 0) {
+-                sb.append("Animations-Running: ").append(info.numAnimationsRunning).append("\n");
+-            }
+-            if (info.broadcastIntentAction != null) {
+-                sb.append("Broadcast-Intent-Action: ").append(info.broadcastIntentAction).append("\n");
+-            }
+-            if (info.durationMillis != -1) {
+-                sb.append("Duration-Millis: ").append(info.durationMillis).append("\n");
+-            }
+-            if (info.numInstances != -1) {
+-                sb.append("Instance-Count: ").append(info.numInstances).append("\n");
+-            }
+-            if (info.tags != null) {
+-                for (String tag : info.tags) {
+-                    sb.append("Span-Tag: ").append(tag).append("\n");
+-                }
+-            }
+-            sb.append("\n");
+-            sb.append(info.getStackTrace());
+-            sb.append("\n");
+-            if (info.getViolationDetails() != null) {
+-                sb.append(info.getViolationDetails());
+-                sb.append("\n");
+-            }
+-        }
+-
+-        final String res = sb.toString();
+-        IoThread.getHandler().post(() -> {
+-            dbox.addText(dropboxTag, res);
+-        });
+-    }
+-
+     /**
+      * Used by {@link Log} via {@link com.android.internal.os.RuntimeInit} to report serious errors.
+      * @param app object of the crashing app, null for the system server
+@@ -10051,35 +9980,9 @@ public class ActivityManagerService extends IActivityManager.Stub
+         FrameworkStatsLog.write(FrameworkStatsLog.WTF_OCCURRED, callingUid, tag, processName,
+                 callingPid, (r != null) ? r.getProcessClassEnum() : 0);
+
+-        addErrorToDropBox("wtf", r, processName, null, null, null, tag, null, null, crashInfo);
+-
+         return r;
+     }
+
+-    /**
+-     * Schedule to handle any pending system_server WTFs.
+-     */
+-    public void schedulePendingSystemServerWtfs(
+-            final LinkedList<Pair<String, ApplicationErrorReport.CrashInfo>> list) {
+-        mHandler.post(() -> handlePendingSystemServerWtfs(list));
+-    }
+-
+-    /**
+-     * Handle any pending system_server WTFs, add into the dropbox
+-     */
+-    private void handlePendingSystemServerWtfs(
+-            final LinkedList<Pair<String, ApplicationErrorReport.CrashInfo>> list) {
+-        ProcessRecord proc;
+-        synchronized (mPidsSelfLocked) {
+-            proc = mPidsSelfLocked.get(MY_PID);
+-        }
+-        for (Pair<String, ApplicationErrorReport.CrashInfo> p = list.poll();
+-                p != null; p = list.poll()) {
+-            addErrorToDropBox("wtf", proc, "system_server", null, null, null, p.first, null, null,
+-                    p.second);
+-        }
+-    }
+-
+     /**
+      * @param app object of some object (as stored in {@link com.android.internal.os.RuntimeInit})
+      * @return the corresponding {@link ProcessRecord} object, or null if none could be found
+@@ -10094,54 +9997,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+     }
+
+-    /**
+-     * Utility function for addErrorToDropBox and handleStrictModeViolation's logging
+-     * to append various headers to the dropbox log text.
+-     */
+-    void appendDropBoxProcessHeaders(ProcessRecord process, String processName,
+-            StringBuilder sb) {
+-        // Watchdog thread ends up invoking this function (with
+-        // a null ProcessRecord) to add the stack file to dropbox.
+-        // Do not acquire a lock on this (am) in such cases, as it
+-        // could cause a potential deadlock, if and when watchdog
+-        // is invoked due to unavailability of lock on am and it
+-        // would prevent watchdog from killing system_server.
+-        if (process == null) {
+-            sb.append("Process: ").append(processName).append("\n");
+-            return;
+-        }
+-        // Note: ProcessRecord 'process' is guarded by the service
+-        // instance.  (notably process.pkgList, which could otherwise change
+-        // concurrently during execution of this method)
+-        synchronized (this) {
+-            sb.append("Process: ").append(processName).append("\n");
+-            sb.append("PID: ").append(process.pid).append("\n");
+-            sb.append("UID: ").append(process.uid).append("\n");
+-            int flags = process.info.flags;
+-            IPackageManager pm = AppGlobals.getPackageManager();
+-            sb.append("Flags: 0x").append(Integer.toHexString(flags)).append("\n");
+-            for (int ip=0; ip<process.pkgList.size(); ip++) {
+-                String pkg = process.pkgList.keyAt(ip);
+-                sb.append("Package: ").append(pkg);
+-                try {
+-                    PackageInfo pi = pm.getPackageInfo(pkg, 0, UserHandle.getCallingUserId());
+-                    if (pi != null) {
+-                        sb.append(" v").append(pi.getLongVersionCode());
+-                        if (pi.versionName != null) {
+-                            sb.append(" (").append(pi.versionName).append(")");
+-                        }
+-                    }
+-                } catch (RemoteException e) {
+-                    Slog.e(TAG, "Error getting package info: " + pkg, e);
+-                }
+-                sb.append("\n");
+-            }
+-            if (process.info.isInstantApp()) {
+-                sb.append("Instant-App: true\n");
+-            }
+-        }
+-    }
+-
+     private static String processClass(ProcessRecord process) {
+         if (process == null || process.pid == MY_PID) {
+             return "system_server";
+@@ -10154,158 +10009,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+
+     private final ArrayMap<String, long[]> mErrorClusterRecords = new ArrayMap<>();
+
+-    /**
+-     * Write a description of an error (crash, WTF, ANR) to the drop box.
+-     * @param eventType to include in the drop box tag ("crash", "wtf", etc.)
+-     * @param process which caused the error, null means the system server
+-     * @param activityShortComponentName which triggered the error, null if unknown
+-     * @param parentShortComponentName activity related to the error, null if unknown
+-     * @param parentProcess parent process
+-     * @param subject line related to the error, null if absent
+-     * @param report in long form describing the error, null if absent
+-     * @param dataFile text file to include in the report, null if none
+-     * @param crashInfo giving an application stack trace, null if absent
+-     */
+-    public void addErrorToDropBox(String eventType,
+-            ProcessRecord process, String processName, String activityShortComponentName,
+-            String parentShortComponentName, ProcessRecord parentProcess,
+-            String subject, final String report, final File dataFile,
+-            final ApplicationErrorReport.CrashInfo crashInfo) {
+-        // NOTE -- this must never acquire the ActivityManagerService lock,
+-        // otherwise the watchdog may be prevented from resetting the system.
+-
+-        // Bail early if not published yet
+-        if (ServiceManager.getService(Context.DROPBOX_SERVICE) == null) return;
+-        final DropBoxManager dbox = mContext.getSystemService(DropBoxManager.class);
+-
+-        // Exit early if the dropbox isn't configured to accept this report type.
+-        final String dropboxTag = processClass(process) + "_" + eventType;
+-        if (dbox == null || !dbox.isTagEnabled(dropboxTag)) return;
+-
+-        // Rate-limit how often we're willing to do the heavy lifting below to
+-        // collect and record logs; currently 5 logs per 10 second period per eventType.
+-        final long now = SystemClock.elapsedRealtime();
+-        synchronized (mErrorClusterRecords) {
+-            long[] errRecord = mErrorClusterRecords.get(eventType);
+-            if (errRecord == null) {
+-                errRecord = new long[2]; // [0]: startTime, [1]: count
+-                mErrorClusterRecords.put(eventType, errRecord);
+-            }
+-            if (now - errRecord[0] > 10 * DateUtils.SECOND_IN_MILLIS) {
+-                errRecord[0] = now;
+-                errRecord[1] = 1L;
+-            } else {
+-                if (errRecord[1]++ >= 5) return;
+-            }
+-        }
+-
+-        final StringBuilder sb = new StringBuilder(1024);
+-        appendDropBoxProcessHeaders(process, processName, sb);
+-        if (process != null) {
+-            sb.append("Foreground: ")
+-                    .append(process.isInterestingToUserLocked() ? "Yes" : "No")
+-                    .append("\n");
+-            if (process.startTime > 0) {
+-                long runtimeMillis = SystemClock.elapsedRealtime() - process.startTime;
+-                sb.append("Process-Runtime: ").append(runtimeMillis).append("\n");
+-            }
+-        }
+-        if (activityShortComponentName != null) {
+-            sb.append("Activity: ").append(activityShortComponentName).append("\n");
+-        }
+-        if (parentShortComponentName != null) {
+-            if (parentProcess != null && parentProcess.pid != process.pid) {
+-                sb.append("Parent-Process: ").append(parentProcess.processName).append("\n");
+-            }
+-            if (!parentShortComponentName.equals(activityShortComponentName)) {
+-                sb.append("Parent-Activity: ").append(parentShortComponentName).append("\n");
+-            }
+-        }
+-        if (subject != null) {
+-            sb.append("Subject: ").append(subject).append("\n");
+-        }
+-        sb.append("Build: ").append(Build.FINGERPRINT).append("\n");
+-        if (Debug.isDebuggerConnected()) {
+-            sb.append("Debugger: Connected\n");
+-        }
+-        if (crashInfo != null && crashInfo.crashTag != null && !crashInfo.crashTag.isEmpty()) {
+-            sb.append("Crash-Tag: ").append(crashInfo.crashTag).append("\n");
+-        }
+-        sb.append("\n");
+-
+-        // Do the rest in a worker thread to avoid blocking the caller on I/O
+-        // (After this point, we shouldn't access AMS internal data structures.)
+-        Thread worker = new Thread("Error dump: " + dropboxTag) {
+-            @Override
+-            public void run() {
+-                if (report != null) {
+-                    sb.append(report);
+-                }
+-
+-                String logcatSetting = Settings.Global.ERROR_LOGCAT_PREFIX + dropboxTag;
+-                String maxBytesSetting = Settings.Global.MAX_ERROR_BYTES_PREFIX + dropboxTag;
+-                int lines = Settings.Global.getInt(mContext.getContentResolver(), logcatSetting, 0);
+-                int dropboxMaxSize = Settings.Global.getInt(
+-                        mContext.getContentResolver(), maxBytesSetting, DROPBOX_DEFAULT_MAX_SIZE);
+-                int maxDataFileSize = dropboxMaxSize - sb.length()
+-                        - lines * RESERVED_BYTES_PER_LOGCAT_LINE;
+-
+-                if (dataFile != null && maxDataFileSize > 0) {
+-                    try {
+-                        sb.append(FileUtils.readTextFile(dataFile, maxDataFileSize,
+-                                    "\n\n[[TRUNCATED]]"));
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Error reading " + dataFile, e);
+-                    }
+-                }
+-                if (crashInfo != null && crashInfo.stackTrace != null) {
+-                    sb.append(crashInfo.stackTrace);
+-                }
+-
+-                if (lines > 0) {
+-                    sb.append("\n");
+-
+-                    // Merge several logcat streams, and take the last N lines
+-                    InputStreamReader input = null;
+-                    try {
+-                        java.lang.Process logcat = new ProcessBuilder(
+-                                "/system/bin/timeout", "-k", "15s", "10s",
+-                                "/system/bin/logcat", "-v", "threadtime", "-b", "events", "-b", "system",
+-                                "-b", "main", "-b", "crash", "-t", String.valueOf(lines))
+-                                        .redirectErrorStream(true).start();
+-
+-                        try { logcat.getOutputStream().close(); } catch (IOException e) {}
+-                        try { logcat.getErrorStream().close(); } catch (IOException e) {}
+-                        input = new InputStreamReader(logcat.getInputStream());
+-
+-                        int num;
+-                        char[] buf = new char[8192];
+-                        while ((num = input.read(buf)) > 0) sb.append(buf, 0, num);
+-                    } catch (IOException e) {
+-                        Slog.e(TAG, "Error running logcat", e);
+-                    } finally {
+-                        if (input != null) try { input.close(); } catch (IOException e) {}
+-                    }
+-                }
+-
+-                dbox.addText(dropboxTag, sb.toString());
+-            }
+-        };
+-
+-        if (process == null) {
+-            // If process is null, we are being called from some internal code
+-            // and may be about to die -- run this synchronously.
+-            final int oldMask = StrictMode.allowThreadDiskWritesMask();
+-            try {
+-                worker.run();
+-            } finally {
+-                StrictMode.setThreadPolicyMask(oldMask);
+-            }
+-        } else {
+-            worker.start();
+-        }
+-    }
+-
+     @Override
+     public List<ActivityManager.ProcessErrorStateInfo> getProcessesInErrorState() {
+         enforceNotIsolatedCaller("getProcessesInErrorState");
+@@ -14603,10 +14306,6 @@ public class ActivityManagerService extends IActivityManager.Stub
+         }
+         dropBuilder.append(catSw.toString());
+         FrameworkStatsLog.write(FrameworkStatsLog.LOW_MEM_REPORTED);
+-        addErrorToDropBox("lowmem", null, "system_server", null,
+-                null, null, tag.toString(), dropBuilder.toString(), null, null);
+-        //Slog.i(TAG, "Sent to dropbox:");
+-        //Slog.i(TAG, dropBuilder.toString());
+         synchronized (ActivityManagerService.this) {
+             long now = SystemClock.uptimeMillis();
+             if (mLastMemUsageReportTime < now) {
+
+diff --git a/services/core/java/com/android/server/am/ProcessList.java b/services/core/java/com/android/server/am/ProcessList.java
+index c851a88b..e3593564 100644
+--- a/services/core/java/com/android/server/am/ProcessList.java
++++ b/services/core/java/com/android/server/am/ProcessList.java
+@@ -79,7 +79,6 @@ import android.os.AppZygote;
+ import android.os.Binder;
+ import android.os.Build;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.Handler;
+ import android.os.IBinder;
+ import android.os.Looper;
+@@ -3963,8 +3962,6 @@ public final class ProcessList {
+         private static final String EXTRA_REASON = "reason";
+         private static final String EXTRA_REQUESTER = "requester";
+
+-        private static final String DROPBOX_TAG_IMPERCEPTIBLE_KILL = "imperceptible_app_kill";
+-
+         // uid -> killing information mapping
+         private SparseArray<List<Bundle>> mWorkItems = new SparseArray<List<Bundle>>();
+
+@@ -4067,10 +4064,6 @@ public final class ProcessList {
+         }
+
+         private void handleDeviceIdle() {
+-            final DropBoxManager dbox = mService.mContext.getSystemService(DropBoxManager.class);
+-            final boolean logToDropbox = dbox != null
+-                    && dbox.isTagEnabled(DROPBOX_TAG_IMPERCEPTIBLE_KILL);
+-
+             synchronized (mService) {
+                 final int size = mWorkItems.size();
+                 for (int i = size - 1; mIdle && i >= 0; i--) {
+@@ -4083,8 +4076,7 @@ public final class ProcessList {
+                                 bundle.getInt(EXTRA_UID),
+                                 bundle.getLong(EXTRA_TIMESTAMP),
+                                 bundle.getString(EXTRA_REASON),
+-                                bundle.getInt(EXTRA_REQUESTER),
+-                                dbox, logToDropbox)) {
++                                bundle.getInt(EXTRA_REQUESTER))) {
+                             list.remove(j);
+                         }
+                     }
+@@ -4118,8 +4110,7 @@ public final class ProcessList {
+          */
+         @GuardedBy("mService")
+         private boolean killProcessLocked(final int pid, final int uid, final long timestamp,
+-                final String reason, final int requester, final DropBoxManager dbox,
+-                final boolean logToDropbox) {
++                final String reason, final int requester) {
+             ProcessRecord app = null;
+             synchronized (mService.mPidsSelfLocked) {
+                 app = mService.mPidsSelfLocked.get(pid);
+@@ -4153,21 +4144,10 @@ public final class ProcessList {
+                 mLastProcessKillTimes.put(app.processName, app.uid, SystemClock.uptimeMillis());
+             }
+
+-            if (logToDropbox) {
+-                final long now = SystemClock.elapsedRealtime();
+-                final StringBuilder sb = new StringBuilder();
+-                mService.appendDropBoxProcessHeaders(app, app.processName, sb);
+-                sb.append("Reason: " + reason).append("\n");
+-                sb.append("Requester UID: " + requester).append("\n");
+-                dbox.addText(DROPBOX_TAG_IMPERCEPTIBLE_KILL, sb.toString());
+-            }
+             return true;
+         }
+
+         private void handleUidStateChanged(int uid, int procState) {
+-            final DropBoxManager dbox = mService.mContext.getSystemService(DropBoxManager.class);
+-            final boolean logToDropbox = dbox != null
+-                    && dbox.isTagEnabled(DROPBOX_TAG_IMPERCEPTIBLE_KILL);
+             synchronized (mService) {
+                 if (mIdle && !mService.mConstants
+                         .IMPERCEPTIBLE_KILL_EXEMPT_PROC_STATES.contains(procState)) {
+@@ -4181,8 +4161,7 @@ public final class ProcessList {
+                                     bundle.getInt(EXTRA_UID),
+                                     bundle.getLong(EXTRA_TIMESTAMP),
+                                     bundle.getString(EXTRA_REASON),
+-                                    bundle.getInt(EXTRA_REQUESTER),
+-                                    dbox, logToDropbox)) {
++                                    bundle.getInt(EXTRA_REQUESTER))) {
+                                 list.remove(j);
+                             }
+                         }
+
+diff --git a/services/core/java/com/android/server/am/ProcessRecord.java b/services/core/java/com/android/server/am/ProcessRecord.java
+index c5152c08..3ef9aef7 100644
+--- a/services/core/java/com/android/server/am/ProcessRecord.java
++++ b/services/core/java/com/android/server/am/ProcessRecord.java
+@@ -1724,9 +1724,6 @@ class ProcessRecord implements WindowProcessListener {
+                 (this.info != null) ? this.info.packageName : "");
+         final ProcessRecord parentPr = parentProcess != null
+                 ? (ProcessRecord) parentProcess.mOwner : null;
+-        mService.addErrorToDropBox("anr", this, processName, activityShortComponentName,
+-                parentShortComponentName, parentPr, annotation, report.toString(), tracesFile,
+-                null);
+
+         if (mWindowProcessController.appNotResponding(info.toString(), () -> kill("anr",
+                 ApplicationExitInfo.REASON_ANR, true),
 
 diff --git a/services/core/java/com/android/server/location/gnss/GnssConfiguration.java b/services/core/java/com/android/server/location/gnss/GnssConfiguration.java
 index 14ab79e7..e6611071 100644
@@ -995,6 +1797,264 @@ index 34ce96f3..00000000
 --- a/services/core/java/com/android/server/location/gps_debug.conf
 +++ /dev/null
 
+diff --git a/services/core/java/com/android/server/net/NetworkStatsRecorder.java b/services/core/java/com/android/server/net/NetworkStatsRecorder.java
+index 9eff5d16..3b180014 100644
+--- a/services/core/java/com/android/server/net/NetworkStatsRecorder.java
++++ b/services/core/java/com/android/server/net/NetworkStatsRecorder.java
+@@ -27,7 +27,6 @@ import android.net.NetworkStatsHistory;
+ import android.net.NetworkTemplate;
+ import android.net.TrafficStats;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.service.NetworkStatsRecorderProto;
+ import android.util.Log;
+ import android.util.MathUtils;
+@@ -73,8 +72,6 @@ public class NetworkStatsRecorder {
+     private static final boolean DUMP_BEFORE_DELETE = true;
+
+     private final FileRotator mRotator;
+-    private final NonMonotonicObserver<String> mObserver;
+-    private final DropBoxManager mDropBox;
+     private final String mCookie;
+
+     private final long mBucketDuration;
+@@ -95,8 +92,6 @@ public class NetworkStatsRecorder {
+      */
+     public NetworkStatsRecorder() {
+         mRotator = null;
+-        mObserver = null;
+-        mDropBox = null;
+         mCookie = null;
+
+         // set the bucket big enough to have all data in one bucket, but allow some
+@@ -113,11 +108,8 @@ public class NetworkStatsRecorder {
+     /**
+      * Persisted recorder.
+      */
+-    public NetworkStatsRecorder(FileRotator rotator, NonMonotonicObserver<String> observer,
+-            DropBoxManager dropBox, String cookie, long bucketDuration, boolean onlyTags) {
++    public NetworkStatsRecorder(FileRotator rotator, String cookie, long bucketDuration, boolean onlyTags) {
+         mRotator = Objects.requireNonNull(rotator, "missing FileRotator");
+-        mObserver = Objects.requireNonNull(observer, "missing NonMonotonicObserver");
+-        mDropBox = Objects.requireNonNull(dropBox, "missing DropBoxManager");
+         mCookie = cookie;
+
+         mBucketDuration = bucketDuration;
+@@ -219,7 +211,7 @@ public class NetworkStatsRecorder {
+         final NetworkStatsCollection complete = mComplete != null ? mComplete.get() : null;
+
+         final NetworkStats delta = NetworkStats.subtract(
+-                snapshot, mLastSnapshot, mObserver, mCookie);
++                snapshot, mLastSnapshot, null, mCookie);
+         final long end = currentTimeMillis;
+         final long start = end - delta.getElapsedRealtime();
+
+@@ -230,9 +222,6 @@ public class NetworkStatsRecorder {
+             // As a last-ditch sanity check, report any negative values and
+             // clamp them so recording below doesn't croak.
+             if (entry.isNegative()) {
+-                if (mObserver != null) {
+-                    mObserver.foundNonMonotonic(delta, i, mCookie);
+-                }
+                 entry.rxBytes = Math.max(entry.rxBytes, 0);
+                 entry.rxPackets = Math.max(entry.rxPackets, 0);
+                 entry.txBytes = Math.max(entry.txBytes, 0);
+@@ -498,7 +487,6 @@ public class NetworkStatsRecorder {
+             } finally {
+                 IoUtils.closeQuietly(os);
+             }
+-            mDropBox.addData(TAG_NETSTATS_DUMP, os.toByteArray(), 0);
+         }
+
+         mRotator.deleteAll();
+
+diff --git a/services/core/java/com/android/server/net/NetworkStatsService.java b/services/core/java/com/android/server/net/NetworkStatsService.java
+index ba9f4860..9b001fe4 100644
+--- a/services/core/java/com/android/server/net/NetworkStatsService.java
++++ b/services/core/java/com/android/server/net/NetworkStatsService.java
+@@ -108,7 +108,6 @@ import android.net.netstats.provider.INetworkStatsProviderCallback;
+ import android.net.netstats.provider.NetworkStatsProvider;
+ import android.os.BestClock;
+ import android.os.Binder;
+-import android.os.DropBoxManager;
+ import android.os.Environment;
+ import android.os.Handler;
+ import android.os.HandlerExecutor;
+@@ -294,9 +293,6 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+     @Nullable
+     private NetworkState[] mLastNetworkStates = null;
+
+-    private final DropBoxNonMonotonicObserver mNonMonotonicObserver =
+-            new DropBoxNonMonotonicObserver();
+-
+     private static final int MAX_STATS_PROVIDER_POLL_WAIT_TIME_MS = 100;
+     private final CopyOnWriteArrayList<NetworkStatsProviderCallbackImpl> mStatsProviderCbList =
+             new CopyOnWriteArrayList<>();
+@@ -541,11 +537,9 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+
+     private NetworkStatsRecorder buildRecorder(
+             String prefix, NetworkStatsSettings.Config config, boolean includeTags) {
+-        final DropBoxManager dropBox = (DropBoxManager) mContext.getSystemService(
+-                Context.DROPBOX_SERVICE);
+         return new NetworkStatsRecorder(new FileRotator(
+                 mBaseDir, prefix, config.rotateAgeMillis, config.deleteAgeMillis),
+-                mNonMonotonicObserver, dropBox, prefix, config.bucketDuration, includeTags);
++                prefix, config.bucketDuration, includeTags);
+     }
+
+     @GuardedBy("mStatsLock")
+@@ -2077,37 +2071,6 @@ public class NetworkStatsService extends INetworkStatsService.Stub {
+         }
+     }
+
+-    private class DropBoxNonMonotonicObserver implements NonMonotonicObserver<String> {
+-        @Override
+-        public void foundNonMonotonic(NetworkStats left, int leftIndex, NetworkStats right,
+-                int rightIndex, String cookie) {
+-            Log.w(TAG, "Found non-monotonic values; saving to dropbox");
+-
+-            // record error for debugging
+-            final StringBuilder builder = new StringBuilder();
+-            builder.append("found non-monotonic " + cookie + " values at left[" + leftIndex
+-                    + "] - right[" + rightIndex + "]\n");
+-            builder.append("left=").append(left).append('\n');
+-            builder.append("right=").append(right).append('\n');
+-
+-            mContext.getSystemService(DropBoxManager.class).addText(TAG_NETSTATS_ERROR,
+-                    builder.toString());
+-        }
+-
+-        @Override
+-        public void foundNonMonotonic(
+-                NetworkStats stats, int statsIndex, String cookie) {
+-            Log.w(TAG, "Found non-monotonic values; saving to dropbox");
+-
+-            final StringBuilder builder = new StringBuilder();
+-            builder.append("Found non-monotonic " + cookie + " values at [" + statsIndex + "]\n");
+-            builder.append("stats=").append(stats).append('\n');
+-
+-            mContext.getSystemService(DropBoxManager.class).addText(TAG_NETSTATS_ERROR,
+-                    builder.toString());
+-        }
+-    }
+-
+     /**
+      * Default external settings that read from
+      * {@link android.provider.Settings.Global}.
+
+diff --git a/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java b/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
+index 5599b0c0..86b07535 100644
+--- a/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
++++ b/services/core/java/com/android/server/net/watchlist/WatchlistLoggingHandler.java
+@@ -26,7 +26,6 @@ import android.content.pm.PackageManager;
+ import android.content.pm.PackageManager.NameNotFoundException;
+ import android.content.pm.UserInfo;
+ import android.os.Bundle;
+-import android.os.DropBoxManager;
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.os.Message;
+@@ -68,10 +67,8 @@ class WatchlistLoggingHandler extends Handler {
+     static final int FORCE_REPORT_RECORDS_NOW_FOR_TEST_MSG = 3;
+
+     private static final long ONE_DAY_MS = TimeUnit.DAYS.toMillis(1);
+-    private static final String DROPBOX_TAG = "network_watchlist_report";
+
+     private final Context mContext;
+-    private final @Nullable DropBoxManager mDropBoxManager;
+     private final ContentResolver mResolver;
+     private final PackageManager mPm;
+     private final WatchlistReportDbHelper mDbHelper;
+@@ -99,7 +96,6 @@ class WatchlistLoggingHandler extends Handler {
+         mDbHelper = WatchlistReportDbHelper.getInstance(context);
+         mConfig = WatchlistConfig.getInstance();
+         mSettings = WatchlistSettings.getInstance();
+-        mDropBoxManager = mContext.getSystemService(DropBoxManager.class);
+         mPrimaryUserId = getPrimaryUserId();
+     }
+
+@@ -261,29 +257,6 @@ class WatchlistLoggingHandler extends Handler {
+                 Slog.i(TAG, "No need to aggregate record yet.");
+                 return;
+             }
+-            Slog.i(TAG, "Start aggregating watchlist records.");
+-            if (mDropBoxManager != null && mDropBoxManager.isTagEnabled(DROPBOX_TAG)) {
+-                Settings.Global.putLong(mResolver,
+-                        Settings.Global.NETWORK_WATCHLIST_LAST_REPORT_TIME,
+-                        lastRecordTime);
+-                final WatchlistReportDbHelper.AggregatedResult aggregatedResult =
+-                        mDbHelper.getAggregatedRecords(lastRecordTime);
+-                if (aggregatedResult == null) {
+-                    Slog.i(TAG, "Cannot get result from database");
+-                    return;
+-                }
+-                // Get all digests for watchlist report, it should include all installed
+-                // application digests and previously recorded app digests.
+-                final List<String> digestsForReport = getAllDigestsForReport(aggregatedResult);
+-                final byte[] secretKey = mSettings.getPrivacySecretKey();
+-                final byte[] encodedResult = ReportEncoder.encodeWatchlistReport(mConfig,
+-                        secretKey, digestsForReport, aggregatedResult);
+-                if (encodedResult != null) {
+-                    addEncodedReportToDropBox(encodedResult);
+-                }
+-            } else {
+-                Slog.w(TAG, "Network Watchlist dropbox tag is not enabled");
+-            }
+             mDbHelper.cleanup(lastRecordTime);
+         } finally {
+             long endTime = System.currentTimeMillis();
+@@ -316,10 +289,6 @@ class WatchlistLoggingHandler extends Handler {
+         return new ArrayList<>(result);
+     }
+
+-    private void addEncodedReportToDropBox(byte[] encodedReport) {
+-        mDropBoxManager.addData(DROPBOX_TAG, encodedReport, 0);
+-    }
+-
+     /**
+      * Get app digest from app uid.
+      * Return null if system cannot get digest from uid.
+
+diff --git a/services/core/java/com/android/server/pm/PackageManagerService.java b/services/core/java/com/android/server/pm/PackageManagerService.java
+index 97b67b83..dd81f08d 100644
+--- a/services/core/java/com/android/server/pm/PackageManagerService.java
++++ b/services/core/java/com/android/server/pm/PackageManagerService.java
+@@ -4456,8 +4456,8 @@ public class PackageManagerService extends IPackageManager.Stub
+                 });
+             }
+
+-            PackageInfo packageInfo = PackageInfoUtils.generate(p, gids, flags,
+-                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId, ps);
++            PackageInfo packageInfo = mayFakeSignature(p, PackageInfoUtils.generate(p, gids, flags,
++                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId, ps), permissions);
+
+             if (packageInfo == null) {
+                 return null;
+@@ -4493,6 +4493,23 @@ public class PackageManagerService extends IPackageManager.Stub
+         }
+     }
+
++    private PackageInfo mayFakeSignature(AndroidPackage p, PackageInfo pi, Set<String> permissions) {
++        try {
++            if (permissions.contains("android.permission.FAKE_PACKAGE_SIGNATURE")
++                    && p.getTargetSdkVersion() > Build.VERSION_CODES.LOLLIPOP_MR1
++                    && p.getMetaData() != null) {
++                String sig = p.getMetaData().getString("fake-signature");
++                if (sig != null) {
++                    pi.signatures = new Signature[] {new Signature(sig)};
++                }
++            }
++        } catch (Throwable t) {
++            // We should never die because of any failures, this is system code!
++            Log.w("PackageManagerService.FAKE_PACKAGE_SIGNATURE", t);
++        }
++        return pi;
++    }
++
+     @Override
+     public void checkPackageStartable(String packageName, int userId) {
+         final int callingUid = Binder.getCallingUid();
+
 diff --git a/services/core/java/com/android/server/protolog/ProtoLogImpl.java b/services/core/java/com/android/server/protolog/ProtoLogImpl.java
 index c9d42c85..e1fb1a13 100644
 --- a/services/core/java/com/android/server/protolog/ProtoLogImpl.java
@@ -1020,6 +2080,345 @@ index c9d42c85..e1fb1a13 100644
      }
  }
 -
+
+diff --git a/services/java/com/android/server/SystemServer.java b/services/java/com/android/server/SystemServer.java
+index 5c12f204..12a05679 100644
+--- a/services/java/com/android/server/SystemServer.java
++++ b/services/java/com/android/server/SystemServer.java
+@@ -1130,13 +1130,6 @@ public final class SystemServer {
+             SQLiteCompatibilityWalFlags.reset();
+             t.traceEnd();
+
+-            // Records errors and logs, for example wtf()
+-            // Currently this service indirectly depends on SettingsProvider so do this after
+-            // InstallSystemProviders.
+-            t.traceBegin("StartDropBoxManager");
+-            mSystemServiceManager.startService(DropBoxManagerService.class);
+-            t.traceEnd();
+-
+             t.traceBegin("StartVibratorService");
+             vibrator = new VibratorService(context);
+             ServiceManager.addService("vibrator", vibrator);
+@@ -2169,7 +2162,6 @@ public final class SystemServer {
+         // Emit any pending system_server WTFs
+         synchronized (SystemService.class) {
+             if (sPendingWtfs != null) {
+-                mActivityManagerService.schedulePendingSystemServerWtfs(sPendingWtfs);
+                 sPendingWtfs = null;
+             }
+         }
+
+project frameworks/native/
+diff --git a/cmds/atrace/Android.bp b/cmds/atrace/Android.bp
+index e7d0ad0..9c0496a 100644
+--- a/cmds/atrace/Android.bp
++++ b/cmds/atrace/Android.bp
+@@ -1,30 +1 @@
+ // Copyright 2012 The Android Open Source Project
+-
+-cc_binary {
+-    name: "atrace",
+-    srcs: ["atrace.cpp"],
+-    cflags: [
+-        "-Wall",
+-        "-Werror",
+-    ],
+-
+-    shared_libs: [
+-        "libbinder",
+-        "libhidlbase",
+-        "liblog",
+-        "libutils",
+-        "libcutils",
+-        "libz",
+-        "libbase",
+-        "libpdx_default_transport",
+-        "android.hardware.atrace@1.0",
+-    ],
+-
+-    init_rc: ["atrace.rc"],
+-
+-    product_variables: {
+-        debuggable: {
+-            init_rc: ["atrace_userdebug.rc"],
+-        },
+-    },
+-}
+
+project packages/apps/LineageParts/
+diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
+index f021017..3266a09 100644
+--- a/res/values-zh-rCN/strings.xml
++++ b/res/values-zh-rCN/strings.xml
+@@ -179,6 +179,8 @@
+     <string name="home_answer_call_summary">按 Home 键接听来电</string>
+     <string name="extras_title">附加功能</string>
+     <string name="additional_buttons_title">附加按钮</string>
++    <string name="edge_gesture_title">边缘触控</string>
++    <string name="edge_gesture_summary">双击手机侧边可触发返回操作</string>
+     <string name="click_partial_screenshot_title">点击以进行局部截图</string>
+     <string name="click_partial_screenshot_summary">同时按音量下和电源键以截取局部截图</string>
+     <string name="button_backlight_title">背光</string>
+@@ -449,6 +451,8 @@
+     <string name="auto_power_save_summary_on">电量 %s 时自动启用省电</string>
+     <string name="auto_power_save_summary_off">不要自动启用省电</string>
+     <string name="auto_power_save_never">永不</string>
++    <string name="cpu_overclock_title">高性能模式</string>
++    <string name="cpu_overclock_summary">提升处理器最大功率以改善性能，但可能缩短续航时间</string>
+     <string name="long_screen_settings_title">全屏应用</string>
+     <string name="long_screen_settings_summary">强制旧式应用程序使用全屏长宽比</string>
+     <string name="long_screen_settings_no_apps">无应用</string>
+
+diff --git a/res/values-zh-rTW/strings.xml b/res/values-zh-rTW/strings.xml
+index 5b046f0..c5254a7 100644
+--- a/res/values-zh-rTW/strings.xml
++++ b/res/values-zh-rTW/strings.xml
+@@ -179,6 +179,8 @@
+     <string name="home_answer_call_summary">按主畫面鍵接聽來電</string>
+     <string name="extras_title">附加功能</string>
+     <string name="additional_buttons_title">附加按鍵</string>
++    <string name="edge_gesture_title">邊緣觸控</string>
++    <string name="edge_gesture_summary">雙擊手機側面以返回</string>
+     <string name="button_backlight_title">背光</string>
+     <string name="button_backlight_enabled">開啟按鍵背光</string>
+     <string name="button_backlight_only_when_pressed_title">僅在按下按鈕才點亮指示燈</string>
+@@ -434,6 +436,8 @@
+     <string name="auto_power_save_summary_on">在 %s 電量時自動啟用省電模式</string>
+     <string name="auto_power_save_summary_off">不要自動啟用省電模式</string>
+     <string name="auto_power_save_never">永不</string>
++    <string name="cpu_overclock_title">高效能模式</string>
++    <string name="cpu_overclock_summary">提高處理器功耗上限以增進性能，但可能縮短續航時間</string>
+     <string name="long_screen_settings_title">全螢幕應用程式</string>
+     <string name="long_screen_settings_summary">強制舊型應用程式使用全螢幕的比例</string>
+     <string name="charging_sounds_settings_title">充電音效</string>
+
+diff --git a/res/values/strings.xml b/res/values/strings.xml
+index a00d805..186cd10 100644
+--- a/res/values/strings.xml
++++ b/res/values/strings.xml
+@@ -215,6 +215,8 @@
+     <string name="home_answer_call_summary">Answer incoming calls by pressing the home button</string>
+     <string name="extras_title">Extras</string>
+     <string name="additional_buttons_title">Additional buttons</string>
++    <string name="edge_gesture_title">Edge gesture</string>
++    <string name="edge_gesture_summary">Double tap the phone\'s edge causes back</string>
+     <string name="click_partial_screenshot_title">Click to partial screenshot</string>
+     <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
+
+@@ -593,6 +595,8 @@
+     <string name="auto_power_save_summary_on">Automatically enable power save mode at %s battery</string>
+     <string name="auto_power_save_summary_off">Do not enable power save mode automatically</string>
+     <string name="auto_power_save_never">Never</string>
++    <string name="cpu_overclock_title">High performance mode</string>
++    <string name="cpu_overclock_summary">Increase maximum CPU power to improve performance, at the cost of battery life</string>
+
+     <!-- Applications: Long screen -->
+     <string name="long_screen_settings_title">Full screen apps</string>
+
+diff --git a/res/xml/button_settings.xml b/res/xml/button_settings.xml
+index 5234a96..236947f 100644
+--- a/res/xml/button_settings.xml
++++ b/res/xml/button_settings.xml
+@@ -336,6 +336,12 @@
+                 android:action="org.lineageos.settings.device.ADDITIONAL_BUTTONS_SETTINGS" />
+         </lineageos.preference.RemotePreference>
+
++        <SwitchPreference
++            android:key="edge_gesture"
++            android:title="@string/edge_gesture_title"
++            android:summary="@string/edge_gesture_summary"
++            android:persistent="false" />
++
+         <lineageos.preference.LineageSystemSettingSwitchPreference
+             android:key="click_partial_screenshot"
+             android:title="@string/click_partial_screenshot_title"
+
+diff --git a/res/xml/perf_profile_settings.xml b/res/xml/perf_profile_settings.xml
+index 0b301a9..7a129d5 100644
+--- a/res/xml/perf_profile_settings.xml
++++ b/res/xml/perf_profile_settings.xml
+@@ -37,6 +37,18 @@
+
+     </PreferenceCategory>
+
++    <PreferenceCategory
++        android:key="cpu_overclock_category"
++        android:title="@string/advanced">
++
++        <SwitchPreference
++            android:key="cpu_overclock"
++            android:title="@string/cpu_overclock_title"
++            android:summary="@string/cpu_overclock_summary"
++            android:persistent="false" />
++
++    </PreferenceCategory>
++
+     <PreferenceCategory
+         android:key="perf_profile_category"
+         android:title="@string/perf_profile_category_title">
+
+diff --git a/src/org/lineageos/lineageparts/input/ButtonSettings.java b/src/org/lineageos/lineageparts/input/ButtonSettings.java
+index 613e847..e58aff8 100644
+--- a/src/org/lineageos/lineageparts/input/ButtonSettings.java
++++ b/src/org/lineageos/lineageparts/input/ButtonSettings.java
+@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
+ import android.os.Bundle;
+ import android.os.Handler;
+ import android.os.RemoteException;
++import android.os.SystemProperties;
+ import android.os.UserHandle;
+ import android.provider.Settings;
+ import android.util.ArraySet;
+@@ -103,6 +104,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+             "torch_long_press_power_gesture";
+     private static final String KEY_TORCH_LONG_PRESS_POWER_TIMEOUT =
+             "torch_long_press_power_timeout";
++    private static final String KEY_EDGE_GESTURE = "edge_gesture";
+     private static final String KEY_CLICK_PARTIAL_SCREENSHOT =
+             "click_partial_screenshot";
+     private static final String KEY_SWAP_CAPACITIVE_KEYS = "swap_capacitive_keys";
+@@ -147,6 +149,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+     private SwitchPreference mHomeAnswerCall;
+     private SwitchPreference mTorchLongPressPowerGesture;
+     private ListPreference mTorchLongPressPowerTimeout;
++    private SwitchPreference mEdgeGesture;
+     private SwitchPreference mSwapCapacitiveKeys;
+
+     private PreferenceCategory mNavigationPreferencesCat;
+@@ -470,6 +473,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
+             mSwapCapacitiveKeys.setDependency(KEY_DISABLE_NAV_KEYS);
+         }
+
++        // Edge gesture controller
++        mEdgeGesture = prefScreen.findPreference(KEY_EDGE_GESTURE);
++
++        if (mEdgeGesture != null) {
++            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++        }
++
+         // Override key actions on Go devices in order to hide any unsupported features
+         if (ActivityManager.isLowRamDeviceStatic()) {
+             String[] actionEntriesGo = res.getStringArray(R.array.hardware_keys_action_entries_go);
+@@ -552,6 +562,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
+                 (incallHomeBehavior == LineageSettings.Secure.RING_HOME_BUTTON_BEHAVIOR_ANSWER);
+             mHomeAnswerCall.setChecked(homeButtonAnswersCall);
+         }
++
++        // Get edge gesture status.
++        if (mEdgeGesture != null) {
++            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++        }
+     }
+
+     private ListPreference initList(String key, Action value) {
+@@ -837,6 +852,9 @@ public class ButtonSettings extends SettingsPreferenceFragment
+         } else if (preference == mHomeAnswerCall) {
+             handleToggleHomeButtonAnswersCallPreferenceClick();
+             return true;
++        } else if (preference == mEdgeGesture) {
++            SystemProperties.set("persist.vendor.edge_touch_mode", mEdgeGesture.isChecked() ? "true" : "false");
++            return true;
+         }
+
+         return super.onPreferenceTreeClick(preference);
+
+diff --git a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
+index 949562f..82a103f 100644
+--- a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
++++ b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
+@@ -28,6 +28,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
+ import android.net.Uri;
+ import android.os.Bundle;
+ import android.os.PowerManager;
++import android.os.SystemProperties;
+ import android.provider.Settings.Global;
+ import android.util.ArraySet;
+ import android.util.TypedValue;
+@@ -65,10 +66,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+     private static final String KEY_AUTO_POWER_SAVE  = "auto_power_save";
+     private static final String KEY_POWER_SAVE       = "power_save";
+     private static final String KEY_PERF_SEEKBAR     = "perf_seekbar";
++    private static final String KEY_CPU_OVERCLOCK    = "cpu_overclock";
+
+     private ListPreference mAutoPowerSavePref;
+     private SwitchPreference   mPowerSavePref;
+
++    private SwitchPreference   mCPUOverclockPref;
++
+     private SeekBarPreference        mPerfSeekBar;
+     private StopMotionVectorDrawable mPerfDrawable;
+     private PerfIconAnimator         mAnimator;
+@@ -96,6 +100,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         mPerfSeekBar = findPreference(KEY_PERF_SEEKBAR);
+         mAutoPowerSavePref = findPreference(KEY_AUTO_POWER_SAVE);
+         mPowerSavePref = findPreference(KEY_POWER_SAVE);
++        mCPUOverclockPref = findPreference(KEY_CPU_OVERCLOCK);
+
+         mPowerManager = getActivity().getSystemService(PowerManager.class);
+         mPerf = PerformanceManager.getInstance(getActivity());
+@@ -126,6 +131,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         updateAutoPowerSaveValue();
+         mAutoPowerSavePref.setOnPreferenceChangeListener(this);
+         mPowerSavePref.setOnPreferenceChangeListener(this);
++        updateCPUOverclockValue();
++        mCPUOverclockPref.setOnPreferenceChangeListener(this);
+     }
+
+
+@@ -212,6 +219,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+             getActivity().registerReceiver(mPowerSaveReceiver,
+                     new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING));
+         }
++
++        if (mCPUOverclockPref != null) {
++            updateCPUOverclockValue();
++        }
+     }
+
+     @Override
+@@ -246,6 +257,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+             final int level = Integer.parseInt((String) newValue);
+             Global.putInt(getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, level);
+             updateAutoPowerSaveSummary(level);
++        } else if (preference == mCPUOverclockPref) {
++            SystemProperties.set("persist.sys.cpu_overclock", mCPUOverclockPref.isChecked() ? "false" : "true");
+         }
+         return true;
+     }
+@@ -263,6 +276,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+         PartsUpdater.notifyChanged(getActivity(), getPreferenceScreen().getKey());
+     }
+
++    private void updateCPUOverclockValue() {
++        mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", false));
++    }
++
+     private void updateAutoPowerSaveValue() {
+         final int level = Global.getInt(
+                 getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, 0);
+
+project packages/apps/PermissionController/
+diff --git a/src/com/android/permissioncontroller/permission/utils/Utils.java b/src/com/android/permissioncontroller/permission/utils/Utils.java
+index 65fdd59..fdd71e2 100644
+--- a/src/com/android/permissioncontroller/permission/utils/Utils.java
++++ b/src/com/android/permissioncontroller/permission/utils/Utils.java
+@@ -23,6 +23,7 @@ import static android.Manifest.permission_group.CALENDAR;
+ import static android.Manifest.permission_group.CALL_LOG;
+ import static android.Manifest.permission_group.CAMERA;
+ import static android.Manifest.permission_group.CONTACTS;
++import static android.Manifest.permission_group.FAKE_PACKAGE;
+ import static android.Manifest.permission_group.LOCATION;
+ import static android.Manifest.permission_group.MICROPHONE;
+ import static android.Manifest.permission_group.PHONE;
+@@ -209,6 +210,8 @@ public final class Utils {
+
+         PLATFORM_PERMISSIONS.put(Manifest.permission.BODY_SENSORS, SENSORS);
+
++        PLATFORM_PERMISSIONS.put(Manifest.permission.FAKE_PACKAGE_SIGNATURE, FAKE_PACKAGE);
++
+         PLATFORM_PERMISSION_GROUPS = new ArrayMap<>();
+         int numPlatformPermissions = PLATFORM_PERMISSIONS.size();
+         for (int i = 0; i < numPlatformPermissions; i++) {
 
 project packages/apps/Settings/
 diff --git a/src/com/android/settings/development/AdbRootPreferenceController.java b/src/com/android/settings/development/AdbRootPreferenceController.java
@@ -1370,7 +2769,7 @@ index e00fa1f..bb1b7bd 100644
  		 $(call make-kernel-target,alldefconfig)
 
 diff --git a/config/BoardConfigKernel.mk b/config/BoardConfigKernel.mk
-index 8479369..5a2cb0b 100644
+index 8479369..f9091e2 100644
 --- a/config/BoardConfigKernel.mk
 +++ b/config/BoardConfigKernel.mk
 @@ -55,11 +55,11 @@ endif
@@ -1385,7 +2784,7 @@ index 8479369..5a2cb0b 100644
 -KERNEL_TOOLCHAIN_arm := $(GCC_PREBUILTS)/arm/arm-linux-androideabi-4.9/bin
 -KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-androidkernel-
 +KERNEL_TOOLCHAIN_arm := /usr/bin
-+KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabi-
++KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabihf-
  # x86 toolchain
  KERNEL_TOOLCHAIN_x86 := $(GCC_PREBUILTS)/x86/x86_64-linux-android-4.9/bin
  KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
