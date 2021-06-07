@@ -106,4 +106,9 @@ void vendor_load_properties()
         break;
     }
     }
+
+    // Hide sensitive IMEI and MEID properties
+    property_override("ro.ril.oem.imei", "");
+    property_override("ro.ril.oem.imei1", "");
+    property_override("ro.ril.oem.meid", "");
 }
