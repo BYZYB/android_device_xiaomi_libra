@@ -26,6 +26,9 @@ allow healthd sysfs:{ dir file } *;
 # Hwservicemanager
 allow hwservicemanager init:{ binder dir file process } *;
 
+# IMEI and MEID
+type deviceid_prop, property_type;
+
 # Init
 allow init diag_device:chr_file *;
 allow init hal_ir_hwservice:hwservice_manager *;
@@ -38,7 +41,6 @@ allow init lirc_device:chr_file *;
 allow init pps_socket:sock_file *;
 allow init qmuxd_socket:sock_file *;
 allow init qmuxd:unix_stream_socket *;
-
 allow init sysfs_graphics:file *;
 allow init sysfs_ssr:lnk_file *;
 allow init sysfs:{ dir file } *;
@@ -55,9 +57,9 @@ allow keystore runtime_event_log_tags_file:file *;
 # MM
 type mmbn-daemon, domain;
 type mmbn-daemon_exec, exec_type, file_type;
+diag_use(mmbn-daemon)
 init_daemon_domain(mmbn-daemon)
 qmux_socket(mmbn-daemon)
-diag_use(mmbn-daemon)
 allow mm-qcamerad camera_prop:file *;
 allow mm-qcamerad sysfs:{ dir file } *;
 allow mmbn-daemon firmware_file:{ dir file } *;
@@ -84,9 +86,9 @@ allow qti_init_shell vfat:{ dir file } *;
 # Readmac
 type readmac, domain;
 type readmac_exec, exec_type, vendor_file_type, file_type;
+diag_use(readmac)
 init_daemon_domain(readmac)
 qmux_socket(readmac)
-diag_use(readmac)
 allow readmac readmac:capability *;
 allow readmac self:{ capability socket } *;
 allow readmac wifi_data_file:{ dir file } *;
