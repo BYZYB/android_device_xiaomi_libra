@@ -1,1 +1,10 @@
+# IMEI and MEID
+persist.radio.imei u:object_r:deviceid_prop:s0
+persist.radio.imei1 u:object_r:deviceid_prop:s0
+persist.radio.meid u:object_r:deviceid_prop:s0
+ro.ril.oem.imei u:object_r:deviceid_prop:s0
+ro.ril.oem.imei1 u:object_r:deviceid_prop:s0
+ro.ril.oem.meid u:object_r:deviceid_prop:s0
+
+# TimeKeep
 persist.vendor.timeadjust u:object_r:vendor_timekeep_prop:s0

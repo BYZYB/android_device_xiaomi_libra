@@ -177,6 +177,14 @@ on property:ro.config.low_ram=true
     write /sys/kernel/mm/ksm/run 1
 
 on property:sys.boot_completed=1
+    # Hide sensitive IMEI and MEID properties
+    setprop persist.radio.imei ""
+    setprop persist.radio.imei1 ""
+    setprop persist.radio.meid ""
+
+    # Workaround to get a working camera on Android 11
+    restart cameraserver
+
     # Disable KTM hotplug and bring CPU4 online
     write /sys/module/msm_thermal/core_control/enabled 0
     write /sys/devices/system/cpu/cpu4/online 1

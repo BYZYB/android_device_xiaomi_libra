@@ -936,7 +936,7 @@ index 962d6ce7..4bea0b2b 100644
           for details. -->
 
 diff --git a/core/res/res/values-zh-rCN/strings.xml b/core/res/res/values-zh-rCN/strings.xml
-index a645cd7d..2129a35c 100644
+index a645cd7d..407d5bfb 100644
 --- a/core/res/res/values-zh-rCN/strings.xml
 +++ b/core/res/res/values-zh-rCN/strings.xml
 @@ -1,5 +1,5 @@
@@ -953,14 +953,14 @@ index a645cd7d..2129a35c 100644
 +    <string name="permlab_fakePackageSignature">模拟软件包签名</string>
 +    <string name="permdesc_fakePackageSignature">允许当前应用伪装成为其他应用</string>
 +    <string name="permgrouplab_fake_package_signature">模拟软件包签名</string>
-+    <string name="permgroupdesc_fake_package_signature">模拟软件包签名</string>
++    <string name="permgroupdesc_fake_package_signature">伪装成为其他应用</string>
 +    <string name="permgrouprequest_fake_package_signature">允许 &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> 模拟软件包签名？</string>
      <string name="config_pdp_reject_dialog_title" msgid="4072057179246785727"></string>
      <string name="config_pdp_reject_user_authentication_failed" msgid="4531693033885744689"></string>
      <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
 
 diff --git a/core/res/res/values-zh-rHK/strings.xml b/core/res/res/values-zh-rHK/strings.xml
-index cb61121b..5f8a2a30 100644
+index cb61121b..813cdcd3 100644
 --- a/core/res/res/values-zh-rHK/strings.xml
 +++ b/core/res/res/values-zh-rHK/strings.xml
 @@ -1,5 +1,5 @@
@@ -977,14 +977,14 @@ index cb61121b..5f8a2a30 100644
 +    <string name="permlab_fakePackageSignature">僞造應用程式封裝簽章</string>
 +    <string name="permdesc_fakePackageSignature">允許當前應用程式偽裝成為其他應用程式</string>
 +    <string name="permgrouplab_fake_package_signature">僞造應用程式封裝簽章</string>
-+    <string name="permgroupdesc_fake_package_signature">僞造應用程式封裝簽章</string>
++    <string name="permgroupdesc_fake_package_signature">偽裝成為其他應用程式</string>
 +    <string name="permgrouprequest_fake_package_signature">允許 &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> 僞造應用程式封裝簽章？</string>
      <string name="config_pdp_reject_dialog_title" msgid="4072057179246785727"></string>
      <string name="config_pdp_reject_user_authentication_failed" msgid="4531693033885744689"></string>
      <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
 
 diff --git a/core/res/res/values-zh-rTW/strings.xml b/core/res/res/values-zh-rTW/strings.xml
-index 4d2d86ad..90f5f24d 100644
+index 4d2d86ad..0cb5bb70 100644
 --- a/core/res/res/values-zh-rTW/strings.xml
 +++ b/core/res/res/values-zh-rTW/strings.xml
 @@ -1,5 +1,5 @@
@@ -1001,7 +1001,7 @@ index 4d2d86ad..90f5f24d 100644
 +    <string name="permlab_fakePackageSignature">僞造應用程式封裝簽章</string>
 +    <string name="permdesc_fakePackageSignature">允許當前應用程式偽裝成為其他應用程式</string>
 +    <string name="permgrouplab_fake_package_signature">僞造應用程式封裝簽章</string>
-+    <string name="permgroupdesc_fake_package_signature">僞造應用程式封裝簽章</string>
++    <string name="permgroupdesc_fake_package_signature">偽裝成為其他應用程式</string>
 +    <string name="permgrouprequest_fake_package_signature">允許 &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> 僞造應用程式封裝簽章？</string>
      <string name="config_pdp_reject_dialog_title" msgid="4072057179246785727"></string>
      <string name="config_pdp_reject_user_authentication_failed" msgid="4531693033885744689"></string>
@@ -1022,7 +1022,7 @@ index b61b26a0..0b6206de 100644
      <!-- This string array can be overriden to enable test location providers initially. -->
 
 diff --git a/core/res/res/values/strings.xml b/core/res/res/values/strings.xml
-index d6ee28b9..b09ecc51 100644
+index d6ee28b9..7aaec63b 100644
 --- a/core/res/res/values/strings.xml
 +++ b/core/res/res/values/strings.xml
 @@ -847,6 +847,17 @@
@@ -1036,7 +1036,7 @@ index d6ee28b9..b09ecc51 100644
 +    <!-- Title of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
 +    <string name="permgrouplab_fake_package_signature">Spoof package signature</string>
 +    <!-- Description of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
-+    <string name="permgroupdesc_fake_package_signature">allow to spoof package signature</string>
++    <string name="permgroupdesc_fake_package_signature">pretend to be a different app</string>
 +    <!-- Message shown to the user when the apps requests permission from this group. If ever possible this should stay below 80 characters (assuming the parameters takes 20 characters). Don't abbreviate until the message reaches 120 characters though. [CHAR LIMIT=120] -->
 +    <string name="permgrouprequest_fake_package_signature">Allow &lt;b><xliff:g id="app_name" example="Gmail">%1$s</xliff:g>&lt;/b> to spoof package signature?</string>
 +
@@ -2559,7 +2559,7 @@ index 6543426..a8fc338 100644
  }
 
 diff --git a/rootdir/init.rc b/rootdir/init.rc
-index a9af0b0..eda0bd4 100644
+index a9af0b0..8f87abb 100644
 --- a/rootdir/init.rc
 +++ b/rootdir/init.rc
 @@ -540,11 +540,6 @@ on post-fs-data
@@ -2650,7 +2650,26 @@ index a9af0b0..eda0bd4 100644
      mkdir /data/system/users 0775 system system
 
      mkdir /data/system_de 0770 system system encryption=None
-@@ -978,12 +940,6 @@ on property:vold.decrypt=trigger_shutdown_framework
+@@ -728,17 +690,7 @@ on post-fs-data
+     mkdir /data_mirror/cur_profiles 0700 root root
+     mount none /data/misc/profiles/cur /data_mirror/cur_profiles bind rec
+
+-    mkdir /data/cache 0770 system cache encryption=Require
+-    mkdir /data/cache/recovery 0770 system cache
+-    mkdir /data/cache/backup_stage 0700 system system
+-    mkdir /data/cache/backup 0700 system system
+-
+-    # Delete these if need be, per b/139193659
+-    mkdir /data/rollback 0700 system system encryption=DeleteIfNecessary
+-    mkdir /data/rollback-observer 0700 system system encryption=DeleteIfNecessary
+-
+-    # Create root dir for Incremental Service
+-    mkdir /data/incremental 0771 system system encryption=Require
++    symlink /cache /data/cache
+
+     # Create directories for statsd
+     mkdir /data/misc/stats-active-metric/ 0770 statsd system
+@@ -978,12 +930,6 @@ on property:vold.decrypt=trigger_shutdown_framework
      class_reset_post_data core
      class_reset_post_data hal
 
@@ -2663,7 +2682,7 @@ index a9af0b0..eda0bd4 100644
  # system server cannot write to /proc/sys files,
  # and chown/chmod does not work for /proc/sys/ entries.
  # So proxy writes through init.
-@@ -1043,13 +999,6 @@ service console /system/bin/sh
+@@ -1043,13 +989,6 @@ service console /system/bin/sh
      seclabel u:r:shell:s0
      setenv HOSTNAME console
 
@@ -2790,10 +2809,10 @@ index 8479369..f9091e2 100644
  KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
 
 diff --git a/config/common.mk b/config/common.mk
-index 9de9de4..8837de3 100644
+index d9493b9..149c16f 100644
 --- a/config/common.mk
 +++ b/config/common.mk
-@@ -100,8 +100,6 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
+@@ -103,8 +103,6 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
  # Bootanimation
  TARGET_SCREEN_WIDTH ?= 1080
  TARGET_SCREEN_HEIGHT ?= 1920
@@ -2802,7 +2821,7 @@ index 9de9de4..8837de3 100644
 
  # AOSP packages
  PRODUCT_PACKAGES += \
-@@ -111,37 +109,12 @@ PRODUCT_PACKAGES += \
+@@ -114,37 +112,12 @@ PRODUCT_PACKAGES += \
  PRODUCT_PACKAGES += \
      LineageParts \
      LineageSettingsProvider \
@@ -2841,7 +2860,7 @@ index 9de9de4..8837de3 100644
  # Filesystems tools
  PRODUCT_PACKAGES += \
      fsck.exfat \
-@@ -151,20 +124,6 @@ PRODUCT_PACKAGES += \
+@@ -154,20 +127,6 @@ PRODUCT_PACKAGES += \
      mkfs.ntfs \
      mount.ntfs
 
