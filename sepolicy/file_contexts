@@ -16,7 +16,7 @@
 /cust(/.*)? u:object_r:vendor_file:s0
 
 # Shell files
-/system/vendor/bin/init\.custom\.post_boot\.sh u:object_r:qti_init_shell_exec:s0
+/system/vendor/bin/init\..*\.sh u:object_r:qti_init_shell_exec:s0
 
 # TimeKeep
 /sys/devices/soc\.0/qpnp-rtc-8/rtc/rtc0(/.*)? u:object_r:sysfs_rtc:s0
