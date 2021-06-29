@@ -85,6 +85,9 @@ WITH_DEXPREOPT_DEBUG_INFO := false
 # Display
 TARGET_SCREEN_DENSITY := 480
 
+# Dedupe VNDK libraries with identical core variants.
+TARGET_VNDK_USE_CORE_VARIANT := true
+
 # DT2W
 TARGET_TAP_TO_WAKE_NODE := "/proc/touchscreen/double_tap_enable"
 
