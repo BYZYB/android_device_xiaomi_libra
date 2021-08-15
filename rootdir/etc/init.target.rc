@@ -175,6 +175,8 @@ on property:persist.vendor.edge_touch_mode=true
 
 on property:ro.config.low_ram=true
     write /sys/kernel/mm/ksm/run 1
+    write /sys/kernel/mm/transparent_hugepage/defrag madvise
+    write /sys/kernel/mm/transparent_hugepage/enabled madvise
 
 on property:sys.boot_completed=1
     # Hide sensitive IMEI and MEID properties
