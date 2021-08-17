@@ -177,3 +177,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.hdmi.enable=true \
     vidc.debug.level=0 \
     vidc.enc.dcvs.extra-buff-count=2
+
+# Zygote preforking
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.device_config.runtime_native.usap_pool_enabled=true
