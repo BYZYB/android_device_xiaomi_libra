@@ -32,9 +32,9 @@ static inline const char *BtmGetDefaultName()
     property_get("ro.product.device", product_device, "");
 
     if (strstr(product_device, "aqua"))
-        return "Xiaomi Mi 4S";
+        return "Xiaomi Mi 4s";
     if (strstr(product_device, "libra"))
-        return "Xiaomi Mi 4C";
+        return "Xiaomi Mi 4c";
 
     // Fallback to ro.product.model
     return "";
