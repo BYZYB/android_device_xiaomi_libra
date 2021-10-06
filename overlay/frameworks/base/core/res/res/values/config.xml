@@ -105,10 +105,12 @@
         <item>"lte:2097152,4194304,8388608,262144,524288,1048576"</item>
         <item>"umts:4094,87380,1220608,4096,16384,1220608"</item>
     </string-array>
-    <!-- Flag indicating if the speed up audio on mt call code should be executed -->
-    <bool name="config_speed_up_audio_on_mt_calls">true</bool>
+    <!-- Whether WiFi display is supported by this device. There are many prerequisites for this feature to work correctly. -->
+    <bool name="config_enableWifiDisplay">true</bool>
     <!-- When true use the linux /dev/input/event subsystem to detect the switch changes on the headphone/microphone jack. When false use the older uevent framework -->
     <bool name="config_useDevInputEventForAudioJack">true</bool>
+    <!-- Flag indicating if the speed up audio on mt call code should be executed -->
+    <bool name="config_speed_up_audio_on_mt_calls">true</bool>
     <!-- Config determines whether to update phone object when voice registration state changes. Voice radio tech change will always trigger an update of phone object irrespective of this config -->
     <bool name="config_switch_phone_on_voice_reg_state_change">false</bool>
     <!-- Disable Manual Network Selection in Global Mode -->
