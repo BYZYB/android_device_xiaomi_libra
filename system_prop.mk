@@ -164,6 +164,10 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.cpu_overclock=false \
     persist.vendor.edge_touch_mode=false
 
+# System
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.kernel.ebpf.supported=false
+
 # Telephony
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.default_cdma_sub=0 \
