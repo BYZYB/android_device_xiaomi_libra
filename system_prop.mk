@@ -166,7 +166,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # System
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.kernel.ebpf.supported=false
+    ro.kernel.ebpf.supported=false \
+    persist.sys.binary_xml=false
 
 # Telephony
 PRODUCT_PROPERTY_OVERRIDES += \
