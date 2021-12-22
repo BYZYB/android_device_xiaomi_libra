@@ -83,7 +83,6 @@ void vendor_load_properties()
             property_override("dalvik.vm.heapsize", "512m");
             property_override("dalvik.vm.heapstartsize", "8m");
             property_override("dalvik.vm.heaptargetutilization", "0.75");
-            property_override("ro.config.low_ram", "true");
         }
 
         break;
