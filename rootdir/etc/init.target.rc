@@ -173,9 +173,6 @@ on property:persist.vendor.edge_touch_mode=false
 on property:persist.vendor.edge_touch_mode=true
     write /proc/touchscreen/edge_touch_mode 1
 
-on property:ro.config.low_ram=true
-    write /sys/kernel/mm/ksm/run 1
-
 on property:sys.boot_completed=1
     # Hide sensitive IMEI and MEID properties
     setprop persist.radio.imei ""
