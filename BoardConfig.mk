@@ -16,6 +16,9 @@
 
 DEVICE_PATH := device/xiaomi/libra
 
+# We copy prebuilt binaries and libs instead of packaging them
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+
 # Arch
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
