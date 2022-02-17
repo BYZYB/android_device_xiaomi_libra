@@ -15,7 +15,7 @@
 
 cc_library_static {
     include_dirs: [
-        "system/core/base/include",
+        "system/libbase/include",
         "system/core/init",
     ],
     name: "libinit_libra",
