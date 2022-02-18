@@ -39,6 +39,13 @@ cc_library_shared {
 }
 
 cc_library_shared {
+    name: "libshims_powermanager",
+    proprietary: true,
+    srcs: ["powermanager.c"],
+    shared_libs: ["libpowermanager"],
+}
+
+cc_library_shared {
     name: "libshim_rild_socket",
     proprietary: true,
     srcs: ["rild_socket.c"],
