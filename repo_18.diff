@@ -1,6 +1,6 @@
 project build/make/
 diff --git a/core/Makefile b/core/Makefile
-index 5b0430f..3c05f47 100644
+index b418946..c978582 100644
 --- a/core/Makefile
 +++ b/core/Makefile
 @@ -325,9 +325,9 @@ endif
@@ -226,16 +226,16 @@ index 267859a..31bfedf 100644
  # Bluetooth:
 
 diff --git a/target/product/handheld_product.mk b/target/product/handheld_product.mk
-index 968d150..d723c52 100644
+index 968d150..e326fed 100644
 --- a/target/product/handheld_product.mk
 +++ b/target/product/handheld_product.mk
-@@ -33,12 +33,10 @@ PRODUCT_PACKAGES += \
+@@ -32,13 +32,9 @@ PRODUCT_PACKAGES += \
+     OneTimeInitializer \
      preinstalled-packages-platform-handheld-product.xml \
      QuickSearchBox \
-     SettingsIntelligence \
+-    SettingsIntelligence \
 -    frameworks-base-overlays
-+    NavigationBarMode3ButtonOverlay \
-+    NavigationBarModeGesturalOverlay
++    SettingsIntelligence
 
  ifeq ($(LINEAGE_BUILD),)
  PRODUCT_PACKAGES += \
@@ -399,7 +399,7 @@ index f81a607..b12f9e6 100644
 -    EmergencyInfo \
 
 diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
-index 76c2c97..f9d52fd 100644
+index c5758c7..1779087 100644
 --- a/tools/releasetools/common.py
 +++ b/tools/releasetools/common.py
 @@ -3062,89 +3062,6 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
@@ -689,11 +689,11 @@ index 5ff7204..77d4f0b 100644
  prebuilt_font {
 
 diff --git a/cjk/NotoSansCJK-Regular.ttc b/cjk/NotoSansCJK-Regular.ttc
-index 7fc3586..bc1dcf6 100644
+index 7fc3586..a2033d0 100644
 Binary files a/cjk/NotoSansCJK-Regular.ttc and b/cjk/NotoSansCJK-Regular.ttc differ
 
 diff --git a/cjk/NotoSerifCJK-Regular.ttc b/cjk/NotoSerifCJK-Regular.ttc
-index f4ee450..9df7017 100644
+index f4ee450..3269d9e 100644
 Binary files a/cjk/NotoSerifCJK-Regular.ttc and b/cjk/NotoSerifCJK-Regular.ttc differ
 
 diff --git a/cjk/subset_noto_cjk.py b/cjk/subset_noto_cjk.py
@@ -924,6 +924,27 @@ index e599a5ce..3d75c1b7 100644
                  new StaticServiceFetcher<InputManager>() {
              @Override
 
+diff --git a/core/java/android/os/Build.java b/core/java/android/os/Build.java
+index 8c6fca50..ea882dfb 100755
+--- a/core/java/android/os/Build.java
++++ b/core/java/android/os/Build.java
+@@ -1113,6 +1113,7 @@ public class Build {
+         // Don't care on eng builds.  Incremental build may trigger false negative.
+         if (IS_ENG) return true;
+
++        /*
+         if (IS_TREBLE_ENABLED) {
+             // If we can run this code, the device should already pass AVB.
+             // So, we don't need to check AVB here.
+@@ -1125,6 +1126,7 @@ public class Build {
+
+             return result == 0;
+         }
++        */
+
+         final String system = SystemProperties.get("ro.system.build.fingerprint");
+         final String vendor = SystemProperties.get("ro.vendor.build.fingerprint");
+
 diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
 index ee428371..ee99e4a0 100644
 --- a/core/res/AndroidManifest.xml
@@ -951,7 +972,7 @@ index ee428371..ee99e4a0 100644
           for details. -->
 
 diff --git a/core/res/res/values-zh-rCN/strings.xml b/core/res/res/values-zh-rCN/strings.xml
-index a645cd7d..407d5bfb 100644
+index 74dde0ec..b1c6fb4c 100644
 --- a/core/res/res/values-zh-rCN/strings.xml
 +++ b/core/res/res/values-zh-rCN/strings.xml
 @@ -1,5 +1,5 @@
@@ -961,7 +982,7 @@ index a645cd7d..407d5bfb 100644
  /* //device/apps/common/assets/res/any/strings.xml
  **
  ** Copyright 2006, The Android Open Source Project
-@@ -2176,6 +2176,11 @@
+@@ -2177,6 +2177,11 @@
      <string name="PERSOSUBSTATE_SIM_ICCID_SUCCESS" msgid="8058678548991999545">"ICCID 解锁成功。"</string>
      <string name="PERSOSUBSTATE_SIM_IMPI_SUCCESS" msgid="2545608067978550571">"IMPI 解锁成功。"</string>
      <string name="PERSOSUBSTATE_SIM_NS_SP_SUCCESS" msgid="4352382949744625007">"网络子集服务提供商解锁成功。"</string>
@@ -975,7 +996,7 @@ index a645cd7d..407d5bfb 100644
      <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
 
 diff --git a/core/res/res/values-zh-rHK/strings.xml b/core/res/res/values-zh-rHK/strings.xml
-index 9eef7036..d94a3b17 100644
+index 6cae6439..458fefce 100644
 --- a/core/res/res/values-zh-rHK/strings.xml
 +++ b/core/res/res/values-zh-rHK/strings.xml
 @@ -1,5 +1,5 @@
@@ -985,7 +1006,7 @@ index 9eef7036..d94a3b17 100644
  /* //device/apps/common/assets/res/any/strings.xml
  **
  ** Copyright 2006, The Android Open Source Project
-@@ -2176,6 +2176,11 @@
+@@ -2177,6 +2177,11 @@
      <string name="PERSOSUBSTATE_SIM_ICCID_SUCCESS" msgid="8058678548991999545">"ICCID 解鎖成功。"</string>
      <string name="PERSOSUBSTATE_SIM_IMPI_SUCCESS" msgid="2545608067978550571">"IMPI 解鎖成功。"</string>
      <string name="PERSOSUBSTATE_SIM_NS_SP_SUCCESS" msgid="4352382949744625007">"網絡子集服務供應商解鎖成功。"</string>
@@ -999,7 +1020,7 @@ index 9eef7036..d94a3b17 100644
      <string name="config_pdp_reject_service_not_subscribed" msgid="8190338397128671588"></string>
 
 diff --git a/core/res/res/values-zh-rTW/strings.xml b/core/res/res/values-zh-rTW/strings.xml
-index c4f5dc8d..a0469665 100644
+index 58af46e6..69d9a101 100644
 --- a/core/res/res/values-zh-rTW/strings.xml
 +++ b/core/res/res/values-zh-rTW/strings.xml
 @@ -1,5 +1,5 @@
@@ -1009,7 +1030,7 @@ index c4f5dc8d..a0469665 100644
  /* //device/apps/common/assets/res/any/strings.xml
  **
  ** Copyright 2006, The Android Open Source Project
-@@ -2176,6 +2176,11 @@
+@@ -2177,6 +2177,11 @@
      <string name="PERSOSUBSTATE_SIM_ICCID_SUCCESS" msgid="8058678548991999545">"ICCID 解鎖成功。"</string>
      <string name="PERSOSUBSTATE_SIM_IMPI_SUCCESS" msgid="2545608067978550571">"IMPI 解鎖成功。"</string>
      <string name="PERSOSUBSTATE_SIM_NS_SP_SUCCESS" msgid="4352382949744625007">"網路子集服務供應商解鎖成功。"</string>
@@ -1060,7 +1081,7 @@ index 5c659123..c2ab0d54 100644
      <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
 
 diff --git a/data/fonts/fonts.xml b/data/fonts/fonts.xml
-index 4c214b52..e2a9d8ca 100644
+index a678f715..a3463c48 100644
 --- a/data/fonts/fonts.xml
 +++ b/data/fonts/fonts.xml
 @@ -576,20 +576,48 @@
@@ -2049,10 +2070,10 @@ index 5599b0c0..86b07535 100644
       * Return null if system cannot get digest from uid.
 
 diff --git a/services/core/java/com/android/server/pm/PackageManagerService.java b/services/core/java/com/android/server/pm/PackageManagerService.java
-index 70b869e5..2384354e 100644
+index d443c013..b5ae92c4 100644
 --- a/services/core/java/com/android/server/pm/PackageManagerService.java
 +++ b/services/core/java/com/android/server/pm/PackageManagerService.java
-@@ -4454,8 +4454,8 @@ public class PackageManagerService extends IPackageManager.Stub
+@@ -4465,8 +4465,8 @@ public class PackageManagerService extends IPackageManager.Stub
                  });
              }
 
@@ -2063,7 +2084,7 @@ index 70b869e5..2384354e 100644
 
              if (packageInfo == null) {
                  return null;
-@@ -4491,6 +4491,23 @@ public class PackageManagerService extends IPackageManager.Stub
+@@ -4502,6 +4502,23 @@ public class PackageManagerService extends IPackageManager.Stub
          }
      }
 
@@ -2180,7 +2201,7 @@ index e7d0ad0..9c0496a 100644
 
 project packages/apps/LineageParts/
 diff --git a/res/values-zh-rCN/strings.xml b/res/values-zh-rCN/strings.xml
-index 3e3ffee..c91c9f4 100644
+index 1a5ff77..0ba8acd 100644
 --- a/res/values-zh-rCN/strings.xml
 +++ b/res/values-zh-rCN/strings.xml
 @@ -181,6 +181,8 @@
@@ -2203,7 +2224,7 @@ index 3e3ffee..c91c9f4 100644
      <string name="long_screen_settings_no_apps">无应用</string>
 
 diff --git a/res/values-zh-rTW/strings.xml b/res/values-zh-rTW/strings.xml
-index c6f0f4f..684fefc 100644
+index 3a12ffa..c1fd160 100644
 --- a/res/values-zh-rTW/strings.xml
 +++ b/res/values-zh-rTW/strings.xml
 @@ -181,6 +181,8 @@
@@ -2226,19 +2247,19 @@ index c6f0f4f..684fefc 100644
      <string name="long_screen_settings_no_apps">沒有應用程式</string>
 
 diff --git a/res/values/strings.xml b/res/values/strings.xml
-index 8cdb211..a399aad 100644
+index 8fe201e..897a2d0 100644
 --- a/res/values/strings.xml
 +++ b/res/values/strings.xml
-@@ -215,6 +215,8 @@
-     <string name="home_answer_call_summary">Answer incoming calls by pressing the home button</string>
-     <string name="extras_title">Extras</string>
+@@ -217,6 +217,8 @@
      <string name="additional_buttons_title">Additional buttons</string>
-+    <string name="edge_gesture_title">Edge gesture</string>
-+    <string name="edge_gesture_summary">Double tap the phone\'s edge causes back</string>
      <string name="click_partial_screenshot_title">Click to partial screenshot</string>
      <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
++    <string name="edge_gesture_title">Edge gesture</string>
++    <string name="edge_gesture_summary">Double tap the phone\'s edge causes back</string>
 
-@@ -593,6 +595,8 @@
+     <!-- Key backlight -->
+     <string name="button_backlight_title">Backlight</string>
+@@ -596,6 +598,8 @@
      <string name="auto_power_save_summary_on">Automatically enable power save mode at %s battery</string>
      <string name="auto_power_save_summary_off">Do not enable power save mode automatically</string>
      <string name="auto_power_save_never">Never</string>
@@ -2291,7 +2312,7 @@ index 0b301a9..7a129d5 100644
          android:title="@string/perf_profile_category_title">
 
 diff --git a/src/org/lineageos/lineageparts/input/ButtonSettings.java b/src/org/lineageos/lineageparts/input/ButtonSettings.java
-index 613e847..e58aff8 100644
+index 613e847..a0edf92 100644
 --- a/src/org/lineageos/lineageparts/input/ButtonSettings.java
 +++ b/src/org/lineageos/lineageparts/input/ButtonSettings.java
 @@ -29,6 +29,7 @@ import android.content.SharedPreferences;
@@ -2310,7 +2331,16 @@ index 613e847..e58aff8 100644
      private static final String KEY_CLICK_PARTIAL_SCREENSHOT =
              "click_partial_screenshot";
      private static final String KEY_SWAP_CAPACITIVE_KEYS = "swap_capacitive_keys";
-@@ -147,6 +149,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -119,6 +121,8 @@ public class ButtonSettings extends SettingsPreferenceFragment
+     private static final String CATEGORY_NAVBAR = "navigation_bar_category";
+     private static final String CATEGORY_EXTRAS = "extras_category";
+
++    private static final String PRODUCT = SystemProperties.get("ro.build.product", "");
++
+     private ListPreference mBackLongPressAction;
+     private ListPreference mHomeLongPressAction;
+     private ListPreference mHomeDoubleTapAction;
+@@ -147,6 +151,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
      private SwitchPreference mHomeAnswerCall;
      private SwitchPreference mTorchLongPressPowerGesture;
      private ListPreference mTorchLongPressPowerTimeout;
@@ -2318,45 +2348,53 @@ index 613e847..e58aff8 100644
      private SwitchPreference mSwapCapacitiveKeys;
 
      private PreferenceCategory mNavigationPreferencesCat;
-@@ -470,6 +473,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -470,6 +475,17 @@ public class ButtonSettings extends SettingsPreferenceFragment
              mSwapCapacitiveKeys.setDependency(KEY_DISABLE_NAV_KEYS);
          }
 
 +        // Edge gesture controller
-+        mEdgeGesture = prefScreen.findPreference(KEY_EDGE_GESTURE);
++        mEdgeGesture = findPreference(KEY_EDGE_GESTURE);
 +
 +        if (mEdgeGesture != null) {
-+            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++            if (PRODUCT.equals("libra")) {
++                mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++            } else {
++                extrasCategory.removePreference(mEdgeGesture);
++            }
 +        }
 +
          // Override key actions on Go devices in order to hide any unsupported features
          if (ActivityManager.isLowRamDeviceStatic()) {
              String[] actionEntriesGo = res.getStringArray(R.array.hardware_keys_action_entries_go);
-@@ -552,6 +562,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -552,6 +568,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
                  (incallHomeBehavior == LineageSettings.Secure.RING_HOME_BUTTON_BEHAVIOR_ANSWER);
              mHomeAnswerCall.setChecked(homeButtonAnswersCall);
          }
 +
 +        // Get edge gesture status.
 +        if (mEdgeGesture != null) {
-+            mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++            if (PRODUCT.equals("libra")) {
++                mEdgeGesture.setChecked(SystemProperties.getBoolean("persist.vendor.edge_touch_mode", false));
++            }
 +        }
      }
 
      private ListPreference initList(String key, Action value) {
-@@ -837,6 +852,9 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -837,6 +860,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
          } else if (preference == mHomeAnswerCall) {
              handleToggleHomeButtonAnswersCallPreferenceClick();
              return true;
 +        } else if (preference == mEdgeGesture) {
-+            SystemProperties.set("persist.vendor.edge_touch_mode", mEdgeGesture.isChecked() ? "true" : "false");
++            if (PRODUCT.equals("libra")) {
++                SystemProperties.set("persist.vendor.edge_touch_mode", mEdgeGesture.isChecked() ? "true" : "false");
++            }
 +            return true;
          }
 
          return super.onPreferenceTreeClick(preference);
 
 diff --git a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
-index 949562f..82a103f 100644
+index 949562f..a84e15e 100644
 --- a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
 +++ b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
 @@ -28,6 +28,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
@@ -2367,11 +2405,14 @@ index 949562f..82a103f 100644
  import android.provider.Settings.Global;
  import android.util.ArraySet;
  import android.util.TypedValue;
-@@ -65,10 +66,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -65,10 +66,16 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
      private static final String KEY_AUTO_POWER_SAVE  = "auto_power_save";
      private static final String KEY_POWER_SAVE       = "power_save";
      private static final String KEY_PERF_SEEKBAR     = "perf_seekbar";
++    private static final String KEY_CPU_OVERCLOCK_CATEGORY = "cpu_overclock_category";
 +    private static final String KEY_CPU_OVERCLOCK    = "cpu_overclock";
++
++    private static final String PRODUCT = SystemProperties.get("ro.build.product", "");
 
      private ListPreference mAutoPowerSavePref;
      private SwitchPreference   mPowerSavePref;
@@ -2381,7 +2422,7 @@ index 949562f..82a103f 100644
      private SeekBarPreference        mPerfSeekBar;
      private StopMotionVectorDrawable mPerfDrawable;
      private PerfIconAnimator         mAnimator;
-@@ -96,6 +100,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -96,6 +103,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
          mPerfSeekBar = findPreference(KEY_PERF_SEEKBAR);
          mAutoPowerSavePref = findPreference(KEY_AUTO_POWER_SAVE);
          mPowerSavePref = findPreference(KEY_POWER_SAVE);
@@ -2389,46 +2430,44 @@ index 949562f..82a103f 100644
 
          mPowerManager = getActivity().getSystemService(PowerManager.class);
          mPerf = PerformanceManager.getInstance(getActivity());
-@@ -126,6 +131,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -126,6 +134,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
          updateAutoPowerSaveValue();
          mAutoPowerSavePref.setOnPreferenceChangeListener(this);
          mPowerSavePref.setOnPreferenceChangeListener(this);
-+        updateCPUOverclockValue();
-+        mCPUOverclockPref.setOnPreferenceChangeListener(this);
++
++        if (PRODUCT.equals("aqua") || PRODUCT.equals("libra")) {
++            mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", false));
++            mCPUOverclockPref.setOnPreferenceChangeListener(this);
++        } else {
++            removePreference(KEY_CPU_OVERCLOCK_CATEGORY);
++        }
      }
 
 
-@@ -212,6 +219,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -212,6 +227,12 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
              getActivity().registerReceiver(mPowerSaveReceiver,
                      new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING));
          }
 +
 +        if (mCPUOverclockPref != null) {
-+            updateCPUOverclockValue();
++            if (PRODUCT.equals("aqua") || PRODUCT.equals("libra")) {
++                mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", false));
++            }
 +        }
      }
 
      @Override
-@@ -246,6 +257,8 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -246,6 +267,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
              final int level = Integer.parseInt((String) newValue);
              Global.putInt(getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, level);
              updateAutoPowerSaveSummary(level);
 +        } else if (preference == mCPUOverclockPref) {
-+            SystemProperties.set("persist.sys.cpu_overclock", mCPUOverclockPref.isChecked() ? "false" : "true");
++            if (PRODUCT.equals("aqua") || PRODUCT.equals("libra")) {
++                SystemProperties.set("persist.sys.cpu_overclock", mCPUOverclockPref.isChecked() ? "false" : "true");
++            }
          }
          return true;
      }
-@@ -263,6 +276,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
-         PartsUpdater.notifyChanged(getActivity(), getPreferenceScreen().getKey());
-     }
-
-+    private void updateCPUOverclockValue() {
-+        mCPUOverclockPref.setChecked(SystemProperties.getBoolean("persist.sys.cpu_overclock", false));
-+    }
-+
-     private void updateAutoPowerSaveValue() {
-         final int level = Global.getInt(
-                 getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, 0);
 
 project packages/apps/PermissionController/
 diff --git a/src/com/android/permissioncontroller/permission/utils/Utils.java b/src/com/android/permissioncontroller/permission/utils/Utils.java
@@ -2454,6 +2493,151 @@ index 65fdd59..fdd71e2 100644
          for (int i = 0; i < numPlatformPermissions; i++) {
 
 project packages/apps/Settings/
+diff --git a/res/values-zh-rCN/cm_strings.xml b/res/values-zh-rCN/cm_strings.xml
+index 2798a62..d7aa8ee 100644
+--- a/res/values-zh-rCN/cm_strings.xml
++++ b/res/values-zh-rCN/cm_strings.xml
+@@ -96,4 +96,7 @@
+     <string name="wifi_setup_wizard_title">选择 Wi\u2011Fi 网络</string>
+     <string name="advanced_notifications_title">高级通知设置</string>
+     <string name="peak_refresh_rate_summary_custom">自动将某些内容的刷新频率从 60 Hz 调高到 %1$d Hz。这么做会增加耗电量。</string>
++    <string name="screen_refresh_rate">屏幕刷新率</string>
++    <string name="screen_refresh_rate_title">屏幕刷新率</string>
++    <string name="keywords_screen_refresh_rate">屏幕，刷新率</string>
+ </resources>
+
+diff --git a/res/values-zh-rHK/cm_strings.xml b/res/values-zh-rHK/cm_strings.xml
+index 45b2af1..0b870f5 100644
+--- a/res/values-zh-rHK/cm_strings.xml
++++ b/res/values-zh-rHK/cm_strings.xml
+@@ -31,4 +31,7 @@
+     <string name="wake_when_plugged_or_unplugged_title">當接上喚醒</string>
+     <string name="wake_when_plugged_or_unplugged_summary">當連接或拔除電源時開啓螢幕</string>
+     <string name="peak_refresh_rate_summary_custom">自動將部分內容的重新整理頻率，從 60 Hz 提升到 %1$d Hz。此功能會增加耗電量。</string>
++    <string name="screen_refresh_rate">螢幕更新率</string>
++    <string name="screen_refresh_rate_title">螢幕更新率</string>
++    <string name="keywords_screen_refresh_rate">螢幕，更新率</string>
+ </resources>
+
+diff --git a/res/values-zh-rTW/cm_strings.xml b/res/values-zh-rTW/cm_strings.xml
+index bf1ab75..1b564a8 100644
+--- a/res/values-zh-rTW/cm_strings.xml
++++ b/res/values-zh-rTW/cm_strings.xml
+@@ -95,4 +95,7 @@
+     <string name="wifi_setup_wizard_title">選取 Wi-Fi 網路</string>
+     <string name="advanced_notifications_title">進階通知設定</string>
+     <string name="peak_refresh_rate_summary_custom">自動將某些內容的重新整理頻率從 60 調高到 %1$d 赫茲 (Hz)。請注意，開啟這項設定會增加電池用量。</string>
++    <string name="screen_refresh_rate">螢幕更新率</string>
++    <string name="screen_refresh_rate_title">螢幕更新率</string>
++    <string name="keywords_screen_refresh_rate">螢幕，更新率</string>
+ </resources>
+
+diff --git a/res/values/cm_arrays.xml b/res/values/cm_arrays.xml
+index aeb0be1..fd9817b 100644
+--- a/res/values/cm_arrays.xml
++++ b/res/values/cm_arrays.xml
+@@ -49,4 +49,27 @@
+     <!-- Override supported color mode labels.
+          NOTE: This list must have the exact same items count as config_availableColorModes -->
+     <string-array name="available_vendor_color_modes" translatable="false" />
++
++    <!-- Display settings. The minimum refresh rate of screen. These are shown in a list dialog. -->
++    <string-array name="screen_refresh_rate_entries">
++        <item>30 Hz</item>
++        <item>48 Hz</item>
++        <item>50 Hz</item>
++        <item>60 Hz</item>
++        <item>75 Hz</item>
++    </string-array>
++
++    <!-- Do not translate. -->
++    <string-array name="screen_refresh_rate_values" translatable="false">
++        <!-- Do not translate. -->
++        <item>30</item>
++        <!-- Do not translate. -->
++        <item>48</item>
++        <!-- Do not translate. -->
++        <item>50</item>
++        <!-- Do not translate. -->
++        <item>60</item>
++        <!-- Do not translate. -->
++        <item>75</item>
++    </string-array>
+ </resources>
+
+diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
+index ab38dec..5bdeb87 100644
+--- a/res/values/cm_strings.xml
++++ b/res/values/cm_strings.xml
+@@ -175,4 +175,18 @@
+
+     <!-- Display settings screen, peak refresh rate settings summary [CHAR LIMIT=NONE] -->
+     <string name="peak_refresh_rate_summary_custom">Automatically raises the refresh rate from 60 to %1$d Hz for some content. Increases battery usage.</string>
++
++    <!-- Sound & display settings screen, setting option name to change screen refresh rate -->
++    <string name="screen_refresh_rate">Screen refresh rate</string>
++
++    <!-- Sound & display settings screen, setting option name to change screen refresh rate [CHAR LIMIT=30] -->
++    <string name="screen_refresh_rate_title">Screen refresh rate</string>
++
++    <!-- Sound & display settings screen, setting option summary to change screen refresh rate -->
++    <string name="screen_refresh_rate_summary">
++        <xliff:g id="refresh_rate_description">%1$s</xliff:g>
++    </string>
++
++    <!-- List of synonyms for the screen refresh rate setting, used to match in settings search [CHAR LIMIT=NONE] -->
++    <string name="keywords_screen_refresh_rate">screen, refresh rate</string>
+ </resources>
+
+diff --git a/res/xml/display_settings.xml b/res/xml/display_settings.xml
+index 925cbb9..bfc3dc3 100644
+--- a/res/xml/display_settings.xml
++++ b/res/xml/display_settings.xml
+@@ -76,6 +76,14 @@
+         android:entryValues="@array/screen_timeout_values"
+         settings:keywords="@string/keywords_screen_timeout" />
+
++    <com.android.settings.display.RefreshRateListPreference
++        android:key="screen_refresh_rate"
++        android:title="@string/screen_refresh_rate"
++        android:summary="@string/summary_placeholder"
++        android:entries="@array/screen_refresh_rate_entries"
++        android:entryValues="@array/screen_refresh_rate_values"
++        settings:keywords="@string/keywords_screen_refresh_rate" />
++
+     <Preference
+         android:key="adaptive_sleep_entry"
+         android:title="@string/adaptive_sleep_title"
+
+diff --git a/src/com/android/settings/DisplaySettings.java b/src/com/android/settings/DisplaySettings.java
+index 20a33f0..771f8e9 100644
+--- a/src/com/android/settings/DisplaySettings.java
++++ b/src/com/android/settings/DisplaySettings.java
+@@ -31,6 +31,7 @@ import com.android.settings.display.ShowOperatorNamePreferenceController;
+ import com.android.settings.display.TapToWakePreferenceController;
+ import com.android.settings.display.ThemePreferenceController;
+ import com.android.settings.display.TimeoutPreferenceController;
++import com.android.settings.display.RefreshRatePreferenceController;
+ import com.android.settings.display.VrDisplayPreferenceController;
+ import com.android.settings.search.BaseSearchIndexProvider;
+ import com.android.settingslib.core.AbstractPreferenceController;
+@@ -49,6 +50,7 @@ public class DisplaySettings extends DashboardFragment {
+     public static final String KEY_PROXIMITY_ON_WAKE = "proximity_on_wake";
+
+     private static final String KEY_SCREEN_TIMEOUT = "screen_timeout";
++    private static final String KEY_SCREEN_REFRESH_RATE = "screen_refresh_rate";
+     private static final String KEY_HIGH_TOUCH_SENSITIVITY = "high_touch_sensitivity_enable";
+
+     @Override
+@@ -91,6 +93,7 @@ public class DisplaySettings extends DashboardFragment {
+         controllers.add(new ScreenSaverPreferenceController(context));
+         controllers.add(new TapToWakePreferenceController(context));
+         controllers.add(new TimeoutPreferenceController(context, KEY_SCREEN_TIMEOUT));
++        controllers.add(new RefreshRatePreferenceController(context, KEY_SCREEN_REFRESH_RATE));
+         controllers.add(new VrDisplayPreferenceController(context));
+         controllers.add(new ShowOperatorNamePreferenceController(context));
+         controllers.add(new ThemePreferenceController(context));
+
 diff --git a/src/com/android/settings/development/AdbRootPreferenceController.java b/src/com/android/settings/development/AdbRootPreferenceController.java
 index 5f7d65d..8cdc24f 100644
 --- a/src/com/android/settings/development/AdbRootPreferenceController.java
@@ -2467,6 +2651,191 @@ index 5f7d65d..8cdc24f 100644
      }
 
      @Override
+
+diff --git a/src/com/android/settings/display/RefreshRateListPreference.java b/src/com/android/settings/display/RefreshRateListPreference.java
+new file mode 100644
+index 0000000..8e04b21
+--- /dev/null
++++ b/src/com/android/settings/display/RefreshRateListPreference.java
+@@ -0,0 +1,49 @@
++/*
++ * Copyright (C) 2022 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
++ * except in compliance with the License. You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the
++ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the specific language governing
++ * permissions and limitations under the License.
++ */
++
++package com.android.settings.display;
++
++import android.app.Dialog;
++import android.content.Context;
++import android.content.DialogInterface;
++import android.util.AttributeSet;
++import android.view.View;
++
++import androidx.appcompat.app.AlertDialog.Builder;
++
++import com.android.settings.RestrictedListPreference;
++
++
++public class RefreshRateListPreference extends RestrictedListPreference {
++    private final CharSequence[] mInitialEntries;
++    private final CharSequence[] mInitialValues;
++
++    public RefreshRateListPreference(Context context, AttributeSet attrs) {
++        super(context, attrs);
++        mInitialEntries = getEntries();
++        mInitialValues = getEntryValues();
++    }
++
++    @Override
++    protected void onPrepareDialogBuilder(Builder builder, DialogInterface.OnClickListener listener) {
++        super.onPrepareDialogBuilder(builder, listener);
++        builder.setView(null);
++    }
++
++    @Override
++    protected void onDialogCreated(Dialog dialog) {
++        super.onDialogCreated(dialog);
++        dialog.create();
++    }
++}
+
+diff --git a/src/com/android/settings/display/RefreshRatePreferenceController.java b/src/com/android/settings/display/RefreshRatePreferenceController.java
+new file mode 100644
+index 0000000..5513c71
+--- /dev/null
++++ b/src/com/android/settings/display/RefreshRatePreferenceController.java
+@@ -0,0 +1,122 @@
++/*
++ * Copyright (C) 2022 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
++ * except in compliance with the License. You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the
++ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the specific language governing
++ * permissions and limitations under the License.
++ */
++
++package com.android.settings.display;
++
++import android.content.Context;
++import android.os.SystemProperties;
++import android.util.Log;
++
++import androidx.preference.Preference;
++
++import com.android.settings.R;
++import com.android.settings.core.PreferenceControllerMixin;
++import com.android.settingslib.core.AbstractPreferenceController;
++
++import java.io.File;
++import java.io.FileReader;
++import java.io.FileWriter;
++
++
++public class RefreshRatePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, Preference.OnPreferenceChangeListener {
++    private static final String TAG = "RefreshRatePrefContr";
++    private final String mScreenRefreshRateKey;
++
++    public RefreshRatePreferenceController(Context context, String key) {
++        super(context);
++        mScreenRefreshRateKey = key;
++    }
++
++    @Override
++    public boolean isAvailable() {
++        final String product = SystemProperties.get("ro.build.product", "");
++        return product.equals("aqua") || product.equals("libra");
++    }
++
++    @Override
++    public String getPreferenceKey() {
++        return mScreenRefreshRateKey;
++    }
++
++    @Override
++    public void updateState(Preference preference) {
++        final RefreshRateListPreference refreshrateListPreference = (RefreshRateListPreference) preference;
++        refreshrateListPreference.setValue(String.valueOf(getRefreshRate()));
++        updateRefreshRatePreferenceDescription(refreshrateListPreference, Integer.parseInt(refreshrateListPreference.getValue()));
++    }
++
++    @Override
++    public boolean onPreferenceChange(Preference preference, Object newValue) {
++        final int value = Integer.parseInt((String) newValue);
++        setRefreshRate(value);
++        if (value != getRefreshRate()) {
++            Log.w(TAG, "cannot change screen refresh rate to unsupported value: " + String.valueOf(value));
++        }
++        updateRefreshRatePreferenceDescription((RefreshRateListPreference) preference, value);
++        return true;
++    }
++
++    public static CharSequence getRefreshRateDescription(int currentRefreshRate, CharSequence[] entries, CharSequence[] values) {
++        if (currentRefreshRate < 0 || entries == null || values == null || values.length != entries.length) {
++            return null;
++        }
++
++        for (int i = 0; i < values.length; i++) {
++            if (currentRefreshRate == Integer.parseInt(values[i].toString())) {
++                return entries[i];
++            }
++        }
++        return null;
++    }
++
++    private void updateRefreshRatePreferenceDescription(RefreshRateListPreference preference, int currentRefreshRate) {
++        final CharSequence[] entries = preference.getEntries();
++        final CharSequence[] values = preference.getEntryValues();
++        final CharSequence refreshrateDescription = getRefreshRateDescription(currentRefreshRate, entries, values);
++        final String summary = refreshrateDescription == null ? "" : mContext.getString(R.string.screen_refresh_rate_summary, refreshrateDescription);
++        preference.setSummary(summary);
++    }
++
++    private int getRefreshRate() {
++        File file = new File("/sys/class/graphics/fb0/dynamic_fps");
++        if (file.exists()) {
++            try {
++                FileReader filereader = new FileReader(file);
++                final int currentValue = (filereader.read() - '0') * 10 + (filereader.read() - '0');
++                filereader.close();
++                return currentValue;
++            } catch (Exception e) {
++                Log.e(TAG, "cannot get screen refresh rate", e);
++            }
++        } else {
++            Log.e(TAG, "File not found: /sys/class/graphics/fb0/dynamic_fps");
++        }
++        return -1;
++    }
++
++    private void setRefreshRate(int newValue) {
++        File file = new File("/sys/class/graphics/fb0/dynamic_fps");
++        if (file.exists()) {
++            try {
++                FileWriter filewriter = new FileWriter(file);
++                filewriter.write(String.valueOf(newValue));
++                filewriter.close();
++            } catch (Exception e) {
++                Log.e(TAG, "cannot set screen refresh rate", e);
++            }
++        } else {
++            Log.e(TAG, "File not found: /sys/class/graphics/fb0/dynamic_fps");
++        }
++    }
++}
 
 project system/core/
 diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
@@ -2796,10 +3165,10 @@ index e26127a..8f71933 100644
  KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
 
 diff --git a/config/common.mk b/config/common.mk
-index d5faf3f..a2c2718 100644
+index 204da24..a2c2718 100644
 --- a/config/common.mk
 +++ b/config/common.mk
-@@ -103,42 +103,21 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
+@@ -103,41 +103,21 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
  # Bootanimation
  TARGET_SCREEN_WIDTH ?= 1080
  TARGET_SCREEN_HEIGHT ?= 1920
@@ -2837,13 +3206,12 @@ index d5faf3f..a2c2718 100644
 -    setcap \
 -    unrar \
 -    vim \
--    wget \
 -    zip
 -
  # Filesystems tools
  PRODUCT_PACKAGES += \
      fsck.ntfs \
-@@ -146,20 +125,6 @@ PRODUCT_PACKAGES += \
+@@ -145,20 +125,6 @@ PRODUCT_PACKAGES += \
      mkfs.ntfs \
      mount.ntfs
 
@@ -2888,7 +3256,7 @@ index 91bf198..67bfa73 100644
      Recorder
 
 diff --git a/config/common_mobile.mk b/config/common_mobile.mk
-index 1f1c241..1f0f443 100644
+index 1f1c241..051dc06 100644
 --- a/config/common_mobile.mk
 +++ b/config/common_mobile.mk
 @@ -8,23 +8,14 @@ PRODUCT_PRODUCT_PROPERTIES += \
@@ -2938,13 +3306,19 @@ index 1f1c241..1f0f443 100644
  # Charger
  PRODUCT_PACKAGES += \
      charger_res_images
-@@ -65,7 +42,6 @@ endif
+@@ -65,9 +42,10 @@ endif
 
  # Customizations
  PRODUCT_PACKAGES += \
 -    IconShapeSquareOverlay \
      LineageNavigationBarNoHint \
-     NavigationBarMode2ButtonOverlay
+-    NavigationBarMode2ButtonOverlay
++    NavigationBarMode2ButtonOverlay \
++    NavigationBarMode3ButtonOverlay \
++    NavigationBarModeGesturalOverlay
+
+ # Media
+ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 
 diff --git a/config/data_only.mk b/config/data_only.mk
 index 5ff877c..ab70301 100644
