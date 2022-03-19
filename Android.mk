@@ -52,6 +52,19 @@ $(RFS_MSM_MPSS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	$(hide) ln -sf /firmware $@/readonly/firmware
 ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_MPSS_SYMLINKS)
 
+# Vulkan symlinks
+VULKAN_SYMLINK := $(TARGET_OUT_VENDOR)/lib/vulkan.$(TARGET_BOARD_PLATFORM).so
+$(VULKAN_SYMLINK): $(LOCAL_INSTALLED_MODULE)
+	@mkdir -p $(dir $@)
+	$(hide) ln -sf hw/$(notdir $@) $@
+ALL_DEFAULT_INSTALLED_MODULES += $(VULKAN_SYMLINK)
+
+VULKAN_SYMLINK_64 := $(TARGET_OUT_VENDOR)/lib64/vulkan.$(TARGET_BOARD_PLATFORM).so
+$(VULKAN_SYMLINK_64): $(LOCAL_INSTALLED_MODULE)
+	@mkdir -p $(dir $@)
+	$(hide) ln -sf hw/$(notdir $@) $@
+ALL_DEFAULT_INSTALLED_MODULES += $(VULKAN_SYMLINK_64)
+
 # WLAN symlinks
 WLAN_SYMLINKS := $(TARGET_OUT_ETC)/firmware/wlan/
 $(WLAN_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
