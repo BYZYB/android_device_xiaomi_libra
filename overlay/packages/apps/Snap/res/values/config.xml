@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Enable support for camera api v2 -->
-    <bool name="support_camera_api_v2">true</bool>
-    <!-- Opens back camera using openLegacy() -->
-    <bool name="back_camera_open_legacy">false</bool>
-    <!-- Opens front camera using openLegacy() -->
-    <bool name="front_camera_open_legacy">false</bool>
-</resources>
