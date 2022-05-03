@@ -123,18 +123,12 @@ TARGET_RECOVERY_DEVICE_MODULES := libinit_libra
 USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
 # Kernel
-# To build the kernel with gcc-10 (or newer), please install "gcc-10-aarch64-linux-gnu" and "gcc-10-arm-linux-gnueabi".
-# To build the kernel with clang-11 (or newer), please install "clang" and "llvm-dev".
-# After installing necessary toolchains, please modify "vendor/lineage/config/BoardConfigKernel.mk" and set the toolchain paths to proper values.
-# Please refer to the part "diff --git a/config/BoardConfigKernel.mk b/config/BoardConfigKernel.mk" in "repo_18.diff" for more details.
-# NOTE: Custom kernel toolchains cannot be used in official LineageOS builds, which will break the build rules and result in errors without modifying the build system.
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive ehci-hcd.park=3 msm_rtb.filter=0x37
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
 TARGET_KERNEL_CLANG_COMPILE := true
-TARGET_KERNEL_CLANG_PATH := /usr/lib/llvm-12
-TARGET_KERNEL_CLANG_VERSION := 12.0
+KERNEL_LTO := full
 TARGET_KERNEL_CONFIG := libra_defconfig
 TARGET_KERNEL_SOURCE := kernel/xiaomi/libra
 
