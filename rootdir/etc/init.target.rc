@@ -46,12 +46,6 @@ on fs
     mount_all /vendor/etc/fstab.qcom
 
 on post-fs
-    # We restorecon /cust in case the cust partition has been reset.
-    restorecon_recursive /cust
-
-    # Create the lost+found directories, so as to enforce our permissions
-    mkdir /cust/lost+found 0770 root root
-
     # Some files in /sys/devices/system/cpu are created after the restorecon of /sys which receive the default label "sysfs".
     # Restorecon again to give new files the correct label.
     restorecon_recursive /sys/devices/system/cpu

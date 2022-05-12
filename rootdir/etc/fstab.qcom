@@ -3,6 +3,7 @@
 # specify 'check', and must come before any filesystems that do specify 'check'
 
 # NOTE: /system partition is now early-mounted and the fstab entry is specified in device tree: /proc/device-tree/firmware/android/fstab/system
+# NOTE: /vendor partition is now early-mounted and the fstab entry is specified in device tree: /proc/device-tree/firmware/android/fstab/vendor
 # <src> <mnt_point> <type> <mnt_flags and options> <fs_mgr_flags>
 
 # Internal partitions
@@ -13,7 +14,7 @@
 /dev/block/bootdevice/by-name/modem /vendor/modem_firmware vfat ro,noatime,uid=1000,gid=1000,fmask=0337,dmask=0227,shortname=lower defaults
 /dev/block/bootdevice/by-name/cache /cache ext4 nosuid,nodev,noatime,discard,noauto_da_alloc wait,check
 /dev/block/bootdevice/by-name/cache /cache f2fs rw,nosuid,nodev,noatime,discard,inline_xattr wait,check
-/dev/block/bootdevice/by-name/cust /mnt/vendor/cust ext4 nosuid,nodev,noatime,discard,noauto_da_alloc wait,check
+/dev/block/bootdevice/by-name/cust /vendor ext4 ro,noatime,discard,noauto_da_alloc wait,recoveryonly
 /dev/block/bootdevice/by-name/persist /mnt/vendor/persist ext4 nosuid,nodev,noatime,discard,noauto_da_alloc wait,check
 /dev/block/bootdevice/by-name/system /system ext4 ro,noatime,discard,noauto_da_alloc wait,recoveryonly
 /dev/block/bootdevice/by-name/userdata /data ext4 nosuid,nodev,noatime,discard,noauto_da_alloc wait,check,encryptable=/dev/block/bootdevice/by-name/bk1
