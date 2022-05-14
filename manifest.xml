@@ -120,7 +120,4 @@
         <transport>hwbinder</transport>
         <fqname>@2.0::IDisplayColorCalibration/default</fqname>
     </hal>
-    <sepolicy>
-        <version>30.0</version>
-    </sepolicy>
 </manifest>
