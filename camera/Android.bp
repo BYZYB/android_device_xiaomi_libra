@@ -22,6 +22,7 @@ cc_library_shared {
     name: "camera.msm8992",
     proprietary: true,
     relative_install_path: "hw",
+    compile_multilib: "32",
     shared_libs: [
         "android.hardware.graphics.bufferqueue@1.0",
         "android.hardware.graphics.bufferqueue@2.0",
