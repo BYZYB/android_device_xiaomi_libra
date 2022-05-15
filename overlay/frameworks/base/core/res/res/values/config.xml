@@ -137,10 +137,10 @@
         <item>"/system/framework/oat/arm64/services.vdex"</item>
         <item>"/system/framework/services.jar.prof"</item>
         <item>"/system/framework/services.jar"</item>
-        <item>"/system/lib64/libsurfaceflinger.so"</item>
         <item>"/system/system_ext/priv-app/SystemUI/oat/arm64/SystemUI.odex"</item>
         <item>"/system/system_ext/priv-app/SystemUI/oat/arm64/SystemUI.vdex"</item>
         <item>"/system/system_ext/priv-app/SystemUI/SystemUI.apk"</item>
+        <item>"/vendor/lib64/libsurfaceflinger.so"</item>
     </string-array>
     <!-- Should the pinner service pin the Home application? -->
     <bool name="config_pinnerHomeApp">true</bool>
