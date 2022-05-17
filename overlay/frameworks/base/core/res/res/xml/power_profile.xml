@@ -19,7 +19,20 @@
         <value>3</value>
         <value>3</value>
     </array>
-    <array name="cpu.speeds">
+    <array name="cpu.speeds.cluster0">
+        <value>384000</value>
+        <value>460800</value>
+        <value>600000</value>
+        <value>672000</value>
+        <value>787200</value>
+        <value>864000</value>
+        <value>960000</value>
+        <value>1248000</value>
+        <value>1440000</value>
+        <value>1536000</value>
+        <value>1632000</value>
+    </array>
+    <array name="cpu.speeds.cluster1">
         <value>384000</value>
         <value>480000</value>
         <value>633600</value>
@@ -31,23 +44,39 @@
         <value>1440000</value>
         <value>1536000</value>
         <value>1632000</value>
-        <value>1689600</value>
+        <value>1689000</value>
         <value>1824000</value>
+        <value>1920000</value>
     </array>
-    <item name="cpu.idle">3.5</item>
-    <array name="cpu.active">
-        <value>90</value>
-        <value>95</value>
-        <value>110</value>
-        <value>136</value>
-        <value>154</value>
-        <value>174</value>
-        <value>200</value>
-        <value>290</value>
-        <value>310</value>
-        <value>390</value>
-        <value>400</value>
-        <value>440</value>
-        <value>520</value>
+    <item name="cpu.idle">6.30</item>
+    <item name="cpu.awake">25.66</item>
+    <array name="cpu.active.cluster0">
+        <value>27.4</value>
+        <value>32.0</value>
+        <value>37.2</value>
+        <value>45.5</value>
+        <value>50.3</value>
+        <value>57.9</value>
+        <value>66.3</value>
+        <value>96.6</value>
+        <value>125.5</value>
+        <value>133.9</value>
+        <value>142.2</value>
+    </array>
+    <array name="cpu.active.cluster1">
+        <value>94.6</value>
+        <value>111.78</value>
+        <value>135.74</value>
+        <value>160.15</value>
+        <value>183.83</value>
+        <value>252.30</value>
+        <value>293.60</value>
+        <value>348.71</value>
+        <value>422.27</value>
+        <value>449.69</value>
+        <value>491.01</value>
+        <value>519.01</value>
+        <value>731.35</value>
+        <value>769.84</value>
     </array>
 </device>
