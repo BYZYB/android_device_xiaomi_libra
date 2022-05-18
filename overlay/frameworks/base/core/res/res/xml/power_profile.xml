@@ -2,6 +2,7 @@
 <device name="Android">
     <item name="none">0</item>
     <item name="screen.on">100</item>
+    <item name="ambient.on">100</item>
     <item name="bluetooth.active">142</item>
     <item name="bluetooth.on">1</item>
     <item name="bluetooth.at">35690</item>
