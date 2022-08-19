@@ -1,49 +1,27 @@
 project build/make/
 diff --git a/core/Makefile b/core/Makefile
-index b418946..39a1fb3 100644
+index b418946..cb767a4 100644
 --- a/core/Makefile
 +++ b/core/Makefile
-@@ -2109,15 +2109,7 @@ endif
- #      do bsdiff because boot and recovery will contain different number of entries
- #      (BOARD_INCLUDE_RECOVERY_ACPIO = true).
-
--ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS_BOOT) \
--  $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO) \
--  $(BOARD_RAMDISK_USE_LZ4) $(BOARD_RAMDISK_USE_XZ)))
--# Named '.dat' so we don't attempt to use imgdiff for patching it.
+@@ -2113,8 +2113,7 @@ ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS
+   $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO) \
+   $(BOARD_RAMDISK_USE_LZ4) $(BOARD_RAMDISK_USE_XZ)))
+ # Named '.dat' so we don't attempt to use imgdiff for patching it.
 -RECOVERY_RESOURCE_ZIP := $(TARGET_OUT_VENDOR)/etc/recovery-resource.dat
 -ALL_DEFAULT_INSTALLED_MODULES += $(RECOVERY_RESOURCE_ZIP)
--else
++RECOVERY_RESOURCE_ZIP :=
+ else
  RECOVERY_RESOURCE_ZIP :=
--endif
-
- INSTALLED_RECOVERY_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/prop.default
-
-@@ -4667,7 +4659,7 @@ ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_
- 	    $(PRODUCT_OUT)/install,$(zip_root)/INSTALL)
- ifdef INSTALLED_RECOVERY_KERNEL
- # The python script that wraps it all up wants it to be named kernel, so do that
--	cp $(INSTALLED_RECOVERY_KERNEL) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
-+	cp $(INSTALLED_RECOVERY_KERNEL) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
  endif
- ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
- 	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
-@@ -4997,15 +4989,11 @@ name := $(name)-ota-$(FILE_NAME_TAG)
- INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
+@@ -4998,7 +4997,7 @@ INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
  INTERNAL_OTA_METADATA := $(PRODUCT_OUT)/ota_metadata
 
--ifeq ($(TARGET_BUILD_VARIANT),user)
+ ifeq ($(TARGET_BUILD_VARIANT),user)
 -    $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
--else
++    $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
+ else
  ifneq ($(LINEAGE_BUILD),)
      $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
- else
-     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
- endif
--endif
-
- $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
- $(INTERNAL_OTA_PACKAGE_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_OTA_METADATA)
 
 diff --git a/core/java.mk b/core/java.mk
 index a041321..ac665b3 100644
@@ -58,52 +36,26 @@ index a041321..ac665b3 100644
  endif
  endif
 
-diff --git a/core/main.mk b/core/main.mk
-index 5b39e8d..624bb29 100644
---- a/core/main.mk
-+++ b/core/main.mk
-@@ -282,8 +282,6 @@ ifneq (,$(user_variant))
-   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
-
- else # !user_variant
--  # Turn on checkjni for non-user builds.
--  ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
-   # Set device insecure for non-user builds.
-   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
-   # Allow mock locations by default for non user builds
-@@ -293,8 +291,6 @@ endif # !user_variant
- ifeq (true,$(strip $(enable_target_debugging)))
-   # Target is more debuggable and adbd is on by default
-   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
--  # Enable Dalvik lock contention logging.
--  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
- else # !enable_target_debugging
-   # Target is less debuggable and adbd is off by default
-   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
-
 diff --git a/core/product.mk b/core/product.mk
-index 13a182a..8dac5c3 100644
+index 13a182a..32e80d7 100644
 --- a/core/product.mk
 +++ b/core/product.mk
-@@ -558,9 +558,14 @@ _readonly_late_variables := \
- _readonly_late_variables += \
-   PRODUCT_CFI_INCLUDE_PATHS \
+@@ -560,7 +560,12 @@ _readonly_late_variables += \
    PRODUCT_COPY_FILES \
--  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
+   PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
    PRODUCT_DEX_PREOPT_BOOT_FLAGS \
 -  PRODUCT_SOONG_NAMESPACES
++  PRODUCT_SOONG_NAMESPACES \
 +  PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER \
 +  PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
-+  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
 +  PRODUCT_OTHER_JAVA_DEBUG_INFO \
-+  PRODUCT_SOONG_NAMESPACES \
 +  PRODUCT_SYSTEM_SERVER_COMPILER_FILTER \
 +  PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 
  _readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
 
 diff --git a/target/product/base_system.mk b/target/product/base_system.mk
-index 5b118ee..1a82b5e 100644
+index 5b118ee..34498b4 100644
 --- a/target/product/base_system.mk
 +++ b/target/product/base_system.mk
 @@ -31,9 +31,7 @@ PRODUCT_PACKAGES += \
@@ -189,13 +141,11 @@ index 5b118ee..1a82b5e 100644
  # Packages included only for eng or userdebug builds, previously debug tagged
  PRODUCT_PACKAGES_DEBUG := \
      adb_keys \
-@@ -393,8 +376,7 @@ endif
-
+@@ -394,7 +377,6 @@ endif
  # The set of packages whose code can be loaded by the system server.
  PRODUCT_SYSTEM_SERVER_APPS += \
--    SettingsProvider \
+     SettingsProvider \
 -    WallpaperBackup
-+    SettingsProvider
 
  # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
  PRODUCT_PACKAGES_DEBUG_ASAN := \
@@ -214,24 +164,17 @@ index 267859a..31bfedf 100644
  # Bluetooth:
 
 diff --git a/target/product/handheld_product.mk b/target/product/handheld_product.mk
-index 968d150..e326fed 100644
+index 968d150..bffcad7 100644
 --- a/target/product/handheld_product.mk
 +++ b/target/product/handheld_product.mk
-@@ -32,13 +32,9 @@ PRODUCT_PACKAGES += \
-     OneTimeInitializer \
+@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += \
      preinstalled-packages-platform-handheld-product.xml \
      QuickSearchBox \
--    SettingsIntelligence \
+     SettingsIntelligence \
 -    frameworks-base-overlays
-+    SettingsIntelligence
 
  ifeq ($(LINEAGE_BUILD),)
  PRODUCT_PACKAGES += \
-     LatinIME
- endif
--
--PRODUCT_PACKAGES_DEBUG += \
--    frameworks-base-overlays-debug
 
 diff --git a/target/product/handheld_system.mk b/target/product/handheld_system.mk
 index f6c92b5..7c71711 100644
@@ -288,19 +231,13 @@ index d935fbf..8406fee 100644
 -    WallpaperCropper \
 
 diff --git a/target/product/media_system.mk b/target/product/media_system.mk
-index f42491e..c5790ed 100644
+index f42491e..ab41631 100644
 --- a/target/product/media_system.mk
 +++ b/target/product/media_system.mk
-@@ -72,16 +72,6 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
- PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-     frameworks/base/dirty-image-objects-phone:system/etc/dirty-image-objects)
+@@ -78,10 +78,6 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+     tombstoned.max_tombstone_count=50
+ endif
 
--# On userdebug builds, collect more tombstones by default.
--ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
--PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
--    tombstoned.max_tombstone_count=50
--endif
--
 -PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 -    ro.logd.size.stats=64K \
 -    log.tag.stats_log=I
@@ -310,17 +247,11 @@ index f42491e..c5790ed 100644
  $(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
 
 diff --git a/target/product/runtime_libart.mk b/target/product/runtime_libart.mk
-index 693b686..6197bb4 100644
+index 693b686..0fe5c98 100644
 --- a/target/product/runtime_libart.mk
 +++ b/target/product/runtime_libart.mk
-@@ -57,23 +57,23 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
- # On eng builds, make "boot" reasons only extract for faster turnaround.
- ifeq (eng,$(TARGET_BUILD_VARIANT))
-     PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
--        pm.dexopt.first-boot=extract \
--        pm.dexopt.boot=extract
-+        pm.dexopt.first-boot=everything \
-+        pm.dexopt.boot=everything
+@@ -61,19 +61,19 @@ ifeq (eng,$(TARGET_BUILD_VARIANT))
+         pm.dexopt.boot=extract
  else
      PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 -        pm.dexopt.first-boot=quicken \
@@ -375,16 +306,6 @@ index ef48719..4b76ad5 100644
 -    CellBroadcastLegacyApp \
 
  PRODUCT_COPY_FILES := \
-
-diff --git a/target/product/telephony_system_ext.mk b/target/product/telephony_system_ext.mk
-index f81a607..b12f9e6 100644
---- a/target/product/telephony_system_ext.mk
-+++ b/target/product/telephony_system_ext.mk
-@@ -20,4 +20,3 @@
- # /system_ext packages
- PRODUCT_PACKAGES += \
-     CarrierConfig \
--    EmergencyInfo \
 
 diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
 index c5758c7..ad459da 100644
@@ -537,10 +458,10 @@ index 952ccdad..1c199adb 100644
 -
 
 diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
-index 26fd27b7..16c90726 100644
+index 9bb5aecd..43c095a7 100644
 --- a/core/res/AndroidManifest.xml
 +++ b/core/res/AndroidManifest.xml
-@@ -2852,6 +2852,20 @@
+@@ -2853,6 +2853,20 @@
          android:description="@string/permdesc_getPackageSize"
          android:protectionLevel="normal" />
 
@@ -756,7 +677,7 @@ index 5f15216e..6851cf14 100644
 -
 
 diff --git a/services/core/java/com/android/server/pm/PackageManagerService.java b/services/core/java/com/android/server/pm/PackageManagerService.java
-index d443c013..b5ae92c4 100644
+index ca9d1c6f..a562b918 100644
 --- a/services/core/java/com/android/server/pm/PackageManagerService.java
 +++ b/services/core/java/com/android/server/pm/PackageManagerService.java
 @@ -4465,8 +4465,8 @@ public class PackageManagerService extends IPackageManager.Stub
@@ -850,18 +771,18 @@ index 3a12ffa..c1fd160 100644
      <string name="long_screen_settings_no_apps">沒有應用程式</string>
 
 diff --git a/res/values/strings.xml b/res/values/strings.xml
-index 8fe201e..897a2d0 100644
+index 8fe201e..afbde60 100644
 --- a/res/values/strings.xml
 +++ b/res/values/strings.xml
-@@ -217,6 +217,8 @@
+@@ -215,6 +215,8 @@
+     <string name="home_answer_call_summary">Answer incoming calls by pressing the home button</string>
+     <string name="extras_title">Extras</string>
      <string name="additional_buttons_title">Additional buttons</string>
-     <string name="click_partial_screenshot_title">Click to partial screenshot</string>
-     <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
 +    <string name="edge_gesture_title">Edge gesture</string>
 +    <string name="edge_gesture_summary">Double tap the phone\'s edge causes back</string>
+     <string name="click_partial_screenshot_title">Click to partial screenshot</string>
+     <string name="click_partial_screenshot_summary">Short click Volume Down and Power to take partial screenshot</string>
 
-     <!-- Key backlight -->
-     <string name="button_backlight_title">Backlight</string>
 @@ -596,6 +598,8 @@
      <string name="auto_power_save_summary_on">Automatically enable power save mode at %s battery</string>
      <string name="auto_power_save_summary_off">Do not enable power save mode automatically</string>
@@ -915,7 +836,7 @@ index 0b301a9..7a129d5 100644
          android:title="@string/perf_profile_category_title">
 
 diff --git a/src/org/lineageos/lineageparts/input/ButtonSettings.java b/src/org/lineageos/lineageparts/input/ButtonSettings.java
-index 613e847..a0edf92 100644
+index 613e847..28455bd 100644
 --- a/src/org/lineageos/lineageparts/input/ButtonSettings.java
 +++ b/src/org/lineageos/lineageparts/input/ButtonSettings.java
 @@ -29,6 +29,7 @@ import android.content.SharedPreferences;
@@ -934,16 +855,15 @@ index 613e847..a0edf92 100644
      private static final String KEY_CLICK_PARTIAL_SCREENSHOT =
              "click_partial_screenshot";
      private static final String KEY_SWAP_CAPACITIVE_KEYS = "swap_capacitive_keys";
-@@ -119,6 +121,8 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -118,6 +120,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+     private static final String CATEGORY_BACKLIGHT = "key_backlight";
      private static final String CATEGORY_NAVBAR = "navigation_bar_category";
      private static final String CATEGORY_EXTRAS = "extras_category";
-
 +    private static final String PRODUCT = SystemProperties.get("ro.build.product", "");
-+
+
      private ListPreference mBackLongPressAction;
      private ListPreference mHomeLongPressAction;
-     private ListPreference mHomeDoubleTapAction;
-@@ -147,6 +151,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -147,6 +150,7 @@ public class ButtonSettings extends SettingsPreferenceFragment
      private SwitchPreference mHomeAnswerCall;
      private SwitchPreference mTorchLongPressPowerGesture;
      private ListPreference mTorchLongPressPowerTimeout;
@@ -951,7 +871,7 @@ index 613e847..a0edf92 100644
      private SwitchPreference mSwapCapacitiveKeys;
 
      private PreferenceCategory mNavigationPreferencesCat;
-@@ -470,6 +475,17 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -470,6 +474,17 @@ public class ButtonSettings extends SettingsPreferenceFragment
              mSwapCapacitiveKeys.setDependency(KEY_DISABLE_NAV_KEYS);
          }
 
@@ -969,7 +889,7 @@ index 613e847..a0edf92 100644
          // Override key actions on Go devices in order to hide any unsupported features
          if (ActivityManager.isLowRamDeviceStatic()) {
              String[] actionEntriesGo = res.getStringArray(R.array.hardware_keys_action_entries_go);
-@@ -552,6 +568,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -552,6 +567,13 @@ public class ButtonSettings extends SettingsPreferenceFragment
                  (incallHomeBehavior == LineageSettings.Secure.RING_HOME_BUTTON_BEHAVIOR_ANSWER);
              mHomeAnswerCall.setChecked(homeButtonAnswersCall);
          }
@@ -983,7 +903,7 @@ index 613e847..a0edf92 100644
      }
 
      private ListPreference initList(String key, Action value) {
-@@ -837,6 +860,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
+@@ -837,6 +859,11 @@ public class ButtonSettings extends SettingsPreferenceFragment
          } else if (preference == mHomeAnswerCall) {
              handleToggleHomeButtonAnswersCallPreferenceClick();
              return true;
@@ -997,7 +917,7 @@ index 613e847..a0edf92 100644
          return super.onPreferenceTreeClick(preference);
 
 diff --git a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
-index 949562f..a84e15e 100644
+index 949562f..d3ba3d6 100644
 --- a/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
 +++ b/src/org/lineageos/lineageparts/power/PerfProfileSettings.java
 @@ -28,6 +28,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
@@ -1008,24 +928,21 @@ index 949562f..a84e15e 100644
  import android.provider.Settings.Global;
  import android.util.ArraySet;
  import android.util.TypedValue;
-@@ -65,10 +66,16 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -65,9 +66,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
      private static final String KEY_AUTO_POWER_SAVE  = "auto_power_save";
      private static final String KEY_POWER_SAVE       = "power_save";
      private static final String KEY_PERF_SEEKBAR     = "perf_seekbar";
 +    private static final String KEY_CPU_OVERCLOCK_CATEGORY = "cpu_overclock_category";
 +    private static final String KEY_CPU_OVERCLOCK    = "cpu_overclock";
-+
 +    private static final String PRODUCT = SystemProperties.get("ro.build.product", "");
 
      private ListPreference mAutoPowerSavePref;
      private SwitchPreference   mPowerSavePref;
-
 +    private SwitchPreference   mCPUOverclockPref;
-+
+
      private SeekBarPreference        mPerfSeekBar;
      private StopMotionVectorDrawable mPerfDrawable;
-     private PerfIconAnimator         mAnimator;
-@@ -96,6 +103,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -96,6 +101,7 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
          mPerfSeekBar = findPreference(KEY_PERF_SEEKBAR);
          mAutoPowerSavePref = findPreference(KEY_AUTO_POWER_SAVE);
          mPowerSavePref = findPreference(KEY_POWER_SAVE);
@@ -1033,7 +950,7 @@ index 949562f..a84e15e 100644
 
          mPowerManager = getActivity().getSystemService(PowerManager.class);
          mPerf = PerformanceManager.getInstance(getActivity());
-@@ -126,6 +134,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -126,6 +132,13 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
          updateAutoPowerSaveValue();
          mAutoPowerSavePref.setOnPreferenceChangeListener(this);
          mPowerSavePref.setOnPreferenceChangeListener(this);
@@ -1047,7 +964,7 @@ index 949562f..a84e15e 100644
      }
 
 
-@@ -212,6 +227,12 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -212,6 +225,12 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
              getActivity().registerReceiver(mPowerSaveReceiver,
                      new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING));
          }
@@ -1060,7 +977,7 @@ index 949562f..a84e15e 100644
      }
 
      @Override
-@@ -246,6 +267,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
+@@ -246,6 +265,10 @@ public class PerfProfileSettings extends SettingsPreferenceFragment
              final int level = Integer.parseInt((String) newValue);
              Global.putInt(getContentResolver(), Global.LOW_POWER_MODE_TRIGGER_LEVEL, level);
              updateAutoPowerSaveSummary(level);
@@ -1442,16 +1359,16 @@ index 0000000..5513c71
 
 project system/core/
 diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
-index 1e33128..a2c888a 100644
+index 1e33128..6670fd7 100644
 --- a/adb/daemon/main.cpp
 +++ b/adb/daemon/main.cpp
-@@ -73,17 +73,14 @@ static bool should_drop_privileges() {
+@@ -73,17 +73,15 @@ static bool should_drop_privileges() {
      //
      // ro.secure:
      //   Drop privileges by default. Set to 1 on userdebug and user builds.
 -    bool ro_secure = android::base::GetBoolProperty("ro.secure", true);
 -    bool ro_debuggable = __android_log_is_debuggable();
--
+
      // Drop privileges if ro.secure is set...
 -    bool drop = ro_secure;
 +    bool drop = false;
@@ -1465,7 +1382,7 @@ index 1e33128..a2c888a 100644
          drop = false;
      }
      // ... and "adb unroot" lets you explicitly drop privileges.
-@@ -119,12 +116,6 @@ static void drop_privileges(int server_port) {
+@@ -119,12 +117,6 @@ static void drop_privileges(int server_port) {
      // Don't listen on a port (default 5037) if running in secure mode.
      // Don't run as root if running in secure mode.
      if (should_drop_privileges()) {
@@ -1575,7 +1492,7 @@ index 6543426..a8fc338 100644
  }
 
 diff --git a/rootdir/init.rc b/rootdir/init.rc
-index a9af0b0..8f87abb 100644
+index a9af0b0..429da4c 100644
 --- a/rootdir/init.rc
 +++ b/rootdir/init.rc
 @@ -540,11 +540,6 @@ on post-fs-data
@@ -1590,7 +1507,7 @@ index a9af0b0..8f87abb 100644
      # Make sure that apexd is started in the default namespace
      enter_default_mount_ns
 
-@@ -611,27 +606,13 @@ on post-fs-data
+@@ -611,26 +606,13 @@ on post-fs-data
      mkdir /data/misc/audioserver 0700 audioserver audioserver
      mkdir /data/misc/cameraserver 0700 cameraserver cameraserver
      mkdir /data/misc/vold 0700 root root
@@ -1614,11 +1531,10 @@ index a9af0b0..8f87abb 100644
 -    mkdir /data/misc/prereboot 0700 system system
 -
 -    mkdir /data/preloads 0775 system system encryption=None
--
+
      mkdir /data/vendor 0771 root root encryption=Require
      mkdir /data/vendor_ce 0771 root root encryption=None
-     mkdir /data/vendor_de 0771 root root encryption=None
-@@ -640,7 +621,6 @@ on post-fs-data
+@@ -640,7 +622,6 @@ on post-fs-data
      # For security reasons, /data/local/tmp should always be empty.
      # Do not place files or directories in /data/local/tmp
      mkdir /data/local/tmp 0771 shell shell
@@ -1626,7 +1542,7 @@ index a9af0b0..8f87abb 100644
      mkdir /data/data 0771 system system encryption=None
      mkdir /data/app-private 0771 system system encryption=Require
      mkdir /data/app-ephemeral 0771 system system encryption=Require
-@@ -648,18 +628,9 @@ on post-fs-data
+@@ -648,18 +629,9 @@ on post-fs-data
      mkdir /data/app-lib 0771 system system encryption=Require
      mkdir /data/app 0771 system system encryption=Require
      mkdir /data/property 0700 root root encryption=Require
@@ -1645,7 +1561,7 @@ index a9af0b0..8f87abb 100644
 
      # create resource-cache and double-check the perms
      mkdir /data/resource-cache 0771 system system encryption=Require
-@@ -677,20 +648,11 @@ on post-fs-data
+@@ -677,20 +649,11 @@ on post-fs-data
      # the following directory.
      mkdir /data/mediadrm 0770 mediadrm mediadrm encryption=Require
 
@@ -1666,7 +1582,7 @@ index a9af0b0..8f87abb 100644
      mkdir /data/system/users 0775 system system
 
      mkdir /data/system_de 0770 system system encryption=None
-@@ -728,17 +690,7 @@ on post-fs-data
+@@ -728,17 +691,7 @@ on post-fs-data
      mkdir /data_mirror/cur_profiles 0700 root root
      mount none /data/misc/profiles/cur /data_mirror/cur_profiles bind rec
 
@@ -1685,7 +1601,7 @@ index a9af0b0..8f87abb 100644
 
      # Create directories for statsd
      mkdir /data/misc/stats-active-metric/ 0770 statsd system
-@@ -978,12 +930,6 @@ on property:vold.decrypt=trigger_shutdown_framework
+@@ -978,12 +931,6 @@ on property:vold.decrypt=trigger_shutdown_framework
      class_reset_post_data core
      class_reset_post_data hal
 
@@ -1698,7 +1614,7 @@ index a9af0b0..8f87abb 100644
  # system server cannot write to /proc/sys files,
  # and chown/chmod does not work for /proc/sys/ entries.
  # So proxy writes through init.
-@@ -1043,13 +989,6 @@ service console /system/bin/sh
+@@ -1043,13 +990,6 @@ service console /system/bin/sh
      seclabel u:r:shell:s0
      setenv HOSTNAME console
 
@@ -1757,29 +1673,8 @@ index 2245dff..a5bd6ac 100644
  	$(hide) mv $@.tmp $@
 
 project vendor/lineage/
-diff --git a/config/BoardConfigKernel.mk b/config/BoardConfigKernel.mk
-index e26127a..8f71933 100644
---- a/config/BoardConfigKernel.mk
-+++ b/config/BoardConfigKernel.mk
-@@ -52,11 +52,11 @@ endif
- CLANG_PREBUILTS := $(BUILD_TOP)/prebuilts/clang/host/$(HOST_PREBUILT_TAG)/clang-r383902b
- GCC_PREBUILTS := $(BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)
- # arm64 toolchain
--KERNEL_TOOLCHAIN_arm64 := $(GCC_PREBUILTS)/aarch64/aarch64-linux-android-4.9/bin
--KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-linux-android-
-+KERNEL_TOOLCHAIN_arm64 := /usr/bin
-+KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-linux-gnu-
- # arm toolchain
--KERNEL_TOOLCHAIN_arm := $(GCC_PREBUILTS)/arm/arm-linux-androideabi-4.9/bin
--KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-androidkernel-
-+KERNEL_TOOLCHAIN_arm := /usr/bin
-+KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabihf-
- # x86 toolchain
- KERNEL_TOOLCHAIN_x86 := $(GCC_PREBUILTS)/x86/x86_64-linux-android-4.9/bin
- KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
-
 diff --git a/config/common.mk b/config/common.mk
-index 204da24..a2c2718 100644
+index 204da24..9e79c77 100644
 --- a/config/common.mk
 +++ b/config/common.mk
 @@ -103,41 +103,21 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
@@ -1793,9 +1688,8 @@ index 204da24..a2c2718 100644
  PRODUCT_PACKAGES += \
      LineageParts \
      LineageSettingsProvider \
--    LineageSetupWizard \
+     LineageSetupWizard \
 -    Updater
-+    LineageSetupWizard
 
  # Themes
  PRODUCT_PACKAGES += \
@@ -1870,24 +1764,23 @@ index 91bf198..67bfa73 100644
      Recorder
 
 diff --git a/config/common_mobile.mk b/config/common_mobile.mk
-index 1f1c241..051dc06 100644
+index 1f1c241..ef2eeb2 100644
 --- a/config/common_mobile.mk
 +++ b/config/common_mobile.mk
-@@ -8,23 +8,14 @@ PRODUCT_PRODUCT_PROPERTIES += \
+@@ -8,9 +8,7 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
  # AOSP packages
  PRODUCT_PACKAGES += \
 -    Email \
--    ExactCalculator \
+     ExactCalculator \
 -    Exchange2
-+    ExactCalculator
 
  # Lineage packages
  PRODUCT_PACKAGES += \
-     Backgrounds \
+@@ -18,13 +16,6 @@ PRODUCT_PACKAGES += \
      Eleven \
      Etar \
--    Jelly \
+     Jelly \
 -    Profiles \
 -    Seedvault
 -
@@ -1895,7 +1788,6 @@ index 1f1c241..051dc06 100644
 -PRODUCT_PACKAGES += \
 -    AudioFX
 -endif
-+    Jelly
 
  ifeq ($(PRODUCT_TYPE), go)
  PRODUCT_PACKAGES += \
@@ -1934,30 +1826,15 @@ index 1f1c241..051dc06 100644
  # Media
  PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 
-diff --git a/config/data_only.mk b/config/data_only.mk
-index 5ff877c..ab70301 100644
---- a/config/data_only.mk
-+++ b/config/data_only.mk
-@@ -1,7 +1,3 @@
- # World APN list
- PRODUCT_PACKAGES += \
-     apns-conf.xml
--
--# Telephony packages
--PRODUCT_PACKAGES += \
--    Stk
-
 diff --git a/config/telephony.mk b/config/telephony.mk
-index 6adf48d..e63b320 100644
+index 6adf48d..355cf57 100644
 --- a/config/telephony.mk
 +++ b/config/telephony.mk
-@@ -8,8 +8,7 @@ PRODUCT_PACKAGES += \
-
+@@ -9,7 +9,6 @@ PRODUCT_PACKAGES += \
  # Telephony packages
  PRODUCT_PACKAGES += \
--    messaging \
+     messaging \
 -    Stk
-+    messaging
 
  # Default ringtone
  PRODUCT_PRODUCT_PROPERTIES += \
